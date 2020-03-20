@@ -1,30 +1,11 @@
 --- a/net/minecraft/client/audio/SoundEngine.java
 +++ b/net/minecraft/client/audio/SoundEngine.java
-@@ -31,7 +31,7 @@
-     private static final Marker LOG_MARKER = MarkerManager.getMarker("SOUNDS");
-     private static final Logger LOGGER = LogManager.getLogger();
-     private static final Set<ResourceLocation> UNABLE_TO_PLAY = Sets.newHashSet();
--    private final SoundHandler sndHandler;
-+    public final SoundHandler sndHandler;
-     private final GameSettings options;
-     private boolean loaded;
-     private final SoundSystem sndSystem = new SoundSystem();
-@@ -477,6 +477,18 @@
+@@ -477,7 +477,7 @@
              });
          }
      }
+-
 +    
-+    public void setLikeNotARetard(Vec3d pos, Vec3d Look, Vec3d Up)
-+    {
-+        if (this.loaded)
-+        {
-+            this.executor.execute(() ->
-+            {
-+                this.listener.setPosition(pos);
-+                this.listener.func_227580_a_(new Vector3f(Look), new Vector3f(Up));
-+            });
-+        }
-+    }
- 
      public void stop(@Nullable ResourceLocation soundName, @Nullable SoundCategory category)
      {
+         if (category != null)

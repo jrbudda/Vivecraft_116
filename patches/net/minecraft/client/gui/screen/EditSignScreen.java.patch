@@ -1,6 +1,16 @@
 --- a/net/minecraft/client/gui/screen/EditSignScreen.java
 +++ b/net/minecraft/client/gui/screen/EditSignScreen.java
-@@ -70,6 +70,7 @@
+@@ -5,6 +5,9 @@
+ import com.mojang.blaze3d.systems.RenderSystem;
+ import com.mojang.blaze3d.vertex.IVertexBuilder;
+ import java.util.List;
++
++import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
++
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.StandingSignBlock;
+ import net.minecraft.client.gui.RenderComponentsUtil;
+@@ -70,6 +73,7 @@
          }
  
          this.tileSign.setEditable(true);

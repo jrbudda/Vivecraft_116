@@ -9,7 +9,17 @@
  import com.mojang.blaze3d.systems.RenderSystem;
  import java.util.Collection;
  import java.util.Iterator;
-@@ -23,6 +25,7 @@
+@@ -12,6 +14,9 @@
+ import java.util.Map;
+ import java.util.Random;
+ import java.util.stream.Collectors;
++
++import org.lwjgl.opengl.GL11;
++
+ import net.minecraft.block.Blocks;
+ import net.minecraft.client.GameSettings;
+ import net.minecraft.client.Minecraft;
+@@ -23,6 +28,7 @@
  import net.minecraft.client.gui.overlay.DebugOverlayGui;
  import net.minecraft.client.gui.overlay.PlayerTabOverlayGui;
  import net.minecraft.client.gui.overlay.SubtitleOverlayGui;
@@ -17,7 +27,7 @@
  import net.minecraft.client.gui.screen.inventory.ContainerScreen;
  import net.minecraft.client.renderer.ActiveRenderInfo;
  import net.minecraft.client.renderer.BufferBuilder;
-@@ -106,6 +109,8 @@
+@@ -106,6 +112,8 @@
      private int scaledWidth;
      private int scaledHeight;
      private final Map<ChatType, List<IChatListener>> chatListeners = Maps.newHashMap();
@@ -26,15 +36,152 @@
  
      public IngameGui(Minecraft p_i231_1_)
      {
-@@ -172,6 +177,7 @@
-                 this.renderPortal(f);
-             }
+@@ -146,32 +154,43 @@
+         FontRenderer fontrenderer = this.getFontRenderer();
+         RenderSystem.enableBlend();
+ 
+-        if (Config.isVignetteEnabled())
+-        {
+-            this.renderVignette(this.mc.getRenderViewEntity());
+-        }
+-        else
+-        {
+-            RenderSystem.enableDepthTest();
+-            RenderSystem.defaultBlendFunc();
+-        }
++        //Vivecraft no no
++//        if (Config.isVignetteEnabled())
++//        {
++//            this.renderVignette(this.mc.getRenderViewEntity());
++//        }
++//        else
++//        {
++//        	
++//        }
++        
++        RenderSystem.enableDepthTest();
++      //''  RenderSystem.defaultBlendFunc();
++        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+ 
+-        ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
+ 
++        ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
++        
++        //Vivecraft pumkinface
++        mc.pumpkineffect=0;
+         if (this.mc.gameSettings.thirdPersonView == 0 && itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem())
+         {
+-            this.renderPumpkinOverlay();
++        	mc.pumpkineffect = 1f;
++            //this.renderPumpkinOverlay();
          }
-+		 */
++        //
++        
+ 
+-        if (!this.mc.player.isPotionActive(Effects.NAUSEA))
+-        {
+-            float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
+-
+-            if (f > 0.0F)
+-            {
+-                this.renderPortal(f);
+-            }
+-        }
++        //Vivecraft oh no no no.
++//        if (!this.mc.player.isPotionActive(Effects.NAUSEA))
++//        {
++//            float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
++//
++//            if (f > 0.0F)
++//            {
++//                this.renderPortal(f);
++//            }
++//        }
  
          if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
          {
-@@ -377,7 +383,7 @@
+@@ -188,9 +207,13 @@
+             this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
+             RenderSystem.enableBlend();
+             RenderSystem.enableAlphaTest();
+-            this.renderAttackIndicator();
++            //Vivecraft nope
++            //this.renderAttackIndicator();
++            //
+             GlStateManager.enableAlphaTest();
+-            RenderSystem.defaultBlendFunc();
++            //Vivecraft blend
++            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++            ///
+             this.mc.getProfiler().startSection("bossHealth");
+             this.overlayBoss.render();
+             this.mc.getProfiler().endSection();
+@@ -223,6 +246,10 @@
+             {
+                 this.spectatorGui.renderSelectedItem();
+             }
++            
++            //Vivecraft
++            renderViveHudIcons();
++            //
+         }
+ 
+         if (this.mc.player.getSleepTimer() > 0)
+@@ -276,7 +303,9 @@
+                     RenderSystem.pushMatrix();
+                     RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight - 68), 0.0F);
+                     RenderSystem.enableBlend();
+-                    RenderSystem.defaultBlendFunc();
++                    //Vivecraft blend
++                    RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++                    ///
+                     int k1 = 16777215;
+ 
+                     if (this.animateOverlayMessageColor)
+@@ -318,7 +347,9 @@
+                     RenderSystem.pushMatrix();
+                     RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight / 2), 0.0F);
+                     RenderSystem.enableBlend();
+-                    RenderSystem.defaultBlendFunc();
++                    //Vivecraft blend
++                    RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++                    ///
+                     RenderSystem.pushMatrix();
+                     RenderSystem.scalef(4.0F, 4.0F, 4.0F);
+                     int l1 = j1 << 24 & -16777216;
+@@ -365,9 +396,30 @@
+             {
+                 this.renderScoreboard(scoreobjective1);
+             }
++            
++			if (mc.currentScreen != null) {
++				// VIVECRAFT: Dimming effect when in background
++				float brightness = 0.5F;
++				GlStateManager.enableBlend();
++				RenderSystem.blendFuncSeparate(SourceFactor.ZERO, DestFactor.ONE, SourceFactor.ZERO, DestFactor.SRC_ALPHA);
++				GlStateManager.disableTexture();
++				GlStateManager.depthMask(false);
++				Tessellator tessellator = Tessellator.getInstance();
++				BufferBuilder bufferbuilder = tessellator.getBuffer();
++				bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
++				bufferbuilder.pos(0.0D, mc.currentScreen.height, 990.0D).color(0.0F, 0.0F, 0.0F, brightness).endVertex();
++				bufferbuilder.pos(mc.currentScreen.width, mc.currentScreen.height, 990.0D).color(0.0F, 0.0F, 0.0F, brightness).endVertex();
++				bufferbuilder.pos(mc.currentScreen.width, 0.0D, 990.0D).color(0.0F, 0.0F, 0.0F, brightness).endVertex();
++				bufferbuilder.pos(0.0D, 0.0D, 990.0D).color(0.0F, 0.0F, 0.0F, brightness).endVertex();
++				tessellator.draw();
++				GlStateManager.depthMask(true);
++				GlStateManager.enableTexture();
++			}
+ 
+             RenderSystem.enableBlend();
+-            RenderSystem.defaultBlendFunc();
++            //Vivecraft blend
++            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++            ///
+             RenderSystem.disableAlphaTest();
+             RenderSystem.pushMatrix();
+             RenderSystem.translatef(0.0F, (float)(this.scaledHeight - 48), 0.0F);
+@@ -377,7 +429,7 @@
              RenderSystem.popMatrix();
              scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
  
@@ -43,33 +190,106 @@
              {
                  this.overlayPlayerList.setVisible(true);
                  this.overlayPlayerList.render(this.scaledWidth, scoreboard, scoreobjective1);
-@@ -1232,6 +1238,9 @@
+@@ -594,6 +646,9 @@
+             int k = 182;
+             int l = 91;
+             this.setBlitOffset(-90);
++            //VIVECRAFT
++			GlStateManager.enableAlphaTest();
++			///
+             this.blit(i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
+             this.blit(i - 91 - 1 + playerentity.inventory.currentItem * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
  
+@@ -612,7 +667,9 @@
+             this.setBlitOffset(j);
+             RenderSystem.enableRescaleNormal();
+             RenderSystem.enableBlend();
+-            RenderSystem.defaultBlendFunc();
++            //Vivecraft blend
++            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++            //
+             CustomItems.setRenderOffHand(false);
+ 
+             for (int i1 = 0; i1 < 9; ++i1)
+@@ -766,7 +823,9 @@
+             {
+                 RenderSystem.pushMatrix();
+                 RenderSystem.enableBlend();
+-                RenderSystem.defaultBlendFunc();
++                //Vivecraft blend
++                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++                ///
+                 fill(i - 2, j - 2, i + this.getFontRenderer().getStringWidth(s) + 2, j + 9 + 2, this.mc.gameSettings.getChatBackgroundColor(0));
+                 FontRenderer fontrenderer = null;
+ 
+@@ -1199,6 +1258,7 @@
+         }
+     }
+ 
++    //unused
+     private void renderPumpkinOverlay()
+     {
+         RenderSystem.disableDepthTest();
+@@ -1230,6 +1290,8 @@
+         }
+     }
+ 
++    
++    //unused
      private void renderVignette(Entity entityIn)
      {
-+		//VIVECRAFT NOPE!
-+		if (true)return;
-+		//
          if (!Config.isVignetteEnabled())
-         {
-             RenderSystem.enableDepthTest();
-@@ -1284,6 +1293,10 @@
+@@ -1282,6 +1344,7 @@
+         }
+     }
  
++    //unused
      private void renderPortal(float timeInPortal)
      {
-+		//VIVECRAFT NOPE!
-+		if(true) return;
-+		//
-+
          if (timeInPortal < 1.0F)
-         {
-             timeInPortal = timeInPortal * timeInPortal;
-@@ -1504,4 +1517,54 @@
+@@ -1504,4 +1567,91 @@
      {
          this.overlayDebug.resetChunk();
      }
 +    
 +	//VIVECRAFT ADDITIONS ***********************************
++  	
++  	private void renderViveHudIcons(){
++          //VIVE SPRINTDICATOR
++          if (this.mc.getRenderViewEntity() instanceof PlayerEntity)
++          {
++        	  int i = mc.mainWindow.getScaledWidth();
++        	  int j = mc.mainWindow.getScaledHeight();
++        	  FontRenderer fontrenderer = mc.ingameGUI.getFontRenderer();
++        	  PlayerEntity entityplayer = (PlayerEntity)this.mc.getRenderViewEntity();
++        	  int iconp = 0;    	  
++        	
++        	  Effect e = null;
++        	  if(entityplayer.isSprinting()) e = Effects.SPEED;      	  
++        	  if(entityplayer.isShiftKeyDown()) e = Effects.BLINDNESS;
++        	  
++        	  if(entityplayer.isElytraFlying()) iconp = -1;
++        	  
++        	  if(iconp == -1){
++            	  GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
++        		  int w = this.mc.mainWindow.getScaledWidth() / 2 - 109;
++        		  int h = this.mc.mainWindow.getScaledHeight() -39;	 
++        		  //TODO: this aint right.
++        		  TextureAtlasSprite textureatlassprite =  this.mc.getAtlasSpriteGetter(new ResourceLocation("minecraft")).apply(new ResourceLocation("items/elytra"));
++        		  this.mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
++        		  AbstractGui.blit(w,h,0,16,16,textureatlassprite);
++        	  } 
++        	  else if (e!=null) {  		  
++        	      TextureAtlasSprite sprite = mc.getPotionSpriteUploader().getSprite(e);
++            	  GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
++        		  this.mc.getTextureManager().bindTexture(sprite.getAtlasTexture().getTextureLocation());
++        		  int w = this.mc.mainWindow.getScaledWidth() / 2 - 109;
++        		  int h = this.mc.mainWindow.getScaledHeight() -39;      			  
++        		  AbstractGui.blit(w, h, 0, 18, 18, sprite);        			
++        	  }       	  
++          }
++          //
++  	}
 +
 +	public void drawMouseMenuQuad(int mouseX, int mouseY)
 +	{	

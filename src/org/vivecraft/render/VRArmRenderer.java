@@ -2,136 +2,104 @@ package org.vivecraft.render;
 
 import org.lwjgl.opengl.ARBTextureEnvCombine;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-
-import com.mojang.blaze3d.platform.GLX;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
+import net.minecraft.client.renderer.entity.layers.ArrowLayer;
+import net.minecraft.client.renderer.entity.layers.BeeStingerLayer;
+import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
+import net.minecraft.client.renderer.entity.layers.CapeLayer;
+import net.minecraft.client.renderer.entity.layers.Deadmau5HeadLayer;
+import net.minecraft.client.renderer.entity.layers.ElytraLayer;
+import net.minecraft.client.renderer.entity.layers.HeadLayer;
+import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
+import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
+import net.minecraft.client.renderer.entity.layers.SpinAttackEffectLayer;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerModelPart;
+import net.minecraft.item.CrossbowItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.UseAction;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 public class VRArmRenderer extends PlayerRenderer
 {
 
-	public VRArmRenderer(EntityRendererManager renderManager) {
-		super(renderManager);
-	}
-
-	public VRArmRenderer(EntityRendererManager renderManager, boolean useSmallArms) {
-		super(renderManager, useSmallArms);
+	public VRArmRenderer(EntityRendererManager p_i1295_1_) {
+		super(p_i1295_1_);
 	}
 	
-	@Override
-    public void renderRightArm(AbstractClientPlayerEntity clientPlayer)
-    {
-        float f = 1.0F;
-        if(Minecraft.getInstance().player.isSneaking()) f= 0.75f;
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, f);
-        float f1 = 0.0625F;
-        PlayerModel<AbstractClientPlayerEntity> modelplayer = this.getEntityModel();
-		MCReflection.RenderPlayer_setModelVisibilities.invoke(this, clientPlayer);
-        GlStateManager.enableBlend();
-        GlStateManager.enableCull();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+	public VRArmRenderer(EntityRendererManager p_i1295_1_, boolean small) {
+		super(p_i1295_1_, small);
+	}
 
-        if (MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).isEnabledRaw(ControllerType.RIGHT) ||
-        		MCOpenVR.keyVRInteract.isKeyDown(ControllerType.RIGHT)|| 
-        		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).isEnabledRaw(ControllerType.RIGHT) ||
-        		MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT)) {
+	public void renderRightArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, AbstractClientPlayerEntity playerIn)
+    {
+        this.renderItem(ControllerType.RIGHT,matrixStackIn, bufferIn, combinedLightIn, playerIn, (this.entityModel).bipedRightArm, (this.entityModel).bipedRightArmwear);
+    }
+
+    public void renderLeftArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, AbstractClientPlayerEntity playerIn)
+    {
+        this.renderItem(ControllerType.LEFT, matrixStackIn, bufferIn, combinedLightIn, playerIn, (this.entityModel).bipedLeftArm, (this.entityModel).bipedLeftArmwear);
+    }
+
+    private void renderItem(ControllerType side, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, AbstractClientPlayerEntity playerIn, ModelRenderer rendererArmIn, ModelRenderer rendererArmwearIn)
+    {
+    	
+        if (MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).isEnabledRaw(side) ||
+        		MCOpenVR.keyVRInteract.isKeyDown(side)|| 
+        		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).isEnabledRaw(side) ||
+        		MCOpenVR.keyClimbeyGrab.isKeyDown(side)) {
         	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_COMBINE);
         	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_COMBINE_RGB_ARB, GL13.GL_MODULATE);
         	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_RGB_SCALE_ARB, 2);      	
         }
         
-        modelplayer.swingProgress = 0.0F;
-        modelplayer.isSneak = false;
-        modelplayer.bipedRightArm.rotateAngleX = 0;
-        modelplayer.bipedRightArm.rotateAngleY = 0;
-        modelplayer.bipedRightArm.rotateAngleZ = 0;
-//        modelplayer.bipedRightArm.offsetX = 0;
-//        modelplayer.bipedRightArm.offsetY = 0;
-//        modelplayer.bipedRightArm.offsetZ = 0;
-        modelplayer.bipedRightArm.render(0.0625F);
-//        modelplayer.bipedRightArmwear.offsetX = 0;
-//        modelplayer.bipedRightArmwear.offsetY = 0;
-//        modelplayer.bipedRightArmwear.offsetZ = 0;
-        modelplayer.bipedRightArmwear.rotateAngleY = 0.0F;
-        modelplayer.bipedRightArmwear.rotateAngleX = 0.0F;
-        modelplayer.bipedRightArmwear.rotateAngleZ = 0.0F;
-//        modelplayer.bipedRightArmwear.rotationPointX = 0.0F;
-//        modelplayer.bipedRightArmwear.rotationPointY = 0.0F;
-        modelplayer.bipedRightArmwear.rotationPointZ = 0.0F;
-        modelplayer.bipedRightArmwear.render(0.0625F);
-        
-   //     if (Minecraft.getInstance().interactTracker.isInteractActive(0)) {
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_MODULATE);
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_RGB_SCALE_ARB, 1);      
-    //    }
-        
-        GlStateManager.disableBlend();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0f);
-    }
-	
-	@Override
-    public void renderLeftArm(AbstractClientPlayerEntity clientPlayer)
-    {
-        float f = 1.0F;
-        if(Minecraft.getInstance().player.isSneaking()) f= 0.75f;
-        GlStateManager.color4f(1.0F, 1.0F, 1.0f, f);
-        float f1 = 0.0625F;
-        PlayerModel<AbstractClientPlayerEntity> modelplayer = this.getEntityModel();
-		MCReflection.RenderPlayer_setModelVisibilities.invoke(this, clientPlayer);
+        PlayerModel<AbstractClientPlayerEntity> playermodel = this.getEntityModel();
+		MCReflection.RenderPlayer_setModelVisibilities.invoke(this, playerIn);
         GlStateManager.enableBlend();
         GlStateManager.enableCull();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+
+        playermodel.swingProgress = 0.0F;
+        playermodel.isSneak = false;
+        playermodel.swimAnimation = 0.0F;
+        playermodel.setRotationAngles(playerIn, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+        rendererArmIn.rotateAngleX = 0.0F;
+        rendererArmIn.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntitySolid(playerIn.getLocationSkin())), combinedLightIn, OverlayTexture.NO_OVERLAY);
+        rendererArmwearIn.rotateAngleX = 0.0F;
+        rendererArmwearIn.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntityTranslucent(playerIn.getLocationSkin())), combinedLightIn, OverlayTexture.NO_OVERLAY);
         
-        if (MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).isEnabledRaw(ControllerType.LEFT) ||
-        		MCOpenVR.keyVRInteract.isKeyDown(ControllerType.LEFT)|| 
-        		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).isEnabledRaw(ControllerType.LEFT) ||
-        		MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT)) {
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_COMBINE);
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_COMBINE_RGB_ARB, GL13.GL_MODULATE);
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_RGB_SCALE_ARB, 2);      	
-        }
-        
-        modelplayer.isSneak = false;
-        modelplayer.swingProgress = 0.0F;
-        modelplayer.bipedLeftArm.rotateAngleX = 0;
-        modelplayer.bipedLeftArm.rotateAngleY = 0;
-        modelplayer.bipedLeftArm.rotateAngleZ = 0;
-//        modelplayer.bipedLeftArm.offsetX = 0;
-//        modelplayer.bipedLeftArm.offsetY = 0;
-//        modelplayer.bipedLeftArm.offsetZ = 0;
-        modelplayer.bipedLeftArm.render(0.0625F);
-//        modelplayer.bipedLeftArmwear.offsetX = 0;
-//        modelplayer.bipedLeftArmwear.offsetY = 0;
-//        modelplayer.bipedLeftArmwear.offsetZ = 0;
-        modelplayer.bipedLeftArmwear.rotateAngleX = 0.0F;
-        modelplayer.bipedLeftArmwear.rotateAngleY = 0.0F;
-        modelplayer.bipedLeftArmwear.rotateAngleZ = 0.0F;
-//        modelplayer.bipedLeftArmwear.rotationPointX = 0.0F;
-//        modelplayer.bipedLeftArmwear.rotationPointY = 0.0F;
-        modelplayer.bipedLeftArmwear.rotationPointZ = 0.0F;
-        modelplayer.bipedLeftArmwear.render(0.0625F);
-        
-     //   if (Minecraft.getInstance().interactTracker.isInteractActive(1)) {
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_MODULATE);
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_RGB_SCALE_ARB, 1);      
-     //   }
-        
+    	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_MODULATE);
+    	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_RGB_SCALE_ARB, 1);      
         GlStateManager.disableBlend();
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0f);
-
     }
-	
+
+  
 }

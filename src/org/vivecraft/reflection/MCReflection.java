@@ -18,30 +18,38 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.world.dimension.Dimension;
 
 public class MCReflection {
-	//public static final ReflectionField SoundManager_sndSystem = new ReflectionField(SoundEngine.class, "field_148620_e");
-	//public static final ReflectionField SoundManager_loaded = new ReflectionField(SoundEngine.class, "field_148617_f");
-	public static final String BlockState_OnBlockActivated = "func_220051_a";
-	public static final ReflectionMethod Dimension_generateLightBrightnessTable = new ReflectionMethod(Dimension.class, "func_76556_a");
-	public static final ReflectionMethod Dimension_hasSkyLight = new ReflectionMethod(Dimension.class, "func_191066_m");
+
+	public static final ReflectionField SoundManager_sndSystem = new ReflectionField(SoundEngine.class, "field_217937_g");
+	public static final ReflectionMethod SoundEngine_reload = new ReflectionMethod(SoundEngine.class, "func_148596_a");
+
+	//TODO: Verify srg
+	public static final String BlockState_OnBlockActivated = "func_225533_a_";
+//	public static final ReflectionMethod Dimension_generateLightBrightnessTable = new ReflectionMethod(Dimension.class, "func_76556_a");
+//	public static final ReflectionMethod Dimension_hasSkyLight = new ReflectionMethod(Dimension.class, "func_191066_m");
+
 	public static final ReflectionField PlayerController_blockHitDelay = new ReflectionField(PlayerController.class, "field_78781_i");
 	public static final ReflectionField PlayerController_isHittingBlock = new ReflectionField(PlayerController.class, "field_78778_j");
-//	public static final ReflectionField GuiChat_inputField = new ReflectionField(GuiChat.class, "field_146415_a");
+
+	//	public static final ReflectionField GuiChat_inputField = new ReflectionField(GuiChat.class, "field_146415_a");
+
 	public static final ReflectionField KeyBinding_pressed = new ReflectionField(KeyBinding.class, "field_74513_e");
 	public static final ReflectionField KeyBinding_pressTime = new ReflectionField(KeyBinding.class, "field_151474_i");
 	public static final ReflectionMethod KeyBinding_unpressKey = new ReflectionMethod(KeyBinding.class, "func_74505_d");
 	public static final ReflectionField KeyBinding_keyCode = new ReflectionField(KeyBinding.class, "field_74512_d");
-//	public static final ReflectionField TileEntityRendererDispatcher_fontRenderer = new ReflectionField(TileEntityRendererDispatcher.class, "field_147557_n");
 	public static final ReflectionField KeyBinding_CATEGORY_ORDER = new ReflectionField(KeyBinding.class, "field_193627_d");
+
 	public static final ReflectionMethod RenderPlayer_setModelVisibilities = new ReflectionMethod(PlayerRenderer.class, "func_177137_d", AbstractClientPlayerEntity.class);
+//	public static final ReflectionField TileEntityRendererDispatcher_fontRenderer = new ReflectionField(TileEntityRendererDispatcher.class, "field_147557_n");
 //	public static final ReflectionField TextureMap_listAnimatedSprites = new ReflectionField(TextureMap.class, "field_94258_i");
 //	public static final ReflectionField PlayerEntity_spawnChunk = new ReflectionField(PlayerEntity.class, "field_71077_c");
 //	public static final ReflectionField PlayerEntity_spawnForced = new ReflectionField(PlayerEntity.class, "field_82248_d");
 //	public static final ReflectionMethod RenderGlobal_renderSky = new ReflectionMethod(RenderGlobal.class, "func_174968_a", BufferBuilder.class, float.class, boolean.class);
 //	public static final ReflectionMethod RenderGlobal_renderStars = new ReflectionMethod(RenderGlobal.class, "func_180444_a", BufferBuilder.class);
-	public static final ReflectionField ModelManager_texmap = new ReflectionField(ModelManager.class, "field_174956_b");
-	public static final ReflectionField ModelManager_modelRegistry = new ReflectionField(ModelManager.class, "field_174958_a");
-	public static final ReflectionField ModelManager_defaultModel = new ReflectionField(ModelManager.class, "field_174955_d");
+//	public static final ReflectionField ModelManager_texmap = new ReflectionField(ModelManager.class, "field_174956_b");
+//	public static final ReflectionField ModelManager_modelRegistry = new ReflectionField(ModelManager.class, "field_174958_a");
+//	public static final ReflectionField ModelManager_defaultModel = new ReflectionField(ModelManager.class, "field_174955_d");
 
+	
 	public static class ReflectionField {
 		private final Class<?> clazz;
 		private final String srgName;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/audio/SoundSystem.java
 +++ b/net/minecraft/client/audio/SoundSystem.java
-@@ -3,17 +3,24 @@
+@@ -3,18 +3,29 @@
  import com.google.common.collect.Sets;
  import java.nio.ByteBuffer;
  import java.nio.IntBuffer;
@@ -11,7 +11,10 @@
  import javax.annotation.Nullable;
 +
 +import net.minecraft.client.Minecraft;
++import net.minecraft.client.renderer.Vector3f;
  import net.minecraft.util.math.MathHelper;
++import net.minecraft.util.math.Vec3d;
++
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.lwjgl.BufferUtils;
@@ -23,9 +26,11 @@
  import org.lwjgl.openal.ALCapabilities;
 +import org.lwjgl.openal.SOFTHRTF;
  import org.lwjgl.system.MemoryStack;
++import org.vivecraft.reflection.MCReflection;
  
  public class SoundSystem
-@@ -48,6 +55,9 @@
+ {
+@@ -48,6 +59,9 @@
      private SoundSystem.IHandler streamingHandler = DUMMY_HANDLER;
      private final Listener field_216416_g = new Listener();
  
@@ -35,7 +40,7 @@
      public void func_216404_a()
      {
          this.field_216411_b = func_216406_f();
-@@ -73,6 +83,80 @@
+@@ -73,6 +87,80 @@
              ALCapabilities alcapabilities = AL.createCapabilities(alccapabilities);
              ALUtils.checkALError("Initialization");
  
@@ -116,3 +121,12 @@
              if (!alcapabilities.AL_EXT_source_distance_model)
              {
                  throw new IllegalStateException("AL_EXT_source_distance_model is not supported");
+@@ -177,7 +265,7 @@
+     {
+         return this.field_216416_g;
+     }
+-
++   
+     @Nullable
+     public SoundSource getSource(SoundSystem.Mode soundMode)
+     {

@@ -24,6 +24,8 @@ import jopenvr.JOpenVRLibrary;
 import jopenvr.JOpenVRLibrary.EVRCompositorError;
 import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.dimension.DimensionType;
@@ -581,11 +583,11 @@ public class OpenVRStereoRenderer
 
 			checkGLError("Render Texture setup");
 				
-			framebufferEye0 = new Framebuffer("L Eye", eyew, eyeh, true,  false, false, 0, LeftEyeTextureId, false);
+			framebufferEye0 = new Framebuffer("L Eye", eyew, eyeh, false, false, LeftEyeTextureId, false);
 			mc.print(framebufferEye0.toString());
 			checkGLError("Left Eye framebuffer setup");
 			
-			framebufferEye1 = new Framebuffer("R Eye", eyew, eyeh, true,  false, false,0, RightEyeTextureId, false);
+			framebufferEye1 = new Framebuffer("R Eye", eyew, eyeh, false, false, RightEyeTextureId, false);
 			mc.print(framebufferEye1.toString());
 			checkGLError("Right Eye framebuffer setup");
 			
@@ -595,7 +597,7 @@ public class OpenVRStereoRenderer
 			displayFBWidth = (int) Math.ceil(eyew * mc.vrSettings.renderScaleFactor);
 			displayFBHeight = (int) Math.ceil(eyeh * mc.vrSettings.renderScaleFactor);
 			
-			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false);
+			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(framebufferVrRender.toString());
 			checkGLError("3D framebuffer setup");
 			
@@ -620,26 +622,26 @@ public class OpenVRStereoRenderer
 			}
 			
 			if (renderPasses.contains(RenderPass.THIRD)) {
-				framebufferMR = new Framebuffer("Mixed Reality Render", mirrorFBWidth, mirrorFBHeight, true, false);
+				framebufferMR = new Framebuffer("Mixed Reality Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false);
 				mc.print(framebufferMR.toString());
 				checkGLError("Mixed reality framebuffer setup");
 			}
 			
 			if (renderPasses.contains(RenderPass.CENTER)) {
-				framebufferUndistorted = new Framebuffer("Undistorted View Render", mirrorFBWidth, mirrorFBHeight, true, false);
+				framebufferUndistorted = new Framebuffer("Undistorted View Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false);
 				mc.print(framebufferUndistorted.toString());
 				checkGLError("Undistorted view framebuffer setup");
 			}
 			
-			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight(), true, true);
+			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(GuiHandler.guiFramebuffer.toString());
 			checkGLError("GUI framebuffer setup");
 
-			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight(), true, true);
+			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(KeyboardHandler.Framebuffer.toString());
 			checkGLError("Keyboard framebuffer setup");
 
-			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight(), true, true);
+			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(RadialHandler.Framebuffer.toString());
 			checkGLError("Radial framebuffer setup");
 
@@ -661,9 +663,9 @@ public class OpenVRStereoRenderer
 					// GL11.GL_RGBA8
 					checkGLError("pre FSAA FBO creation");
 					// Lanczos downsample FBOs
-					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO",eyew, displayFBHeight, true, false,false, 0, -1, true);
+					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO",eyew, displayFBHeight,false, false, Framebuffer.NO_TEXTURE_ID, false);
 					//TODO: ugh, support multiple color attachments in Framebuffer....
-					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO",eyew, eyeh, true, false,false, 0, -1, true);
+					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO",eyew, eyeh,false, false, Framebuffer.NO_TEXTURE_ID, false);
 			
 					mc.print(fsaaFirstPassResultFBO.toString());
 					mc.print(fsaaLastPassResultFBO.toString());
@@ -763,7 +765,7 @@ public class OpenVRStereoRenderer
 			GlStateManager.disableTexture();
 			GlStateManager.disableCull();
 
-			GlStateManager.color3f(0, 0, 0);
+			RenderSystem.color3f(0, 0, 0);
 			GlStateManager.depthMask(false); // Don't write to depth buffer
 			GlStateManager.matrixMode(GL11.GL_PROJECTION);
 			GlStateManager.pushMatrix();

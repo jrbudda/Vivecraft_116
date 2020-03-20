@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 
 import org.vivecraft.api.NetworkHelper;
 import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.settings.profile.ProfileManager;
 import org.vivecraft.settings.profile.ProfileReader;
 import org.vivecraft.settings.profile.ProfileWriter;
@@ -1531,7 +1532,7 @@ public class VRSettings
                         this.hrtfSelection = -1;
 
                     // Reload the sound engine to get the new HRTF
-                    mc.getSoundHandler().sndManager.reload();
+                    MCReflection.SoundEngine_reload.invoke(MCReflection.SoundManager_sndSystem.get(mc.getSoundHandler()), (Object[])null);
                 }
                 break;
             case RIGHT_CLICK_DELAY:

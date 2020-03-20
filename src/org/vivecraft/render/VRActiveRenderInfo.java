@@ -20,30 +20,13 @@ import net.minecraft.world.IBlockReader;
 public class VRActiveRenderInfo extends ActiveRenderInfo {
 
 	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		super.clear();
-	}
-
-	@Override
-	public float getPitch() {
-		// TODO Auto-generated method stub
-		return super.getPitch();
-	}
-
-	@Override
-	public float getYaw() {
-		// TODO Auto-generated method stub
-		return super.getYaw();
-	}
-
-	@Override
 	public void update(IBlockReader worldIn, Entity renderViewEntity, boolean thirdPersonIn,
 			boolean thirdPersonReverseIn, float partialTicks) {
 		this.valid = true;
 		this.world = worldIn;
 		this.renderViewEntity = renderViewEntity;
 		Minecraft mc = Minecraft.getInstance();
+		
 		// This is the center position of the camera, not the exact eye.
 		
 		VRDevicePose src = mc.vrPlayer.vrdata_world_render.hmd;		
@@ -63,10 +46,16 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 		// this.setDirection(mc.vrPlayer.vrdata_world_render.hmd.getYaw(),mc.vrPlayer.vrdata_world_render.hmd.getPitch());
 		this.pitch = -src.getPitch(); //No, I do not know why this is negative.
 		this.yaw = src.getYaw();
+	
+		//These are used for the soundsystem.
 		this.look.set((float)src.getDirection().x,(float)src.getDirection().y, (float)src.getDirection().z);
-		//this.updateLook();
-
+		Vec3d up = src.getCustomVector(new Vec3d(0, 1, 0));
+		this.up.set((float)up.x,(float) up.y,(float) up.z);
+		//
 		
+		//what even are you
+		Vec3d left = src.getCustomVector(new Vec3d(1, 0, 0));
+		this.left.set((float)up.x,(float) up.y,(float) up.z);
 	}
 
 	@Override

@@ -1,17 +1,18 @@
 --- a/net/minecraft/entity/projectile/FishingBobberEntity.java
 +++ b/net/minecraft/entity/projectile/FishingBobberEntity.java
-@@ -3,6 +3,10 @@
+@@ -3,6 +3,11 @@
  import java.util.Collections;
  import java.util.List;
  import javax.annotation.Nullable;
 +
 +import org.vivecraft.api.NetworkHelper;
 +import org.vivecraft.api.ServerVivePlayer;
++import org.vivecraft.provider.MCOpenVR;
 +
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.block.Block;
  import net.minecraft.block.Blocks;
-@@ -85,10 +89,24 @@
+@@ -85,10 +90,24 @@
          float f3 = MathHelper.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
          float f4 = -MathHelper.cos(-f * ((float)Math.PI / 180F));
          float f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
@@ -40,3 +41,22 @@
          Vec3d vec3d = new Vec3d((double)(-f3), (double)MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
          double d3 = vec3d.length();
          vec3d = vec3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
+@@ -236,6 +255,18 @@
+             this.setMotion(this.getMotion().scale(0.92D));
+             this.recenterBoundingBox();
+         }
++        
++        //Vivecraft nibblehaptics
++    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(angler.getUniqueID());
++    	if (vp !=null && vp.isVR()) {
++    		if(this.currentState == State.BOBBING) {
++    			if(this.getMotion().y <= -0.24) { //server makes the bobber jump downwards on a bite.
++                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
++    			}				
++    		}
++    	}
++    	//
++    	
+     }
+ 
+     private boolean shouldStopFishing()

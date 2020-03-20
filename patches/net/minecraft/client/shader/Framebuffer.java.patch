@@ -11,7 +11,95 @@
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.Tessellator;
  import net.minecraft.client.renderer.texture.TextureUtil;
-@@ -232,7 +236,7 @@
+@@ -20,11 +24,40 @@
+     public int depthBuffer;
+     public final float[] framebufferColor;
+     public int framebufferFilter;
+-
+-    public Framebuffer(int p_i1731_1_, int p_i1731_2_, boolean p_i1731_3_, boolean p_i1731_4_)
++    //Vivecraft
++    public static final int NO_TEXTURE_ID = -1;
++ 	private boolean depthisTex;
++ 	private int texid = NO_TEXTURE_ID;
++ 	private String name = "Default";
++ 	private boolean useTextureInsteadofRenderBuffer = false;
++ 	//
++
++ 	//Vivecraft extended constructor
++    public Framebuffer(String name, int width, int height, boolean usedepth, boolean onMac, int texid, boolean depthtex)
++    {        
++    	RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
++    	//
++    	this.name = name;
++    	this.texid = texid;
++    	this.depthisTex = depthtex;
++    	//
++        this.useDepth = usedepth;
++        this.framebufferObject = -1;
++        this.framebufferTexture = -1;
++        this.depthBuffer = -1;
++        this.framebufferColor = new float[4];
++        this.framebufferColor[0] = 1.0F;
++        this.framebufferColor[1] = 1.0F;
++        this.framebufferColor[2] = 1.0F;
++        this.framebufferColor[3] = 0.0F;
++        this.resize(width, height, onMac);
++    }
++ 	//
++    
++    public Framebuffer(int width, int height, boolean usedepth, boolean onMac)
+     {
+         RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+-        this.useDepth = p_i1731_3_;
++        this.useDepth = usedepth;
+         this.framebufferObject = -1;
+         this.framebufferTexture = -1;
+         this.depthBuffer = -1;
+@@ -33,7 +66,7 @@
+         this.framebufferColor[1] = 1.0F;
+         this.framebufferColor[2] = 1.0F;
+         this.framebufferColor[3] = 0.0F;
+-        this.resize(p_i1731_1_, p_i1731_2_, p_i1731_4_);
++        this.resize(width, height, onMac);
+     }
+ 
+     public void resize(int p_216491_1_, int p_216491_2_, boolean p_216491_3_)
+@@ -90,7 +123,8 @@
+             this.framebufferObject = -1;
+         }
+     }
+-
++    
++    
+     public void createBuffers(int p_216492_1_, int p_216492_2_, boolean p_216492_3_)
+     {
+         RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+@@ -99,11 +133,22 @@
+         this.framebufferTextureWidth = p_216492_1_;
+         this.framebufferTextureHeight = p_216492_2_;
+         this.framebufferObject = GlStateManager.genFramebuffers();
+-        this.framebufferTexture = TextureUtil.generateTextureId();
++     
++        //Vivecraft support supplied texture
++        if (this.texid == NO_TEXTURE_ID)
++        	this.framebufferTexture = TextureUtil.generateTextureId();
++        else
++        	this.framebufferTexture = texid;
++        //
+ 
+         if (this.useDepth)
+         {
+-            this.depthBuffer = GlStateManager.genRenderbuffers();
++        	//Vivecraft support texture depth.
++        	if(this.depthisTex)
++        		this.depthBuffer = TextureUtil.generateTextureId();
++        	else
++        		this.depthBuffer = GlStateManager.genRenderbuffers();
++        	//
+         }
+ 
+         this.setFramebufferFilter(9728);
+@@ -232,7 +277,7 @@
          this.framebufferRenderExt(width, height, true);
      }
  
@@ -20,47 +108,31 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnGameThreadOrInit);
  
-@@ -307,4 +311,57 @@
+@@ -240,12 +285,12 @@
+         {
+             RenderSystem.recordRenderCall(() ->
+             {
+-                this.framebufferRenderExtRaw(width, height, p_178038_3_);
++                this.framebufferRenderExtRaw(width, height, disableBlend);
+             });
+         }
+         else
+         {
+-            this.framebufferRenderExtRaw(width, height, p_178038_3_);
++            this.framebufferRenderExtRaw(width, height, disableBlend);
+         }
+     }
+ 
+@@ -307,4 +352,26 @@
          GlStateManager.clear(i, onMac);
          this.unbindFramebuffer();
      }
-+    //Vivecraft Additions
-+    public Framebuffer(String name, int width, int height, boolean useDepth, boolean generateMipMaps)
-+    {
-+        this(name, width, height, useDepth, generateMipMaps, false, 0,-1, true);
-+    }
 +    
-+    public Framebuffer(String name, int width, int height, boolean useDepth, boolean generateMipMaps, boolean multisample, int multisamplecount, int textureID, boolean textureDepth)
-+    {
-+    	this.name = name;
-+        this.useDepth = useDepth;
-+        this.framebufferObject = -1;       
-+        this.framebufferTexture = NO_TEXTURE_ID;
-+        this.generatedFramebufferTexture = true;
-+        this.depthBuffer = -1;
-+        this.framebufferColor = new float[4];
-+        this.framebufferColor[0] = 1.0F;
-+        this.framebufferColor[1] = 1.0F;
-+        this.framebufferColor[2] = 1.0F;
-+        this.framebufferColor[3] = 0.0F;
-+        this.genMipMaps = generateMipMaps;
-+        this.useTextureInsteadofRenderBuffer = textureDepth;
-+//        this.multiSample = multisample;
-+//        if (this.multiSample) {
-+//            this.multiSampleCount = multisamplecount;
-+//            this.textureType = GL32.GL_TEXTURE_2D_MULTISAMPLE;
-+//        }
-+
-+        this.func_216491_a(width, height, false, textureID);
-+    }
 +    public void genMipMaps()
 +    {
 +        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);    // TODO: Minecrift - Check GLContext capabilities
 +    }
-+    public void createBindFramebuffer(int width, int height, boolean is_mac){
-+    	this.func_216491_a(width, height, is_mac, NO_TEXTURE_ID);
-+    }
-+    
++      
 +    public void framebufferRenderExt(int width, int height, boolean noblend)
 +    {
 +        this.framebufferRenderExt(0,width, height,0, noblend);

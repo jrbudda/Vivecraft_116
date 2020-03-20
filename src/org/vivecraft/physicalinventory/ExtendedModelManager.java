@@ -14,11 +14,12 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-public class ExtendedModelManager extends ModelManager{
-	public ExtendedModelManager(AtlasTexture p_i1132_1_, BlockColors p_i1132_2_) {
-		super(p_i1132_1_, p_i1132_2_);
-		// TODO Auto-generated constructor stub
-	}
+public class ExtendedModelManager {
+//	public ExtendedModelManager(AtlasTexture p_i1132_1_, BlockColors p_i1132_2_) {
+//		super(p_i396_1_, p_i396_2_, p_i396_3_);
+//		//super(p_i1132_1_, p_i1132_2_);
+//		// TODO Auto-generated constructor stub
+//	}
 
 	ArrayList<String> models=new ArrayList<>();
 

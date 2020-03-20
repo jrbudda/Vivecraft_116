@@ -168,7 +168,7 @@ public class InteractTracker extends Tracker{
 					);
 
 			
-            inEntityHit[c] = ProjectileHelper.func_221273_a(mc.getRenderViewEntity(), hmdPos, handPos, weaponBB, (e) ->
+            inEntityHit[c] = ProjectileHelper.rayTraceEntities(mc.getRenderViewEntity(), hmdPos, handPos, weaponBB, (e) ->
             {
                 return !e.isSpectator() && e.canBeCollidedWith()  && !(e == mc.getRenderViewEntity().getRidingEntity());
             }, 0);

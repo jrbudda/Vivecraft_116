@@ -35,7 +35,7 @@
  import net.minecraft.world.storage.MapData;
  import net.optifine.Config;
  import net.optifine.reflect.Reflector;
-@@ -39,12 +50,41 @@
+@@ -39,12 +50,40 @@
      private float prevEquippedProgressOffHand;
      private final EntityRendererManager renderManager;
      private final ItemRenderer itemRenderer;
@@ -71,13 +71,12 @@
 +        //Vivecraft
 +        myRenderVRPlayer = new VRArmRenderer(this.renderManager);
 +        renderVRPlayerSkinMap.put("default", this.myRenderVRPlayer);
-+        renderVRPlayerSkinMap.put("slim", new VRArmRenderer(this.renderManager, true));
-+        
++        renderVRPlayerSkinMap.put("slim", new VRArmRenderer(this.renderManager, true));     
 +        //
      }
  
      public void renderItemSide(LivingEntity livingEntityIn, ItemStack itemStackIn, ItemCameraTransforms.TransformType transformTypeIn, boolean leftHand, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn)
-@@ -556,4 +596,154 @@
+@@ -556,4 +595,154 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }

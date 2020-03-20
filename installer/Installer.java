@@ -759,7 +759,62 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					monitor.setProgress(95);
 					monitor.setNote("Creating Vivecraft profile...");
 								
-					if (!updateLauncherJson(targetDir, minecriftVersionName, profileName))
+					if (!    private void renderVRHand_Main(float partialTicks)
+    {
+	
+		if(Config.isShaders()){
+			Shaders.beginHand(false);
+		}else {
+			GL11.glMatrixMode(GL11.GL_PROJECTION);
+			GlStateManager.pushMatrix();
+			GL11.glMatrixMode(GL11.GL_MODELVIEW);
+			GlStateManager.pushMatrix();
+		}	
+			//from player face to HMD
+			setupCameraTransform(partialTicks);
+			applyCameraDepth(false);
+			if (this.mc.gameSettings.thirdPersonView == 0) 
+			{
+				// VIVE START - from HMD to controller
+				SetupRenderingAtController(0);
+
+				ItemStack item = mc.player.getHeldItemMainhand();
+				ItemStack override=mc.physicalGuiManager.getHeldItemOverride();
+				if(override!=null)
+					item=override;
+
+				if(mc.climbTracker.isClimbeyClimb() && (item.getItem() != Items.SHEARS)){
+					itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), override==null? mc.player.getHeldItemOffhand() : override, 0);
+				}
+
+				if(BowTracker.isHoldingBow(mc.player, Hand.MAIN_HAND)){
+					//do ammo override
+					int c = 0;
+					if (mc.vrSettings.vrReverseShootingEye) c = 1;				
+					ItemStack ammo = mc.bowTracker.findAmmoItemStack(mc.player);
+					if (ammo !=null  && !mc.bowTracker.isNotched()) { //render the arrow in right, left hand will check for and render bow.
+						itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ammo, 0);
+					} else {
+						itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
+					}
+				}
+				else if(BowTracker.isHoldingBow(mc.player, Hand.OFF_HAND) && mc.bowTracker.isNotched()){
+					int c = 0;
+					if (mc.vrSettings.vrReverseShootingEye) c = 1;				
+					itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
+				}else {
+					itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), item, 0);
+				}
+			}	
+		if(Config.isShaders())
+			Shaders.endHand();
+		else {
+			GL11.glMatrixMode(GL11.GL_PROJECTION);
+			GlStateManager.popMatrix();
+			GL11.glMatrixMode(GL11.GL_MODELVIEW);
+			GlStateManager.popMatrix();
+		}	
+	}(targetDir, minecriftVersionName, profileName))
 						sbErrors.append("Failed to set up 'Vivecraft' profile (you can still manually select Edit Profile->Use Version " + minecriftVersionName + " in the Minecraft launcher)\n");
 					else
 						profileCreated = true;
@@ -1368,7 +1423,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				prof.put("lastVersionId", minecriftVer + mod);
-				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + ramAllocation.getSelectedItem() + "G -XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
+				int minAlloc = ramAllocation.getSelectedItem() == 1 ? 1 : 2;
+				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + minAlloc + "G -XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
 				prof.put("name", profileName);
 				prof.put("icon", "Creeper_Head");
 				prof.put("type", "custom");

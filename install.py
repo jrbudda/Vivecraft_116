@@ -482,7 +482,7 @@ def main(mcp_dir):
     decompile(conffile=None,      # -c
               force_jad=False,    # -j
               force_csv=False,    # -s
-              no_recompile=nocompilefixpatch, # -r
+              no_recompile=not nocompilefixpatch, # -r
               no_comments=False,  # -d
               no_reformat=False,  # -a
               no_renamer=False,   # -n

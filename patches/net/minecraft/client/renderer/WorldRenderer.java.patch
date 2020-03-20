@@ -16,6 +16,15 @@
  
  public class WorldRenderer implements AutoCloseable, IResourceManagerReloadListener
  {
+@@ -1754,7 +1756,7 @@
+         this.renderManager.renderEntityStatic(entityIn, d0 - camX, d1 - camY, d2 - camZ, f, partialTicks, matrixStackIn, bufferIn, this.renderManager.getPackedLight(entityIn, partialTicks));
+     }
+ 
+-    private void renderBlockLayer(RenderType blockLayerIn, MatrixStack matrixStackIn, double xIn, double yIn, double zIn)
++    public void renderBlockLayer(RenderType blockLayerIn, MatrixStack matrixStackIn, double xIn, double yIn, double zIn)
+     {
+         blockLayerIn.setupRenderState();
+ 
 @@ -2161,7 +2163,7 @@
  
              if (flag)

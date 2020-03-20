@@ -22,6 +22,7 @@ import org.vivecraft.control.TrackedController;
 import org.vivecraft.control.TrackpadSwipeSampler;
 import org.vivecraft.control.VRInputAction;
 import org.vivecraft.control.VRInputActionSet;
+import org.vivecraft.control.VivecraftMovementInput;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.gameplay.screenhandlers.RadialHandler;
@@ -1519,7 +1520,7 @@ public class MCOpenVR
 		}
 
 		if(mc.vrSettings.vrWorldRotationIncrement == 0){
-			float ax = MovementInputFromOptions.getMovementAxisValue(keyRotateLeft);
+			float ax = VivecraftMovementInput.getMovementAxisValue(keyRotateLeft);
 			if(ax > 0){
 				float analogRotSpeed = 5;
 				if(ax > 0)	analogRotSpeed= 10 * ax;
@@ -1534,7 +1535,7 @@ public class MCOpenVR
 		}
 
 		if(mc.vrSettings.vrWorldRotationIncrement == 0){
-			float ax = MovementInputFromOptions.getMovementAxisValue(keyRotateRight);
+			float ax = VivecraftMovementInput.getMovementAxisValue(keyRotateRight);
 			if(ax > 0){
 				float analogRotSpeed = 5;
 				if(ax > 0)	analogRotSpeed = 10 * ax;
