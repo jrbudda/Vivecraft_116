@@ -1,0 +1,15 @@
+--- a/net/minecraft/client/renderer/vertex/DefaultVertexFormats.java
++++ b/net/minecraft/client/renderer/vertex/DefaultVertexFormats.java
+@@ -36,6 +36,12 @@
+     @Deprecated
+     public static final VertexFormat POSITION_TEX_COLOR_NORMAL = new VertexFormat(ImmutableList.<VertexFormatElement>builder().add(POSITION_3F).add(TEX_2F).add(COLOR_4UB).add(NORMAL_3B).add(PADDING_1B).build());
+ 
++    //Vivecraft
++    public static final VertexFormat POSITION_TEX_LMAP_COLOR_NORMAL = new VertexFormat(ImmutableList.<VertexFormatElement>builder().add(POSITION_3F).add(TEX_2F).add(TEX_2S).add(COLOR_4UB).add(NORMAL_3B).add(PADDING_1B).build());
++    public static final VertexFormat POSITION_COLOR_NORMAL = new VertexFormat(ImmutableList.<VertexFormatElement>builder().add(POSITION_3F).add(COLOR_4UB).add(NORMAL_3B).add(PADDING_1B).build());
++    ///
++    
++    
+     public static void updateVertexFormats()
+     {
+         if (Config.isShaders())

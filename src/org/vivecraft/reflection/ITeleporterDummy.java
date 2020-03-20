@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.vivecraft.utils;
+package org.vivecraft.reflection;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;

@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.menuworlds;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,6 +15,7 @@ import java.util.zip.Inflater;
 import com.google.common.io.Files;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.IntIdentityHashBiMap;
@@ -213,8 +214,7 @@ public class MenuWorldExporter {
 			paletteMap.clear();
 			int size = dis.readInt();
 			for (int i = 0; i < size; i++) {
-				CompoundNBT tag = new CompoundNBT();
-				tag.read(dis, 0, NBTSizeTracker.INFINITE);
+				CompoundNBT tag = CompressedStreamTools.read(dis);
 				paletteMap.add(NBTUtil.readBlockState(tag));
 			}
 		}

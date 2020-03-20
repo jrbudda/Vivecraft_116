@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.control;
 
 import java.util.HashSet;
 import java.util.Set;

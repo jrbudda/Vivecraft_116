@@ -2,12 +2,11 @@ package org.vivecraft.gui.physical;
 
 import net.minecraft.item.ItemGroup;
 import org.vivecraft.api.VRData;
-import org.vivecraft.utils.Convert;
-import org.vivecraft.utils.Quaternion;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,6 +19,8 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 import org.vivecraft.gui.physical.interactables.*;
 import org.vivecraft.utils.Utils;
+import org.vivecraft.utils.math.Convert;
+import org.vivecraft.utils.math.Quaternion;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -584,9 +585,9 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 		GlStateManager.enableLighting();
 		PlayerEntity player = Minecraft.getInstance().player;
 		Vec3d playerPos = new Vec3d(
-				player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks,
-				player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks,
-				player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks
+				player.lastTickPosX + (player.getPosX() - player.lastTickPosX) * partialTicks,
+				player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * partialTicks,
+				player.lastTickPosZ + (player.getPosZ() - player.lastTickPosZ) * partialTicks
 		);
 		
 		Vec3d origin = getAnchorPos(partialTicks);
@@ -644,7 +645,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 			GlStateManager.translated(-0.9, -0.7, -0.5);
 			GlStateManager.scalef(scale, scale, scale);
 			
-			mc.worldRenderer.renderCustomModel(loc);
+			renderCustomModel(loc);
 			GlStateManager.popMatrix();
 			
 			GlStateManager.pushMatrix();
@@ -656,6 +657,12 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 		
 		GlStateManager.depthFunc(GL11.GL_LEQUAL);
 		GlStateManager.popMatrix();
+	}
+    
+	public static void renderCustomModel(ModelResourceLocation model){
+		Minecraft mc = Minecraft.getInstance();
+		mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+		//mc.getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(mc.getModelManager().getModel(model), 1.0F, 1.0F, 1.0F, 1.0F);
 	}
 	
 	public class Hotbar extends PhysicalItemSlotGui {

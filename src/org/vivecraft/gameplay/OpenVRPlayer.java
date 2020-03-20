@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.vivecraft.api.NetworkHelper;
 import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
+import org.vivecraft.control.InputSimulator;
 import org.vivecraft.api.VRData;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
@@ -14,7 +15,6 @@ import org.vivecraft.gameplay.trackers.Tracker;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.settings.AutoCalibration;
 import org.vivecraft.settings.VRSettings;
-import org.vivecraft.utils.InputSimulator;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -248,7 +248,7 @@ public class OpenVRPlayer
 		if (Thread.currentThread().getName().equals("Server thread"))
 			return;
 
-		if(player.posX == 0 && player.posY == 0 &&player.posZ == 0) return;
+		if(player.getPositionVec() ==  Vec3d.ZERO) return;
 		
 		Minecraft mc = Minecraft.getInstance();
 		
@@ -262,9 +262,9 @@ public class OpenVRPlayer
 
 		double x,y,z;
 
-		x = player.posX - campos.x;
-		z = player.posZ - campos.z;
-		y = player.posY;
+		x = player.getPosX() - campos.x;
+		z = player.getPosZ() - campos.z;
+		y = player.getPosY();
 		
 		switch (player.getPose())
 		{
@@ -272,6 +272,16 @@ public class OpenVRPlayer
 		case FALL_FLYING:
 		case SPIN_ATTACK:
 			y -= 1.62 - 0.4f;
+		case CROUCHING:
+			break;
+		case DYING:
+			break;
+		case SLEEPING:
+			break;
+		case STANDING:
+			break;
+		default:
+			break;
 		}
 		
 		setRoomOrigin(x, y, z, reset);
@@ -378,7 +388,7 @@ public class OpenVRPlayer
 		}
 		Minecraft mc = Minecraft.getInstance();
 		if(player == null) return;
-		if(player.isSneaking()) {return;} //jrbudda : prevent falling off things or walking up blocks while moving in room scale.
+		if(player.isShiftKeyDown()) {return;} //jrbudda : prevent falling off things or walking up blocks while moving in room scale.
 		if(player.isSleeping()) return; //
 		if(mc.jumpTracker.isjumping()) return; //
 		if(mc.climbTracker.isGrabbingLadder()) return; //
@@ -408,7 +418,7 @@ public class OpenVRPlayer
 		Vec3d eyePos = temp.getHeadPivot();
 
 		double x = eyePos.x;
-		double y = player.posY;
+		double y = player.getPosY();
 		double z = eyePos.z;
 
 		// create bounding box at dest position
@@ -424,17 +434,13 @@ public class OpenVRPlayer
 
 		// valid place to move player to?
 		float var27 = 0.0625F;
-		boolean emptySpot = mc.world.isCollisionBoxesEmpty(player, bb);
+		boolean emptySpot = mc.world.hasNoCollisions(player, bb);
 		
 		if (emptySpot)
 		{
 			// don't call setPosition style functions to avoid shifting room origin
-			player.posX = x;
-			if (!mc.vrSettings.simulateFalling)	{
-				player.posY = y;                	
-			}
-			player.posZ = z;
-
+			player.setRawPosition(x, !mc.vrSettings.simulateFalling ? y : player.getPosY(), z);
+			
 			player.setBoundingBox(new AxisAlignedBB(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY + playerHeight, bb.maxZ));
 			player.fallDistance = 0.0F;
 
@@ -460,7 +466,7 @@ public class OpenVRPlayer
 					bb.maxY,
 					torso.z + shrunkClimbHalfWidth);
 
-			boolean iscollided = !mc.world.isCollisionBoxesEmpty(player, bbClimb);
+			boolean iscollided = !mc.world.hasNoCollisions(player, bbClimb);
 
 			if(iscollided){
 				double xOffset = torso.x - x;
@@ -476,16 +482,14 @@ public class OpenVRPlayer
 				{
 					bb = bb.offset(0, .1, 0);
 
-					emptySpot = mc.world.isCollisionBoxesEmpty(player, bb);
+					emptySpot = mc.world.hasNoCollisions(player, bb);
 					if (emptySpot)
 					{
 						x += xOffset;  	
 						z += zOffset;
 						y += 0.1f*i;
 
-						player.posX = x;
-						player.posY = y;
-						player.posZ = z;
+						player.setRawPosition(x, y, z);
 
 						player.setBoundingBox(new AxisAlignedBB(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ));
 

@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.provider;
 
 import java.util.HashMap;
 import java.util.List;

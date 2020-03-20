@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.menuworlds;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.zip.DataFormatException;
 
 import org.vivecraft.settings.VRSettings;
+import org.vivecraft.utils.Utils;
 
 import net.minecraft.client.Minecraft;
 

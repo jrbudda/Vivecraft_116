@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.physicalinventory;
 
 public class Semaphore {
 	private boolean locked=true;

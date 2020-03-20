@@ -1,6 +1,15 @@
 --- a/net/minecraft/client/gui/IngameGui.java
 +++ b/net/minecraft/client/gui/IngameGui.java
-@@ -23,6 +23,7 @@
+@@ -5,6 +5,8 @@
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Ordering;
+ import com.mojang.blaze3d.platform.GlStateManager;
++import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
++import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+ import com.mojang.blaze3d.systems.RenderSystem;
+ import java.util.Collection;
+ import java.util.Iterator;
+@@ -23,6 +25,7 @@
  import net.minecraft.client.gui.overlay.DebugOverlayGui;
  import net.minecraft.client.gui.overlay.PlayerTabOverlayGui;
  import net.minecraft.client.gui.overlay.SubtitleOverlayGui;
@@ -8,7 +17,7 @@
  import net.minecraft.client.gui.screen.inventory.ContainerScreen;
  import net.minecraft.client.renderer.ActiveRenderInfo;
  import net.minecraft.client.renderer.BufferBuilder;
-@@ -106,6 +107,8 @@
+@@ -106,6 +109,8 @@
      private int scaledWidth;
      private int scaledHeight;
      private final Map<ChatType, List<IChatListener>> chatListeners = Maps.newHashMap();
@@ -17,7 +26,7 @@
  
      public IngameGui(Minecraft p_i231_1_)
      {
-@@ -172,6 +175,7 @@
+@@ -172,6 +177,7 @@
                  this.renderPortal(f);
              }
          }
@@ -25,7 +34,7 @@
  
          if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
          {
-@@ -377,7 +381,7 @@
+@@ -377,7 +383,7 @@
              RenderSystem.popMatrix();
              scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
  
@@ -34,7 +43,7 @@
              {
                  this.overlayPlayerList.setVisible(true);
                  this.overlayPlayerList.render(this.scaledWidth, scoreboard, scoreobjective1);
-@@ -1232,6 +1236,9 @@
+@@ -1232,6 +1238,9 @@
  
      private void renderVignette(Entity entityIn)
      {
@@ -44,7 +53,7 @@
          if (!Config.isVignetteEnabled())
          {
              RenderSystem.enableDepthTest();
-@@ -1284,6 +1291,10 @@
+@@ -1284,6 +1293,10 @@
  
      private void renderPortal(float timeInPortal)
      {
@@ -55,7 +64,7 @@
          if (timeInPortal < 1.0F)
          {
              timeInPortal = timeInPortal * timeInPortal;
-@@ -1504,4 +1515,54 @@
+@@ -1504,4 +1517,54 @@
      {
          this.overlayDebug.resetChunk();
      }
@@ -84,11 +93,11 @@
 +
 +		// Turns out all we needed was some blendFuncSeparate magic :)
 +		// Also color DestFactor of ZERO produces better results with non-white crosshairs
-+		GlStateManager.blendFuncSeparate(SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ZERO, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++		RenderSystem.blendFuncSeparate(SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ZERO, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 +		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);
 +
 +		GlStateManager.disableBlend();
-+		GlStateManager.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++		RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 +		GlStateManager.enableDepthTest();
 +		GlStateManager.enableLighting();
 +		//GlStateManager.colorMask(true, true, true, false);
@@ -103,10 +112,10 @@
 +		Tessellator tessellator = Tessellator.getInstance();
 +		tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 +		tessellator.getBuffer().pos(0, 0, 0).tex(u, v);
-+		tessellator.getBuffer().pos((double)(centreX - (width / 2f)), (double)(centreY + (height / 2f)), (double)this.blitOffset).tex((double)((float)(u + 0) * f), (double)((float)(v + texHeight) * f1)).endVertex();
-+		tessellator.getBuffer().pos((double)(centreX + (width / 2f)), (double)(centreY + (height / 2f)), (double)this.blitOffset).tex( (double)((float)(u + texWidth) * f), (double)((float)(v + texHeight) * f1)).endVertex();
-+		tessellator.getBuffer().pos((double)(centreX + (width / 2f)), (double)(centreY - (height / 2f)), (double)this.blitOffset).tex( (double)((float)(u + texWidth) * f), (double)((float)(v + 0) * f1)).endVertex();
-+		tessellator.getBuffer().pos((double)(centreX - (width / 2f)), (double)(centreY - (height / 2f)), (double)this.blitOffset).tex( (double)((float)(u + 0) * f), (double)((float)(v + 0) * f1)).endVertex();
++		tessellator.getBuffer().pos((double)(centreX - (width / 2f)), (double)(centreY + (height / 2f)), (double)this.getBlitOffset()).tex(((float)(u + 0) * f), ((float)(v + texHeight) * f1)).endVertex();
++		tessellator.getBuffer().pos((double)(centreX + (width / 2f)), (double)(centreY + (height / 2f)), (double)this.getBlitOffset()).tex( ((float)(u + texWidth) * f), ((float)(v + texHeight) * f1)).endVertex();
++		tessellator.getBuffer().pos((double)(centreX + (width / 2f)), (double)(centreY - (height / 2f)), (double)this.getBlitOffset()).tex( ((float)(u + texWidth) * f), ((float)(v + 0) * f1)).endVertex();
++		tessellator.getBuffer().pos((double)(centreX - (width / 2f)), (double)(centreY - (height / 2f)), (double)this.getBlitOffset()).tex( ((float)(u + 0) * f), ((float)(v + 0) * f1)).endVertex();
 +		tessellator.draw();
 +	}
  }

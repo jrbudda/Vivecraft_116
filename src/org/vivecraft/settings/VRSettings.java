@@ -20,9 +20,9 @@ import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.settings.profile.ProfileManager;
 import org.vivecraft.settings.profile.ProfileReader;
 import org.vivecraft.settings.profile.ProfileWriter;
-import org.vivecraft.utils.Angle;
-import org.vivecraft.utils.Quaternion;
-import org.vivecraft.utils.Vector3;
+import org.vivecraft.utils.math.Angle;
+import org.vivecraft.utils.math.Quaternion;
+import org.vivecraft.utils.math.Vector3;
 
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;

@@ -1,10 +1,12 @@
-package org.vivecraft.utils;
+package org.vivecraft.utils.math;
 
 //import org.vivecraft.utils.Matrix4f;
 //import javax.vecmath.Matrix4f;
 //import net.minecraft.client.renderer.Matrix4f;
 
 import org.vivecraft.utils.lwjgl.Quaternion;
+
+import net.minecraft.client.renderer.Matrix4f;
 
 import java.nio.FloatBuffer;
 
@@ -37,7 +39,7 @@ public class Convert {
 		return matrix(floatBuffer);
 	}
 	
-	public static Convert.Matrix matrix(org.vivecraft.utils.Quaternion quaternion){
+	public static Convert.Matrix matrix(org.vivecraft.utils.math.Quaternion quaternion){
 		return matrix(quaternion.getMatrix());
 	}
 	
@@ -112,16 +114,16 @@ public class Convert {
 		}
 		
 		
-		public org.vivecraft.utils.Matrix4f toOVRMatrix4f() {
+		public org.vivecraft.utils.math.Matrix4f toOVRMatrix4f() {
 			needFloats();
 			if (dimension == 3) {
-				return new org.vivecraft.utils.Matrix4f(
+				return new org.vivecraft.utils.math.Matrix4f(
 						floatArray[0], floatArray[1], floatArray[2],
 						floatArray[3], floatArray[4], floatArray[5],
 						floatArray[6], floatArray[7], floatArray[8]);
 				
 			} else if (dimension == 4) {
-				return new org.vivecraft.utils.Matrix4f(
+				return new org.vivecraft.utils.math.Matrix4f(
 						floatArray[0], floatArray[1], floatArray[2], floatArray[3],
 						floatArray[4], floatArray[5], floatArray[6], floatArray[7],
 						floatArray[8], floatArray[9], floatArray[10], floatArray[11],
@@ -135,12 +137,8 @@ public class Convert {
 		public net.minecraft.client.renderer.Matrix4f toMCMatrix4f() {
 			needFloats();
 			if (dimension == 4) {
-				net.minecraft.client.renderer.Matrix4f mat=new net.minecraft.client.renderer.Matrix4f();
-				for (int row = 0; row < 4; row++) {
-					for (int col = 0; col < 4; col++) {
-						mat.set(col,row,floatArray[row*4+col]);
-					}
-				}
+				Matrix4f mat = new net.minecraft.client.renderer.Matrix4f();
+				mat.write(this.toFloatBuffer());
 				return mat;
 			} else {
 				throw new IllegalArgumentException("Wrong dimension! Can't convert Matrix" + dimension + " to Matrix4f");

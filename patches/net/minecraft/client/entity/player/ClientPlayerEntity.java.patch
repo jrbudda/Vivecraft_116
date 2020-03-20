@@ -20,11 +20,11 @@
 +import org.vivecraft.api.NetworkHelper;
 +import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
 +import org.vivecraft.gameplay.OpenVRPlayer;
++import org.vivecraft.physicalinventory.TransactionMutex;
 +import org.vivecraft.provider.MCOpenVR;
 +import org.vivecraft.settings.VRSettings;
-+import org.vivecraft.utils.TransactionMutex;
-+import org.vivecraft.utils.jinfinadeck;
-+import org.vivecraft.utils.jkatvr;
++import org.vivecraft.utils.external.jinfinadeck;
++import org.vivecraft.utils.external.jkatvr;
 +
 +import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
@@ -393,7 +393,7 @@
                  vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vec3d2.lengthSquared();
  
-@@ -1220,4 +1446,400 @@
+@@ -1220,4 +1446,398 @@
              return this.eyesInWaterPlayer;
          }
      }
@@ -661,51 +661,49 @@
 +    		return this == Minecraft.getInstance().player;
 +    	}
 +
++    	//Vivecraft override from LivingEntity because addItemParticles is private
 +    	@Override
-+    	protected void updateItemUse(ItemStack stack, int eatingParticleCount)
-+    	{
-+    		if(!isThePlayer()){
-+    			super.updateItemUse(stack, eatingParticleCount);;
-+    		} else {
-+    			if (!stack.isEmpty() && this.isHandActive())
-+    			{
-+    				if (stack.getUseAction() == UseAction.DRINK)
-+    				{
-+    					this.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
-+    				}
++        protected void func_226293_b_(ItemStack p_226293_1_, int p_226293_2_)
++        {
++            if (!p_226293_1_.isEmpty() && this.isHandActive())
++            {
++                if (p_226293_1_.getUseAction() == UseAction.DRINK)
++                {
++                    this.playSound(this.getDrinkSound(p_226293_1_), 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
++                }
 +
-+    				if (stack.getUseAction() == UseAction.EAT)
-+    				{
-+    					for (int i = 0; i < eatingParticleCount; ++i)
-+    					{
-+    						Vec3d vec3d = new Vec3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
-+    						vec3d = vec3d.rotatePitch(-this.rotationPitch * 0.017453292F);
-+    						vec3d = vec3d.rotateYaw(-this.rotationYaw * 0.017453292F);
-+    						double d0 = (double)(-this.rand.nextFloat()) * 0.6D - 0.3D;
-+    						Vec3d vec3d1 = new Vec3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
-+    						vec3d1 = vec3d1.rotatePitch(-this.rotationPitch * 0.017453292F);
-+    						vec3d1 = vec3d1.rotateYaw(-this.rotationYaw * 0.017453292F);
++                if (p_226293_1_.getUseAction() == UseAction.EAT)
++                {
++                    this.addItemParticles(p_226293_1_, p_226293_2_);
++                    this.playSound(this.getEatSound(p_226293_1_), 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
++                }
++            }
++        }
 +
-+    						vec3d1 = vec3d1.add(this.getPosX(), this.getPosY() + (double)this.getEyeHeight(), this.getPosZ());
++        private void addItemParticles(ItemStack stack, int count)
++        {
 +
-+    						//VIVE
-+    						Hand hand = getActiveHand();
-+    						if(hand == Hand.MAIN_HAND){
-+    							vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
-+    						} else {
-+    							vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();                 	
-+    						}
-+    						//
-+    						
-+							this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vec3d1.x, vec3d1.y, vec3d1.z, vec3d.x, vec3d.y + 0.05D, vec3d.z);
-+
-+    					}
-+
-+    					this.playSound(SoundEvents.ENTITY_GENERIC_EAT, 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
-+    				}
++            for (int i = 0; i < count; ++i)
++            {
++                Vec3d vec3d = new Vec3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
++                vec3d = vec3d.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++                vec3d = vec3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++                double d0 = (double)(-this.rand.nextFloat()) * 0.6D - 0.3D;
++                Vec3d vec3d1 = new Vec3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
++    			//VIVE
++    			Hand hand = getActiveHand();
++    			if(hand == Hand.MAIN_HAND){
++    				vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
++    			} else {
++    				vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();                 	
 +    			}
-+    		}
-+    	}
++                // vec3d1 = vec3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++                // vec3d1 = vec3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++                // vec3d1 = vec3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
++    			//
++                this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vec3d1.x, vec3d1.y, vec3d1.z, vec3d.x, vec3d.y + 0.05D, vec3d.z);
++            }
++        }
 +
 +    	public boolean isClimbeyJumpEquipped(){
 +

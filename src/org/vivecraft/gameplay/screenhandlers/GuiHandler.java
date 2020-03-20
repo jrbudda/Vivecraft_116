@@ -3,17 +3,17 @@ package org.vivecraft.gameplay.screenhandlers;
 import org.vivecraft.api.VRData.VRDevicePose;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.control.HandedKeyBinding;
+import org.vivecraft.control.InputSimulator;
 import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.OpenVRUtil;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRSettings;
-import org.vivecraft.utils.InputSimulator;
-import org.vivecraft.utils.OpenVRUtil;
-import org.vivecraft.utils.Quaternion;
-import org.vivecraft.utils.Vector3;
+import org.vivecraft.utils.math.Matrix4f;
+import org.vivecraft.utils.math.Quaternion;
+import org.vivecraft.utils.math.Vector3;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 
-import org.vivecraft.utils.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.EditBookScreen;

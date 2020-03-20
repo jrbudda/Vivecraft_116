@@ -15,7 +15,7 @@
  
          if (p_i995_2_ instanceof PlayerEntity)
          {
-+        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i2360_2_.getUniqueID());
++        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i995_2_.getUniqueID());
 +        	if (vp !=null && vp.isVR())
 +        	{
 +        		//VIVE SET SPAWNPOS

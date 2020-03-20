@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.vivecraft.control.ControllerType;
+import org.vivecraft.control.InputSimulator;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
-import org.vivecraft.utils.InputSimulator;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 import org.vivecraft.utils.lwjgl.Vector3f;
@@ -18,6 +18,8 @@ import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -308,7 +310,7 @@ public class PhysicalKeyboard {
 		GlStateManager.enableAlphaTest();
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
 		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
 		if (easterEggActive) {
 			// https://qimg.techjargaming.com/i/UkG1cWAh.png

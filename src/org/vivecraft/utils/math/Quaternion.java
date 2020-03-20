@@ -1,7 +1,9 @@
-package org.vivecraft.utils;
+package org.vivecraft.utils.math;
 
+import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.lwjgl.Matrix3f;
 import org.vivecraft.utils.lwjgl.Matrix4f;
+
 import net.minecraft.util.math.Vec3d;
 
 
@@ -82,7 +84,7 @@ public class Quaternion {
 		this(matrix.m00, matrix.m01, matrix.m02, matrix.m10, matrix.m11, matrix.m12, matrix.m20, matrix.m21, matrix.m22);
 	}
 	
-	public Quaternion(org.vivecraft.utils.Matrix4f matrix) {
+	public Quaternion(org.vivecraft.utils.math.Matrix4f matrix) {
 		this(matrix.M[0][0], matrix.M[0][1], matrix.M[0][2], matrix.M[1][0], matrix.M[1][1], matrix.M[1][2], matrix.M[2][0], matrix.M[2][1], matrix.M[2][2]);
 	}
 	

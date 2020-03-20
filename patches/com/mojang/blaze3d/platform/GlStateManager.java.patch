@@ -9,3 +9,20 @@
      private static final GlStateManager.DepthState DEPTH = new GlStateManager.DepthState();
      private static final GlStateManager.FogState FOG = new GlStateManager.FogState();
      private static final GlStateManager.CullState CULL = new GlStateManager.CullState();
+@@ -1984,7 +1984,7 @@
+         }
+     }
+ 
+-    static class BlendState
++    public static class BlendState
+     {
+         public final GlStateManager.BooleanState blend = new GlStateManager.BooleanState(3042);
+         public int srcFactorRgb = 1;
+@@ -2049,6 +2049,7 @@
+     }
+ 
+     @Deprecated
++	public
+     static class Color
+     {
+         public float red = 1.0F;

@@ -9,8 +9,8 @@ import org.vivecraft.gameplay.OpenVRPlayer;
 import org.vivecraft.render.PlayerModelController;
 import org.vivecraft.settings.AutoCalibration;
 import org.vivecraft.settings.VRSettings;
-import org.vivecraft.utils.Quaternion;
 import org.vivecraft.utils.lwjgl.Matrix4f;
+import org.vivecraft.utils.math.Quaternion;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

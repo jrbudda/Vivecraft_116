@@ -3,7 +3,8 @@ package org.vivecraft.gui.physical.interactables;
 import org.vivecraft.api.VRData;
 import org.vivecraft.gui.physical.PhysicalInventory;
 import org.vivecraft.gui.physical.PhysicalItemSlotGui;
-import org.vivecraft.utils.Quaternion;
+import org.vivecraft.utils.math.Quaternion;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;

@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.physicalinventory;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.BlockColors;

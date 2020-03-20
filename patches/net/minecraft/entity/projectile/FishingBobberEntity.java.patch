@@ -11,3 +11,32 @@
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.block.Block;
  import net.minecraft.block.Blocks;
+@@ -85,10 +89,24 @@
+         float f3 = MathHelper.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
+         float f4 = -MathHelper.cos(-f * ((float)Math.PI / 180F));
+         float f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
+-        double d0 = this.angler.getPosX() - (double)f3 * 0.3D;
+-        double d1 = this.angler.getPosYEye();
+-        double d2 = this.angler.getPosZ() - (double)f2 * 0.3D;
+-        this.setLocationAndAngles(d0, d1, d2, f1, f);
++       	//VIVE USE CONTROLLER  	
++    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(angler.getUniqueID());
++    	if (vp !=null && vp.isVR())
++    	{
++    		Vec3d aim = vp.getControllerDir(0);
++    		Vec3d aimSource = vp.getControllerPos(0);
++    		float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.length()));
++    		float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   
++    		this.setLocationAndAngles(aimSource.x + aim.x*0.6f, aimSource.y+aim.y*0.6f, aimSource.z+aim.z*0.6f, yaw, pitch);
++    		f = pitch;
++    		f1 = yaw;
++    	}else {
++	        double d0 = this.angler.getPosX() - (double)f3 * 0.3D;
++	        double d1 = this.angler.getPosYEye();
++	        double d2 = this.angler.getPosZ() - (double)f2 * 0.3D;
++	        this.setLocationAndAngles(d0, d1, d2, f1, f);
++    	}
++    	//END VIVE
+         Vec3d vec3d = new Vec3d((double)(-f3), (double)MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
+         double d3 = vec3d.length();
+         vec3d = vec3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);

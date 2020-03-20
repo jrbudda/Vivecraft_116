@@ -3,11 +3,13 @@ package org.vivecraft.gui.physical.interactables;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 
+import org.vivecraft.gui.physical.PhysicalInventory;
 import org.vivecraft.gui.physical.PhysicalItemSlotGui;
 import org.vivecraft.gui.physical.WindowCoordinator;
-import org.vivecraft.utils.Convert;
-import org.vivecraft.utils.Quaternion;
 import org.vivecraft.utils.Utils;
+import org.vivecraft.utils.math.Convert;
+import org.vivecraft.utils.math.Quaternion;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
@@ -43,7 +45,7 @@ public class Trashbin extends CreativeItemSlot {
 		GlStateManager.translated(offset.x,offset.y,offset.z);
 		GlStateManager.scalef((float) binScale,(float) binScale,(float) binScale);
 
-		mc.worldRenderer.renderCustomModel(binLoc);
+		PhysicalInventory.renderCustomModel(binLoc);
 
 		GlStateManager.popMatrix();
 		super.render(partialTicks, renderLayer);

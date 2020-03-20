@@ -3,8 +3,8 @@ package org.vivecraft.gameplay.trackers;
 import org.vivecraft.gameplay.OpenVRPlayer;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.settings.VRSettings;
-import org.vivecraft.utils.Quaternion;
 import org.vivecraft.utils.Utils;
+import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;

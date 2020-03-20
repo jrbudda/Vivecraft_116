@@ -7,7 +7,7 @@ import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
 import org.vivecraft.api.VRData;
 import org.vivecraft.gameplay.OpenVRPlayer;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.Vector3;
+import org.vivecraft.utils.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;

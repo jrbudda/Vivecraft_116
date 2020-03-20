@@ -6,9 +6,10 @@ import org.vivecraft.api.VRData.VRDevicePose;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.gui.GuiRadial;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.OpenVRUtil;
-import org.vivecraft.utils.Vector3;
-import org.vivecraft.utils.Matrix4f;
+import org.vivecraft.provider.OpenVRUtil;
+import org.vivecraft.utils.math.Matrix4f;
+import org.vivecraft.utils.math.Vector3;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.Main;
 import net.minecraft.client.shader.Framebuffer;

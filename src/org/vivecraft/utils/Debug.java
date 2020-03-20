@@ -3,8 +3,14 @@ package org.vivecraft.utils;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import org.vivecraft.utils.math.Quaternion;
+import org.vivecraft.utils.math.Vector3;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.debug.DebugRenderer;
@@ -198,9 +204,9 @@ public class Debug {
 		public void render(float partialTicks, long finishTimeNano) {
 
 			PlayerEntity entityplayer = Minecraft.getInstance().player;
-			double d0 = entityplayer.lastTickPosX + (entityplayer.posX - entityplayer.lastTickPosX) * (double)partialTicks;
-			double d1 = entityplayer.lastTickPosY + (entityplayer.posY - entityplayer.lastTickPosY) * (double)partialTicks;
-			double d2 = entityplayer.lastTickPosZ + (entityplayer.posZ - entityplayer.lastTickPosZ) * (double)partialTicks;
+			double d0 = entityplayer.lastTickPosX + (entityplayer.getPosX() - entityplayer.lastTickPosX) * (double)partialTicks;
+			double d1 = entityplayer.lastTickPosY + (entityplayer.getPosY() - entityplayer.lastTickPosY) * (double)partialTicks;
+			double d2 = entityplayer.lastTickPosZ + (entityplayer.getPosZ() - entityplayer.lastTickPosZ) * (double)partialTicks;
 
 			//GlStateManager.enableBlend();
 			//GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -243,7 +249,8 @@ public class Debug {
 		}
 
 		@Override
-		public void render(long p_217676_1_) {
+		public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, double camX, double camY,
+				double camZ) {
 			// TODO Auto-generated method stub
 			
 		}

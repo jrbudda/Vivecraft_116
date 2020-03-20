@@ -463,13 +463,13 @@ public class ClimbTracker extends Tracker{
 			player.fallDistance = 0;
 
 
-			double x = player.posX;
-			double y = player.posY;
-			double z = player.posZ;
+			double x = player.getPosX();
+			double y = player.getPosY();
+			double z = player.getPosZ();
 
-			double nx = player.posX;
-			double ny = player.posY;
-			double nz = player.posZ;
+			double nx =x;
+			double ny =y;
+			double nz =z;
 
 			ny = y - delta.y;		
 			BlockPos b = new BlockPos(grab);
@@ -505,12 +505,12 @@ public class ClimbTracker extends Tracker{
 				Vec3d hdir = new Vec3d(dir.x, 0, dir.z).normalize().scale(0.1); //check if free spot
 
 
-				boolean ok = mc.world.isCollisionBoxesEmpty(player, player.getBoundingBox()
-						.offset(hdir.x,(latchbox[latchStartController].maxY + b.getY()) - player.posY , + hdir.z));
+				boolean ok = mc.world.hasNoCollisions(player, player.getBoundingBox()
+						.offset(hdir.x,(latchbox[latchStartController].maxY + b.getY()) - player.getPosY() , + hdir.z));
 				if(ok){
-					nx = player.posX + hdir.x;
+					nx = player.getPosX() + hdir.x;
 					ny = latchbox[latchStartController].maxY + b.getY();
-					nz = player.posZ + hdir.z;
+					nz = player.getPosZ() + hdir.z;
 					latchStartController = -1;
 					latched[0] = false;
 					latched[1] = false;
@@ -556,7 +556,7 @@ public class ClimbTracker extends Tracker{
 				}
 				player.setPosition(ax, ay, az);
 				AxisAlignedBB bb = player.getBoundingBox();
-				free = mc.world.isCollisionBoxesEmpty(player,bb);
+				free = mc.world.hasNoCollisions(player,bb);
 				if(free) {
 					if( i > 1){
 						MCOpenVR.triggerHapticPulse(0, 100); //ouch!

@@ -21,7 +21,7 @@
 +            this.executor.execute(() ->
 +            {
 +                this.listener.setPosition(pos);
-+                this.listener.setOrientation(Look, Up);
++                this.listener.func_227580_a_(new Vector3f(Look), new Vector3f(Up));
 +            });
 +        }
 +    }

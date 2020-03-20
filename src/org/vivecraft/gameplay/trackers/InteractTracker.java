@@ -9,8 +9,8 @@ import javax.swing.RowFilter.ComparisonType;
 
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.MCReflection;
-import org.vivecraft.utils.MCReflection.ReflectionMethod;
+import org.vivecraft.reflection.MCReflection;
+import org.vivecraft.reflection.MCReflection.ReflectionMethod;
 
 import net.minecraft.block.AbstractButtonBlock;
 import net.minecraft.block.BambooBlock;

@@ -7,8 +7,7 @@ import net.minecraft.inventory.container.Slot;
 
 import org.vivecraft.gui.physical.PhysicalItemSlotGui;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.Convert;
-import org.vivecraft.utils.Quaternion;
+
 import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -16,6 +15,8 @@ import net.minecraft.util.HandSide;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import org.vivecraft.utils.Utils;
+import org.vivecraft.utils.math.Convert;
+import org.vivecraft.utils.math.Quaternion;
 
 public class PhysicalItemSlot implements Interactable {
 	public PhysicalItemSlotGui gui;
@@ -37,7 +38,7 @@ public class PhysicalItemSlot implements Interactable {
 	 * Render this slot at the set position and rotation
 	 * */
 	public void render(double partialTicks, int renderLayer){
-		if(this.getOpacity()==0)
+/*		if(this.getOpacity()==0)
 			return;
 
 		ItemRenderer renderItem = Minecraft.getInstance().getItemRenderer();
@@ -101,6 +102,7 @@ public class PhysicalItemSlot implements Interactable {
 
 		renderItem.setFade(1);
 		GlStateManager.popMatrix();
+		*/
 	}
 
 

@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.asm;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;

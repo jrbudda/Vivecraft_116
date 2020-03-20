@@ -8,10 +8,9 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.InputSimulator;
-import org.vivecraft.utils.MCReflection;
-import org.vivecraft.utils.Vector2;
-import org.vivecraft.utils.Vector3;
+import org.vivecraft.reflection.MCReflection;
+import org.vivecraft.utils.math.Vector2;
+import org.vivecraft.utils.math.Vector3;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;

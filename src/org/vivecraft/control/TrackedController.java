@@ -3,8 +3,8 @@ package org.vivecraft.control;
 import java.util.List;
 
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.Vector2;
-import org.vivecraft.utils.Vector3;
+import org.vivecraft.utils.math.Vector2;
+import org.vivecraft.utils.math.Vector3;
 
 import jopenvr.VRControllerAxis_t;
 import jopenvr.VRControllerState_t;

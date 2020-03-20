@@ -1,8 +1,8 @@
 package org.vivecraft.control;
 
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.Vector2;
 import org.vivecraft.utils.lwjgl.Vector2f;
+import org.vivecraft.utils.math.Vector2;
 
 public class TrackpadSwipeSampler {
 	private static final int UP = 0;

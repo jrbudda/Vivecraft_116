@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.utils.math;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -84,9 +84,9 @@ public class BezierCurve {
 
 	public void render(int vertexCount, Color c, float partialTicks){
 		PlayerEntity entityplayer = Minecraft.getInstance().player;
-		double d0 = entityplayer.lastTickPosX + (entityplayer.posX - entityplayer.lastTickPosX) * (double)partialTicks;
-		double d1 = entityplayer.lastTickPosY + (entityplayer.posY - entityplayer.lastTickPosY) * (double)partialTicks;
-		double d2 = entityplayer.lastTickPosZ + (entityplayer.posZ - entityplayer.lastTickPosZ) * (double)partialTicks;
+		double d0 = entityplayer.lastTickPosX + (entityplayer.getPosX() - entityplayer.lastTickPosX) * (double)partialTicks;
+		double d1 = entityplayer.lastTickPosY + (entityplayer.getPosY() - entityplayer.lastTickPosY) * (double)partialTicks;
+		double d2 = entityplayer.lastTickPosZ + (entityplayer.getPosZ() - entityplayer.lastTickPosZ) * (double)partialTicks;
 
 		GlStateManager.disableTexture();
 		GlStateManager.disableLighting();

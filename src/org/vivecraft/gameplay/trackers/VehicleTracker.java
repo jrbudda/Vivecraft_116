@@ -44,7 +44,7 @@ public class VehicleTracker extends Tracker {
 		if(vehicle instanceof AbstractHorseEntity)
 			return original; //horses are fine.
 		
-		return vehicle.posY;
+		return vehicle.getPosY();
 	}
 	
 	public int rotationCooldown = 0; 
@@ -176,7 +176,7 @@ public class VehicleTracker extends Tracker {
 	private int minecartStupidityCounter;
 	
 	private float getMinecartRenderYaw(MinecartEntity entity){	
-		Vec3d spd = new Vec3d(entity.posX - entity.lastTickPosX, entity.posY - entity.lastTickPosY, entity.posZ - entity.lastTickPosZ);
+		Vec3d spd = new Vec3d(entity.getPosX() - entity.lastTickPosX, entity.getPosY() - entity.lastTickPosY, entity.getPosZ() - entity.lastTickPosZ);
 		float spdyaw = (float)Math.toDegrees((Math.atan2(-spd.x, spd.z)));
 		if(shouldMinecartTurnView(entity))
 			return -180+spdyaw;
@@ -190,7 +190,7 @@ public class VehicleTracker extends Tracker {
 	}
 	
 	private boolean shouldMinecartTurnView(MinecartEntity entity){	
-		Vec3d spd = new Vec3d(entity.posX - entity.lastTickPosX, entity.posY - entity.lastTickPosY, entity.posZ - entity.lastTickPosZ);
+		Vec3d spd = new Vec3d(entity.getPosX() - entity.lastTickPosX, entity.getPosY() - entity.lastTickPosY, entity.getPosZ() - entity.lastTickPosZ);
 		return spd.length() > 0.001;
 	}
 	

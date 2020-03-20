@@ -12,9 +12,8 @@ import org.vivecraft.render.ShaderHelper;
 import org.vivecraft.render.VRShaders;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRSettings;
-import org.vivecraft.utils.Matrix4f;
-import org.vivecraft.utils.OpenVRUtil;
-import org.vivecraft.utils.Vector2;
+import org.vivecraft.utils.math.Matrix4f;
+import org.vivecraft.utils.math.Vector2;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;

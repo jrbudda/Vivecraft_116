@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.MCReflection;
+import org.vivecraft.reflection.MCReflection;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;

@@ -13,7 +13,7 @@
  import org.lwjgl.glfw.GLFWKeyCallbackI;
  import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
  import org.lwjgl.glfw.GLFWScrollCallbackI;
-+import org.vivecraft.utils.InputSimulator;
++import org.vivecraft.control.InputSimulator;
  
  public class InputMappings
  {

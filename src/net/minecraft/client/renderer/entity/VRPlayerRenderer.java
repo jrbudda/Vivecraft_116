@@ -2,7 +2,7 @@ package net.minecraft.client.renderer.entity;
 
 import org.vivecraft.render.PlayerModelController;
 import org.vivecraft.render.PlayerModelController.RotInfo;
-import org.vivecraft.utils.Quaternion;
+import org.vivecraft.utils.math.Quaternion;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 

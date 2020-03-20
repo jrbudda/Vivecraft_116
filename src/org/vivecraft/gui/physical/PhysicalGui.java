@@ -3,7 +3,9 @@ package org.vivecraft.gui.physical;
 import net.minecraft.state.IProperty;
 import org.vivecraft.gui.physical.interactables.Interactable;
 import org.vivecraft.utils.Debug;
-import org.vivecraft.utils.Quaternion;
+import org.vivecraft.utils.math.Quaternion;
+import org.vivecraft.utils.math.Vector3;
+
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,8 +18,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
-
-import org.vivecraft.utils.Vector3;
 
 public abstract class PhysicalGui{
 	public Container container = null;

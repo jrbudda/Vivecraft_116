@@ -2,7 +2,8 @@ package org.vivecraft.gui.physical.interactables;
 
 import org.vivecraft.gui.physical.PhysicalInventory;
 import org.vivecraft.gui.physical.WindowCoordinator;
-import org.vivecraft.utils.Quaternion;
+import org.vivecraft.utils.math.Quaternion;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 
@@ -29,7 +30,7 @@ public class MiniCrafting implements Interactable {
 		if(renderLayer==0) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translated(-0.22 - 0.22, 0, -0.22);
-			mc.worldRenderer.renderCustomModel(craftingLoc);
+			PhysicalInventory.renderCustomModel(craftingLoc);
 			GlStateManager.popMatrix();
 		}
 	}

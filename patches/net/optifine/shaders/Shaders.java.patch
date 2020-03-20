@@ -194,6 +194,15 @@
  
          if (!isShaderPackInitialized)
          {
+@@ -4119,7 +4140,7 @@
+ 
+                     if (livingentity.isPotionActive(Effects.NIGHT_VISION))
+                     {
+-                        GameRenderer gamerenderer = entityRenderer;
++                        GameRenderer gamerenderer = gameRenderer;
+                         nightVision = GameRenderer.getNightVisionBrightness(livingentity, partialTicks);
+                     }
+ 
 @@ -4162,7 +4183,9 @@
          previousModelView.position(0);
          modelView.position(0);

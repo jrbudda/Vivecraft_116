@@ -3,9 +3,9 @@ package org.vivecraft.api;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.render.PlayerModelController;
 import org.vivecraft.render.RenderPass;
-import org.vivecraft.utils.Matrix4f;
 import org.vivecraft.utils.Utils;
-import org.vivecraft.utils.Vector3;
+import org.vivecraft.utils.math.Matrix4f;
+import org.vivecraft.utils.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;

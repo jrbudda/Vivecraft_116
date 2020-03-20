@@ -1,27 +1,83 @@
 --- a/net/minecraft/client/renderer/FirstPersonRenderer.java
 +++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
-@@ -2,8 +2,12 @@
+@@ -2,8 +2,16 @@
  
  import com.google.common.base.MoreObjects;
  import com.mojang.blaze3d.matrix.MatrixStack;
 +import com.mojang.blaze3d.platform.GlStateManager;
  import com.mojang.blaze3d.vertex.IVertexBuilder;
++
++import java.util.HashMap;
++import java.util.Map;
  import java.util.Objects;
 +
 +import org.lwjgl.opengl.GL11;
++import org.vivecraft.render.VRArmRenderer;
 +
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
  import net.minecraft.client.entity.player.ClientPlayerEntity;
-@@ -20,6 +24,7 @@
+@@ -11,6 +19,7 @@
+ import net.minecraft.client.renderer.entity.PlayerRenderer;
+ import net.minecraft.client.renderer.model.ItemCameraTransforms;
+ import net.minecraft.client.renderer.texture.OverlayTexture;
++import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.item.CrossbowItem;
+ import net.minecraft.item.FilledMapItem;
+@@ -20,7 +29,9 @@
  import net.minecraft.util.Hand;
  import net.minecraft.util.HandSide;
  import net.minecraft.util.ResourceLocation;
 +import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
++import net.minecraft.util.math.Vec3d;
  import net.minecraft.world.storage.MapData;
  import net.optifine.Config;
-@@ -556,4 +561,153 @@
+ import net.optifine.reflect.Reflector;
+@@ -39,12 +50,41 @@
+     private float prevEquippedProgressOffHand;
+     private final EntityRendererManager renderManager;
+     private final ItemRenderer itemRenderer;
++    //Vivecraft
++    private final VRArmRenderer myRenderVRPlayer;
++    private final Map<String, VRArmRenderer> renderVRPlayerSkinMap = new HashMap<>();
++    public VRFirstPersonArmSwing swingType = VRFirstPersonArmSwing.Attack;  
++    public float xdist = -0;
++    public enum VRFirstPersonArmSwing{
++    	Attack,
++    	Use,
++    	Interact
++    }
++    private enum VivecraftItemRendering{
++    	Item,
++    	Block,
++    	Shield,
++    	Sword,
++    	Tool,
++    	Bow,
++    	Spear,
++    	Map,
++    	Noms,
++    	Crossbow
++    }
++    //
+ 
+     public FirstPersonRenderer(Minecraft p_i146_1_)
+     {
+         this.mc = p_i146_1_;
+         this.renderManager = p_i146_1_.getRenderManager();
+         this.itemRenderer = p_i146_1_.getItemRenderer();
++        //Vivecraft
++        myRenderVRPlayer = new VRArmRenderer(this.renderManager);
++        renderVRPlayerSkinMap.put("default", this.myRenderVRPlayer);
++        renderVRPlayerSkinMap.put("slim", new VRArmRenderer(this.renderManager, true));
++        
++        //
+     }
+ 
+     public void renderItemSide(LivingEntity livingEntityIn, ItemStack itemStackIn, ItemCameraTransforms.TransformType transformTypeIn, boolean leftHand, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn)
+@@ -556,4 +596,154 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }
@@ -143,8 +199,8 @@
 +    		mc.gameRenderer.renderVRGuiElements(false, par1);
 +    	}
 +
-+    	if(mc.gameRenderer.onfire)
-+    		renderFireInFirstPerson();
++//    	if(mc.gameRenderer.onfire)
++//    		renderFireInFirstPerson();
 +
 +    	if (shadersMod) {
 +    		//does nothing at all.
@@ -175,3 +231,4 @@
 +    //
 +    
  }
++

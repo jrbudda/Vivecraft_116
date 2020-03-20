@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.utils.external;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;

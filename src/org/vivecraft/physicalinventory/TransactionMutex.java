@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.physicalinventory;
 
 public class TransactionMutex {
 	public boolean approved;

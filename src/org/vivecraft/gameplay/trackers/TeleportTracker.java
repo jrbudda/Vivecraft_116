@@ -5,11 +5,12 @@ import java.util.Random;
 import org.vivecraft.api.NetworkHelper;
 import org.vivecraft.gameplay.VRMovementStyle;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.OpenVRUtil;
-import org.vivecraft.utils.Quaternion;
-import org.vivecraft.utils.Vector3;
-import org.vivecraft.utils.Angle;
-import org.vivecraft.utils.Matrix4f;
+import org.vivecraft.provider.OpenVRUtil;
+import org.vivecraft.utils.math.Angle;
+import org.vivecraft.utils.math.Matrix4f;
+import org.vivecraft.utils.math.Quaternion;
+import org.vivecraft.utils.math.Vector3;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -167,7 +168,7 @@ public class TeleportTracker extends Tracker{
                     }
                     player.movementTeleportTimer++;
 
-                    Vec3d playerPos = new Vec3d(player.posX, player.posY, player.posZ);
+                    Vec3d playerPos = player.getPositionVec();
                     double dist = dest.distanceTo(playerPos);
                     double progress = (player.movementTeleportTimer * 1.0) / (dist + 3.0);
 
@@ -182,7 +183,7 @@ public class TeleportTracker extends Tracker{
                         }
 
                         // cloud of sparks moving past you
-                        Vec3d motionDir = dest.add(-player.posX, -player.posY, -player.posZ).normalize();
+                        Vec3d motionDir = dest.add(-player.getPosX(), -player.getPosY(), -player.getPosZ()).normalize();
                         Vec3d forward = player.getLookVec();
                         Vec3d right = forward.crossProduct(new Vec3d(0, 1, 0));
                         Vec3d up = right.crossProduct(forward);
@@ -194,9 +195,9 @@ public class TeleportTracker extends Tracker{
                                 double forwardDist = rand.nextDouble() * 1.0 + 3.5;
                                 double upDist = rand.nextDouble() * 2.5;
                                 double rightDist = rand.nextDouble() * 4.0 - 2.0;
-                                Vec3d sparkPos = new Vec3d(player.posX + forward.x * forwardDist,
-                                        player.posY + forward.y * forwardDist,
-                                        player.posZ + forward.z * forwardDist);
+                                Vec3d sparkPos = new Vec3d(player.getPosX() + forward.x * forwardDist,
+                                        player.getPosY() + forward.y * forwardDist,
+                                        player.getPosZ() + forward.z * forwardDist);
                                 sparkPos = sparkPos.add(right.x * rightDist, right.y * rightDist, right.z * rightDist);
                                 sparkPos = sparkPos.add(up.x * upDist, up.y * upDist, up.z * upDist);
 
@@ -234,7 +235,7 @@ public class TeleportTracker extends Tracker{
 
         if (doTeleport && dest!=null && (dest.x != 0 || dest.y !=0 || dest.z != 0)) //execute teleport
         {
-            movementTeleportDistance = (float)MathHelper.sqrt(dest.squareDistanceTo(player.posX, player.posY, player.posZ));
+            movementTeleportDistance = (float)MathHelper.sqrt(dest.squareDistanceTo(player.getPositionVec()));
             boolean playCustomTeleportSound = movementTeleportDistance > 0.0f && vrMovementStyle.endTeleportingSound != null;
             Block block = null;
 
@@ -420,7 +421,7 @@ public class TeleportTracker extends Tracker{
         		
         		boolean ok = true;
         		
-            	if(mc.player.isSneaking()) {
+            	if(mc.player.isShiftKeyDown()) {
             		if(yDiff > 0.2)
             			ok = false;
             	}        	
@@ -488,15 +489,15 @@ public class TeleportTracker extends Tracker{
     	if (!mc.world.getFluidState(bp).isEmpty()){
     		Vec3d hitVec = new Vec3d(collision.getHitVec().x, bp.getY(), collision.getHitVec().z );
 
-    		Vec3d offset = hitVec.subtract(player.posX, player.getBoundingBox().minY, player.posZ);
+    		Vec3d offset = hitVec.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     		AxisAlignedBB bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
-    		boolean emptySpotReq = mc.world.isCollisionBoxesEmpty(player,bb);
+    		boolean emptySpotReq = mc.world.hasNoCollisions(player,bb);
 
     		if(!emptySpotReq){
     			Vec3d center = new Vec3d(bp).add(0.5, 0, 0.5);
-    			offset = center.subtract(player.posX, player.getBoundingBox().minY, player.posZ);
+    			offset = center.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     			bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
-    			emptySpotReq = mc.world.isCollisionBoxesEmpty(player,bb);	
+    			emptySpotReq = mc.world.hasNoCollisions(player,bb);	
     		}
     		float ex = 0;
     		if(mc.vrSettings.seated)ex = 0.5f;
@@ -540,20 +541,20 @@ public class TeleportTracker extends Tracker{
     		double height = testClimb.getCollisionShape(mc.world, hitBlock).getEnd(Axis.Y);
     		
     		Vec3d hitVec = new Vec3d(collision.getHitVec().x, hitBlock.getY() + height, collision.getHitVec().z );
-    		Vec3d offset = hitVec.subtract(player.posX, player.getBoundingBox().minY, player.posZ);
+    		Vec3d offset = hitVec.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     		AxisAlignedBB bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     		double ex = 0;
     		if (testClimb.getBlock() == Blocks.SOUL_SAND) ex = 0.05;
 
-    		boolean emptySpotReq = mc.world.isCollisionBoxesEmpty(player,bb) &&
-    				!mc.world.isCollisionBoxesEmpty(player,bb.grow(0, .125 + ex, 0));     
+    		boolean emptySpotReq = mc.world.hasNoCollisions(player,bb) &&
+    				!mc.world.hasNoCollisions(player,bb.grow(0, .125 + ex, 0));     
 
     		if(!emptySpotReq){
     			Vec3d center = new Vec3d(hitBlock).add(0.5, height, 0.5);
-    			offset = center.subtract(player.posX, player.getBoundingBox().minY, player.posZ);
+    			offset = center.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     			bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
-    			emptySpotReq = mc.world.isCollisionBoxesEmpty(player,bb) &&
-    					!mc.world.isCollisionBoxesEmpty(player,bb.grow(0, .125 + ex, 0));     	
+    			emptySpotReq = mc.world.hasNoCollisions(player,bb) &&
+    					!mc.world.hasNoCollisions(player,bb.grow(0, .125 + ex, 0));     	
     		}
 
     		if(emptySpotReq){

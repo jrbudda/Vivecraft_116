@@ -3,7 +3,6 @@ package org.vivecraft.gui.physical;
 import org.vivecraft.gui.physical.interactables.Interactable;
 import org.vivecraft.gui.physical.interactables.PhysicalItemSlot;
 import org.vivecraft.utils.Debug;
-import org.vivecraft.utils.Quaternion;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -15,8 +14,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import org.vivecraft.utils.Vector3;
+
 import org.vivecraft.utils.lwjgl.Vector;
+import org.vivecraft.utils.math.Quaternion;
+import org.vivecraft.utils.math.Vector3;
 
 import java.awt.*;
 

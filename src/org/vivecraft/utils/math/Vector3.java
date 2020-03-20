@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.utils.math;
 
 import org.vivecraft.utils.lwjgl.Matrix3f;
 import org.vivecraft.utils.lwjgl.Matrix4f;

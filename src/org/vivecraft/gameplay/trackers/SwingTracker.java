@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.MCReflection;
+import org.vivecraft.reflection.MCReflection;
 
 import net.minecraft.block.BambooBlock;
 import net.minecraft.block.Block;
@@ -258,7 +258,7 @@ public class SwingTracker extends Tracker{
 
         		BlockRayTraceResult blockHit = mc.world.rayTraceBlocks(new RayTraceContext(lastWeaponEndAir[c], weaponEnd[c], BlockMode.OUTLINE, FluidMode.NONE, mc.player));
 
-        		EntityRayTraceResult entityHit = ProjectileHelper.func_221273_a(player, lastWeaponEndAir[c], weaponEnd[c], axisalignedbb, (p_lambda$getMouseOver$0_0_) ->
+        		EntityRayTraceResult entityHit = ProjectileHelper.rayTraceEntities(player, lastWeaponEndAir[c], weaponEnd[c], axisalignedbb, (p_lambda$getMouseOver$0_0_) ->
         		{
         			return !p_lambda$getMouseOver$0_0_.isSpectator() && p_lambda$getMouseOver$0_0_.canBeCollidedWith();
         		}, 16);   
@@ -357,6 +357,28 @@ public class SwingTracker extends Tracker{
     // VIVE START - function to allow damaging blocks immediately
 	private void clearBlockHitDelay() {
 		MCReflection.PlayerController_blockHitDelay.set(Minecraft.getInstance().playerController, 0);
+	}
+	
+	//Get the transparency for held items to indicate attack power or sneaking.
+	public static float getItemFade(ClientPlayerEntity p, ItemStack is) {
+       float fade = p.getCooledAttackStrength(0)*.75f + .25f;
+    	
+      	if(p.isShiftKeyDown()) 
+          	fade =0.75f;
+          
+          if(p.isActiveItemStackBlocking() && p.getActiveItemStack() != is) 
+          	fade =0.75f;
+
+          if(is.getItem() == Items.SHIELD) {
+              if (p.isActiveItemStackBlocking())
+                  fade = 1;
+              else
+                  fade = 0.75f;
+          }
+
+          if(fade < 0.1) fade = 0.1f;
+          if(fade > 1) fade = 1f;
+          return fade;
 	}
 	
 }

@@ -5,7 +5,7 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
 +
-+import org.vivecraft.utils.ASMDelegator;
++import org.vivecraft.asm.ASMDelegator;
 +
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.entity.player.ClientPlayerEntity;

@@ -2,7 +2,7 @@ package org.vivecraft.gui.physical.interactables;
 
 import org.vivecraft.gui.physical.PhysicalInventory;
 import org.vivecraft.gui.physical.WindowCoordinator;
-import org.vivecraft.utils.Quaternion;
+import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.util.math.Vec3d;

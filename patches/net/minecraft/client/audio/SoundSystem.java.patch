@@ -80,7 +80,7 @@
 +                    buf.put(0).flip();
 +                    SOFTHRTF.alcResetDeviceSOFT(this.field_216411_b, buf);
 +
-+                    if (!ALUtils.func_216483_a("HRTF initialization")) {
++                    if (!ALUtils.checkALError("HRTF initialization")) {
 +                        LOGGER.info("HRTF initialized.");
 +
 +                        int status = ALC10.alcGetInteger(this.field_216411_b, SOFTHRTF.ALC_HRTF_STATUS_SOFT);

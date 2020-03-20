@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.menuworlds;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -12,6 +12,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.ChunkStatus;
@@ -19,6 +20,7 @@ import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.lighting.WorldLightManager;
 
 public class FakeBlockAccess implements IWorldReader {
 	private DimensionType dimensionType;
@@ -217,5 +219,23 @@ public class FakeBlockAccess implements IWorldReader {
 	@Override
 	public Dimension getDimension() {
 		return this.dimension;
+	}
+
+	@Override
+	public WorldLightManager getLightManager() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BiomeManager getBiomeManager() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Biome getNoiseBiomeRaw(int x, int y, int z) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

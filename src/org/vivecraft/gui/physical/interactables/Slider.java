@@ -2,13 +2,16 @@ package org.vivecraft.gui.physical.interactables;
 
 import org.vivecraft.api.VRData;
 import org.vivecraft.gameplay.OpenVRPlayer;
-import org.vivecraft.utils.Quaternion;
+import org.vivecraft.utils.math.Quaternion;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
-import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.model.ModelRenderer.ModelBox;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
@@ -161,7 +164,7 @@ public class Slider implements Interactable{
 			texturemapRail[3]=new int[]{141,11,142,12};//back
 			texturemapRail[4]=new int[]{141,11,142,12};//left
 			texturemapRail[5]=new int[]{166,11,167,12};//right
-			rail.cubeList.add(new ModelBox(rail,texturemapRail,-3,0,-length/2f,6,3, length,0,false));
+		//	rail.cubeList.add(new ModelBox(rail,texturemapRail,-3,0,-length/2f,6,3, length,0,false));
 
 
 			knob=new ModelRenderer(this,0,0).setTextureSize(256,256);
@@ -172,7 +175,7 @@ public class Slider implements Interactable{
 			texturemapKnob[3]=new int[]{232,0,233,1};//back
 			texturemapKnob[4]=new int[]{232,0,233,1};//left
 			texturemapKnob[5]=new int[]{233,14,234,15};//right
-			knob.cubeList.add(new ModelBox(knob,texturemapKnob,-6,0.5f,0,12,4,15,0,false));
+	//		knob.cubeList.add(new ModelBox(knob,texturemapKnob,-6,0.5f,0,12,4,15,0,false));
 			setSliderPos(sliderPos);
 		}
 
@@ -185,14 +188,29 @@ public class Slider implements Interactable{
 			knob.rotationPointZ=(float) (sliderPos*(length-15)) - length/2f;
 		}
 
-		@Override
-		public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-			render(scale);
-		}	
+//		@Override
+//		public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+//			render(scale);
+//		}	
+		
 		void render(float scale){
 			Minecraft.getInstance().getTextureManager().bindTexture(TEXTURE);
-			rail.render(scale);
-			knob.render(scale);
+//			rail.render(scale);
+//			knob.render(scale);
+		}
+
+		@Override
+		public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks,
+				float netHeadYaw, float headPitch) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn,
+				float red, float green, float blue, float alpha) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 }

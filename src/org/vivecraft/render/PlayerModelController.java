@@ -11,9 +11,9 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.vivecraft.api.VRData;
-import org.vivecraft.utils.Quaternion;
 import org.vivecraft.utils.Utils;
-import org.vivecraft.utils.Vector3;
+import org.vivecraft.utils.math.Quaternion;
+import org.vivecraft.utils.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
@@ -212,9 +212,9 @@ public class PlayerModelController {
 							// Use hmd pos for self so we don't have butt sparkles in face
 							Vec3d pos = rotInfo != null && player == mc.player ? rotInfo.Headpos : player.getEyePosition(1);
 							Particle particle = mc.particles.addParticle(ParticleTypes.FIREWORK,
-									pos.x + (player.isSneaking() ? -derp.x * 3 : 0) + ((double) this.rand.nextFloat() - 0.5D) * .02f,
-									pos.y - (player.isSneaking() ? 1.0f : 0.8f) + ((double) this.rand.nextFloat() - 0.5D) * .02f,
-									pos.z + (player.isSneaking() ? -derp.z * 3 : 0) + ((double) this.rand.nextFloat() - 0.5D) * .02f,
+									pos.x + (player.isShiftKeyDown() ? -derp.x * 3 : 0) + ((double) this.rand.nextFloat() - 0.5D) * .02f,
+									pos.y - (player.isShiftKeyDown() ? 1.0f : 0.8f) + ((double) this.rand.nextFloat() - 0.5D) * .02f,
+									pos.z + (player.isShiftKeyDown() ? -derp.z * 3 : 0) + ((double) this.rand.nextFloat() - 0.5D) * .02f,
 									-derp.x + ((double) this.rand.nextFloat() - 0.5D) * .01f, ((double) this.rand.nextFloat() - .05f) * .05f, -derp.z + ((double) this.rand.nextFloat() - 0.5D) * .01f
 									);
 							if (particle != null)

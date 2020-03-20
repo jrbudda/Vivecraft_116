@@ -7,6 +7,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.IFluidState;
@@ -62,7 +63,7 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 		// this.setDirection(mc.vrPlayer.vrdata_world_render.hmd.getYaw(),mc.vrPlayer.vrdata_world_render.hmd.getPitch());
 		this.pitch = -src.getPitch(); //No, I do not know why this is negative.
 		this.yaw = src.getYaw();
-		this.look = src.getDirection();
+		this.look.set((float)src.getDirection().x,(float)src.getDirection().y, (float)src.getDirection().z);
 		//this.updateLook();
 
 		

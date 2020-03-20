@@ -2,11 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vivecraft.utils;
+package org.vivecraft.provider;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
+
+import org.vivecraft.utils.math.Matrix4f;
+import org.vivecraft.utils.math.Quaternion;
+import org.vivecraft.utils.math.Vector3;
 
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;

@@ -11,7 +11,23 @@
  import net.minecraft.block.Blocks;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
-@@ -66,6 +70,15 @@
+@@ -49,6 +53,15 @@
+         this(p_i405_1_, p_i405_2_.getPosX(), p_i405_2_.getPosYEye() - (double)0.1F, p_i405_2_.getPosZ(), p_i405_3_);
+         this.owner = p_i405_2_;
+         this.ownerId = p_i405_2_.getUniqueID();
++        //VIVE SET SPAWNPOS
++        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(owner.getUniqueID());
++        if (vp !=null && vp.isVR())
++        {
++        	Vec3d aimSource = vp.getControllerPos(0);
++        	Vec3d aimDir = vp.getControllerDir(0).scale(0.6f);
++        	this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
++        } 
++        ///
+     }
+ 
+     public boolean isInRangeToRenderDist(double distance)
+@@ -66,6 +79,15 @@
  
      public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
      {

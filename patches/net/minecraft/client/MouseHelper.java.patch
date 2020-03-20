@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/MouseHelper.java
 +++ b/net/minecraft/client/MouseHelper.java
+@@ -34,7 +34,7 @@
+         this.minecraft = p_i1782_1_;
+     }
+ 
+-    private void mouseButtonCallback(long handle, int button, int action, int mods)
++    public void mouseButtonCallback(long handle, int button, int action, int mods)
+     {
+         if (handle == this.minecraft.getMainWindow().getHandle())
+         {
 @@ -131,7 +131,7 @@
  
                  if (flag)
@@ -9,7 +18,37 @@
                      {
                          this.minecraft.ingameGUI.getSpectatorGui().onMiddleClick();
                      }
-@@ -347,7 +347,11 @@
+@@ -144,7 +144,7 @@
+         }
+     }
+ 
+-    private void scrollCallback(long handle, double xoffset, double yoffset)
++    public void scrollCallback(long handle, double xoffset, double yoffset)
+     {
+         if (handle == Minecraft.getInstance().getMainWindow().getHandle())
+         {
+@@ -216,7 +216,7 @@
+         });
+     }
+ 
+-    private void cursorPosCallback(long handle, double xpos, double ypos)
++    public void cursorPosCallback(long handle, double xpos, double ypos)
+     {
+         if (handle == Minecraft.getInstance().getMainWindow().getHandle())
+         {
+@@ -266,6 +266,11 @@
+ 
+     public void updatePlayerLook()
+     {
++    	
++    	//Vivecraft
++    	if(true) return;
++    	//
++    	
+         double d0 = NativeUtil.getTime();
+         double d1 = d0 - this.lastLookTime;
+         this.lastLookTime = d0;
+@@ -347,7 +352,11 @@
  
      public void grabMouse()
      {
@@ -22,7 +61,7 @@
          {
              if (!this.mouseGrabbed)
              {
-@@ -369,6 +373,10 @@
+@@ -369,6 +378,10 @@
  
      public void ungrabMouse()
      {

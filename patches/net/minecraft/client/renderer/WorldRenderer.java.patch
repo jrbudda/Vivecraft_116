@@ -52,6 +52,15 @@
              }
  
              float f12 = this.world.getStarBrightness(partialTicks) * f10;
+@@ -2346,7 +2348,7 @@
+ 
+             if (flag)
+             {
+-                Shaders.disableTexture2D();
++                //Shaders.disableTexture2D();
+             }
+ 
+             RenderSystem.color3f(0.0F, 0.0F, 0.0F);
 @@ -3282,6 +3284,8 @@
      {
          Random random = this.world.rand;
@@ -143,15 +152,3 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3963,4 +3997,11 @@
-             this.counter = p_initialize_3_;
-         }
-     }
-+    
-+    //**Vivecraft Additions
-+    
-+	public void renderCustomModel(ModelResourceLocation model){
-+		mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-+		mc.getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(mc.modelManager.getModel(model), 1.0F, 1.0F, 1.0F, 1.0F);
-+	}
- }

@@ -3,7 +3,6 @@ package org.vivecraft.gui.physical;
 import org.vivecraft.gui.physical.interactables.Interactable;
 import org.vivecraft.gui.physical.interactables.PhysicalItemSlot;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.Quaternion;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -19,6 +18,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 import org.vivecraft.utils.Utils;
+import org.vivecraft.utils.math.Quaternion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -129,9 +129,9 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 
 		PlayerEntity player = Minecraft.getInstance().player;
 		Vec3d playerPos = new Vec3d(
-				player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks,
-				player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks,
-				player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks
+				player.lastTickPosX + (player.getPosX() - player.lastTickPosX) * partialTicks,
+				player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * partialTicks,
+				player.lastTickPosZ + (player.getPosZ() - player.lastTickPosZ) * partialTicks
 		);
 		
 		int depthFun = GL11.glGetInteger(GL11.GL_DEPTH_FUNC);
@@ -237,7 +237,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 	}
 
 	public void tryOpenWindow() {
-		if (mc.player.isSneaking())
+		if (mc.player.isShiftKeyDown())
 			return;
 		mc.physicalGuiManager.requestGuiSwitch(this);
 

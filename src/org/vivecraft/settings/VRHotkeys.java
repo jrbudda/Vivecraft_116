@@ -13,14 +13,15 @@ import java.nio.charset.StandardCharsets;
 
 import org.vivecraft.api.VRData;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.utils.Angle;
-import org.vivecraft.utils.Axis;
-import org.vivecraft.utils.Quaternion;
 import org.vivecraft.utils.Utils;
-import org.vivecraft.utils.Vector3;
+import org.vivecraft.utils.math.Angle;
+import org.vivecraft.utils.math.Axis;
+import org.vivecraft.utils.math.Matrix4f;
+import org.vivecraft.utils.math.Quaternion;
+import org.vivecraft.utils.math.Vector3;
 
 import com.google.common.util.concurrent.Runnables;
-import org.vivecraft.utils.Matrix4f;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.WinGameScreen;
 import net.minecraft.client.util.InputMappings;

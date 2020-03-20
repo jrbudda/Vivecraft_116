@@ -1,4 +1,4 @@
-package org.vivecraft.utils;
+package org.vivecraft.utils.math;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

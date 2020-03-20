@@ -5,7 +5,7 @@
  
 +import org.vivecraft.gui.settings.GuiQuickCommandsInGame;
 +import org.vivecraft.settings.AutoCalibration;
-+import org.vivecraft.utils.jkatvr;
++import org.vivecraft.utils.external.jkatvr;
 +
  import net.minecraft.client.gui.advancements.AdvancementsScreen;
  import net.minecraft.client.gui.widget.button.Button;
