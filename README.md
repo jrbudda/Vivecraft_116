@@ -1,4 +1,4 @@
-Vivecraft for Minecraft 1.14
+Vivecraft for Minecraft 1.15
 =========
 
 This readme is intended for developers. For downloads and gameplay instructions please see the [official website](http://www.vivecraft.org/)
@@ -28,7 +28,7 @@ The install process (install.py) does a number of things:
  - It copies all files found in \assets\ to \mcp9xx\src\assets\.
  This directory is now the full 'Vivecraft' codebase.
  
-If you use Eclipse you can open the workspace found in \mcp9xx\eclipse. You will have to correct the library path for the vanilla jar and realms jar, and also add libraries for JRift, json, asm, and launchwrapper, all of these can be found in the root /lib folder. To run the game from eclipse you also have to attach natives to the lwjgl jar (from lib/natives).
+If you use Eclipse you can open the workspace found in \mcp9xx\eclipse. You will have to correct the libraries (except jsr305) and JRE verssion, all of these can be found in the root /lib folder. To run the game from eclipse you also have to attach natives to the lwjgl jar (from lib/natives).
 
 Make all changes to the game in the \mcp9xx\src\minecraft directory.
 
