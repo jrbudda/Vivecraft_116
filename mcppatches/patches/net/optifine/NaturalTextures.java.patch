@@ -1,0 +1,11 @@
+--- a/net/optifine/NaturalTextures.java
++++ b/net/optifine/NaturalTextures.java
+@@ -107,7 +107,7 @@
+                     }
+                 }
+ 
+-                propertiesByIndex = arraylist.toArray(new NaturalProperties[arraylist.size()]);
++                propertiesByIndex = (NaturalProperties[]) arraylist.toArray(new NaturalProperties[arraylist.size()]);
+ 
+                 if (i > 0)
+                 {

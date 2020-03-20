@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/ScreenShotHelper.java
++++ b/net/minecraft/util/ScreenShotHelper.java
+@@ -71,7 +71,7 @@
+             GlStateManager.clear(16640);
+             minecraft.getFramebuffer().bindFramebuffer(true);
+             GlStateManager.enableTexture();
+-            minecraft.gameRenderer.updateCameraAndRender(minecraft.getRenderPartialTicks(), System.nanoTime(), true);
++            minecraft.gameRenderer.renderGame(minecraft.getRenderPartialTicks(), System.nanoTime(), true);
+         }
+ 
+         NativeImage nativeimage = createScreenshot(width, height, buffer);

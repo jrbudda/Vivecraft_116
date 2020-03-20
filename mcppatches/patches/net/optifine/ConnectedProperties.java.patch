@@ -1,0 +1,37 @@
+--- a/net/optifine/ConnectedProperties.java
++++ b/net/optifine/ConnectedProperties.java
+@@ -6,6 +6,7 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Properties;
++import java.util.Set;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+@@ -318,7 +319,7 @@
+                 list.add(s);
+             }
+ 
+-            String[] astring2 = list.toArray(new String[list.size()]);
++            String[] astring2 = (String[]) list.toArray(new String[list.size()]);
+ 
+             for (int i1 = 0; i1 < astring2.length; ++i1)
+             {
+@@ -480,7 +481,7 @@
+ 
+     public static IProperty getProperty(String key, Collection properties)
+     {
+-        for (IProperty iproperty : properties)
++        for (IProperty iproperty : (Set<IProperty>)(Set<?>)properties)
+         {
+             if (key.equals(iproperty.getName()))
+             {
+@@ -1242,7 +1243,7 @@
+                 }
+             }
+ 
+-            TextureAtlasSprite[] atextureatlassprite = list.toArray(new TextureAtlasSprite[list.size()]);
++            TextureAtlasSprite[] atextureatlassprite = (TextureAtlasSprite[]) list.toArray(new TextureAtlasSprite[list.size()]);
+             return atextureatlassprite;
+         }
+     }

@@ -1,0 +1,27 @@
+--- a/net/minecraft/client/gui/screen/OptionsSoundsScreen.java
++++ b/net/minecraft/client/gui/screen/OptionsSoundsScreen.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.client.settings.AbstractOption;
+ import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.text.TranslationTextComponent;
++import org.vivecraft.settings.VRSettings;
+ 
+ public class OptionsSoundsScreen extends SettingsScreen
+ {
+@@ -30,6 +31,16 @@
+                 ++i;
+             }
+         }
++        
++        //Vivecraft
++        this.addButton(new Button(this.width / 2 - 155 + i % 2 * 160, this.height / 6 -12 + 24 * (i >>1), 150, 20, minecraft.vrSettings.getButtonDisplayString(VRSettings.VrOptions.HRTF_SELECTION), (p_213104_1_) ->
++        {
++        	this.buttons.clear();
++        	minecraft.vrSettings.setOptionValue(VRSettings.VrOptions.HRTF_SELECTION);
++        	minecraft.vrSettings.saveOptions();
++        	this.init();
++        }));
++        ///
+ 
+         int j = this.width / 2 - 75;
+         int k = this.height / 6 - 12;

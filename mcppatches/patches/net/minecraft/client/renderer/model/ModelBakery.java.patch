@@ -1,0 +1,43 @@
+--- a/net/minecraft/client/renderer/model/ModelBakery.java
++++ b/net/minecraft/client/renderer/model/ModelBakery.java
+@@ -28,6 +28,7 @@
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.Map.Entry;
++import java.util.function.BiConsumer;
+ import java.util.function.Function;
+ import java.util.function.Predicate;
+ import java.util.function.Supplier;
+@@ -538,9 +539,9 @@
+ 
+                         try {
+                             ModelBakery.ModelListWrapper modelbakery$modellistwrapper1 = pair2.getSecond().get();
+-                            lvt_20_1_.computeIfAbsent(modelbakery$modellistwrapper1, (p_lambda$null$24_0_) -> {
++                            ((Set)lvt_20_1_.computeIfAbsent(modelbakery$modellistwrapper1, (p_lambda$null$24_0_) -> {
+                                 return Sets.newIdentityHashSet();
+-                            }).add(p_lambda$loadBlockstate$25_6_);
++                            })).add(p_lambda$loadBlockstate$25_6_);
+                         }
+                         catch (Exception exception11)
+                         {
+@@ -549,7 +550,7 @@
+                     });
+                     lvt_20_1_.forEach((p_lambda$loadBlockstate$26_1_, p_lambda$loadBlockstate$26_2_) ->
+                     {
+-                        Iterator<BlockState> iterator = p_lambda$loadBlockstate$26_2_.iterator();
++                        Iterator<BlockState> iterator = ((Set)p_lambda$loadBlockstate$26_2_).iterator();
+ 
+                         while (iterator.hasNext())
+                         {
+@@ -562,9 +563,9 @@
+                             }
+                         }
+ 
+-                        if (p_lambda$loadBlockstate$26_2_.size() > 1)
++                        if (((Set)p_lambda$loadBlockstate$26_2_).size() > 1)
+                         {
+-                            this.registerModelIds(p_lambda$loadBlockstate$26_2_);
++                            this.registerModelIds((Set)p_lambda$loadBlockstate$26_2_);
+                         }
+                     });
+                 }

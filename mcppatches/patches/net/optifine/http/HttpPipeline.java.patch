@@ -1,0 +1,11 @@
+--- a/net/optifine/http/HttpPipeline.java
++++ b/net/optifine/http/HttpPipeline.java
+@@ -216,7 +216,7 @@
+ 
+     public static boolean hasActiveRequests()
+     {
+-        for (HttpPipelineConnection httppipelineconnection : mapConnections.values())
++        for (HttpPipelineConnection httppipelineconnection : (Iterable<HttpPipelineConnection>)mapConnections.values())
+         {
+             if (httppipelineconnection.hasActiveRequests())
+             {

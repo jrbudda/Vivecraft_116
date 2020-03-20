@@ -1,0 +1,11 @@
+--- a/net/optifine/entity/model/CustomEntityModelParser.java
++++ b/net/optifine/entity/model/CustomEntityModelParser.java
+@@ -81,7 +81,7 @@
+             }
+         }
+ 
+-        CustomModelRenderer[] acustommodelrenderer = list.toArray(new CustomModelRenderer[list.size()]);
++        CustomModelRenderer[] acustommodelrenderer = (CustomModelRenderer[]) list.toArray(new CustomModelRenderer[list.size()]);
+         ResourceLocation resourcelocation = null;
+ 
+         if (s2 != null)

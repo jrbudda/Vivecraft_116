@@ -1,0 +1,14 @@
+--- a/optifine/OptiFineResourceLocator.java
++++ b/optifine/OptiFineResourceLocator.java
+@@ -6,9 +6,9 @@
+ {
+     private static IOptiFineResourceLocator resourceLocator;
+ 
+-    public static void setResourceLocator(IOptiFineResourceLocator resourceLocator)
++    public static void setResourceLocator(IOptiFineResourceLocator resourceLocatorin)
+     {
+-        resourceLocator = resourceLocator;
++        resourceLocator = resourceLocatorin;
+         Class oclass = OptiFineResourceLocator.class;
+         System.getProperties().put(oclass.getName() + ".class", oclass);
+     }

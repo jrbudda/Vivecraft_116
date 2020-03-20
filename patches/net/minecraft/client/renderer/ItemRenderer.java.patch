@@ -1,0 +1,36 @@
+--- a/net/minecraft/client/renderer/ItemRenderer.java
++++ b/net/minecraft/client/renderer/ItemRenderer.java
+@@ -11,6 +11,9 @@
+ import java.util.Random;
+ import java.util.Set;
+ import javax.annotation.Nullable;
++
++import org.lwjgl.opengl.GL14;
++
+ import net.minecraft.block.BlockState;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.entity.player.ClientPlayerEntity;
+@@ -62,6 +65,13 @@
+     private boolean renderModelHasEmissive = false;
+     private boolean renderModelEmissive = false;
+     private static boolean renderItemGui = false;
++    
++    //Vivecraft
++    public static boolean ismainhand = false;
++    public static boolean isfphand = false;
++    float fade = 1, manualFade = 1;
++    private GlAlphaState alphaState = new GlAlphaState();
++    //
+ 
+     public ItemRenderer(TextureManager p_i49_1_, ModelManager p_i49_2_, ItemColors p_i49_3_)
+     {
+@@ -460,4 +470,9 @@
+     {
+         return VanillaResourceType.MODELS;
+     }
++    
++    //Vivecraft Additions
++    private int makeColor(int a, int r, int g, int b) {
++    	return  a << 24 | r << 16 | g << 8 | b;
++    }
+ }

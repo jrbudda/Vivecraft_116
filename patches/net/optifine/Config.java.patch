@@ -1,0 +1,20 @@
+--- a/net/optifine/Config.java
++++ b/net/optifine/Config.java
+@@ -136,13 +136,14 @@
+ 
+     public static void initGameSettings(GameSettings settings)
+     {
+-        if (gameSettings == null)
+-        {
++    	//oh this game again.
++     //   if (gameSettings == null)
++      //  {
+             gameSettings = settings;
+             updateAvailableProcessors();
+             ReflectorForge.putLaunchBlackboard("optifine.ForgeSplashCompatible", Boolean.TRUE);
+             antialiasingLevel = gameSettings.ofAaLevel;
+-        }
++     //   }
+     }
+ 
+     public static void initDisplay()

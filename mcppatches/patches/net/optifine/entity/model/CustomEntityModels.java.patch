@@ -1,0 +1,11 @@
+--- a/net/optifine/entity/model/CustomEntityModels.java
++++ b/net/optifine/entity/model/CustomEntityModels.java
+@@ -110,7 +110,7 @@
+ 
+     private static Map<TileEntityType, TileEntityRenderer> getTileEntityRenderMap()
+     {
+-        Map<TileEntityType, TileEntityRenderer> map = TileEntityRendererDispatcher.instance.renderers;
++        Map map = TileEntityRendererDispatcher.instance.renderers;
+ 
+         if (originalTileEntityRenderMap == null)
+         {

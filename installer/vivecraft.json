@@ -1,0 +1,36 @@
+{
+	"inheritsFrom": "$MCVERSION",
+	"id": "$MCVERSION-Vivecraft-$VERSION",
+	"time": "1979-06-01T00:00:00-05:00", 
+	"releaseTime": "1979-06-02T00:00:00-05:00",
+	"type": "release",
+	"fileId": "$FILE",
+	"name": "Vivecraft",
+	"version": "$VERSION",
+	"mcVersion": "$MCVERSION",
+	"mainClass": "net.minecraft.launchwrapper.Launch",
+	"arguments": {
+    "game": [
+	  "--tweakClass",
+	  "org.vivecraft.tweaker.MinecriftVanillaTweaker"
+    ]
+  },
+	"order": 6,
+	"libraries": [
+	{
+		"name": "org.ow2.asm:asm-all:5.2",
+		"url": "http://files.minecraftforge.net/maven/"
+	},
+	{
+		"url": "http://vivecraft.org/jar/", 
+		"name": "org.json:json:20140107"
+	}, 
+	{
+		"name": "net.minecraft:launchwrapper:1.12"
+	}, 
+	{
+		"url": "http://vivecraft.org/jar/", 
+		"name": "com.sun:jna:4.2.1"
+	}
+	]
+}

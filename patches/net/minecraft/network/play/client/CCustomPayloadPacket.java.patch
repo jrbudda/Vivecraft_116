@@ -1,0 +1,13 @@
+--- a/net/minecraft/network/play/client/CCustomPayloadPacket.java
++++ b/net/minecraft/network/play/client/CCustomPayloadPacket.java
+@@ -10,8 +10,8 @@
+ public class CCustomPayloadPacket implements IPacket<IServerPlayNetHandler>
+ {
+     public static final ResourceLocation BRAND = new ResourceLocation("brand");
+-    private ResourceLocation channel;
+-    private PacketBuffer data;
++    public ResourceLocation channel;
++    public PacketBuffer data;
+ 
+     public CCustomPayloadPacket()
+     {

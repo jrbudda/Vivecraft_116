@@ -1,0 +1,11 @@
+--- a/net/minecraft/command/impl/data/DataCommand.java
++++ b/net/minecraft/command/impl/data/DataCommand.java
+@@ -17,6 +17,8 @@
+ import java.util.List;
+ import java.util.function.BiConsumer;
+ import java.util.function.Function;
++import java.util.function.Supplier;
++
+ import net.minecraft.command.CommandSource;
+ import net.minecraft.command.Commands;
+ import net.minecraft.command.arguments.NBTCompoundTagArgument;

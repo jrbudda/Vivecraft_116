@@ -1,0 +1,12 @@
+mc_version = "1.15.2"
+mc_file_md5 = "1d87e7d75a99172f0cffc4f96cdc44da"
+of_file_name = "1.15.2_HD_U_G1"
+of_file_md5 = ""
+of_build_md5 = "78d87a643f83ddddb7db1c46840cac6d"
+minecrift_version_num = "1.15.2"
+minecrift_build = "jrbudda-1-a0"
+of_file_extension = ".jar"
+mcp_version = "mcp940"
+mcp_uses_generics = True
+mcp_download_url = "http://www.modcoderpack.com/files/mcp940.zip"
+forge_version = "14.25.0.110"

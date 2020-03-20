@@ -1,0 +1,32 @@
+{
+	"+tweakers": [
+	"optifine.OptiFineTweaker",
+	"org.vivecraft.tweaker.MinecriftVanillaTweaker"
+	],
+	"libraries": [
+	{
+		"name": "org.json:json:20140107",
+		"url": "http://vivecraft.org/jar/"
+	},
+	{
+		"name": "com.sun:jna:4.2.1",
+		"url": "http://vivecraft.org/jar/"
+	},
+	{
+		"name": "org.ow2.asm:asm-all:5.2",
+		"url": "http://files.minecraftforge.net/maven/"
+	},
+	{
+		"name": "net.minecraft:launchwrapper:1.12"
+	},
+	{
+		"name": "optifine:OptiFine:$OFVERSION",
+		"MMC-hint": "local"
+	}
+	],
+	"mainClass": "net.minecraft.launchwrapper.Launch",
+	"name": "Vivecraft",
+	"releaseTime": "2017-09-21T12:32:20+00:00",
+	"uid": "vivecraft",
+	"version": "4"
+}

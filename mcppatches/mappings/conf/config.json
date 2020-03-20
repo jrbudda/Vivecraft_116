@@ -1,0 +1,240 @@
+{
+    "spec": 1,
+    "version": "1.15.2",
+    "data": {
+        "access": "config/access.txt",
+        "constructors": "config/constructors.txt",
+        "exceptions": "config/exceptions.txt",
+        "mappings": "config/joined.tsrg",
+        "inject": "config/inject/",
+        "statics": "config/static_methods.txt",
+        "patches": {
+            "client": "patches/client/",
+            "joined": "patches/joined/",
+            "server": "patches/server/"
+        }
+    },
+    "steps": {
+        "joined": [
+            {
+                "type": "downloadManifest"
+            },
+            {
+                "type": "downloadJson"
+            },
+            {
+                "type": "downloadClient"
+            },
+            {
+                "type": "downloadServer"
+            },
+            {
+                "type": "strip",
+                "name": "stripClient",
+                "input": "{downloadClientOutput}"
+            },
+            {
+                "type": "strip",
+                "name": "stripServer",
+                "input": "{downloadServerOutput}"
+            },
+            {
+                "type": "merge",
+                "client": "{stripClientOutput}",
+                "server": "{stripServerOutput}",
+                "version": "1.15.2"
+            },
+            {
+                "type": "rename",
+                "input": "{mergeOutput}"
+            },
+            {
+                "type": "mcinject",
+                "input": "{renameOutput}"
+            },
+            {
+                "type": "listLibraries"
+            },
+            {
+                "type": "decompile",
+                "libraries": "{listLibrariesOutput}",
+                "input": "{mcinjectOutput}"
+            },
+            {
+                "type": "inject",
+                "input": "{decompileOutput}"
+            },
+            {
+                "type": "patch",
+                "input": "{injectOutput}"
+            }
+        ],
+        "client": [
+            {
+                "type": "downloadManifest"
+            },
+            {
+                "type": "downloadJson"
+            },
+            {
+                "type": "downloadClient"
+            },
+            {
+                "type": "strip",
+                "input": "{downloadClientOutput}"
+            },
+            {
+                "type": "rename",
+                "input": "{stripOutput}"
+            },
+            {
+                "type": "mcinject",
+                "input": "{renameOutput}"
+            },
+            {
+                "type": "listLibraries"
+            },
+            {
+                "type": "decompile",
+                "libraries": "{listLibrariesOutput}",
+                "input": "{mcinjectOutput}"
+            },
+            {
+                "type": "inject",
+                "input": "{decompileOutput}"
+            },
+            {
+                "type": "patch",
+                "input": "{injectOutput}"
+            }
+        ],
+        "server": [
+            {
+                "type": "downloadManifest"
+            },
+            {
+                "type": "downloadJson"
+            },
+            {
+                "type": "downloadServer"
+            },
+            {
+                "type": "strip",
+                "input": "{downloadServerOutput}"
+            },
+            {
+                "type": "rename",
+                "input": "{stripOutput}"
+            },
+            {
+                "type": "mcinject",
+                "input": "{renameOutput}"
+            },
+            {
+                "type": "listLibraries"
+            },
+            {
+                "type": "decompile",
+                "libraries": "{listLibrariesOutput}",
+                "input": "{mcinjectOutput}"
+            },
+            {
+                "type": "inject",
+                "input": "{decompileOutput}"
+            },
+            {
+                "type": "patch",
+                "input": "{injectOutput}"
+            }
+        ]
+    },
+    "functions": {
+        "decompile": {
+            "version": "net.minecraftforge:forgeflower:1.5.380.40",
+            "args": [
+                "-din=1",
+                "-rbr=1",
+                "-dgs=1",
+                "-asc=1",
+                "-rsy=1",
+                "-iec=1",
+                "-jvn=1",
+                "-log=TRACE",
+                "-cfg",
+                "{libraries}",
+                "{input}",
+                "{output}"
+            ],
+            "jvmargs": [
+                "-Xmx4G"
+            ],
+            "repo": "https://files.minecraftforge.net/maven/"
+        },
+        "mcinject": {
+            "version": "de.oceanlabs.mcp:mcinjector:3.7.7:fatjar",
+            "args": [
+                "--in",
+                "{input}",
+                "--out",
+                "{output}",
+                "--log",
+                "{log}",
+                "--level=INFO",
+                "--lvt=LVT",
+                "--exc",
+                "{exceptions}",
+                "--acc",
+                "{access}",
+                "--ctr",
+                "{constructors}"
+            ],
+            "repo": "https://files.minecraftforge.net/maven/"
+        },
+        "merge": {
+            "version": "net.minecraftforge:mergetool:1.0.9:fatjar",
+            "args": [
+                "--client",
+                "{client}",
+                "--server",
+                "{server}",
+                "--ann",
+                "{version}",
+                "--output",
+                "{output}",
+                "--inject",
+                "false"
+            ],
+            "jvmargs": [
+                
+            ],
+            "repo": "https://files.minecraftforge.net/maven/"
+        },
+        "rename": {
+            "version": "net.md-5:SpecialSource:1.8.3:shaded",
+            "args": [
+                "--in-jar",
+                "{input}",
+                "--out-jar",
+                "{output}",
+                "--srg-in",
+                "{mappings}"
+            ],
+            "repo": "https://repo1.maven.org/maven2/",
+            "jvmargs": [
+                
+            ]
+        }
+    },
+    "libraries": {
+        "client": [
+            "com.google.code.findbugs:jsr305:3.0.1"
+        ],
+        "server": [
+            "com.google.code.findbugs:jsr305:3.0.1"
+        ],
+        "joined": [
+            "com.google.code.findbugs:jsr305:3.0.1",
+            "net.minecraftforge:mergetool:1.0.9:api"
+        ]
+    }
+}

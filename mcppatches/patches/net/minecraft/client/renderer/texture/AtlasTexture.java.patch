@@ -1,0 +1,54 @@
+--- a/net/minecraft/client/renderer/texture/AtlasTexture.java
++++ b/net/minecraft/client/renderer/texture/AtlasTexture.java
+@@ -186,7 +186,7 @@
+                 {
+                     GlStateManager.bindTexture(this.getMultiTexID().norm);
+ 
+-                    for (TextureAtlasSprite textureatlassprite2 : list)
++                    for (TextureAtlasSprite textureatlassprite2 : (List<TextureAtlasSprite>)(List<?>)list)
+                     {
+                         TextureAtlasSprite textureatlassprite5 = textureatlassprite2.spriteNormal;
+ 
+@@ -201,7 +201,7 @@
+                 {
+                     GlStateManager.bindTexture(this.getMultiTexID().spec);
+ 
+-                    for (TextureAtlasSprite textureatlassprite3 : list)
++                    for (TextureAtlasSprite textureatlassprite3 : (List<TextureAtlasSprite>)(List<?>)list)
+                     {
+                         TextureAtlasSprite textureatlassprite6 = textureatlassprite3.spriteSpecular;
+ 
+@@ -774,7 +774,7 @@
+                             }
+                             else
+                             {
+-                                int k = map.get(j);
++                                int k = (int) map.get(j);
+                                 map.put(j, k + 1);
+                             }
+                         }
+@@ -788,12 +788,12 @@
+         }
+ 
+         int l = 0;
+-        Set set = map.keySet();
+-        Set set1 = new TreeSet(set);
++        Set<Integer> set = map.keySet();
++        Set<Integer> set1 = new TreeSet(set);
+ 
+         for (int j1 : set1)
+         {
+-            int l1 = map.get(j1);
++            int l1 = (int) map.get(j1);
+             l += l1;
+         }
+ 
+@@ -803,7 +803,7 @@
+ 
+         for (int j2 : set1)
+         {
+-            int k2 = map.get(j2);
++            int k2 = (int) map.get(j2);
+             k1 += k2;
+ 
+             if (j2 > i1)

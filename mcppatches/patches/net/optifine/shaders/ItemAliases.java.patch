@@ -1,0 +1,20 @@
+--- a/net/optifine/shaders/ItemAliases.java
++++ b/net/optifine/shaders/ItemAliases.java
+@@ -5,6 +5,8 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Properties;
++import java.util.Set;
++
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.util.ResourceLocation;
+ import net.optifine.Config;
+@@ -112,7 +114,7 @@
+                 Config.dbg("[Shaders] Parsing item mappings: " + path);
+                 ConnectedParser connectedparser = new ConnectedParser("Shaders");
+ 
+-                for (String s : properties.keySet())
++                for (String s : (Set<String>)(Set<?>)properties.keySet())
+                 {
+                     String s1 = properties.getProperty(s);
+                     String s2 = "item.";

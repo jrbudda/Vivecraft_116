@@ -1,0 +1,11 @@
+--- a/net/optifine/util/CacheObjectArray.java
++++ b/net/optifine/util/CacheObjectArray.java
+@@ -111,7 +111,7 @@
+ 
+         for (int j = 0; j < count; ++j)
+         {
+-            Object[] aobject = Array.newInstance(cls, size);
++            Object[] aobject = (Object[]) Array.newInstance(cls, size);
+         }
+ 
+         long k = System.currentTimeMillis();

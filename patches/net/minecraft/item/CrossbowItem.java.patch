@@ -1,0 +1,15 @@
+--- a/net/minecraft/item/CrossbowItem.java
++++ b/net/minecraft/item/CrossbowItem.java
+@@ -59,7 +59,11 @@
+         });
+         this.addPropertyOverride(new ResourceLocation("charged"), (p_220030_0_, p_220030_1_, p_220030_2_) ->
+         {
+-            return p_220030_2_ != null && isCharged(p_220030_0_) ? 1.0F : 0.0F;
++        	//Vivecraft - show arrow on crossbow when its fully drawn, to indicate it is ok to let go of right click
++        	//This replaces the animation that would normally indicate to the player the bow is fully charged. 
++            return p_220030_2_ != null && 
++            		(p_220030_2_.isHandActive() && getCharge(this.getUseDuration(p_220030_0_) - p_220030_2_.getItemInUseCount(), p_220030_0_) == 1.0 || 
++            		isCharged(p_220030_0_)) ? 1.0F : 0.0F;
+         });
+         this.addPropertyOverride(new ResourceLocation("firework"), (p_220020_0_, p_220020_1_, p_220020_2_) ->
+         {

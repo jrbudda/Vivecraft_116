@@ -1,0 +1,25 @@
+--- a/net/minecraft/item/PotionItem.java
++++ b/net/minecraft/item/PotionItem.java
+@@ -3,6 +3,8 @@
+ import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.entity.player.ClientPlayerEntity;
+ import net.minecraft.client.util.ITooltipFlag;
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.player.PlayerEntity;
+@@ -77,7 +79,12 @@
+                 playerentity.inventory.addItemStackToInventory(new ItemStack(Items.GLASS_BOTTLE));
+             }
+         }
+-
++        
++        if (entityLiving instanceof ClientPlayerEntity && stack.getDisplayName().getString().equals("DRINK ME")) {
++        	Minecraft.getInstance().vrPlayer.wfMode = -0.1;
++        	Minecraft.getInstance().vrPlayer.wfCount = 400;
++        }
++        
+         return stack;
+     }
+ 

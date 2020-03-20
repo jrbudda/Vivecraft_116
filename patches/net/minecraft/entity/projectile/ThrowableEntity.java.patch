@@ -1,0 +1,29 @@
+--- a/net/minecraft/entity/projectile/ThrowableEntity.java
++++ b/net/minecraft/entity/projectile/ThrowableEntity.java
+@@ -2,6 +2,10 @@
+ 
+ import java.util.UUID;
+ import javax.annotation.Nullable;
++
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.ServerVivePlayer;
++
+ import net.minecraft.block.Blocks;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityType;
+@@ -66,6 +70,15 @@
+ 
+     public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
+     {
++    	//VIVE USE CONTROLLER
++        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(owner.getUniqueID());
++        if (vp !=null && vp.isVR())
++        {
++        	Vec3d aim = vp.getControllerDir(0);
++        	rotationPitchIn = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
++			rotationYawIn = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		
++        	}
++        //END VIVE
+         float f = -MathHelper.sin(rotationYawIn * ((float)Math.PI / 180F)) * MathHelper.cos(rotationPitchIn * ((float)Math.PI / 180F));
+         float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * ((float)Math.PI / 180F));
+         float f2 = MathHelper.cos(rotationYawIn * ((float)Math.PI / 180F)) * MathHelper.cos(rotationPitchIn * ((float)Math.PI / 180F));

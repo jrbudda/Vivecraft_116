@@ -1,0 +1,24 @@
+--- a/net/optifine/CustomPanorama.java
++++ b/net/optifine/CustomPanorama.java
+@@ -110,17 +110,17 @@
+         return aproperties;
+     }
+ 
+-    private static int[] getWeights(Properties[] properties)
++    private static int[] getWeights(Properties[] propertiesp)
+     {
+-        int[] aint = new int[properties.length];
++        int[] aint = new int[propertiesp.length];
+ 
+         for (int i = 0; i < aint.length; ++i)
+         {
+-            Properties properties = properties[i];
++            Properties properties = propertiesp[i];
+ 
+             if (properties == null)
+             {
+-                properties = properties[0];
++                properties = propertiesp[0];
+             }
+ 
+             if (properties == null)

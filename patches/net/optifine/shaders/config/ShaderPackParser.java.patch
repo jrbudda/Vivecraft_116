@@ -1,0 +1,29 @@
+--- a/net/optifine/shaders/config/ShaderPackParser.java
++++ b/net/optifine/shaders/config/ShaderPackParser.java
+@@ -476,14 +476,14 @@
+         }
+     }
+ 
+-    public static Map<String, ScreenShaderOptions> parseGuiScreens(Properties props, ShaderProfile[] shaderProfiles, ShaderOption[] shaderOptions)
++    public static Map<String, ScreenShaderOptions> parseScreens(Properties props, ShaderProfile[] shaderProfiles, ShaderOption[] shaderOptions)
+     {
+         Map<String, ScreenShaderOptions> map = new HashMap<>();
+-        parseGuiScreen("screen", props, map, shaderProfiles, shaderOptions);
++        parseScreen("screen", props, map, shaderProfiles, shaderOptions);
+         return map.isEmpty() ? null : map;
+     }
+ 
+-    private static boolean parseGuiScreen(String key, Properties props, Map<String, ScreenShaderOptions> map, ShaderProfile[] shaderProfiles, ShaderOption[] shaderOptions)
++    private static boolean parseScreen(String key, Properties props, Map<String, ScreenShaderOptions> map, ShaderProfile[] shaderProfiles, ShaderOption[] shaderOptions)
+     {
+         String s = props.getProperty(key);
+ 
+@@ -538,7 +538,7 @@
+                         {
+                             Config.warn("[Shaders] Invalid screen: " + s1 + ", key: " + key);
+                         }
+-                        else if (!parseGuiScreen("screen." + s3, props, map, shaderProfiles, shaderOptions))
++                        else if (!parseScreen("screen." + s3, props, map, shaderProfiles, shaderOptions))
+                         {
+                             Config.warn("[Shaders] Invalid screen: " + s1 + ", key: " + key);
+                         }

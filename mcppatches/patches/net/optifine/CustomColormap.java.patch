@@ -1,0 +1,11 @@
+--- a/net/optifine/CustomColormap.java
++++ b/net/optifine/CustomColormap.java
+@@ -557,7 +557,7 @@
+                 }
+             }
+ 
+-            Integer[] ainteger = set.toArray(new Integer[set.size()]);
++            Integer[] ainteger = (Integer[]) set.toArray(new Integer[set.size()]);
+             int[] aint = new int[ainteger.length];
+ 
+             for (int j = 0; j < ainteger.length; ++j)

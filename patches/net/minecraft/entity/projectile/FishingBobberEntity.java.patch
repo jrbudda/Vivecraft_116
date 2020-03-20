@@ -1,0 +1,13 @@
+--- a/net/minecraft/entity/projectile/FishingBobberEntity.java
++++ b/net/minecraft/entity/projectile/FishingBobberEntity.java
+@@ -3,6 +3,10 @@
+ import java.util.Collections;
+ import java.util.List;
+ import javax.annotation.Nullable;
++
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.ServerVivePlayer;
++
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.Blocks;

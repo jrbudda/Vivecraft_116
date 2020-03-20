@@ -1,0 +1,82 @@
+--- a/net/optifine/shaders/Shaders.java
++++ b/net/optifine/shaders/Shaders.java
+@@ -110,6 +110,7 @@
+ import net.optifine.util.TimedEvent;
+ import org.apache.commons.io.IOUtils;
+ import org.lwjgl.BufferUtils;
++import org.lwjgl.opengl.ARBFragmentShader;
+ import org.lwjgl.opengl.ARBGeometryShader4;
+ import org.lwjgl.opengl.ARBShaderObjects;
+ import org.lwjgl.opengl.ARBVertexShader;
+@@ -804,6 +805,7 @@
+ 
+     public static void loadShaderPack()
+     {
++    	mc = Minecraft.getInstance();
+         boolean flag = shaderPackLoaded;
+         boolean flag1 = isOldLighting();
+ 
+@@ -1010,7 +1012,7 @@
+         Set set = props.keySet();
+         List<ICustomTexture> list = new ArrayList<>();
+ 
+-        for (String s1 : set)
++        for (String s1 : (Set<String>)(Set<?>)set)
+         {
+             if (s1.startsWith(s))
+             {
+@@ -1969,10 +1971,10 @@
+         SMCLog.info(stringbuilder.toString());
+     }
+ 
+-    public static void startup(Minecraft mc)
++    public static void startup(Minecraft mcin)
+     {
+         checkShadersModInstalled();
+-        mc = mc;
++        mc = mcin;
+         mc = Minecraft.getInstance();
+         capabilities = GL.getCapabilities();
+         glVersionString = GL11.glGetString(GL11.GL_VERSION);
+@@ -2385,11 +2387,11 @@
+ 
+     private static int getDrawBuffer(Program p, String str, int i)
+     {
+-        int i = 0;
++        int d = 0;
+ 
+         if (i >= str.length())
+         {
+-            return i;
++            return d;
+         }
+         else
+         {
+@@ -4237,14 +4239,14 @@
+         GlStateManager.activeTexture(33984);
+     }
+ 
+-    public static void checkWorldChanged(ClientWorld world)
++    public static void checkWorldChanged(ClientWorld worldin)
+     {
+-        if (currentWorld != world)
++        if (currentWorld != worldin)
+         {
+             World world = currentWorld;
+-            currentWorld = world;
++            currentWorld = worldin;
+             setCameraOffset(mc.getRenderViewEntity());
+-            int i = getDimensionId(world);
++            int i = getDimensionId(worldin);
+             int j = getDimensionId(world);
+ 
+             if (j != i)
+@@ -5687,7 +5689,7 @@
+                         Lang.loadLocaleData(inputstream, properties);
+                         inputstream.close();
+ 
+-                        for (String s5 : properties.keySet())
++                        for (String s5 : (Set<String>)(Set<?>)properties.keySet())
+                         {
+                             String s6 = properties.getProperty(s5);
+                             shaderPackResources.put(s5, s6);

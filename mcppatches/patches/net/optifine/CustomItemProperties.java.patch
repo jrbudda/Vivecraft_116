@@ -1,0 +1,80 @@
+--- a/net/optifine/CustomItemProperties.java
++++ b/net/optifine/CustomItemProperties.java
+@@ -4,6 +4,7 @@
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.HashMap;
++import java.util.Iterator;
+ import java.util.LinkedHashMap;
+ import java.util.List;
+ import java.util.Map;
+@@ -239,7 +240,7 @@
+                 }
+             }
+ 
+-            Integer[] ainteger = set.toArray(new Integer[set.size()]);
++            Integer[] ainteger = (Integer[]) set.toArray(new Integer[set.size()]);
+             int[] aint = new int[ainteger.length];
+ 
+             for (int k = 0; k < aint.length; ++k)
+@@ -347,11 +348,12 @@
+             Set set = map.keySet();
+             Map map1 = new LinkedHashMap();
+ 
+-            for (String s1 : set)
++            for (Iterator it = set.iterator(); it.hasNext();)
+             {
+-                String s2 = (String)map.get(s1);
++            	String key = (String)it.next();
++                String s2 = (String)map.get(key);
+                 s2 = fixTextureName(s2, basePath);
+-                map1.put(s1, s2);
++                map1.put(key, s2);
+             }
+ 
+             return map1;
+@@ -428,7 +430,7 @@
+             Set set = map.keySet();
+             Map map1 = new LinkedHashMap();
+ 
+-            for (String s1 : set)
++            for (String s1 : (Set<String>)(Set<?>)set)
+             {
+                 String s2 = (String)map.get(s1);
+                 s2 = fixModelName(s2, basePath);
+@@ -647,7 +649,7 @@
+         {
+             List list = new ArrayList();
+ 
+-            for (String s1 : map.keySet())
++            for (String s1 : (Set<String>)(Set<?>)map.keySet())
+             {
+                 String s2 = (String)map.get(s1);
+                 String s3 = s1.substring(s.length());
+@@ -655,7 +657,7 @@
+                 list.add(nbttagvalue);
+             }
+ 
+-            NbtTagValue[] anbttagvalue = list.toArray(new NbtTagValue[list.size()]);
++            NbtTagValue[] anbttagvalue = (NbtTagValue[]) list.toArray(new NbtTagValue[list.size()]);
+             return anbttagvalue;
+         }
+     }
+@@ -664,7 +666,7 @@
+     {
+         Map map = new LinkedHashMap();
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 
+@@ -823,7 +825,7 @@
+ 
+         if (this.mapSprites != null)
+         {
+-            for (String s : this.mapSprites.keySet())
++            for (String s : (Set<String>)this.mapSprites.keySet())
+             {
+                 TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.mapSprites.get(s);
+ 

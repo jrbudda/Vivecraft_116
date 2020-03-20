@@ -1,0 +1,11 @@
+--- a/net/optifine/BlockPosM.java
++++ b/net/optifine/BlockPosM.java
+@@ -164,7 +164,7 @@
+                         }
+                         else if (this.theBlockPosM.equals(blockpos1))
+                         {
+-                            return this.endOfData();
++                            return (BlockPosM) this.endOfData();
+                         }
+                         else
+                         {

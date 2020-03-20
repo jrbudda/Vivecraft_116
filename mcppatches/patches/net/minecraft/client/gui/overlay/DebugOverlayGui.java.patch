@@ -1,0 +1,19 @@
+--- a/net/minecraft/client/gui/overlay/DebugOverlayGui.java
++++ b/net/minecraft/client/gui/overlay/DebugOverlayGui.java
+@@ -14,6 +14,7 @@
+ import java.util.Map;
+ import java.util.Objects;
+ import java.util.Optional;
++import java.util.Set;
+ import java.util.Map.Entry;
+ import java.util.concurrent.CompletableFuture;
+ import javax.annotation.Nullable;
+@@ -537,7 +538,7 @@
+         {
+             list.add("");
+ 
+-            for (String s1 : (Collection)Reflector.call(Reflector.BrandingControl_getBrandings, true, false))
++            for (String s1 : (Set<String>)(Set<?>)Reflector.call(Reflector.BrandingControl_getBrandings, true, false))
+             {
+                 if (!s1.startsWith("Minecraft "))
+                 {

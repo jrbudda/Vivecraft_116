@@ -1,0 +1,118 @@
+--- a/net/minecraft/client/audio/SoundSystem.java
++++ b/net/minecraft/client/audio/SoundSystem.java
+@@ -3,17 +3,24 @@
+ import com.google.common.collect.Sets;
+ import java.nio.ByteBuffer;
+ import java.nio.IntBuffer;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Objects;
+ import java.util.Set;
+ import javax.annotation.Nullable;
++
++import net.minecraft.client.Minecraft;
+ import net.minecraft.util.math.MathHelper;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.lwjgl.BufferUtils;
+ import org.lwjgl.openal.AL;
+ import org.lwjgl.openal.AL10;
+ import org.lwjgl.openal.ALC;
+ import org.lwjgl.openal.ALC10;
+ import org.lwjgl.openal.ALCCapabilities;
+ import org.lwjgl.openal.ALCapabilities;
++import org.lwjgl.openal.SOFTHRTF;
+ import org.lwjgl.system.MemoryStack;
+ 
+ public class SoundSystem
+@@ -48,6 +55,9 @@
+     private SoundSystem.IHandler streamingHandler = DUMMY_HANDLER;
+     private final Listener field_216416_g = new Listener();
+ 
++    // Vivecraft
++    public static List<String> hrtfList = new ArrayList<>();
++
+     public void func_216404_a()
+     {
+         this.field_216411_b = func_216406_f();
+@@ -73,6 +83,80 @@
+             ALCapabilities alcapabilities = AL.createCapabilities(alccapabilities);
+             ALUtils.checkALError("Initialization");
+ 
++            // Vivecraft: HRTF directional audio
++            hrtfList.clear();
++            if (alccapabilities.ALC_SOFT_HRTF) {
++                int hrtfCount = ALC10.alcGetInteger(this.field_216411_b, SOFTHRTF.ALC_NUM_HRTF_SPECIFIERS_SOFT);
++                if (hrtfCount > 0) {
++                    LOGGER.info("Available HRTFs:");
++                    for (int h = 0; h < hrtfCount; h++) {
++                        String name = Objects.requireNonNull(SOFTHRTF.alcGetStringiSOFT(this.field_216411_b, SOFTHRTF.ALC_HRTF_SPECIFIER_SOFT, h));
++                        hrtfList.add(name);
++                        LOGGER.info("{}: {}", h, name);
++                    }
++
++                    int selectedIndex = Minecraft.getInstance().vrSettings.hrtfSelection;
++
++                    int hrtfEnable;
++                    if (selectedIndex == -1)
++                        hrtfEnable = ALC10.ALC_FALSE;
++                    // This usually just results in disabled
++                    //else if (selectedIndex == 0)
++                    //    hrtfEnable = SOFTHRTF.ALC_DONT_CARE_SOFT;
++                    else
++                        hrtfEnable = ALC10.ALC_TRUE;
++
++                    IntBuffer buf = BufferUtils.createIntBuffer(10).put(SOFTHRTF.ALC_HRTF_SOFT).put(hrtfEnable);
++
++                    if (selectedIndex != -1) {
++                        if (selectedIndex > 0 && selectedIndex <= hrtfList.size()) {
++                            LOGGER.info("Using HRTF: {}", hrtfList.get(selectedIndex - 1));
++                            buf.put(SOFTHRTF.ALC_HRTF_ID_SOFT).put(selectedIndex - 1);
++                        } else {
++                            if (selectedIndex > hrtfList.size())
++                                LOGGER.warn("Invalid HRTF index: {}", selectedIndex);
++                            LOGGER.info("Using default HRTF");
++                        }
++                    } else {
++                        LOGGER.info("Disabling HRTF");
++                    }
++
++                    buf.put(0).flip();
++                    SOFTHRTF.alcResetDeviceSOFT(this.field_216411_b, buf);
++
++                    if (!ALUtils.func_216483_a("HRTF initialization")) {
++                        LOGGER.info("HRTF initialized.");
++
++                        int status = ALC10.alcGetInteger(this.field_216411_b, SOFTHRTF.ALC_HRTF_STATUS_SOFT);
++                        switch (status) {
++                            case SOFTHRTF.ALC_HRTF_DISABLED_SOFT:
++                                LOGGER.info("HRTF status: disabled");
++                                break;
++                            case SOFTHRTF.ALC_HRTF_ENABLED_SOFT:
++                                LOGGER.info("HRTF status: enabled");
++                                break;
++                            case SOFTHRTF.ALC_HRTF_DENIED_SOFT:
++                                LOGGER.info("HRTF status: denied");
++                                break;
++                            case SOFTHRTF.ALC_HRTF_REQUIRED_SOFT:
++                                LOGGER.info("HRTF status: required");
++                                break;
++                            case SOFTHRTF.ALC_HRTF_HEADPHONES_DETECTED_SOFT:
++                                LOGGER.info("HRTF status: headphones detected");
++                                break;
++                            case SOFTHRTF.ALC_HRTF_UNSUPPORTED_FORMAT_SOFT:
++                                LOGGER.info("HRTF status: unsupported format");
++                                break;
++                        }
++                    }
++                } else {
++                    LOGGER.warn("No HRTFs found.");
++                }
++            } else {
++                LOGGER.warn("ALC_SOFT_HRTF is not supported.");
++            }
++            //
++
+             if (!alcapabilities.AL_EXT_source_distance_model)
+             {
+                 throw new IllegalStateException("AL_EXT_source_distance_model is not supported");

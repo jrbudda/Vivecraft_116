@@ -1,0 +1,89 @@
+--- a/net/optifine/Config.java
++++ b/net/optifine/Config.java
+@@ -1161,7 +1161,7 @@
+             }
+         }
+ 
+-        IResourcePack[] airesourcepack = list.toArray(new IResourcePack[list.size()]);
++        IResourcePack[] airesourcepack = (IResourcePack[]) list.toArray(new IResourcePack[list.size()]);
+         return airesourcepack;
+     }
+ 
+@@ -1487,7 +1487,7 @@
+             list.add(s);
+         }
+ 
+-        String[] astring = list.toArray(new String[list.size()]);
++        String[] astring = (String[]) list.toArray(new String[list.size()]);
+         return astring;
+     }
+ 
+@@ -1619,7 +1619,7 @@
+ 
+             if (s == null)
+             {
+-                String[] astring = list.toArray(new String[list.size()]);
++                String[] astring = (String[]) list.toArray(new String[list.size()]);
+                 return astring;
+             }
+ 
+@@ -1688,9 +1688,9 @@
+         return newRelease;
+     }
+ 
+-    public static void setNewRelease(String newRelease)
++    public static void setNewRelease(String newReleasein)
+     {
+-        newRelease = newRelease;
++        newRelease = newReleasein;
+     }
+ 
+     public static int compareRelease(String rel1, String rel2)
+@@ -1927,7 +1927,7 @@
+         {
+             int i = arr.length;
+             int j = i + 1;
+-            Object[] aobject = Array.newInstance(arr.getClass().getComponentType(), j);
++            Object[] aobject = (Object[]) Array.newInstance(arr.getClass().getComponentType(), j);
+             System.arraycopy(arr, 0, aobject, 0, i);
+             aobject[i] = obj;
+             return aobject;
+@@ -1938,7 +1938,7 @@
+     {
+         List list = new ArrayList<>(Arrays.asList(arr));
+         list.add(index, obj);
+-        Object[] aobject = Array.newInstance(arr.getClass().getComponentType(), list.size());
++        Object[] aobject = (Object[]) Array.newInstance(arr.getClass().getComponentType(), list.size());
+         return list.toArray(aobject);
+     }
+ 
+@@ -1956,7 +1956,7 @@
+         {
+             int i = arr.length;
+             int j = i + objs.length;
+-            Object[] aobject = Array.newInstance(arr.getClass().getComponentType(), j);
++            Object[] aobject = (Object[]) Array.newInstance(arr.getClass().getComponentType(), j);
+             System.arraycopy(arr, 0, aobject, 0, i);
+             System.arraycopy(objs, 0, aobject, i, objs.length);
+             return aobject;
+@@ -1987,7 +1987,7 @@
+         }
+         else
+         {
+-            Object[] aobject = Array.newInstance(elementClass, coll.size());
++            Object[] aobject = (Object[]) Array.newInstance(elementClass, coll.size());
+             return coll.toArray(aobject);
+         }
+     }
+@@ -2153,9 +2153,9 @@
+         fileoutputstream.close();
+     }
+ 
+-    public static void setTextureMap(AtlasTexture textureMapTerrain)
++    public static void setTextureMap(AtlasTexture textureMapTerrainin)
+     {
+-        textureMapTerrain = textureMapTerrain;
++        textureMapTerrain = textureMapTerrainin;
+     }
+ 
+     public static AtlasTexture getTextureMap()

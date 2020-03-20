@@ -1,0 +1,41 @@
+--- a/net/minecraft/item/Item.java
++++ b/net/minecraft/item/Item.java
+@@ -8,6 +8,10 @@
+ import java.util.Random;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
++
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.ServerVivePlayer;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.client.util.ITooltipFlag;
+@@ -161,7 +165,7 @@
+         {
+             ItemStack itemstack = playerIn.getHeldItem(handIn);
+ 
+-            if (playerIn.canEat(this.getFood().canEatWhenFull()))
++            if (playerIn.canEat(this.getFood().canEatWhenFull()) || itemstack.getDisplayName().getString().equals("EAT ME"))
+             {
+                 playerIn.setActiveHand(handIn);
+                 return ActionResult.resultConsume(itemstack);
+@@ -345,6 +349,18 @@
+         float f = player.rotationPitch;
+         float f1 = player.rotationYaw;
+         Vec3d vec3d = player.getEyePosition(1.0F);
++        
++        //Vivecraft - Good Luck keeping this viable with Forge!
++    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(player.getUniqueID());
++    	if (vp !=null && vp.isVR())
++    	{
++    		vec3d = vp.getControllerPos(0);
++    		Vec3d aim = vp.getControllerDir(0);
++    		f = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
++    		f1 = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		       		
++    	}           	         	
++        //
++    	
+         float f2 = MathHelper.cos(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
+         float f3 = MathHelper.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
+         float f4 = -MathHelper.cos(-f * ((float)Math.PI / 180F));

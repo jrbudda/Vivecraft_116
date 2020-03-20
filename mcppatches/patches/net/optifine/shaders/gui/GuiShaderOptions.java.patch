@@ -1,0 +1,11 @@
+--- a/net/optifine/shaders/gui/GuiShaderOptions.java
++++ b/net/optifine/shaders/gui/GuiShaderOptions.java
+@@ -226,7 +226,7 @@
+ 
+     private void updateAllButtons()
+     {
+-        for (Button button : this.buttonList)
++        for (Widget button : this.buttonList)
+         {
+             if (button instanceof GuiButtonShaderOption)
+             {

@@ -1,0 +1,11 @@
+--- a/net/optifine/shaders/ShadersRender.java
++++ b/net/optifine/shaders/ShadersRender.java
+@@ -185,7 +185,7 @@
+         }
+     }
+ 
+-    public static void renderShadowMap(GameRenderer entityRenderer, ActiveRenderInfo activeRenderInfo, int pass, float partialTicks, long finishTimeNano)
++    public static void renderShadowMap(GameRenderer gameRenderer, ActiveRenderInfo activeRenderInfo, int pass, float partialTicks, long finishTimeNano)
+     {
+     }
+ 

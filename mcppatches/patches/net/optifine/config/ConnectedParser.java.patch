@@ -1,0 +1,29 @@
+--- a/net/optifine/config/ConnectedParser.java
++++ b/net/optifine/config/ConnectedParser.java
+@@ -105,7 +105,7 @@
+                 }
+             }
+ 
+-            MatchBlock[] amatchblock1 = list.toArray(new MatchBlock[list.size()]);
++            MatchBlock[] amatchblock1 = (MatchBlock[]) list.toArray(new MatchBlock[list.size()]);
+             return amatchblock1;
+         }
+     }
+@@ -379,7 +379,7 @@
+ 
+     public static Comparable getPropertyValue(String value, Collection propertyValues)
+     {
+-        for (Comparable comparable : propertyValues)
++        for (Comparable comparable :(Set<Comparable>)(Set<?>) propertyValues)
+         {
+             if (getValueName(comparable).equals(value))
+             {
+@@ -494,7 +494,7 @@
+                 list = list1;
+             }
+ 
+-            Biome[] abiome = list.toArray(new Biome[list.size()]);
++            Biome[] abiome = (Biome[]) list.toArray(new Biome[list.size()]);
+             return abiome;
+         }
+     }

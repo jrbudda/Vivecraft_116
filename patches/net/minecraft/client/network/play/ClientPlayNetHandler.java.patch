@@ -1,0 +1,232 @@
+--- a/net/minecraft/client/network/play/ClientPlayNetHandler.java
++++ b/net/minecraft/client/network/play/ClientPlayNetHandler.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.network.play;
+ 
++import com.google.common.base.Charsets;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.mojang.authlib.GameProfile;
+@@ -288,6 +289,8 @@
+ import net.minecraft.util.math.MutableBoundingBox;
+ import net.minecraft.util.math.SectionPos;
+ import net.minecraft.util.math.Vec3d;
++import net.minecraft.util.registry.Registry;
++import net.minecraft.util.text.ChatType;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraft.world.Explosion;
+@@ -301,6 +304,14 @@
+ import net.minecraft.world.storage.MapData;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.ServerVivePlayer;
++import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
++import org.vivecraft.control.ControllerType;
++import org.vivecraft.gameplay.OpenVRPlayer;
++import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.render.PlayerModelController;
++import org.vivecraft.settings.VRSettings;
+ 
+ public class ClientPlayNetHandler implements IClientPlayNetHandler
+ {
+@@ -904,6 +915,11 @@
+     public void handleDisconnect(SDisconnectPacket packetIn)
+     {
+         this.netManager.closeChannel(packetIn.getReason());
++    	// VIVE START - no longer on a vanilla server, reset restricted state
++        this.client.vrPlayer.setTeleportSupported(false);
++        this.client.vrPlayer.setTeleportOverride(false);
++        this.client.vrSettings.overrides.resetAll();
++    	// VIVE END - no longer on a vanilla server, reset restricted state  
+     }
+ 
+     public void onDisconnect(ITextComponent reason)
+@@ -966,8 +982,31 @@
+ 
+     public void handleChat(SChatPacket packetIn)
+     {
+-        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
+-        this.client.ingameGUI.addChatMessage(packetIn.getType(), packetIn.getChatComponent());
++    	PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
++    	this.client.ingameGUI.addChatMessage(packetIn.getType(), packetIn.getChatComponent());
++
++    	//Vivecraft
++    	Minecraft mc = Minecraft.getInstance();
++    	String tmp = mc.player.lastMsg;  		
++    	mc.player.lastMsg = null;
++
++    	if(mc.player != null && tmp != null && packetIn.getChatComponent().getString().contains(tmp))
++    		return;
++
++    	if (mc.vrSettings.chatNotifications > 0) {
++    		if (mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_HAPTIC ||
++    				mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_BOTH)
++    			if(mc.vrSettings.seated == false) 
++    				MCOpenVR.triggerHapticPulse(ControllerType.LEFT, 0.2f, 1000, 500);
++
++    		if (mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_SOUND ||
++    				mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_BOTH) {
++    			Vec3d p = mc.vrPlayer.vrdata_world_pre.getController(1).getPosition();
++    			mc.world.playSound(p.getX(), p.getY(), p.getZ(), 
++    					Registry.SOUND_EVENT.getOrDefault(new ResourceLocation(mc.vrSettings.chatNotificationSound)), SoundCategory.NEUTRAL, 
++    					0.3f, 0.1f, false);
++    		}
++    	}
+     }
+ 
+     public void handleAnimation(SAnimateHandPacket packetIn)
+@@ -1100,7 +1139,9 @@
+ 
+                     if (entity1 == this.client.player && !flag)
+                     {
+-                        this.client.ingameGUI.setOverlayMessage(I18n.format("mount.onboard", this.client.gameSettings.keyBindSneak.getLocalizedName()), false);
++                    	//Vivecraft - use key name, not keyboard key
++                        this.client.ingameGUI.setOverlayMessage(I18n.format("mount.onboard", this.client.gameSettings.keyBindSneak.getKeyDescription()), false);
++                        //
+                     }
+                 }
+             }
+@@ -1305,7 +1346,7 @@
+     {
+         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
+         Container container = null;
+-        PlayerEntity playerentity = this.client.player;
++        ClientPlayerEntity playerentity = this.client.player;
+ 
+         if (packetIn.getWindowId() == 0)
+         {
+@@ -1320,6 +1361,9 @@
+         {
+             this.sendPacket(new CConfirmTransactionPacket(packetIn.getWindowId(), packetIn.getActionNumber(), true));
+         }
++        
++        playerentity.confirmTransaction(packetIn.getActionNumber(),packetIn.getWindowId(),packetIn.wasAccepted());
++
+     }
+ 
+     public void handleWindowItems(SWindowItemsPacket packetIn)
+@@ -2344,6 +2388,107 @@
+                 int l5 = packetbuffer.readInt();
+                 this.client.debugRenderer.field_229018_q_.func_229022_a_(blockpos7, l3, s10, l5);
+             }
++    		else if (resourcelocation.getNamespace().equalsIgnoreCase("vivecraft"))
++    		{ 			
++    			// VIVE START - server told us that it has this mod too, allow extended reach, etc.
++    			if (resourcelocation.getPath().equalsIgnoreCase("data"))
++    			{ 
++
++    				byte db = packetbuffer.readByte();
++    				PacketDiscriminators dis = PacketDiscriminators.values()[db];
++
++    				switch (dis){
++    				case VERSION:
++    					String v = packetbuffer.readString(1024);
++    					this.client.vrPlayer.setTeleportSupported(true);
++    					this.client.vrPlayer.teleportWarningTimer = -1;
++    					this.client.printChatMessage("Vivecraft server mod detected: " +  v);
++    					break;
++    				case REQUESTDATA:
++    					NetworkHelper.serverWantsData = true;
++    					break;
++    				case CLIMBING:
++    					NetworkHelper.serverAllowsClimbey = packetbuffer.readBoolean();
++    					if (packetbuffer.readableBytes() > 0) {
++                            Minecraft.getInstance().climbTracker.serverblockmode = packetbuffer.readByte();
++                            Minecraft.getInstance().climbTracker.blocklist.clear();
++                            while (packetbuffer.readableBytes() > 0) {
++                                String name = packetbuffer.readString(16384);
++                                Block block = Registry.BLOCK.getOrDefault(new ResourceLocation(name));
++                                if (block != null)
++                                    Minecraft.getInstance().climbTracker.blocklist.add(block);
++                            }
++                        }
++    					break;
++    				case TELEPORT:
++    					NetworkHelper.serverSupportsDirectTeleport = true;
++    					break;
++    				case UBERPACKET:
++    					Long hi = packetbuffer.readLong();
++    					Long low = packetbuffer.readLong();
++    					byte[] hmd = new byte[29];
++    					byte[] c0 = new byte[29];
++    					byte[] c1 = new byte[29];
++    					packetbuffer.readBytes(29).getBytes(0, hmd);
++    					packetbuffer.readBytes(29).getBytes(0, c0);
++    					packetbuffer.readBytes(29).getBytes(0, c1);
++    					UUID u = new UUID(hi, low);
++
++    					float scale = 1f;
++    					float height = ServerVivePlayer.defaultHeight;
++    					if (packetbuffer.isReadable())
++    						scale = packetbuffer.readFloat();
++    					if (packetbuffer.isReadable())
++    						height = packetbuffer.readFloat();		
++
++    					PlayerModelController.getInstance().Update(u, hmd, c0, c1, scale, height / ServerVivePlayer.defaultHeight);    
++    						
++    					break;
++    				case SETTING_OVERRIDE:
++    				    // TODO: Placeholder code until proper framework is implemented
++    				    while (packetbuffer.readableBytes() > 0) {
++    				        String settingName = packetbuffer.readString(16384);
++    				        String value = packetbuffer.readString(16384);
++    				        String[] split = settingName.split(".", 2);
++
++    				        if (client.vrSettings.overrides.hasSetting(split[0])) {
++                                VRSettings.ServerOverrides.Setting setting = client.vrSettings.overrides.getSetting(split[0]);
++
++                                try {
++                                    if (split.length > 1) {
++                                        switch (split[1]) {
++                                            case "min":
++                                                setting.setValueMin(Float.parseFloat(value));
++                                                break;
++                                            case "max":
++                                                setting.setValueMax(Float.parseFloat(value));
++                                                break;
++                                        }
++                                    } else {
++                                        Object origValue = setting.getOriginalValue();
++
++                                        if (origValue instanceof Boolean)
++                                            setting.setValue(value.equals("true"));
++                                        else if (origValue instanceof Integer || origValue instanceof Byte || origValue instanceof Short)
++                                            setting.setValue(Integer.parseInt(value));
++                                        else if (origValue instanceof Float || origValue instanceof Double)
++                                            setting.setValue(Float.parseFloat(value));
++                                        else
++                                            setting.setValue(value);
++                                    }
++                                    System.out.println("Server setting override: " + settingName + " = " + value);
++                                } catch (Exception e) {
++                                    e.printStackTrace();
++                                }
++                            }
++                        }
++                        break;
++    				default:
++    					break;
++    				}
++    			}
++    		}
++    		// VIVE END
+             else
+             {
+                 LOGGER.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
+@@ -2699,4 +2844,14 @@
+     {
+         return this.sessionId;
+     }
++    //VIVECRAFT Additions
++    boolean tryParseInt(String value) {  
++    	try {  
++    		Integer.parseInt(value);  
++    		return true;  
++    	} catch (NumberFormatException e) {  
++    		return false;  
++    	}  
++    }
++    //
+ }

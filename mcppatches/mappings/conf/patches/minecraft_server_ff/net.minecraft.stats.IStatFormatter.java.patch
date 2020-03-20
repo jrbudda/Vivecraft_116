@@ -1,0 +1,11 @@
+﻿diff -r -U 3 minecraft\net\minecraft\stats\IStatFormatter.java minecraft_patched\net\minecraft\stats\IStatFormatter.java
+--- minecraft\net\minecraft\stats\IStatFormatter.java
++++ minecraft_patched\net\minecraft\stats\IStatFormatter.java
+@@ -39,4 +39,6 @@
+          return d1 > 0.5D ? field_223217_a_.format(d1) + " m" : d0 + " s";
+       }
+    };
++
++   String format(int p_format_1_); // MCP: add client-only method to server
+ }
+

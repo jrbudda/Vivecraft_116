@@ -1,0 +1,11 @@
+--- a/net/optifine/reflect/ReflectorRaw.java
++++ b/net/optifine/reflect/ReflectorRaw.java
+@@ -67,7 +67,7 @@
+                 }
+             }
+ 
+-            Field[] afield = list.toArray(new Field[list.size()]);
++            Field[] afield = (Field[]) list.toArray(new Field[list.size()]);
+             return afield;
+         }
+         catch (Exception var5)

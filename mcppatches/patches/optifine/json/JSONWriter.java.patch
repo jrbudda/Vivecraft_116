@@ -1,0 +1,11 @@
+--- a/optifine/json/JSONWriter.java
++++ b/optifine/json/JSONWriter.java
+@@ -79,7 +79,7 @@
+         int i = set.size();
+         int j = 0;
+ 
+-        for (String s : set)
++        for (String s : (Set<String>)(Set<?>)set)
+         {
+             Object object = jObj.get(s);
+             this.writeIndent();

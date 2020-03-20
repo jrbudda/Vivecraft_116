@@ -1,0 +1,21 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>../../installer.jar</jar>
+  <outfile>../../installer.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine>-Djava.net.preferIPv4Stack=true</cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest>manifest/uac.exe.manifest</manifest>
+  <icon></icon>
+  <jre>
+    <path></path>
+    <minVersion>1.8.0</minVersion>
+    <maxVersion></maxVersion>
+  </jre>
+</launch4jConfig>

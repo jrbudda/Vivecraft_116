@@ -1,0 +1,110 @@
+--- a/net/optifine/CustomColors.java
++++ b/net/optifine/CustomColors.java
+@@ -469,7 +469,7 @@
+         String s = "palette.block.";
+         Map map = new HashMap();
+ 
+-        for (String s1 : props.keySet())
++        for (String s1 : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s2 = props.getProperty(s1);
+ 
+@@ -479,7 +479,7 @@
+             }
+         }
+ 
+-        String[] astring = map.keySet().toArray(new String[map.size()]);
++        String[] astring = (String[]) map.keySet().toArray(new String[map.size()]);
+ 
+         for (int j = 0; j < astring.length; ++j)
+         {
+@@ -523,7 +523,7 @@
+         }
+         else
+         {
+-            CustomColormap[] acustomcolormap = list.toArray(new CustomColormap[list.size()]);
++            CustomColormap[] acustomcolormap = (CustomColormap[]) list.toArray(new CustomColormap[list.size()]);
+             return acustomcolormap;
+         }
+     }
+@@ -623,15 +623,15 @@
+             list.add((Object)null);
+         }
+ 
+-        List list = (List)list.get(id);
++        List sublist = (List)list.get(id);
+ 
+-        if (list == null)
++        if (sublist == null)
+         {
+-            list = new ArrayList();
+-            list.set(id, list);
++            sublist = new ArrayList();
++            list.set(id, sublist);
+         }
+ 
+-        list.add(cm);
++        sublist.add(cm);
+     }
+ 
+     private static CustomColormap[][] blockListToArray(List list)
+@@ -640,11 +640,11 @@
+ 
+         for (int i = 0; i < list.size(); ++i)
+         {
+-            List list = (List)list.get(i);
++            List lista = (List)list.get(i);
+ 
+-            if (list != null)
++            if (lista != null)
+             {
+-                CustomColormap[] acustomcolormap1 = list.toArray(new CustomColormap[list.size()]);
++                CustomColormap[] acustomcolormap1 = (CustomColormap[]) lista.toArray(new CustomColormap[lista.size()]);
+                 acustomcolormap[i] = acustomcolormap1;
+             }
+         }
+@@ -1378,7 +1378,7 @@
+         Set set = props.keySet();
+         int i = 0;
+ 
+-        for (String s : set)
++        for (String s : (Set<String>)(Set<?>)set)
+         {
+             String s1 = props.getProperty(s);
+ 
+@@ -1524,7 +1524,7 @@
+         float[][] afloat1 = new float[adyecolor.length][];
+         int k = 0;
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 
+@@ -1591,7 +1591,7 @@
+         Arrays.fill(aint, -1);
+         int i = 0;
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 
+@@ -1647,7 +1647,7 @@
+         Arrays.fill(aint, -1);
+         int i = 0;
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 
+@@ -1686,7 +1686,7 @@
+         Arrays.fill(aint, -1);
+         int i = 0;
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 

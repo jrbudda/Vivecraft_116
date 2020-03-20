@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/screen/EditSignScreen.java
++++ b/net/minecraft/client/gui/screen/EditSignScreen.java
+@@ -70,6 +70,7 @@
+         }
+ 
+         this.tileSign.setEditable(true);
++        KeyboardHandler.setOverlayShowing(false);
+     }
+ 
+     public void tick()

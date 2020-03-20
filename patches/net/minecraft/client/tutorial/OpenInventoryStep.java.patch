@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/tutorial/OpenInventoryStep.java
++++ b/net/minecraft/client/tutorial/OpenInventoryStep.java
+@@ -31,7 +31,7 @@
+             if (this.timeWaiting >= 600 && this.toast == null)
+             {
+                 this.toast = new TutorialToast(TutorialToast.Icons.RECIPE_BOOK, TITLE, DESCRIPTION, false);
+-                this.tutorial.getMinecraft().getToastGui().add(this.toast);
++                this.tutorial.getInstance().getToastGui().add(this.toast);
+             }
+         }
+     }

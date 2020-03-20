@@ -1,0 +1,11 @@
+--- a/net/optifine/CustomSky.java
++++ b/net/optifine/CustomSky.java
+@@ -108,7 +108,7 @@
+ 
+             if (list.size() > 0)
+             {
+-                CustomSkyLayer[] acustomskylayer2 = list.toArray(new CustomSkyLayer[list.size()]);
++                CustomSkyLayer[] acustomskylayer2 = (CustomSkyLayer[]) list.toArray(new CustomSkyLayer[list.size()]);
+                 acustomskylayer[j] = acustomskylayer2;
+                 i = j;
+             }

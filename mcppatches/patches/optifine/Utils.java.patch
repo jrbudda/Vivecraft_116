@@ -1,0 +1,65 @@
+--- a/optifine/Utils.java
++++ b/optifine/Utils.java
+@@ -42,7 +42,7 @@
+         String s = System.getProperty("user.home", ".");
+         File file1 = null;
+ 
+-        switch ($SWITCH_TABLE$optifine$Utils$OS()[getPlatform().ordinal()])
++        switch (getPlatform().ordinal())
+         {
+             case 1:
+             case 2:
+@@ -176,7 +176,7 @@
+             list.add(s);
+         }
+ 
+-        String[] astring = list.toArray(new String[list.size()]);
++        String[] astring = (String[]) list.toArray(new String[list.size()]);
+         return astring;
+     }
+ 
+@@ -368,7 +368,7 @@
+ 
+                     if (object instanceof Object[])
+                     {
+-                        Object[] aobject = object;
++                        Object[] aobject = (Object[]) object;
+                         stringbuffer.append(arrayToCommaSeparatedString(aobject));
+                     }
+                     else
+@@ -611,7 +611,7 @@
+         {
+             int i = arr.length;
+             int j = i + 1;
+-            Object[] aobject = Array.newInstance(arr.getClass().getComponentType(), j);
++            Object[] aobject = (Object[]) Array.newInstance(arr.getClass().getComponentType(), j);
+             System.arraycopy(arr, 0, aobject, 0, i);
+             aobject[i] = obj;
+             return aobject;
+@@ -622,7 +622,7 @@
+     {
+         List list = new ArrayList<>(Arrays.asList(arr));
+         list.add(index, obj);
+-        Object[] aobject = Array.newInstance(arr.getClass().getComponentType(), list.size());
++        Object[] aobject = (Object[]) Array.newInstance(arr.getClass().getComponentType(), list.size());
+         return list.toArray(aobject);
+     }
+ 
+@@ -640,7 +640,7 @@
+         {
+             int i = arr.length;
+             int j = i + objs.length;
+-            Object[] aobject = Array.newInstance(arr.getClass().getComponentType(), j);
++            Object[] aobject = (Object[]) Array.newInstance(arr.getClass().getComponentType(), j);
+             System.arraycopy(arr, 0, aobject, 0, i);
+             System.arraycopy(objs, 0, aobject, i, objs.length);
+             return aobject;
+@@ -671,7 +671,7 @@
+         }
+         else
+         {
+-            Object[] aobject = Array.newInstance(elementClass, coll.size());
++            Object[] aobject = (Object[]) Array.newInstance(elementClass, coll.size());
+             return coll.toArray(aobject);
+         }
+     }

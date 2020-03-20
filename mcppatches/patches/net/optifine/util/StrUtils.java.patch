@@ -1,0 +1,11 @@
+--- a/net/optifine/util/StrUtils.java
++++ b/net/optifine/util/StrUtils.java
+@@ -303,7 +303,7 @@
+                 }
+ 
+                 list.add(str.substring(i, str.length()));
+-                return list.toArray(new String[list.size()]);
++                return (String[]) list.toArray(new String[list.size()]);
+             }
+         }
+         else

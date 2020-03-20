@@ -1,0 +1,11 @@
+--- a/com/mojang/blaze3d/platform/GlStateManager.java
++++ b/com/mojang/blaze3d/platform/GlStateManager.java
+@@ -50,7 +50,7 @@
+         return new GlStateManager.BooleanState[p_lambda$static$2_0_];
+     });
+     private static final GlStateManager.ColorMaterialState COLOR_MATERIAL = new GlStateManager.ColorMaterialState();
+-    private static final GlStateManager.BlendState BLEND = new GlStateManager.BlendState();
++    public static final GlStateManager.BlendState BLEND = new GlStateManager.BlendState();
+     private static final GlStateManager.DepthState DEPTH = new GlStateManager.DepthState();
+     private static final GlStateManager.FogState FOG = new GlStateManager.FogState();
+     private static final GlStateManager.CullState CULL = new GlStateManager.CullState();

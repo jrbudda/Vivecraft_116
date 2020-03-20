@@ -1,0 +1,11 @@
+--- a/net/optifine/player/PlayerItemParser.java
++++ b/net/optifine/player/PlayerItemParser.java
+@@ -128,7 +128,7 @@
+                 }
+             }
+ 
+-            PlayerItemRenderer[] aplayeritemrenderer = list.toArray(new PlayerItemRenderer[list.size()]);
++            PlayerItemRenderer[] aplayeritemrenderer = (PlayerItemRenderer[]) list.toArray(new PlayerItemRenderer[list.size()]);
+             return new PlayerItemModel(dimension, flag, aplayeritemrenderer);
+         }
+     }

@@ -1,0 +1,59 @@
+--- a/net/minecraft/client/gui/toasts/AdvancementToast.java
++++ b/net/minecraft/client/gui/toasts/AdvancementToast.java
+@@ -23,20 +23,20 @@
+ 
+     public IToast.Visibility draw(ToastGui toastGui, long delta)
+     {
+-        toastGui.getMinecraft().getTextureManager().bindTexture(TEXTURE_TOASTS);
++        toastGui.getInstance().getTextureManager().bindTexture(TEXTURE_TOASTS);
+         RenderSystem.color3f(1.0F, 1.0F, 1.0F);
+         DisplayInfo displayinfo = this.advancement.getDisplay();
+         toastGui.blit(0, 0, 0, 0, 160, 32);
+ 
+         if (displayinfo != null)
+         {
+-            List<String> list = toastGui.getMinecraft().fontRenderer.listFormattedStringToWidth(displayinfo.getTitle().getFormattedText(), 125);
++            List<String> list = toastGui.getInstance().fontRenderer.listFormattedStringToWidth(displayinfo.getTitle().getFormattedText(), 125);
+             int i = displayinfo.getFrame() == FrameType.CHALLENGE ? 16746751 : 16776960;
+ 
+             if (list.size() == 1)
+             {
+-                toastGui.getMinecraft().fontRenderer.drawString(I18n.format("advancements.toast." + displayinfo.getFrame().getName()), 30.0F, 7.0F, i | -16777216);
+-                toastGui.getMinecraft().fontRenderer.drawString(displayinfo.getTitle().getFormattedText(), 30.0F, 18.0F, -1);
++                toastGui.getInstance().fontRenderer.drawString(I18n.format("advancements.toast." + displayinfo.getFrame().getName()), 30.0F, 7.0F, i | -16777216);
++                toastGui.getInstance().fontRenderer.drawString(displayinfo.getTitle().getFormattedText(), 30.0F, 18.0F, -1);
+             }
+             else
+             {
+@@ -46,7 +46,7 @@
+                 if (delta < 1500L)
+                 {
+                     int k = MathHelper.floor(MathHelper.clamp((float)(1500L - delta) / 300.0F, 0.0F, 1.0F) * 255.0F) << 24 | 67108864;
+-                    toastGui.getMinecraft().fontRenderer.drawString(I18n.format("advancements.toast." + displayinfo.getFrame().getName()), 30.0F, 11.0F, i | k);
++                    toastGui.getInstance().fontRenderer.drawString(I18n.format("advancements.toast." + displayinfo.getFrame().getName()), 30.0F, 11.0F, i | k);
+                 }
+                 else
+                 {
+@@ -55,7 +55,7 @@
+ 
+                     for (String s : list)
+                     {
+-                        toastGui.getMinecraft().fontRenderer.drawString(s, 30.0F, (float)l, 16777215 | i1);
++                        toastGui.getInstance().fontRenderer.drawString(s, 30.0F, (float)l, 16777215 | i1);
+                         l += 9;
+                     }
+                 }
+@@ -67,11 +67,11 @@
+ 
+                 if (displayinfo.getFrame() == FrameType.CHALLENGE)
+                 {
+-                    toastGui.getMinecraft().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0F, 1.0F));
++                    toastGui.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0F, 1.0F));
+                 }
+             }
+ 
+-            toastGui.getMinecraft().getItemRenderer().renderItemAndEffectIntoGUI((LivingEntity)null, displayinfo.getIcon(), 8, 8);
++            toastGui.getInstance().getItemRenderer().renderItemAndEffectIntoGUI((LivingEntity)null, displayinfo.getIcon(), 8, 8);
+             return delta >= 5000L ? IToast.Visibility.HIDE : IToast.Visibility.SHOW;
+         }
+         else

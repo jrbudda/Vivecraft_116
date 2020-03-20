@@ -1,0 +1,22 @@
+--- a/net/optifine/TextureAnimation.java
++++ b/net/optifine/TextureAnimation.java
+@@ -208,16 +208,16 @@
+ 
+         if (j + i <= this.imageData.limit())
+         {
+-            int k = i * frame2.index;
++            int offset2 = i * frame2.index;
+ 
+-            if (k + i <= this.imageData.limit())
++            if (offset2 + i <= this.imageData.limit())
+             {
+                 this.interpolateData.clear();
+ 
+                 for (int l = 0; l < i; ++l)
+                 {
+                     int i1 = this.imageData.get(j + l) & 255;
+-                    int j1 = this.imageData.get(k + l) & 255;
++                    int j1 = this.imageData.get(offset2 + l) & 255;
+                     int k1 = this.mix(i1, j1, k);
+                     byte b0 = (byte)k1;
+                     this.interpolateData.put(b0);

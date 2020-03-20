@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/tutorial/FindTreeStep.java
++++ b/net/minecraft/client/tutorial/FindTreeStep.java
+@@ -42,7 +42,7 @@
+         {
+             if (this.timeWaiting == 1)
+             {
+-                ClientPlayerEntity clientplayerentity = this.tutorial.getMinecraft().player;
++                ClientPlayerEntity clientplayerentity = this.tutorial.getInstance().player;
+ 
+                 if (clientplayerentity != null)
+                 {
+@@ -66,7 +66,7 @@
+             if (this.timeWaiting >= 6000 && this.toast == null)
+             {
+                 this.toast = new TutorialToast(TutorialToast.Icons.TREE, TITLE, DESCRIPTION, false);
+-                this.tutorial.getMinecraft().getToastGui().add(this.toast);
++                this.tutorial.getInstance().getToastGui().add(this.toast);
+             }
+         }
+     }

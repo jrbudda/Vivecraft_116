@@ -1,0 +1,13 @@
+--- a/net/minecraft/entity/projectile/TridentEntity.java
++++ b/net/minecraft/entity/projectile/TridentEntity.java
+@@ -1,6 +1,10 @@
+ package net.minecraft.entity.projectile;
+ 
+ import javax.annotation.Nullable;
++
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.ServerVivePlayer;
++
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityType;

@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/MainWindow.java
++++ b/net/minecraft/client/MainWindow.java
+@@ -282,7 +282,9 @@
+     {
+         RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+         this.vsync = vsyncEnabled;
+-        GLFW.glfwSwapInterval(vsyncEnabled ? 1 : 0);
++        // Viveraft - don't do vsync, silly billy
++        GLFW.glfwSwapInterval(0);
++        //
+     }
+ 
+     public void close()

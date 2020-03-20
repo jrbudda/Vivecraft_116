@@ -1,0 +1,48 @@
+--- a/net/minecraft/item/crafting/RecipeManager.java
++++ b/net/minecraft/item/crafting/RecipeManager.java
+@@ -18,9 +18,12 @@
+ import java.util.Map.Entry;
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
++
++import net.minecraft.block.Blocks;
+ import net.minecraft.client.resources.JsonReloadListener;
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.item.ItemStack;
++import net.minecraft.item.Items;
+ import net.minecraft.profiler.IProfiler;
+ import net.minecraft.resources.IResourceManager;
+ import net.minecraft.util.JSONUtils;
+@@ -28,6 +31,7 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.Util;
+ import net.minecraft.util.registry.Registry;
++import net.minecraft.util.text.StringTextComponent;
+ import net.minecraft.world.World;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -67,6 +71,24 @@
+             }
+         }
+ 
++    	//VIVECRAFT - This prolly cant stay here. Move to .json files someday.
++    	ItemStack is = new ItemStack(Items.LEATHER_BOOTS);
++    	is.setDisplayName(new StringTextComponent("Jump Boots"));
++    	is.getTag().putBoolean("Unbreakable", true);
++    	is.getTag().putInt("HideFlags",4);
++
++    	ItemStack is2 = new ItemStack(Items.SHEARS);
++    	is2.setDisplayName(new StringTextComponent("Climb Claws"));
++    	is2.getTag().putBoolean("Unbreakable", true);
++    	is2.getTag().putInt("HideFlags",4);
++    	
++    	
++    	ShapedRecipe boot = new ShapedRecipe(new ResourceLocation("jumpboots"),"Vivecraft", 1, 2, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItems(Items.LEATHER_BOOTS), Ingredient.fromStacks(new ItemStack(Blocks.SLIME_BLOCK))), is);
++    	ShapedRecipe claw = new ShapedRecipe(new ResourceLocation("climbclaws"),"Vivecraft", 3, 2, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItems(Items.SPIDER_EYE),Ingredient.EMPTY,Ingredient.fromItems(Items.SPIDER_EYE),Ingredient.fromItems(Items.SHEARS),Ingredient.EMPTY,Ingredient.fromItems(Items.SHEARS)), is2);
++    
++    	map.get(boot.getType()).put(boot.getId(), boot);
++    	map.get(claw.getType()).put(claw.getId(), claw);	
++    	
+         this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (p_223400_0_) ->
+         {
+             return p_223400_0_.getValue().build();

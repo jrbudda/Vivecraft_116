@@ -1,0 +1,11 @@
+--- a/net/optifine/gui/TooltipManager.java
++++ b/net/optifine/gui/TooltipManager.java
+@@ -25,7 +25,7 @@
+ 
+     public void drawTooltips(int x, int y, List<Widget> buttonList)
+     {
+-        if (Math.abs(x - this.lastMouseX) <= 5 && Math.abs(y - this.lastMouseY) <= 5)
++        if (Math.abs(x - this.lastMouseX) <= 15 && Math.abs(y - this.lastMouseY) <= 15)
+         {
+             int i = 700;
+ 

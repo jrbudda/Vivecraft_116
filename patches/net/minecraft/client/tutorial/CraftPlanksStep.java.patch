@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/tutorial/CraftPlanksStep.java
++++ b/net/minecraft/client/tutorial/CraftPlanksStep.java
+@@ -36,7 +36,7 @@
+         {
+             if (this.timeWaiting == 1)
+             {
+-                ClientPlayerEntity clientplayerentity = this.tutorial.getMinecraft().player;
++                ClientPlayerEntity clientplayerentity = this.tutorial.getInstance().player;
+ 
+                 if (clientplayerentity != null)
+                 {
+@@ -57,7 +57,7 @@
+             if (this.timeWaiting >= 1200 && this.toast == null)
+             {
+                 this.toast = new TutorialToast(TutorialToast.Icons.WOODEN_PLANKS, TITLE, DESCRIPTION, false);
+-                this.tutorial.getMinecraft().getToastGui().add(this.toast);
++                this.tutorial.getInstance().getToastGui().add(this.toast);
+             }
+         }
+     }

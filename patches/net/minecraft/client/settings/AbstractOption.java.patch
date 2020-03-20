@@ -1,0 +1,27 @@
+--- a/net/minecraft/client/settings/AbstractOption.java
++++ b/net/minecraft/client/settings/AbstractOption.java
+@@ -151,12 +151,21 @@
+         double d0 = p_lambda$static$26_1_.normalizeValue(p_lambda$static$26_1_.get(p_lambda$static$26_0_));
+         String s = p_lambda$static$26_1_.getDisplayString();
+ 
+-        if (d0 == 0.0D)
++        if (Math.abs(d0 - 1D / 3D) < 0.005)
+         {
+             return s + I18n.format("options.gamma.min");
+         }
+-        else {
+-            return d0 == 1.0D ? s + I18n.format("options.gamma.max") : s + "+" + (int)(d0 * 100.0D) + "%";
++        else if (d0 == 1.0D)
++        {
++            return s + I18n.format("options.gamma.max");
++        }
++        else if (d0 == 0.0D)
++        {
++            return s + I18n.format("vivecraft.options.gamma.cantseeshitcaptain");
++        }
++        else
++        {
++            return s + (d0 >= 1D / 3D ? "+" : "") + (int)((d0 * 1.5 - 0.5) * 100.0D) + "%";
+         }
+     });
+     public static final SliderPercentageOption MIPMAP_LEVELS = new SliderPercentageOption("options.mipmapLevels", 0.0D, 4.0D, 1.0F, (p_lambda$static$27_0_) ->

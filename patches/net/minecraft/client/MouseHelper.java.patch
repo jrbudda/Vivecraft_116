@@ -1,0 +1,35 @@
+--- a/net/minecraft/client/MouseHelper.java
++++ b/net/minecraft/client/MouseHelper.java
+@@ -131,7 +131,7 @@
+ 
+                 if (flag)
+                 {
+-                    if (this.minecraft.player.isSpectator() && i == 2)
++                    if (this.minecraft.player != null && this.minecraft.player.isSpectator() && i == 2)
+                     {
+                         this.minecraft.ingameGUI.getSpectatorGui().onMiddleClick();
+                     }
+@@ -347,7 +347,11 @@
+ 
+     public void grabMouse()
+     {
+-        if (this.minecraft.isGameFocused())
++    	if (!this.minecraft.vrSettings.seated) {
++    		this.mouseGrabbed = true;
++    		return;
++    	}
++    	else if (this.minecraft.isGameFocused())
+         {
+             if (!this.mouseGrabbed)
+             {
+@@ -369,6 +373,10 @@
+ 
+     public void ungrabMouse()
+     {
++    	if (!this.minecraft.vrSettings.seated) {
++    		this.mouseGrabbed = false;
++    		return;
++    	}
+         if (this.mouseGrabbed)
+         {
+             this.mouseGrabbed = false;

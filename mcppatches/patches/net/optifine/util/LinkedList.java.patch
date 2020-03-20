@@ -1,0 +1,104 @@
+--- a/net/optifine/util/LinkedList.java
++++ b/net/optifine/util/LinkedList.java
+@@ -19,9 +19,9 @@
+         }
+         else
+         {
+-            LinkedList.Node<T> node = this.first;
+-            node.setNext(node);
+-            node.setPrev(node);
++            LinkedList.Node<T> nodenext = this.first;
++            node.setNext(nodenext);
++            nodenext.setPrev(node);
+             this.first = node;
+         }
+ 
+@@ -40,9 +40,9 @@
+         }
+         else
+         {
+-            LinkedList.Node<T> node = this.last;
+-            node.setPrev(node);
+-            node.setNext(node);
++            LinkedList.Node<T> nodeprev = this.last;
++            node.setPrev(nodeprev);
++            nodeprev.setNext(node);
+             this.last = node;
+         }
+ 
+@@ -64,11 +64,11 @@
+         {
+             this.checkParent(nodePrev);
+             this.checkNoParent(node);
+-            LinkedList.Node<T> node = nodePrev.getNext();
++            LinkedList.Node<T> nodenext = nodePrev.getNext();
+             nodePrev.setNext(node);
+             node.setPrev(nodePrev);
+-            node.setPrev(node);
+-            node.setNext(node);
++            nodenext.setPrev(node);
++            node.setNext(nodenext);
+             node.setParent(this);
+             ++this.size;
+         }
+@@ -77,12 +77,12 @@
+     public LinkedList.Node<T> remove(LinkedList.Node<T> node)
+     {
+         this.checkParent(node);
+-        LinkedList.Node<T> node = node.getPrev();
++        LinkedList.Node<T> prev = node.getPrev();
+         LinkedList.Node<T> node1 = node.getNext();
+ 
+-        if (node != null)
++        if (prev != null)
+         {
+-            node.setNext(node1);
++            prev.setNext(node1);
+         }
+         else
+         {
+@@ -91,11 +91,11 @@
+ 
+         if (node1 != null)
+         {
+-            node1.setPrev(node);
++            node1.setPrev(prev);
+         }
+         else
+         {
+-            this.last = node;
++            this.last = prev;
+         }
+ 
+         node.setPrev((LinkedList.Node<T>)null);
+@@ -207,21 +207,18 @@
+ 
+     public String toString()
+     {
+-        StringBuffer stringbuffer = new StringBuffer();
+-
+-        for (LinkedList.Node<T> node : this)
++        StringBuffer sb = new StringBuffer();
++        for (Iterator<Node<T>> it = iterator(); it.hasNext();)
+         {
+-            if (stringbuffer.length() > 0)
+-            {
+-                stringbuffer.append(", ");
+-            }
+-
+-            stringbuffer.append(node.getItem());
++          Node<T> node = (Node)it.next();
++          if (sb.length() > 0) {
++            sb.append(", ");
++          }
++          sb.append(node.getItem());
+         }
+-
+-        return "" + this.size + " [" + stringbuffer.toString() + "]";
++        return "" + this.size + " [" + sb.toString() + "]";
+     }
+-
++    
+     public static class Node<T>
+     {
+         private final T item;

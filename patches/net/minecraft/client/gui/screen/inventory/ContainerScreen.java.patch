@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/inventory/ContainerScreen.java
++++ b/net/minecraft/client/gui/screen/inventory/ContainerScreen.java
+@@ -458,7 +458,7 @@
+                 }
+             }
+         }
+-        else if (this.dragSplitting && slot != null && !itemstack.isEmpty() && (itemstack.getCount() > this.dragSplittingSlots.size() || this.dragSplittingLimit == 2) && Container.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && this.container.canDragIntoSlot(slot))
++        else if (!Screen.hasShiftDown() && this.dragSplitting && slot != null && !itemstack.isEmpty() && (itemstack.getCount() > this.dragSplittingSlots.size() || this.dragSplittingLimit == 2) && Container.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && this.container.canDragIntoSlot(slot))
+         {
+             this.dragSplittingSlots.add(slot);
+             this.updateDragSplitting();

@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/datafix/fixes/TrappedChestTileEntitySplit.java
++++ b/net/minecraft/util/datafix/fixes/TrappedChestTileEntitySplit.java
+@@ -132,7 +132,7 @@
+ 
+             for (int i = 0; i < this.palette.size(); ++i)
+             {
+-                Dynamic<?> dynamic = this.palette.get(i);
++                Dynamic<?> dynamic = (Dynamic<?>) this.palette.get(i);
+                 String s = dynamic.get("Name").asString("");
+ 
+                 if (Objects.equals(s, "minecraft:trapped_chest"))

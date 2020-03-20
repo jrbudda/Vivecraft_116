@@ -1,0 +1,11 @@
+--- a/net/optifine/util/BlockUtils.java
++++ b/net/optifine/util/BlockUtils.java
+@@ -131,7 +131,7 @@
+         return Block.isOpaque(stateIn.getCollisionShape(blockReaderIn, posIn));
+     }
+ 
+-    public static Collection<IProperty> getProperties(BlockState blockState)
++    public static Collection<IProperty<?>> getProperties(BlockState blockState)
+     {
+         return blockState.getProperties();
+     }

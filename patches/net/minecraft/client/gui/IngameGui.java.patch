@@ -1,0 +1,112 @@
+--- a/net/minecraft/client/gui/IngameGui.java
++++ b/net/minecraft/client/gui/IngameGui.java
+@@ -23,6 +23,7 @@
+ import net.minecraft.client.gui.overlay.DebugOverlayGui;
+ import net.minecraft.client.gui.overlay.PlayerTabOverlayGui;
+ import net.minecraft.client.gui.overlay.SubtitleOverlayGui;
++import net.minecraft.client.gui.screen.Screen;
+ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+ import net.minecraft.client.renderer.ActiveRenderInfo;
+ import net.minecraft.client.renderer.BufferBuilder;
+@@ -106,6 +107,8 @@
+     private int scaledWidth;
+     private int scaledHeight;
+     private final Map<ChatType, List<IChatListener>> chatListeners = Maps.newHashMap();
++    // Vivecraft
++    public boolean showPlayerList;
+ 
+     public IngameGui(Minecraft p_i231_1_)
+     {
+@@ -172,6 +175,7 @@
+                 this.renderPortal(f);
+             }
+         }
++		 */
+ 
+         if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
+         {
+@@ -377,7 +381,7 @@
+             RenderSystem.popMatrix();
+             scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
+ 
+-            if (this.mc.gameSettings.keyBindPlayerList.isKeyDown() && (!this.mc.isIntegratedServerRunning() || this.mc.player.connection.getPlayerInfoMap().size() > 1 || scoreobjective1 != null))
++            if ((this.mc.gameSettings.keyBindPlayerList.isKeyDown() || showPlayerList) && (!this.mc.isIntegratedServerRunning() || this.mc.player.connection.getPlayerInfoMap().size() > 1 || scoreobjective1 != null))
+             {
+                 this.overlayPlayerList.setVisible(true);
+                 this.overlayPlayerList.render(this.scaledWidth, scoreboard, scoreobjective1);
+@@ -1232,6 +1236,9 @@
+ 
+     private void renderVignette(Entity entityIn)
+     {
++		//VIVECRAFT NOPE!
++		if (true)return;
++		//
+         if (!Config.isVignetteEnabled())
+         {
+             RenderSystem.enableDepthTest();
+@@ -1284,6 +1291,10 @@
+ 
+     private void renderPortal(float timeInPortal)
+     {
++		//VIVECRAFT NOPE!
++		if(true) return;
++		//
++
+         if (timeInPortal < 1.0F)
+         {
+             timeInPortal = timeInPortal * timeInPortal;
+@@ -1504,4 +1515,54 @@
+     {
+         this.overlayDebug.resetChunk();
+     }
++    
++	//VIVECRAFT ADDITIONS ***********************************
++
++	public void drawMouseMenuQuad(int mouseX, int mouseY)
++	{	
++		GlStateManager.enableBlend();
++		GlStateManager.enableAlphaTest();
++		GlStateManager.disableDepthTest();
++		GlStateManager.disableLighting();
++		GlStateManager.color4f(1, 1, 1, 1);
++
++		this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
++		float menuMousePointerSize = 16f * this.mc.vrSettings.menuCrosshairScale;
++		
++		//Why didnt we think of this sooner?
++		/*GlStateManager.colorMask(false, false, false, true);
++		GlStateManager.blendFunc(SourceFactor.CONSTANT_ALPHA, DestFactor.ZERO);
++		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);
++		
++		GlStateManager.blendFunc(SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ONE_MINUS_SRC_COLOR);
++		GlStateManager.colorMask(true, true, true, false);
++		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);*/
++
++		// Turns out all we needed was some blendFuncSeparate magic :)
++		// Also color DestFactor of ZERO produces better results with non-white crosshairs
++		GlStateManager.blendFuncSeparate(SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ZERO, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);
++
++		GlStateManager.disableBlend();
++		GlStateManager.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++		GlStateManager.enableDepthTest();
++		GlStateManager.enableLighting();
++		//GlStateManager.colorMask(true, true, true, false);
++	}
++	/**
++	 * Draws a centred textured rectangle at the stored z-value. Args: x, y, width, height, u, v, texwidth, texheight
++	 */
++	public void drawCentredTexturedModalRect(int centreX, int centreY, float width, float height, int u, int v, int texWidth, int texHeight)
++	{   	
++		float f = 0.00390625F;
++		float f1 = 0.00390625F;
++		Tessellator tessellator = Tessellator.getInstance();
++		tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
++		tessellator.getBuffer().pos(0, 0, 0).tex(u, v);
++		tessellator.getBuffer().pos((double)(centreX - (width / 2f)), (double)(centreY + (height / 2f)), (double)this.blitOffset).tex((double)((float)(u + 0) * f), (double)((float)(v + texHeight) * f1)).endVertex();
++		tessellator.getBuffer().pos((double)(centreX + (width / 2f)), (double)(centreY + (height / 2f)), (double)this.blitOffset).tex( (double)((float)(u + texWidth) * f), (double)((float)(v + texHeight) * f1)).endVertex();
++		tessellator.getBuffer().pos((double)(centreX + (width / 2f)), (double)(centreY - (height / 2f)), (double)this.blitOffset).tex( (double)((float)(u + texWidth) * f), (double)((float)(v + 0) * f1)).endVertex();
++		tessellator.getBuffer().pos((double)(centreX - (width / 2f)), (double)(centreY - (height / 2f)), (double)this.blitOffset).tex( (double)((float)(u + 0) * f), (double)((float)(v + 0) * f1)).endVertex();
++		tessellator.draw();
++	}
+ }

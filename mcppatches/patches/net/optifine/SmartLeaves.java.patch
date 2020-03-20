@@ -1,0 +1,11 @@
+--- a/net/optifine/SmartLeaves.java
++++ b/net/optifine/SmartLeaves.java
+@@ -162,7 +162,7 @@
+                         }
+                         else
+                         {
+-                            for (BakedQuad bakedquad : list)
++                            for (BakedQuad bakedquad : (List<BakedQuad>)list)
+                             {
+                                 List list1 = ibakedmodel.getQuads((BlockState)null, bakedquad.getFace(), RANDOM);
+ 

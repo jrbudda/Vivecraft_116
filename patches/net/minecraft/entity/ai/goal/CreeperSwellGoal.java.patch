@@ -1,0 +1,13 @@
+--- a/net/minecraft/entity/ai/goal/CreeperSwellGoal.java
++++ b/net/minecraft/entity/ai/goal/CreeperSwellGoal.java
+@@ -1,6 +1,10 @@
+ package net.minecraft.entity.ai.goal;
+ 
+ import java.util.EnumSet;
++
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.ServerVivePlayer;
++
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.monster.CreeperEntity;
+ 

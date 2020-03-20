@@ -1,0 +1,33 @@
+--- a/net/optifine/model/ModelUtils.java
++++ b/net/optifine/model/ModelUtils.java
+@@ -35,7 +35,7 @@
+         }
+     }
+ 
+-    private static void dbgQuads(String name, List quads, String prefix)
++    private static void dbgQuads(String name, List<BakedQuad> quads, String prefix)
+     {
+         for (BakedQuad bakedquad : quads)
+         {
+@@ -85,17 +85,17 @@
+         return simplebakedmodel;
+     }
+ 
+-    public static List duplicateQuadList(List list)
++    public static List duplicateQuadList(List<BakedQuad> list)
+     {
+-        List list = new ArrayList();
++        List list2 = new ArrayList();
+ 
+         for (BakedQuad bakedquad : list)
+         {
+             BakedQuad bakedquad1 = duplicateQuad(bakedquad);
+-            list.add(bakedquad1);
++            list2.add(bakedquad1);
+         }
+ 
+-        return list;
++        return list2;
+     }
+ 
+     public static BakedQuad duplicateQuad(BakedQuad quad)

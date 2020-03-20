@@ -1,0 +1,24 @@
+--- a/net/optifine/Mipmaps.java
++++ b/net/optifine/Mipmaps.java
+@@ -53,7 +53,7 @@
+ 
+                 if (k <= 0 && l <= 0)
+                 {
+-                    Dimension[] adimension = list.toArray(new Dimension[list.size()]);
++                    Dimension[] adimension = (Dimension[]) list.toArray(new Dimension[list.size()]);
+                     return adimension;
+                 }
+ 
+@@ -171,9 +171,9 @@
+ 
+     private int averageColor(int i, int j)
+     {
+-        int i = (i & -16777216) >> 24 & 255;
+-        int j = (j & -16777216) >> 24 & 255;
+-        return (i + j >> 1 << 24) + ((i & 16711422) + (j & 16711422) >> 1);
++        int ii = (i & -16777216) >> 24 & 255;
++        int jj = (j & -16777216) >> 24 & 255;
++        return (ii + jj >> 1 << 24) + ((ii & 16711422) + (jj & 16711422) >> 1);
+     }
+ 
+     public static IntBuffer[] makeMipmapBuffers(Dimension[] mipmapDimensions, int[][] mipmapDatas)

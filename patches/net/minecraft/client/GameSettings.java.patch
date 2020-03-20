@@ -1,0 +1,68 @@
+--- a/net/minecraft/client/GameSettings.java
++++ b/net/minecraft/client/GameSettings.java
+@@ -64,6 +64,7 @@
+ import org.apache.commons.lang3.ArrayUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.vivecraft.provider.MCOpenVR;
+ 
+ public class GameSettings
+ {
+@@ -234,7 +235,7 @@
+     public int ofTranslucentBlocks = 0;
+     public boolean ofDynamicFov = true;
+     public boolean ofAlternateBlocks = true;
+-    public int ofDynamicLights = 3;
++    public int ofDynamicLights = 2;
+     public boolean ofCustomEntityModels = true;
+     public boolean ofCustomGuis = true;
+     public boolean ofShowGlErrors = true;
+@@ -309,6 +310,9 @@
+         this.ofKeyBindZoom = new KeyBinding("of.key.zoom", 67, "key.categories.misc");
+         this.keyBindings = ArrayUtils.add(this.keyBindings, this.ofKeyBindZoom);
+         KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
++        //Vivecraft
++        this.keyBindings = MCOpenVR.initializeBindings(this.keyBindings);
++        //
+         this.renderDistanceChunks = 8;
+         this.loadOptions();
+         Config.initGameSettings(this);
+@@ -1032,7 +1036,7 @@
+             {
+                 if (i >= aint[j])
+                 {
+-                    this.ofAaLevel = aint[j];
++                    this.ofAaLevel = 0; //Vivecraft aint[j];
+                 }
+             }
+ 
+@@ -1480,7 +1484,7 @@
+                 return;
+             }
+ 
+-            this.ofFastRender = !this.ofFastRender;
++            this.ofFastRender = false; //Vivecraft !this.ofFastRender;
+ 
+             if (this.ofFastRender)
+             {
+@@ -2590,6 +2594,15 @@
+             KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
+             KeyBinding.resetKeyBindingArrayAndHash();
+             bufferedreader.close();
++            
++            //Vivecraft important.
++            this.ofFastRender = false;
++            this.ofUseFbo = true;
++            this.ofUseVbo = true;
++            this.ofAaLevel = 0;
++            this.ofAfLevel = 1;
++            //
++            
+         }
+         catch (Exception exception11)
+         {
+@@ -2964,3 +2977,4 @@
+         }
+     }
+ }
++

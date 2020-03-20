@@ -1,0 +1,13 @@
+﻿diff -r -U 3 minecraft\net\minecraft\world\raid\Raid.java minecraft_patched\net\minecraft\world\raid\Raid.java
+--- minecraft\net\minecraft\world\raid\Raid.java
++++ minecraft_patched\net\minecraft\world\raid\Raid.java
+@@ -524,7 +524,7 @@
+       Iterator iterator = this.field_221344_h.values().iterator();
+ 
+       while(iterator.hasNext()) {
+-         for(AbstractRaiderEntity abstractraiderentity : (Set)iterator.next()) {
++         for(AbstractRaiderEntity abstractraiderentity : (Set<AbstractRaiderEntity>)iterator.next()) {
+             f += abstractraiderentity.func_110143_aJ();
+          }
+       }
+

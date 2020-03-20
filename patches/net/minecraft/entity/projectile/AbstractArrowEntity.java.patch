@@ -1,0 +1,71 @@
+--- a/net/minecraft/entity/projectile/AbstractArrowEntity.java
++++ b/net/minecraft/entity/projectile/AbstractArrowEntity.java
+@@ -7,6 +7,10 @@
+ import java.util.Optional;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
++
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.ServerVivePlayer;
++
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.enchantment.EnchantmentHelper;
+@@ -84,6 +88,21 @@
+ 
+         if (p_i995_2_ instanceof PlayerEntity)
+         {
++        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i2360_2_.getUniqueID());
++        	if (vp !=null && vp.isVR())
++        	{
++        		//VIVE SET SPAWNPOS
++        		if(this instanceof TridentEntity) {
++        	        Vec3d aimSource = vp.getControllerPos(0);
++        	        Vec3d aimDir = vp.getControllerDir(0);     
++            		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
++        		} else {
++        	        Vec3d aimSource = (vp.isSeated() || vp.getDraw()==0) ? vp.getControllerPos(0): vp.getControllerPos(1);
++        	        Vec3d aimDir = getVRAim(vp).scale(0.6f);        
++            		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
++        		}     			
++        		//
++        	}
+             this.pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
+         }
+     }
+@@ -112,9 +131,34 @@
+         this.dataManager.register(field_212362_a, Optional.empty());
+         this.dataManager.register(PIERCE_LEVEL, (byte)0);
+     }
+-
++    public Vec3d getVRAim(ServerVivePlayer vp){
++		Vec3d aim = vp.getControllerDir(0);
++    	if(!vp.isSeated() && vp.getDraw() > 0){
++    		aim = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
++    	}
++    	return aim;
++    }
+     public void shoot(Entity shooter, float pitch, float yaw, float p_184547_4_, float velocity, float inaccuracy)
+     {
++    	//VIVE SET AIM AND SPEED
++        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
++        if (vp !=null && vp.isVR())
++        { 
++        	if(this instanceof TridentEntity) {
++        		Vec3d aim = vp.getControllerDir(0);
++    			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
++    			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		       		
++        	} else {
++        		Vec3d aim = getVRAim(vp);
++            	if(!vp.isSeated() && vp.getDraw() > 0){
++            		velocity = velocity * vp.getDraw();  
++            		this.damage *= 2;
++            	}
++    			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
++    			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
++        	}
++        }
++        ///
+         float f = -MathHelper.sin(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
+         float f1 = -MathHelper.sin(pitch * ((float)Math.PI / 180F));
+         float f2 = MathHelper.cos(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));

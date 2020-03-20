@@ -1,0 +1,157 @@
+--- a/net/minecraft/client/renderer/WorldRenderer.java
++++ b/net/minecraft/client/renderer/WorldRenderer.java
+@@ -55,6 +55,7 @@
+ import net.minecraft.client.renderer.entity.EntityRendererManager;
+ import net.minecraft.client.renderer.entity.ItemFrameRenderer;
+ import net.minecraft.client.renderer.model.ModelBakery;
++import net.minecraft.client.renderer.model.ModelResourceLocation;
+ import net.minecraft.client.renderer.texture.AtlasTexture;
+ import net.minecraft.client.renderer.texture.TextureManager;
+ import net.minecraft.client.renderer.tileentity.SignTileEntityRenderer;
+@@ -136,6 +137,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ import org.lwjgl.opengl.GL11;
++import org.vivecraft.provider.MCOpenVR;
+ 
+ public class WorldRenderer implements AutoCloseable, IResourceManagerReloadListener
+ {
+@@ -2161,7 +2163,7 @@
+ 
+             if (flag)
+             {
+-                Shaders.disableTexture2D();
++                Shaders.disableTexture();
+             }
+ 
+             Vec3d vec3d = this.world.getSkyColor(this.mc.gameRenderer.getActiveRenderInfo().getBlockPos(), partialTicks);
+@@ -2219,7 +2221,7 @@
+ 
+                 if (flag)
+                 {
+-                    Shaders.disableTexture2D();
++                    Shaders.disableTexture();
+                 }
+ 
+                 RenderSystem.shadeModel(7425);
+@@ -2254,7 +2256,7 @@
+ 
+             if (flag)
+             {
+-                Shaders.enableTexture2D();
++                Shaders.enableTexture();
+             }
+ 
+             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+@@ -2316,7 +2318,7 @@
+ 
+             if (flag)
+             {
+-                Shaders.disableTexture2D();
++                Shaders.disableTexture();
+             }
+ 
+             float f12 = this.world.getStarBrightness(partialTicks) * f10;
+@@ -3282,6 +3284,8 @@
+     {
+         Random random = this.world.rand;
+ 
++        boolean playernear =  mc.player !=null && mc.player.isAlive() && (mc.player.getPosition().distanceSq(blockPosIn) < 25); ///hmm sure why not.
++        
+         switch (type)
+         {
+             case 1000:
+@@ -3337,18 +3341,26 @@
+                 break;
+ 
+             case 1011:
++                if(playernear)
++                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
+                 this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_DOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
+                 break;
+ 
+             case 1012:
++                if(playernear)
++                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
+                 this.world.playSound(blockPosIn, SoundEvents.BLOCK_WOODEN_DOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
+                 break;
+ 
+             case 1013:
++                if(playernear)
++                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
+                 this.world.playSound(blockPosIn, SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
+                 break;
+ 
+             case 1014:
++                if(playernear)
++                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
+                 this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
+                 break;
+ 
+@@ -3369,14 +3381,26 @@
+                 break;
+ 
+             case 1019:
++                if(playernear){ //this is just mean.
++                	MCOpenVR.triggerHapticPulse(0,750); 
++                	MCOpenVR.triggerHapticPulse(1,750); 
++                }
+                 this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
+                 break;
+ 
+             case 1020:
++                if(playernear){ //this is just mean.
++                	MCOpenVR.triggerHapticPulse(0,750); 
++                	MCOpenVR.triggerHapticPulse(1,750); 
++                }
+                 this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
+                 break;
+ 
+             case 1021:
++                if(playernear){ //this is just mean.
++                	MCOpenVR.triggerHapticPulse(0,750); 
++                	MCOpenVR.triggerHapticPulse(1,750); 
++                }
+                 this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
+                 break;
+ 
+@@ -3405,10 +3429,17 @@
+                 break;
+ 
+             case 1030:
++                if(playernear){ 
++                	MCOpenVR.triggerHapticPulse(0,500); 
++                }
+                 this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
+                 break;
+ 
+             case 1031:
++                if(playernear){ 
++                	MCOpenVR.triggerHapticPulse(0,1250); 
++                	MCOpenVR.triggerHapticPulse(1,1250); 
++                }
+                 this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
+                 break;
+ 
+@@ -3429,6 +3460,9 @@
+                 break;
+ 
+             case 1036:
++
++                if(playernear)
++                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
+                 this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
+                 break;
+ 
+@@ -3963,4 +3997,11 @@
+             this.counter = p_initialize_3_;
+         }
+     }
++    
++    //**Vivecraft Additions
++    
++	public void renderCustomModel(ModelResourceLocation model){
++		mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
++		mc.getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(mc.modelManager.getModel(model), 1.0F, 1.0F, 1.0F, 1.0F);
++	}
+ }

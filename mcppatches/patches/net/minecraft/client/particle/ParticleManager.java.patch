@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/particle/ParticleManager.java
++++ b/net/minecraft/client/particle/ParticleManager.java
+@@ -177,7 +177,7 @@
+             preparationsProfiler.endSection();
+             preparationsProfiler.endTick();
+             return atlastexture$sheetdata;
+-        }, backgroundExecutor).<Void>thenCompose(stage::markCompleteAwaitingOthers).thenAcceptAsync((p_lambda$reload$5_3_) ->
++        }, backgroundExecutor).thenCompose(stage::markCompleteAwaitingOthers).thenAcceptAsync((p_lambda$reload$5_3_) ->
+         {
+             this.byType.clear();
+             reloadProfiler.startTick();
+@@ -267,7 +267,7 @@
+     @Nullable
+     private <T extends IParticleData> Particle makeParticle(T particleData, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+     {
+-        IParticleFactory<T> iparticlefactory = this.factories.get(Registry.PARTICLE_TYPE.getKey(particleData.getType()));
++        IParticleFactory<T> iparticlefactory = (IParticleFactory<T>) this.factories.get(Registry.PARTICLE_TYPE.getKey(particleData.getType()));
+         return iparticlefactory == null ? null : iparticlefactory.makeParticle(particleData, this.world, x, y, z, xSpeed, ySpeed, zSpeed);
+     }
+ 

@@ -1,0 +1,13 @@
+﻿diff -r -U 3 minecraft\net\minecraft\realms\RealmsObjectSelectionListProxy.java minecraft_patched\net\minecraft\realms\RealmsObjectSelectionListProxy.java
+--- minecraft\net\minecraft\realms\RealmsObjectSelectionListProxy.java
++++ minecraft_patched\net\minecraft\realms\RealmsObjectSelectionListProxy.java
+@@ -68,7 +68,7 @@
+    }
+ 
+    public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
+-      return this.realmsObjectSelectionList.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_) ? true : access$001(this, p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
++      return this.realmsObjectSelectionList.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_) ? true : super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
+    }
+ 
+    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
+

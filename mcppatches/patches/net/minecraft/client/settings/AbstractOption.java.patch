@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/settings/AbstractOption.java
++++ b/net/minecraft/client/settings/AbstractOption.java
+@@ -113,7 +113,7 @@
+     });
+     public static final SliderPercentageOption FRAMERATE_LIMIT = new SliderPercentageOption("options.framerateLimit", 0.0D, 260.0D, 5.0F, (p_lambda$static$21_0_) ->
+     {
+-        return p_lambda$static$21_0_.vsync ? FRAMERATE_LIMIT.getMinValue() : (double)p_lambda$static$21_0_.framerateLimit;
++        return p_lambda$static$21_0_.vsync ? 0: (double)p_lambda$static$21_0_.framerateLimit;
+     }, (p_lambda$static$22_0_, p_lambda$static$22_1_) ->
+     {
+         p_lambda$static$22_0_.framerateLimit = p_lambda$static$22_1_.intValue();
+@@ -121,7 +121,7 @@
+ 
+         if (p_lambda$static$22_0_.framerateLimit <= 0)
+         {
+-            p_lambda$static$22_0_.framerateLimit = (int)FRAMERATE_LIMIT.getMaxValue();
++            p_lambda$static$22_0_.framerateLimit = 260;
+             p_lambda$static$22_0_.vsync = true;
+         }
+ 

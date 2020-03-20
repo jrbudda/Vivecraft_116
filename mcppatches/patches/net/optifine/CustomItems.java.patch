@@ -1,0 +1,49 @@
+--- a/net/optifine/CustomItems.java
++++ b/net/optifine/CustomItems.java
+@@ -520,11 +520,11 @@
+ 
+         for (int i = 0; i < list.size(); ++i)
+         {
+-            List list = (List)list.get(i);
++            List lista = (List)list.get(i);
+ 
+-            if (list != null)
++            if (lista != null)
+             {
+-                CustomItemProperties[] acustomitemproperties1 = list.toArray(new CustomItemProperties[list.size()]);
++                CustomItemProperties[] acustomitemproperties1 = (CustomItemProperties[]) lista.toArray(new CustomItemProperties[lista.size()]);
+                 Arrays.sort(acustomitemproperties1, new CustomItemsComparator());
+                 acustomitemproperties[i] = acustomitemproperties1;
+             }
+@@ -596,15 +596,15 @@
+             list.add((List<CustomItemProperties>)null);
+         }
+ 
+-        List<CustomItemProperties> list = list.get(id);
++        List<CustomItemProperties> lista = list.get(id);
+ 
+-        if (list == null)
++        if (lista == null)
+         {
+-            list = new ArrayList<>();
+-            list.set(id, list);
++            lista = new ArrayList<>();
++            list.set(id, lista);
+         }
+ 
+-        list.add(cp);
++        lista.add(cp);
+     }
+ 
+     public static IBakedModel getCustomItemModel(ItemStack itemStack, IBakedModel model, ResourceLocation modelLocation, boolean fullModel)
+@@ -1209,8 +1209,8 @@
+         return useGlint;
+     }
+ 
+-    public static void setRenderOffHand(boolean renderOffHand)
++    public static void setRenderOffHand(boolean renderOffHandin)
+     {
+-        renderOffHand = renderOffHand;
++        renderOffHand = renderOffHandin;
+     }
+ }

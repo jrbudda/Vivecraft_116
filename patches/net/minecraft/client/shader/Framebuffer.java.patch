@@ -1,0 +1,80 @@
+--- a/net/minecraft/client/shader/Framebuffer.java
++++ b/net/minecraft/client/shader/Framebuffer.java
+@@ -3,6 +3,10 @@
+ import com.mojang.blaze3d.platform.GlStateManager;
+ import com.mojang.blaze3d.systems.RenderSystem;
+ import java.nio.IntBuffer;
++
++import org.lwjgl.opengl.GL11;
++import org.lwjgl.opengl.GL30;
++
+ import net.minecraft.client.renderer.BufferBuilder;
+ import net.minecraft.client.renderer.Tessellator;
+ import net.minecraft.client.renderer.texture.TextureUtil;
+@@ -232,7 +236,7 @@
+         this.framebufferRenderExt(width, height, true);
+     }
+ 
+-    public void framebufferRenderExt(int width, int height, boolean p_178038_3_)
++    public void framebufferRenderExt(int left, int width, int height, int top, boolean disableBlend)
+     {
+         RenderSystem.assertThread(RenderSystem::isOnGameThreadOrInit);
+ 
+@@ -307,4 +311,57 @@
+         GlStateManager.clear(i, onMac);
+         this.unbindFramebuffer();
+     }
++    //Vivecraft Additions
++    public Framebuffer(String name, int width, int height, boolean useDepth, boolean generateMipMaps)
++    {
++        this(name, width, height, useDepth, generateMipMaps, false, 0,-1, true);
++    }
++    
++    public Framebuffer(String name, int width, int height, boolean useDepth, boolean generateMipMaps, boolean multisample, int multisamplecount, int textureID, boolean textureDepth)
++    {
++    	this.name = name;
++        this.useDepth = useDepth;
++        this.framebufferObject = -1;       
++        this.framebufferTexture = NO_TEXTURE_ID;
++        this.generatedFramebufferTexture = true;
++        this.depthBuffer = -1;
++        this.framebufferColor = new float[4];
++        this.framebufferColor[0] = 1.0F;
++        this.framebufferColor[1] = 1.0F;
++        this.framebufferColor[2] = 1.0F;
++        this.framebufferColor[3] = 0.0F;
++        this.genMipMaps = generateMipMaps;
++        this.useTextureInsteadofRenderBuffer = textureDepth;
++//        this.multiSample = multisample;
++//        if (this.multiSample) {
++//            this.multiSampleCount = multisamplecount;
++//            this.textureType = GL32.GL_TEXTURE_2D_MULTISAMPLE;
++//        }
++
++        this.func_216491_a(width, height, false, textureID);
++    }
++    public void genMipMaps()
++    {
++        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);    // TODO: Minecrift - Check GLContext capabilities
++    }
++    public void createBindFramebuffer(int width, int height, boolean is_mac){
++    	this.func_216491_a(width, height, is_mac, NO_TEXTURE_ID);
++    }
++    
++    public void framebufferRenderExt(int width, int height, boolean noblend)
++    {
++        this.framebufferRenderExt(0,width, height,0, noblend);
++    }
++    
++    public String toString()
++    {
++        StringBuilder sb = new StringBuilder();
++        sb.append("\n");
++        if (name != null) sb.append("Name:   " + name).append("\n");
++        sb.append("Size:   " + framebufferWidth + " x " + framebufferHeight).append("\n");
++        sb.append("FB ID:  " + framebufferObject).append("\n");
++        sb.append("Tex ID: " + framebufferTexture).append("\n");
++        return sb.toString();
++    }
++    
+ }

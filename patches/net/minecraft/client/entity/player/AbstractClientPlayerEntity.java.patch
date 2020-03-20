@@ -1,0 +1,29 @@
+--- a/net/minecraft/client/entity/player/AbstractClientPlayerEntity.java
++++ b/net/minecraft/client/entity/player/AbstractClientPlayerEntity.java
+@@ -4,6 +4,9 @@
+ import com.mojang.authlib.GameProfile;
+ import java.io.File;
+ import javax.annotation.Nullable;
++
++import org.vivecraft.api.PatreonReceiver;
++
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.network.play.NetworkPlayerInfo;
+ import net.minecraft.client.renderer.texture.DownloadingTexture;
+@@ -20,6 +23,7 @@
+ import net.minecraft.util.StringUtils;
+ import net.minecraft.world.GameType;
+ import net.optifine.Config;
++import net.optifine.http.FileDownloadThread;
+ import net.optifine.player.CapeUtils;
+ import net.optifine.player.PlayerConfigurations;
+ import net.optifine.reflect.Reflector;
+@@ -52,6 +56,8 @@
+ 
+         CapeUtils.downloadCape(this);
+         PlayerConfigurations.getPlayerConfiguration(this);
++        
++        PatreonReceiver.addPlayerInfo(this);
+     }
+ 
+     public boolean isSpectator()

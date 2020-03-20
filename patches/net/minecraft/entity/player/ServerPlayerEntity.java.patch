@@ -1,0 +1,145 @@
+--- a/net/minecraft/entity/player/ServerPlayerEntity.java
++++ b/net/minecraft/entity/player/ServerPlayerEntity.java
+@@ -33,6 +33,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.Items;
+ import net.minecraft.item.MerchantOffers;
++import net.minecraft.item.UseAction;
+ import net.minecraft.item.WrittenBookItem;
+ import net.minecraft.item.crafting.IRecipe;
+ import net.minecraft.item.crafting.ServerRecipeBook;
+@@ -70,8 +71,13 @@
+ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+ import net.minecraft.network.play.server.SWindowItemsPacket;
+ import net.minecraft.network.play.server.SWindowPropertyPacket;
++import net.minecraft.particles.ItemParticleData;
++import net.minecraft.particles.ParticleType;
++import net.minecraft.particles.ParticleTypes;
+ import net.minecraft.potion.EffectInstance;
+ import net.minecraft.potion.Effects;
++import net.minecraft.potion.PotionUtils;
++import net.minecraft.potion.Potions;
+ import net.minecraft.scoreboard.Score;
+ import net.minecraft.scoreboard.ScoreCriteria;
+ import net.minecraft.scoreboard.ScorePlayerTeam;
+@@ -95,6 +101,7 @@
+ import net.minecraft.util.ServerCooldownTracker;
+ import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.SoundEvent;
++import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.Unit;
+ import net.minecraft.util.Util;
+ import net.minecraft.util.math.BlockPos;
+@@ -115,6 +122,8 @@
+ import net.minecraft.world.storage.WorldInfo;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.ServerVivePlayer;
+ 
+ public class ServerPlayerEntity extends PlayerEntity implements IContainerListener
+ {
+@@ -322,6 +331,20 @@
+     public void addSelfToInternalCraftingInventory()
+     {
+         this.openContainer.addListener(this);
++
++		ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
++		if (vp != null && vp.isVR()) {
++			if (rand.nextInt(20) == 3) {
++				ItemStack stack;
++				if (rand.nextInt(2) == 1)
++					stack = new ItemStack(Items.PUMPKIN_PIE).setDisplayName(new StringTextComponent("EAT ME"));
++				else
++					stack = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), Potions.WATER)
++					.setDisplayName(new StringTextComponent("DRINK ME"));
++				if (this.inventory.addItemStackToInventory(stack))
++					this.container.detectAndSendChanges();
++			}
++		}
+     }
+ 
+     public void sendEnterCombat()
+@@ -1507,6 +1530,75 @@
+             this.server.getPlayerList().sendInventory(this);
+         }
+     }
++	@Override
++	public void spawnSweepParticles() {
++		ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
++		if (vp == null || vp.isVR() == false) {
++			super.spawnSweepParticles();
++		} else {
++			// VIVECRAFT USE CONTROLLER - which controller? have to assume 0.
++
++			Vec3d aim = vp.getControllerDir(0);
++			float yaw = (float) Math.toDegrees(Math.atan2(aim.x, -aim.z));
++
++			double d0 = (double) (-MathHelper.sin(yaw * 0.017453292F));
++			double d1 = (double) MathHelper.cos(yaw * 0.017453292F);
++
++			Vec3d pos = vp.getControllerPos(0);
++
++			if (this.world instanceof ServerWorld) // has to be
++			{
++				((ServerWorld) this.world).spawnParticle(ParticleTypes.SWEEP_ATTACK, pos.x + d0, pos.y, pos.z + d1, 0, d0,
++						0.0D, d1, 0.0D);
++			}
++			// END
++		}
++	}
++
++	@Override
++	protected void updateItemUse(ItemStack stack, int eatingParticleCount) {
++		ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
++		if (vp == null || vp.isVR() == false) {
++			super.updateItemUse(stack, eatingParticleCount);
++		} else {
++			if (!stack.isEmpty() && this.isHandActive()) {
++				if (stack.getUseAction() == UseAction.DRINK) {
++					this.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
++				}
++
++				if (stack.getUseAction() == UseAction.EAT) {
++					for (int i = 0; i < eatingParticleCount; ++i) {
++						Vec3d vec3d = new Vec3d(((double) this.rand.nextFloat() - 0.5D) * 0.1D,
++								Math.random() * 0.1D + 0.1D, 0.0D);
++						vec3d = vec3d.rotatePitch(-this.rotationPitch * 0.017453292F);
++						vec3d = vec3d.rotateYaw(-this.rotationYaw * 0.017453292F);
++						double d0 = (double) (-this.rand.nextFloat()) * 0.6D - 0.3D;
++						Vec3d vec3d1 = new Vec3d(((double) this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
++						vec3d1 = vec3d1.rotatePitch(-this.rotationPitch * 0.017453292F);
++						vec3d1 = vec3d1.rotateYaw(-this.rotationYaw * 0.017453292F);
++
++						vec3d1 = vec3d1.add(this.posX, this.posY + (double) this.getEyeHeight(), this.posZ);
++
++						// VIVE
++						Hand hand = getActiveHand();
++						if (hand == Hand.MAIN_HAND) {
++							vec3d1 = vp.getControllerPos(0);
++						} else {
++							vec3d1 = vp.getControllerPos(1);
++						}
++						//
++
++						this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vec3d1.x, vec3d1.y,
++								vec3d1.z, vec3d.x, vec3d.y + 0.05D, vec3d.z);
++
++					}
++
++					this.playSound(SoundEvents.ENTITY_GENERIC_EAT, 0.5F + 0.5F * (float) this.rand.nextInt(2),
++							(this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
++				}
++			}
++		}
++	}
+ 
+     public void sendChunkLoad(ChunkPos p_213844_1_, IPacket<?> p_213844_2_, IPacket<?> p_213844_3_)
+     {
+@@ -1568,4 +1660,4 @@
+             return itementity;
+         }
+     }
+-}
++}
+\ No newline at end of file

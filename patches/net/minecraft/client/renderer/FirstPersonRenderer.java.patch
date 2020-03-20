@@ -1,0 +1,177 @@
+--- a/net/minecraft/client/renderer/FirstPersonRenderer.java
++++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
+@@ -2,8 +2,12 @@
+ 
+ import com.google.common.base.MoreObjects;
+ import com.mojang.blaze3d.matrix.MatrixStack;
++import com.mojang.blaze3d.platform.GlStateManager;
+ import com.mojang.blaze3d.vertex.IVertexBuilder;
+ import java.util.Objects;
++
++import org.lwjgl.opengl.GL11;
++
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+ import net.minecraft.client.entity.player.ClientPlayerEntity;
+@@ -20,6 +24,7 @@
+ import net.minecraft.util.Hand;
+ import net.minecraft.util.HandSide;
+ import net.minecraft.util.ResourceLocation;
++import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.storage.MapData;
+ import net.optifine.Config;
+@@ -556,4 +561,153 @@
+             this.equippedProgressOffHand = 0.0F;
+         }
+     }
++    
++    //VIVECRAFT ADDITIONS
++    public float getEquipProgress(Hand hand, float partialTicks){
++    	if(hand == Hand.MAIN_HAND)
++    		return 1.0f- (this.prevEquippedProgressMainHand + (this.equippedProgressMainHand - this.prevEquippedProgressMainHand) * partialTicks);
++    	else
++    		return 1.0F - (this.prevEquippedProgressOffHand + (this.equippedProgressOffHand - this.prevEquippedProgressOffHand) * partialTicks);
++    }
++
++    public void renderFaceInBlock() {
++        Tessellator tessellator = Tessellator.getInstance();
++        BufferBuilder bufferbuilder = tessellator.getBuffer();
++        
++        GlStateManager.color4f(0f, 0F, 0F, mc.gameRenderer.inBlock);
++        
++        GlStateManager.matrixMode(GL11.GL_PROJECTION);
++        GlStateManager.pushMatrix();
++        	GlStateManager.loadIdentity();
++	        GlStateManager.ortho(0.0D, 1, 0, 1, 0, 100);
++	        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
++	        GlStateManager.pushMatrix();
++		        GlStateManager.loadIdentity();
++		        
++		        GlStateManager.disableDepthTest();
++		        GlStateManager.disableTexture();
++		        GlStateManager.enableBlend();	               
++		        GlStateManager.disableCull();
++
++		        bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
++		        bufferbuilder.pos(-1 ,-1, 0).endVertex();
++		        bufferbuilder.pos(2, -1, 0).endVertex();
++		        bufferbuilder.pos(2, 2, 0).endVertex();
++		        bufferbuilder.pos(-1, 2, 0).endVertex();
++		        tessellator.draw();
++		        
++
++	        GlStateManager.matrixMode(GL11.GL_PROJECTION);
++	        GlStateManager.popMatrix();
++        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
++        GlStateManager.popMatrix();
++        
++        //GlStateManager.enableDepth();
++        GlStateManager.enableTexture();
++        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
++    }
++    
++    public boolean isInsideOpaqueBlock(Vec3d in, boolean set)
++    {
++
++    	if (mc.world == null) return false;
++    	BlockPos bp = new BlockPos(in);
++    	
++    	if(mc.world.getBlockState(bp).causesSuffocation(mc.world, bp)) {
++    		mc.gameRenderer.inBlock = 1;
++    		return true;
++    	}
++    	
++    	if(!set) return false;
++    	mc.gameRenderer.inBlock = 0;    	
++    	Vec3d pos = in.add(0, 0, 0);
++    	float per = 0;
++    	float buffer = .07f;	
++    	
++    	if((pos.x - Math.floor(pos.x)) < buffer) 
++    	{
++    		per = (float) (pos.x - Math.floor(pos.x));
++    		mc.gameRenderer.inBlock = (buffer - per) / buffer; 
++    		if (mc.world.getBlockState(bp.west()).causesSuffocation(mc.world, bp.west())) return true;
++    	}
++    	
++    	if(pos.x - Math.floor(pos.x) > 1-buffer){
++    		per = 1f - (float) (pos.x - Math.floor(pos.x));
++    		mc.gameRenderer.inBlock = (buffer - per) / buffer; 
++    		if (mc.world.getBlockState(bp.east()).causesSuffocation(mc.world, bp.east())) return true;
++    	}
++    	
++    	if((pos.y - Math.floor(pos.y)) < buffer) 
++    	{
++    		per = (float) (pos.y - Math.floor(pos.y));
++    		mc.gameRenderer.inBlock = (buffer - per) / buffer; 
++    		if (mc.world.getBlockState(bp.down()).causesSuffocation(mc.world, bp.down())) return true;
++    	} 
++    	
++    	if(pos.y - Math.floor(pos.y) > 1-buffer){
++    		per = 1f - (float) (pos.y - Math.floor(pos.y));
++    		mc.gameRenderer.inBlock = (buffer - per) / buffer; 
++    		if (mc.world.getBlockState(bp.up()).causesSuffocation(mc.world,bp.up())) return true;
++    	}
++    	
++    	if((pos.z - Math.floor(pos.z)) < buffer) 
++    	{
++    		per = (float) (pos.z - Math.floor(pos.z));
++    		mc.gameRenderer.inBlock = (buffer - per) / buffer; 
++    		if (mc.world.getBlockState(bp.north()).causesSuffocation(mc.world, bp.north())) return true;
++    	} 
++    	
++    	if(pos.z - Math.floor(pos.z) > 1-buffer){
++    		per = 1f - (float) (pos.z - Math.floor(pos.z));
++    		mc.gameRenderer.inBlock = (buffer - per) / buffer; 
++    		if (mc.world.getBlockState(bp.south()).causesSuffocation(mc.world, bp.south())) return true;
++    	}
++
++    	return false;
++    	
++    }
++    
++    public void renderFaceOverlay(float par1){ //replaced with shader
++    	boolean shadersMod = Config.isShaders();
++    	if (shadersMod) {
++    		//just disables caps
++    		Shaders.beginFPOverlay();
++    	}
++
++    	if(mc.gameRenderer.inblock) {
++    		renderFaceInBlock();
++    		mc.gameRenderer.renderVRGuiElements(false, par1);
++    	}
++
++    	if(mc.gameRenderer.onfire)
++    		renderFireInFirstPerson();
++
++    	if (shadersMod) {
++    		//does nothing at all.
++    		Shaders.endFPOverlay();
++    	}
++    }
++    
++//    public boolean isInsideOfMaterial(Vec3d pos, Material materialIn)
++//    {
++//    	BlockPos blockpos = new BlockPos(pos);
++//    	BlockState BlockState = mc.world.getBlockState(blockpos);
++//    	BlockState BlockStateup = mc.world.getBlockState(blockpos.up());
++//
++//    	if (BlockState.getMaterial() == materialIn)
++//    	{
++//    		float f = BlockLiquid.getLiquidHeightPercent(BlockState.getBlock().getMetaFromState(BlockState)) -0.11111111F;;
++//    		if(BlockStateup.getMaterial() != materialIn && materialIn instanceof MaterialLiquid) f+=0.09F;
++//    		
++//    		//float f1 = (float)(blockpos.getY() + 1) - f;
++//    		boolean flag = (pos.y-blockpos.getY()) < (1-f);
++//    		return flag;
++//    	}
++//    	else
++//    	{
++//    		return false;
++//    	}
++//   }
++    //
++    
+ }

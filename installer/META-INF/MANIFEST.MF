@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: Installer
+TweakClass: com.mtbs3d.minecrift.tweaker.MinecriftForgeTweaker
+TweakOrder: -2000
+

@@ -1,0 +1,31 @@
+--- a/net/minecraft/util/concurrent/ITaskQueue.java
++++ b/net/minecraft/util/concurrent/ITaskQueue.java
+@@ -4,6 +4,7 @@
+ import java.util.Collection;
+ import java.util.List;
+ import java.util.Queue;
++import java.util.concurrent.ConcurrentLinkedQueue;
+ import java.util.stream.Collectors;
+ import java.util.stream.IntStream;
+ import javax.annotation.Nullable;
+@@ -19,7 +20,7 @@
+ 
+     public static final class Priority implements ITaskQueue<ITaskQueue.RunnableWithPriority, Runnable>
+     {
+-        private final List<Queue<Runnable>> queues;
++        private final List<ConcurrentLinkedQueue<Object>> queues;
+ 
+         public Priority(int p_i447_1_)
+         {
+@@ -32,9 +33,9 @@
+         @Nullable
+         public Runnable poll()
+         {
+-            for (Queue<Runnable> queue : this.queues)
++            for (ConcurrentLinkedQueue<Object> queue : this.queues)
+             {
+-                Runnable runnable = queue.poll();
++                Runnable runnable = (Runnable) queue.poll();
+ 
+                 if (runnable != null)
+                 {

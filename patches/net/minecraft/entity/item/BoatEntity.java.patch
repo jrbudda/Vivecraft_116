@@ -1,0 +1,116 @@
+--- a/net/minecraft/entity/item/BoatEntity.java
++++ b/net/minecraft/entity/item/BoatEntity.java
+@@ -6,6 +6,7 @@
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.block.LilyPadBlock;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityType;
+ import net.minecraft.entity.LivingEntity;
+@@ -738,14 +739,18 @@
+         {
+             float f = 0.0F;
+ 
++    		//Vivecraft
++    		Minecraft mc = Minecraft.getInstance();
++    		float strafe = mc.player.movementInput.moveStrafe;
++    		
+             if (this.leftInputDown)
+             {
+-                --this.deltaRotation;
++    			this.deltaRotation -= strafe;
+             }
+ 
+             if (this.rightInputDown)
+             {
+-                ++this.deltaRotation;
++    			this.deltaRotation -= strafe;
+             }
+ 
+             if (this.rightInputDown != this.leftInputDown && !this.forwardInputDown && !this.backInputDown)
+@@ -765,7 +770,83 @@
+                 f -= 0.005F;
+             }
+ 
+-            this.setMotion(this.getMotion().add((double)(MathHelper.sin(-this.rotationYaw * ((float)Math.PI / 180F)) * f), 0.0D, (double)(MathHelper.cos(this.rotationYaw * ((float)Math.PI / 180F)) * f)));
++			double mx, mz;
++
++    		if(this.forwardInputDown && !mc.vrSettings.seated){
++    			//controller-based
++    			float yaw = mc.vrPlayer.vrdata_world_pre.getController(1).getYaw();     
++    			if(mc.vrSettings.vehicleRotation){
++    				//tank controls
++    				float end = this.rotationYaw % 360;
++    				float start = yaw;
++    				float difference = Math.abs(end - start);
++
++    				if (difference > 180)
++    					if (end > start)
++    						start += 360;
++    					else
++    						end += 360;
++
++    				difference = end - start;
++
++    				f = 0;
++
++    				if (Math.abs(difference) < 30){
++    					f = 0.04f;
++    				} 
++    				else if (Math.abs(difference) > 150) {
++    					f = -0.005F;
++    				}
++    				else if(difference < 0){
++    					this.deltaRotation +=1;
++    					f = 0.005f;
++    				} else if(difference > 0) {
++    					this.deltaRotation -=1;
++    					f = 0.005f;
++    				}
++
++     				mx = (double)(MathHelper.sin(-this.rotationYaw* 0.017453292F) * f);
++    				mz = (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
++    			} else {
++    				//point to move
++    				mx = (double)(MathHelper.sin(-yaw* 0.017453292F) * f);
++    				mz = (double)(MathHelper.cos(yaw * 0.017453292F) * f);
++    				this.rotationYaw =yaw;
++    			}
++    			
++
++    		} else {
++    			//roomscale or vanilla behavior
++    			if(mc.rowTracker.isRowing() && !mc.vrSettings.seated){
++    			
++    				this.deltaRotation += mc.rowTracker.LOar / 1.5;
++    				this.deltaRotation -= mc.rowTracker.ROar / 1.5;
++    				/*
++    				this.deltaRotation += mc.rowTracker.forces[0] *50;
++    				this.deltaRotation -= mc.rowTracker.forces[1] *50;
++    				 */
++    				
++    				if (deltaRotation < 0) this.leftInputDown = true;
++    				if (deltaRotation > 0) this.rightInputDown = true;
++
++    				f = 0.06f * mc.rowTracker.Foar;
++    				if(f > 0) this.forwardInputDown = true;
++    				
++    				/*
++    				f=(float)(mc.rowTracker.forces[0] + mc.rowTracker.forces[1]);
++    				if(f > 0.005) this.forwardInputDown = true;
++    				*/
++
++    				mx= (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
++    				mz= (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
++    			}else{
++    				//default boat (seated mode)
++    				mx= (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
++    				mz= (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
++    			}
++    		}
++    		//  		
++			this.setMotion(this.getMotion().x + mx, this.getMotion().y, this.getMotion().z + mz);
+             this.setPaddleState(this.rightInputDown && !this.leftInputDown || this.forwardInputDown, this.leftInputDown && !this.rightInputDown || this.forwardInputDown);
+         }
+     }

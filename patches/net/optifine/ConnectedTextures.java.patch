@@ -1,0 +1,11 @@
+--- a/net/optifine/ConnectedTextures.java
++++ b/net/optifine/ConnectedTextures.java
+@@ -2269,7 +2269,7 @@
+             }
+             catch (FileNotFoundException var11)
+             {
+-                Config.warn("ConnectedTextures file not found: " + s);
++                Config.warn("ConnectedTextures file not found: " + s + " " + var11.getMessage());
+             }
+             catch (Exception exception)
+             {

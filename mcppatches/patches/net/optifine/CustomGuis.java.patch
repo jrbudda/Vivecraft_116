@@ -1,0 +1,14 @@
+--- a/net/optifine/CustomGuis.java
++++ b/net/optifine/CustomGuis.java
+@@ -330,9 +330,9 @@
+         return playerControllerOF;
+     }
+ 
+-    public static void setPlayerControllerOF(PlayerControllerOF playerControllerOF)
++    public static void setPlayerControllerOF(PlayerControllerOF playerControllerOFin)
+     {
+-        playerControllerOF = playerControllerOF;
++        playerControllerOF = playerControllerOFin;
+     }
+ 
+     private static boolean isChristmas()

@@ -1,0 +1,12 @@
+--- a/net/optifine/reflect/Reflector.java
++++ b/net/optifine/reflect/Reflector.java
+@@ -1298,4 +1298,9 @@
+         LOGGER.info("[OptiFine] " + str);
+         return true;
+     }
++
++	public static boolean forgeExists() {
++		// TODO Auto-generated method stub
++		return false;
++	}
+ }

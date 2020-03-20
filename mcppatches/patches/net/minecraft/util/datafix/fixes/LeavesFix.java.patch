@@ -1,0 +1,44 @@
+--- a/net/minecraft/util/datafix/fixes/LeavesFix.java
++++ b/net/minecraft/util/datafix/fixes/LeavesFix.java
+@@ -265,7 +265,7 @@
+ 
+             for (int i = 0; i < this.palette.size(); ++i)
+             {
+-                Dynamic<?> dynamic = this.palette.get(i);
++                Dynamic<?> dynamic = (Dynamic<?>) this.palette.get(i);
+                 String s = dynamic.get("Name").asString("");
+ 
+                 if (LeavesFix.LEAVES.containsKey(s))
+@@ -308,12 +308,12 @@
+ 
+         private int getDistance(int p_208459_1_)
+         {
+-            return this.isLog(p_208459_1_) ? 0 : Integer.parseInt(this.palette.get(p_208459_1_).get("Properties").get("distance").asString(""));
++            return this.isLog(p_208459_1_) ? 0 : Integer.parseInt(((Dynamic<?>) (this.palette.get(p_208459_1_))).get("Properties").get("distance").asString(""));
+         }
+ 
+         private void setDistance(int p_208454_1_, int p_208454_2_, int p_208454_3_)
+         {
+-            Dynamic<?> dynamic = this.palette.get(p_208454_2_);
++            Dynamic<?> dynamic = (Dynamic<?>) this.palette.get(p_208454_2_);
+             String s = dynamic.get("Name").asString("");
+             boolean flag = Objects.equals(dynamic.get("Properties").get("persistent").asString(""), "true");
+             int i = this.getStateId(s, flag, p_208454_3_);
+@@ -348,7 +348,7 @@
+     {
+         private final Type < Pair < String, Dynamic<? >>> blockStateType = DSL.named(TypeReferences.BLOCK_STATE.typeName(), DSL.remainderType());
+         protected final OpticFinder < List < Pair < String, Dynamic<? >>> > paletteFinder = DSL.fieldFinder("Palette", DSL.list(this.blockStateType));
+-        protected final List < Dynamic<? >> palette;
++        protected final List palette;
+         protected final int index;
+         @Nullable
+         protected BitArray storage;
+@@ -391,7 +391,7 @@
+             return this.isSkippable() ? p_208465_1_ : p_208465_1_.update(DSL.remainderFinder(), (p_212510_1_) ->
+             {
+                 return p_212510_1_.set("BlockStates", p_212510_1_.createLongList(Arrays.stream(this.storage.getBackingLongArray())));
+-            }).<List<Pair>>set((OpticFinder)this.paletteFinder, this.palette.stream().map((p_212509_0_) ->
++            }).set((OpticFinder)this.paletteFinder, this.palette.stream().map((p_212509_0_) ->
+             {
+                 return Pair.of(TypeReferences.BLOCK_STATE.typeName(), p_212509_0_);
+             }).collect(Collectors.toList()));

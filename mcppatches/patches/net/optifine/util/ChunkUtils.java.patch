@@ -1,0 +1,20 @@
+--- a/net/optifine/util/ChunkUtils.java
++++ b/net/optifine/util/ChunkUtils.java
+@@ -53,7 +53,7 @@
+             setter.accept(chunk, false);
+             List list2 = new ArrayList();
+ 
+-            for (Field field1 : list)
++            for (Field field1 : (List<Field>)list)
+             {
+                 list2.add(field1.get(chunk));
+             }
+@@ -61,7 +61,7 @@
+             setter.accept(chunk, true);
+             List list3 = new ArrayList();
+ 
+-            for (Field field2 : list)
++            for (Field field2 : (List<Field>)list)
+             {
+                 list3.add(field2.get(chunk));
+             }

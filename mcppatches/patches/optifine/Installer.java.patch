@@ -1,0 +1,38 @@
+--- a/optifine/Installer.java
++++ b/optifine/Installer.java
+@@ -109,8 +109,8 @@
+             String s = Utils.readFile(file1, "UTF-8");
+             JSONParser jsonparser = new JSONParser();
+             JSONObject jsonobject = (JSONObject)jsonparser.parse(s);
+-            JSONObject jsonobject1 = jsonobject.get("profiles");
+-            JSONObject jsonobject2 = jsonobject1.get("OptiFine");
++            JSONObject jsonobject1 = (JSONObject) jsonobject.get("profiles");
++            JSONObject jsonobject2 = (JSONObject) jsonobject1.get("OptiFine");
+ 
+             if (jsonobject2 == null)
+             {
+@@ -154,13 +154,13 @@
+         jsonobject1.put("type", "release");
+         JSONArray jsonarray = new JSONArray();
+         jsonobject1.put("libraries", jsonarray);
+-        String s1 = jsonobject.get("mainClass");
++        String s1 = (String) jsonobject.get("mainClass");
+ 
+         if (!s1.startsWith("net.minecraft.launchwrapper."))
+         {
+             s1 = "net.minecraft.launchwrapper.Launch";
+             jsonobject1.put("mainClass", s1);
+-            String s2 = jsonobject.get("minecraftArguments");
++            String s2 = (String) jsonobject.get("minecraftArguments");
+ 
+             if (s2 != null)
+             {
+@@ -349,7 +349,7 @@
+ 
+         try
+         {
+-            Enumeration<ZipEntry> enumeration = zipfile.entries();
++            Enumeration<ZipEntry> enumeration = (Enumeration<ZipEntry>) zipfile.entries();
+ 
+             while (enumeration.hasMoreElements())
+             {

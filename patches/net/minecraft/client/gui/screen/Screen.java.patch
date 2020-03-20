@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/gui/screen/Screen.java
++++ b/net/minecraft/client/gui/screen/Screen.java
+@@ -446,7 +446,16 @@
+     {
+         if (this.minecraft.world != null)
+         {
+-            this.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
++        	//Vivecraft
++        	if (minecraft.vrSettings != null && minecraft.vrSettings.menuBackground == false)
++        	{
++        		this.fillGradient(0, 0, this.width, this.height, 0, 0);
++        	}
++        	else
++        	{
++        		this.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
++        	}
++        	//
+         }
+         else
+         {

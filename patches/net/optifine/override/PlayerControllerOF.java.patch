@@ -1,0 +1,16 @@
+--- a/net/optifine/override/PlayerControllerOF.java
++++ b/net/optifine/override/PlayerControllerOF.java
+@@ -52,11 +52,11 @@
+         return actionresulttype;
+     }
+ 
+-    public ActionResultType func_217292_a(ClientPlayerEntity player, ClientWorld worldIn, Hand hand, BlockRayTraceResult rayTrace)
++    public ActionResultType processRightClickBlock(ClientPlayerEntity player, ClientWorld worldIn, Hand hand, BlockRayTraceResult rayTrace)
+     {
+         this.acting = true;
+         this.lastClickBlockPos = rayTrace.getPos();
+-        ActionResultType actionresulttype = super.func_217292_a(player, worldIn, hand, rayTrace);
++        ActionResultType actionresulttype = super.processRightClickBlock(player, worldIn, hand, rayTrace);
+         this.acting = false;
+         return actionresulttype;
+     }

@@ -1,0 +1,13 @@
+--- a/net/minecraft/tileentity/ChestTileEntity.java
++++ b/net/minecraft/tileentity/ChestTileEntity.java
+@@ -29,8 +29,8 @@
+ public class ChestTileEntity extends LockableLootTileEntity implements IChestLid, ITickableTileEntity
+ {
+     private NonNullList<ItemStack> chestContents = NonNullList.withSize(27, ItemStack.EMPTY);
+-    protected float lidAngle;
+-    protected float prevLidAngle;
++    public float lidAngle;
++    public float prevLidAngle;
+     protected int numPlayersUsing;
+     private int ticksSinceSync;
+ 

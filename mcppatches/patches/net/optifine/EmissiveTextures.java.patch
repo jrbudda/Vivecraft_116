@@ -1,0 +1,36 @@
+--- a/net/optifine/EmissiveTextures.java
++++ b/net/optifine/EmissiveTextures.java
+@@ -44,19 +44,19 @@
+         hasEmissive = false;
+     }
+ 
+-    public static Texture getEmissiveTexture(Texture texture, Map<ResourceLocation, Texture> mapTextures)
++    public static Texture getEmissiveTexture(Texture texturein, Map<ResourceLocation, Texture> mapTextures)
+     {
+         if (!render)
+         {
+-            return texture;
++            return texturein;
+         }
+-        else if (!(texture instanceof SimpleTexture))
++        else if (!(texturein instanceof SimpleTexture))
+         {
+-            return texture;
++            return texturein;
+         }
+         else
+         {
+-            SimpleTexture simpletexture = (SimpleTexture)texture;
++            SimpleTexture simpletexture = (SimpleTexture)texturein;
+             ResourceLocation resourcelocation = simpletexture.locationEmissive;
+ 
+             if (!renderEmissive)
+@@ -66,7 +66,7 @@
+                     hasEmissive = true;
+                 }
+ 
+-                return texture;
++                return texturein;
+             }
+             else
+             {

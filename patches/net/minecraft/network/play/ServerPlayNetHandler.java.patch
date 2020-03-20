@@ -1,0 +1,138 @@
+--- a/net/minecraft/network/play/ServerPlayNetHandler.java
++++ b/net/minecraft/network/play/ServerPlayNetHandler.java
+@@ -8,6 +8,12 @@
+ import io.netty.util.concurrent.GenericFutureListener;
+ import it.unimi.dsi.fastutil.ints.Int2ShortMap;
+ import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap;
++
++import java.io.BufferedReader;
++import java.io.ByteArrayInputStream;
++import java.io.DataInputStream;
++import java.io.IOException;
++import java.io.InputStreamReader;
+ import java.util.Collections;
+ import java.util.Set;
+ import javax.annotation.Nullable;
+@@ -16,6 +22,7 @@
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.block.CommandBlockBlock;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.command.CommandSource;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -131,6 +138,9 @@
+ import net.minecraft.world.server.ServerWorld;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
++import org.vivecraft.api.ServerVivePlayer;
+ 
+ public class ServerPlayNetHandler implements IServerPlayNetHandler
+ {
+@@ -270,6 +280,8 @@
+         {
+             this.disconnect(new TranslationTextComponent("multiplayer.disconnect.idling"));
+         }
++        //VIVECRAFT
++        NetworkHelper.sendPosData(player); //has to go somewhere?
+     }
+ 
+     public void captureCurrentPosition()
+@@ -1612,6 +1624,95 @@
+ 
+     public void processCustomPayload(CCustomPayloadPacket packetIn)
+     {
++        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
++        String s = packetIn.channel.getNamespace();
++        String d = packetIn.channel.getPath();
++        
++        // VIVE START - client querying if server is running this mod too      		
++        if (s.equalsIgnoreCase("vivecraft") && d.equalsIgnoreCase("data"))
++        {
++        	int len = packetIn.data.readableBytes();
++        	PacketDiscriminators dis = PacketDiscriminators.values()[packetIn.data.readByte()];
++    		byte[] data = new byte[len-1];
++        	packetIn.data.readBytes(data);
++    		ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.player.getUniqueID());
++    		if(vp == null && dis != PacketDiscriminators.VERSION) {
++    			//how?
++    			return;
++    		}
++        	switch (dis){
++        	case VERSION:
++            	String ver = Minecraft.getInstance().minecriftVerString;
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.VERSION,ver));
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.REQUESTDATA, new byte[]{}));  
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.CLIMBING, new byte[]{1, 0}));
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.TELEPORT, new byte[]{})); 
++    			vp = new ServerVivePlayer(this.player);
++            	NetworkHelper.vivePlayers.put(this.player.getUniqueID(), vp);
++            	
++            	BufferedReader br = new BufferedReader(
++            			new InputStreamReader(
++            					new DataInputStream(
++            							new ByteArrayInputStream(data))));
++    			
++    			String v;
++				try {
++					v = br.readLine();
++					if(v.contains("NONVR")){
++						this.player.sendMessage(new StringTextComponent("NONVR: " + this.player.getDisplayName().getFormattedText()));
++						vp.setVR(false);
++					}
++					else{
++						this.player.sendMessage(new StringTextComponent("VR: " + this.player.getDisplayName().getFormattedText()));
++						vp.setVR(true);
++					}  
++				} catch (IOException e) {
++					// TODO Auto-generated catch block
++					e.printStackTrace();
++				}     
++        		break;
++    		case CONTROLLER0DATA:
++    			vp.controller0data = data;
++    			break;
++    		case CONTROLLER1DATA:
++    			vp.controller1data = data;
++    			break;
++    		case DRAW:
++    			vp.draw = data;
++    			break;
++    		case HEADDATA:
++    			vp.hmdData = data;
++    			break;	
++    		case MOVEMODE:
++    			break;
++    		case REQUESTDATA:
++    			//only we can use that word.
++    			break;
++    		case WORLDSCALE:
++            	packetIn.data.resetReaderIndex();
++            	packetIn.data.readByte();
++    			vp.worldScale = packetIn.data.readFloat();
++    			break;
++    		case HEIGHT:
++            	packetIn.data.resetReaderIndex();
++            	packetIn.data.readByte();
++    			vp.height = packetIn.data.readFloat();
++    			break;			
++    		case TELEPORT:
++            	packetIn.data.resetReaderIndex();
++            	packetIn.data.readByte();
++    			float x = packetIn.data.readFloat();
++				float y = packetIn.data.readFloat();
++				float z = packetIn.data.readFloat();
++				this.player.setPositionAndRotation(x, y, z, this.player.rotationYaw, this.player.rotationPitch);
++    			break;
++    		case CLIMBING:
++    			this.player.fallDistance = 0;
++        	default:
++        		break;
++        	}
++        }
++        // VIVE END - vivecraft packets
+     }
+ 
+     public void func_217263_a(CSetDifficultyPacket p_217263_1_)

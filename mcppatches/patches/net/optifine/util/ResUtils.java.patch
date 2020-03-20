@@ -1,0 +1,29 @@
+--- a/net/optifine/util/ResUtils.java
++++ b/net/optifine/util/ResUtils.java
+@@ -151,7 +151,7 @@
+                 }
+             }
+ 
+-            String[] astring = list.toArray(new String[list.size()]);
++            String[] astring = (String[]) list.toArray(new String[list.size()]);
+             return astring;
+         }
+     }
+@@ -206,7 +206,7 @@
+                 }
+             }
+ 
+-            String[] astring1 = list.toArray(new String[list.size()]);
++            String[] astring1 = (String[]) list.toArray(new String[list.size()]);
+             return astring1;
+         }
+     }
+@@ -245,7 +245,7 @@
+             }
+ 
+             zipfile.close();
+-            String[] astring = list.toArray(new String[list.size()]);
++            String[] astring = (String[]) list.toArray(new String[list.size()]);
+             return astring;
+         }
+         catch (IOException ioexception)
