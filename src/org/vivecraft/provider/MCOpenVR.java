@@ -127,8 +127,6 @@ public class MCOpenVR
 	// position/orientation of headset and eye offsets
 	private static final Matrix4f hmdPose = new Matrix4f();
 	public static final Matrix4f hmdRotation = new Matrix4f();
-	public static Matrix4f hmdProjectionLeftEye;
-	public static Matrix4f hmdProjectionRightEye;
 	
 	static Matrix4f hmdPoseLeftEye = new Matrix4f();
 	static Matrix4f hmdPoseRightEye = new Matrix4f();

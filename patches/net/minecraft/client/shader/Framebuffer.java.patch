@@ -1,8 +1,11 @@
 --- a/net/minecraft/client/shader/Framebuffer.java
 +++ b/net/minecraft/client/shader/Framebuffer.java
-@@ -3,6 +3,10 @@
+@@ -2,7 +2,13 @@
+ 
  import com.mojang.blaze3d.platform.GlStateManager;
  import com.mojang.blaze3d.systems.RenderSystem;
++
++import java.nio.ByteBuffer;
  import java.nio.IntBuffer;
 +
 +import org.lwjgl.opengl.GL11;
@@ -11,7 +14,7 @@
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.Tessellator;
  import net.minecraft.client.renderer.texture.TextureUtil;
-@@ -20,11 +24,40 @@
+@@ -20,11 +26,40 @@
      public int depthBuffer;
      public final float[] framebufferColor;
      public int framebufferFilter;
@@ -40,7 +43,7 @@
 +        this.depthBuffer = -1;
 +        this.framebufferColor = new float[4];
 +        this.framebufferColor[0] = 1.0F;
-+        this.framebufferColor[1] = 1.0F;
++        this.framebufferColor[1] = 0.8F;
 +        this.framebufferColor[2] = 1.0F;
 +        this.framebufferColor[3] = 0.0F;
 +        this.resize(width, height, onMac);
@@ -55,7 +58,7 @@
          this.framebufferObject = -1;
          this.framebufferTexture = -1;
          this.depthBuffer = -1;
-@@ -33,7 +66,7 @@
+@@ -33,7 +68,7 @@
          this.framebufferColor[1] = 1.0F;
          this.framebufferColor[2] = 1.0F;
          this.framebufferColor[3] = 0.0F;
@@ -64,7 +67,7 @@
      }
  
      public void resize(int p_216491_1_, int p_216491_2_, boolean p_216491_3_)
-@@ -90,7 +123,8 @@
+@@ -90,7 +125,8 @@
              this.framebufferObject = -1;
          }
      }
@@ -74,7 +77,7 @@
      public void createBuffers(int p_216492_1_, int p_216492_2_, boolean p_216492_3_)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
-@@ -99,11 +133,22 @@
+@@ -99,11 +135,22 @@
          this.framebufferTextureWidth = p_216492_1_;
          this.framebufferTextureHeight = p_216492_2_;
          this.framebufferObject = GlStateManager.genFramebuffers();
@@ -99,31 +102,76 @@
          }
  
          this.setFramebufferFilter(9728);
-@@ -232,7 +277,7 @@
+@@ -113,10 +160,22 @@
+         GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_COLOR_ATTACHMENT0, 3553, this.framebufferTexture, 0);
+ 
+         if (this.useDepth)
+-        {
+-            GlStateManager.bindRenderbuffer(FramebufferConstants.GL_RENDERBUFFER, this.depthBuffer);
+-            GlStateManager.renderbufferStorage(FramebufferConstants.GL_RENDERBUFFER, 33190, this.framebufferTextureWidth, this.framebufferTextureHeight);
+-            GlStateManager.framebufferRenderbuffer(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_DEPTH_ATTACHMENT, FramebufferConstants.GL_RENDERBUFFER, this.depthBuffer);
++        {        	
++        	if(this.depthisTex) {
++            	//Vivecraft TODO: Re-evaluate this block.
++            	GL11.glBindTexture((int)3553, this.depthBuffer );
++            	GL11.glTexParameteri((int)3553, (int)10242, (int)10496);
++            	GL11.glTexParameteri((int)3553, (int)10243, (int)10496);
++            	GL11.glTexParameteri((int)3553, (int)10241, (int)9728);
++            	GL11.glTexParameteri((int)3553, (int)10240, (int)9728);
++            	GL11.glTexParameteri((int)3553, (int)34891, (int)6409);
++            	GL11.glTexImage2D(GL11.GL_TEXTURE_2D, (int)0, GL30.GL_DEPTH24_STENCIL8, framebufferWidth, framebufferHeight, (int)0, GL30.GL_DEPTH_STENCIL,  GL30.GL_UNSIGNED_INT_24_8, (ByteBuffer)null);
++            	GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL11.GL_TEXTURE_2D, depthBuffer, (int)0);
++        	} else {
++	            GlStateManager.bindRenderbuffer(FramebufferConstants.GL_RENDERBUFFER, this.depthBuffer);
++	            GlStateManager.renderbufferStorage(FramebufferConstants.GL_RENDERBUFFER, 33190, this.framebufferTextureWidth, this.framebufferTextureHeight);
++	            GlStateManager.framebufferRenderbuffer(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_DEPTH_ATTACHMENT, FramebufferConstants.GL_RENDERBUFFER, this.depthBuffer);
++        	}
+         }
+ 
+         this.checkFramebufferComplete();
+@@ -232,7 +291,8 @@
          this.framebufferRenderExt(width, height, true);
      }
  
 -    public void framebufferRenderExt(int width, int height, boolean p_178038_3_)
++	//Vivecraft add x/y offsets
 +    public void framebufferRenderExt(int left, int width, int height, int top, boolean disableBlend)
      {
          RenderSystem.assertThread(RenderSystem::isOnGameThreadOrInit);
  
-@@ -240,12 +285,12 @@
+@@ -240,16 +300,17 @@
          {
              RenderSystem.recordRenderCall(() ->
              {
 -                this.framebufferRenderExtRaw(width, height, p_178038_3_);
-+                this.framebufferRenderExtRaw(width, height, disableBlend);
++                this.framebufferRenderExtRaw(left, width, height, top, disableBlend);
              });
          }
          else
          {
 -            this.framebufferRenderExtRaw(width, height, p_178038_3_);
-+            this.framebufferRenderExtRaw(width, height, disableBlend);
++            this.framebufferRenderExtRaw(left, width, height, top, disableBlend);
          }
      }
  
-@@ -307,4 +352,26 @@
+-    private void framebufferRenderExtRaw(int width, int height, boolean p_227588_3_)
++	//Vivecraft add x/y offsets
++    private void framebufferRenderExtRaw(int left, int width, int height, int top, boolean p_227588_3_)
+     {
+         RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+         GlStateManager.colorMask(true, true, true, false);
+@@ -261,7 +322,9 @@
+         GlStateManager.matrixMode(5888);
+         GlStateManager.loadIdentity();
+         GlStateManager.translatef(0.0F, 0.0F, -2000.0F);
+-        GlStateManager.viewport(0, 0, width, height);
++    	//Vivecraft add x/y offsets
++        GlStateManager.viewport(left, top, width, height);
++        //
+         GlStateManager.enableTexture();
+         GlStateManager.disableLighting();
+         GlStateManager.disableAlphaTest();
+@@ -307,4 +370,26 @@
          GlStateManager.clear(i, onMac);
          this.unbindFramebuffer();
      }

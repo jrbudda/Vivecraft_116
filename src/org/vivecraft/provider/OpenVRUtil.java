@@ -94,7 +94,7 @@ public class OpenVRUtil {
                 hmdMatrix.m[12], hmdMatrix.m[13], hmdMatrix.m[14], hmdMatrix.m[15]);
         return mat;
     }
-
+    
     public static Vector3 convertMatrix4ftoTranslationVector(Matrix4f mat) {
         return new Vector3(mat.M[0][3], mat.M[1][3], mat.M[2][3]);
     }

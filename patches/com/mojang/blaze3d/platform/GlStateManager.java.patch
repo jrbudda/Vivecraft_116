@@ -9,7 +9,27 @@
      private static final GlStateManager.DepthState DEPTH = new GlStateManager.DepthState();
      private static final GlStateManager.FogState FOG = new GlStateManager.FogState();
      private static final GlStateManager.CullState CULL = new GlStateManager.CullState();
-@@ -1984,7 +1984,7 @@
+@@ -1534,7 +1534,18 @@
+         RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+         GL11.glGetFloatv(pname, params);
+     }
+-
++    
++    //temp
++    public static Matrix4f getMatrix4f(int p_getMatrix4f_0_)
++    {
++        GL11.glGetFloatv(p_getMatrix4f_0_, MATRIX_BUFFER);
++        MATRIX_BUFFER.rewind();
++        Matrix4f matrix4f = new Matrix4f();
++        matrix4f.read(MATRIX_BUFFER);
++        MATRIX_BUFFER.rewind();
++        return matrix4f;
++    }
++    
+     @Deprecated
+     public static void ortho(double left, double right, double bottom, double top, double zNear, double zFar)
+     {
+@@ -1984,7 +1995,7 @@
          }
      }
  
@@ -18,7 +38,7 @@
      {
          public final GlStateManager.BooleanState blend = new GlStateManager.BooleanState(3042);
          public int srcFactorRgb = 1;
-@@ -2049,6 +2049,7 @@
+@@ -2049,6 +2060,7 @@
      }
  
      @Deprecated

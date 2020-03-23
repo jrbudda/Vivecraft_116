@@ -240,7 +240,7 @@
          this.thread = Thread.currentThread();
          this.gameSettings = new GameSettings(this, this.gameDir);
          this.creativeSettings = new CreativeSettings(this.gameDir, this.dataFixer);
-@@ -426,6 +559,14 @@
+@@ -426,6 +559,13 @@
          {
              this.fontRenderer = fontrenderer;
              this.fontRenderer.setBidiFlag(this.languageManager.isCurrentLanguageBidirectional());
@@ -248,14 +248,13 @@
 +			try {
 +				initMinecrift();
 +			} catch (Exception e) {
-+				// TODO Auto-generated catch block
 +				e.printStackTrace();
 +			}
 +			/** END MINECRIFT */
              this.resourceManager.addReloadListener(new GrassColorReloadListener());
              this.resourceManager.addReloadListener(new FoliageColorReloadListener());
              this.mainWindow.setRenderPhase("Startup");
-@@ -478,10 +619,22 @@
+@@ -478,10 +618,22 @@
                  this.displayGuiScreen(new MainMenuScreen(true));
              }
  
@@ -278,7 +277,7 @@
                  Util.acceptOrElse(p_229990_2_, this::restoreResourcePacks, () -> {
                      this.languageManager.parseLanguageMetadata(list);
  
-@@ -494,20 +647,23 @@
+@@ -494,20 +646,23 @@
          }
      }
  
@@ -309,7 +308,7 @@
          stringbuilder.append(" ");
          stringbuilder.append(SharedConstants.getVersion().getName());
          ClientPlayNetHandler clientplaynethandler = this.getConnection();
-@@ -537,6 +693,7 @@
+@@ -537,6 +692,7 @@
          return stringbuilder.toString();
      }
  
@@ -317,7 +316,7 @@
      public boolean func_230151_c_()
      {
          return !"vanilla".equals(ClientBrandRetriever.getClientModName()) || Minecraft.class.getSigners() == null;
-@@ -790,6 +947,13 @@
+@@ -790,6 +946,13 @@
                  List<IResourcePack> list = this.resourcePackRepository.getEnabledPacks().stream().map(ResourcePackInfo::getResourcePack).collect(Collectors.toList());
                  this.setLoadingGui(new ResourceLoadProgressGui(this, this.resourceManager.reloadResources(Util.getServerExecutor(), this, RESOURCE_RELOAD_INIT_TASK, list), (p_229992_3_) ->
                  {
@@ -331,7 +330,7 @@
                      Util.acceptOrElse(p_229992_3_, this::restoreResourcePacks, () -> {
                          this.languageManager.parseLanguageMetadata(list);
                          this.worldRenderer.loadRenderers();
-@@ -901,6 +1065,10 @@
+@@ -901,6 +1064,10 @@
              this.ingameGUI.getChatGUI().clearChatMessages(true);
          }
  
@@ -342,7 +341,7 @@
          this.currentScreen = guiScreenIn;
  
          if (guiScreenIn != null)
-@@ -964,6 +1132,12 @@
+@@ -964,6 +1131,12 @@
          finally
          {
              Util.nanoTimeSupplier = System::nanoTime;
@@ -355,7 +354,7 @@
  
              if (this.crashReporter == null)
              {
-@@ -1002,56 +1176,165 @@
+@@ -1002,56 +1175,162 @@
  
      private void runGameLoop(boolean renderWorldIn)
      {
@@ -402,6 +401,13 @@
 -                this.runTick();
 -            }
 -        }
+-
+-        this.mouseHelper.updatePlayerLook();
+-        this.mainWindow.setRenderPhase("Render");
+-        this.profiler.endStartSection("sound");
+-        this.soundHandler.updateListener(this.gameRenderer.getActiveRenderInfo());
+-        this.profiler.endSection();
+-        this.profiler.startSection("render");
 +    	this.mainWindow.setRenderPhase("Pre render");
 +    	long i = Util.nanoTime();
 +    	this.profiler.startTick();
@@ -515,7 +521,6 @@
 +    		stereoProvider.setupRenderConfiguration();
 +    		checkGLError("post render setup ");
 +    	} catch (Exception e) {
-+    		// TODO Auto-generated catch block
 +    		e.printStackTrace();
 +    	}
 +    	//
@@ -557,20 +562,12 @@
 +		this.soundHandler.updateListener(gameRenderer.getActiveRenderInfo());
 +    	this.profiler.endSection();
 +    	
-+    
- 
--        this.mouseHelper.updatePlayerLook();
--        this.mainWindow.setRenderPhase("Render");
--        this.profiler.endStartSection("sound");
--        this.soundHandler.updateListener(this.gameRenderer.getActiveRenderInfo());
--        this.profiler.endSection();
--        this.profiler.startSection("render");
-+    	this.profiler.startSection("render");
++       	this.profiler.startSection("render");
 +    	/* Vivecraft
          RenderSystem.pushMatrix();
          RenderSystem.clear(16640, IS_RUNNING_ON_MAC);
          this.framebuffer.bindFramebuffer(true);
-@@ -1059,83 +1342,149 @@
+@@ -1059,83 +1338,149 @@
          this.profiler.startSection("display");
          RenderSystem.enableTexture();
          this.profiler.endSection();
@@ -797,7 +794,7 @@
      }
  
      public void updateWindowSize()
-@@ -1148,9 +1497,23 @@
+@@ -1148,9 +1493,23 @@
              this.currentScreen.resize(this, this.mainWindow.getScaledWidth(), this.mainWindow.getScaledHeight());
          }
  
@@ -823,7 +820,7 @@
          this.mouseHelper.setIgnoreFirstMove();
      }
  
-@@ -1228,7 +1591,7 @@
+@@ -1228,7 +1587,7 @@
          }
      }
  
@@ -832,7 +829,7 @@
      {
          if (this.profiler.getFixedProfiler().isEnabled())
          {
-@@ -1395,12 +1758,14 @@
+@@ -1395,12 +1754,14 @@
                      if (this.playerController.onPlayerDamageBlock(blockpos, direction))
                      {
                          this.particles.addBlockHitEffects(blockpos, direction);
@@ -851,7 +848,7 @@
                  this.playerController.resetBlockRemoving();
              }
          }
-@@ -1442,21 +1807,22 @@
+@@ -1442,103 +1803,114 @@
                          {
                              this.leftClickCounter = 10;
                          }
@@ -872,79 +869,191 @@
 -        {
 -            this.rightClickDelayTimer = 4;
 -
-+    	//Vivecraft check seated
-+		if (!this.playerController.getIsHittingBlock() || vrSettings.seated == false) {
-+		//
-+			//Vivecraft delay
-+			this.rightClickDelayTimer = vrSettings.seated ? 4 : vrSettings.rightclickDelay; 
-+			//
-+			
-             if (!this.player.isRowingBoat())
-             {
-                 if (this.objectMouseOver == null)
-@@ -1473,6 +1839,9 @@
-                         switch (this.objectMouseOver.getType())
-                         {
-                             case ENTITY:
-+                            //ft where are you
-+							physicalGuiManager.preClickAction();
-+							//
-                                 EntityRayTraceResult entityraytraceresult = (EntityRayTraceResult)this.objectMouseOver;
-                                 Entity entity = entityraytraceresult.getEntity();
-                                 ActionResultType actionresulttype = this.playerController.interactWithEntity(this.player, entity, entityraytraceresult, hand);
-@@ -1486,7 +1855,9 @@
-                                 {
-                                     if (actionresulttype.isSuccess())
-                                     {
+-            if (!this.player.isRowingBoat())
+-            {
+-                if (this.objectMouseOver == null)
+-                {
+-                    LOGGER.warn("Null returned as 'hitResult', this shouldn't happen!");
+-                }
+-
+-                for (Hand hand : Hand.values())
+-                {
+-                    ItemStack itemstack = this.player.getHeldItem(hand);
+-
+-                    if (this.objectMouseOver != null)
+-                    {
+-                        switch (this.objectMouseOver.getType())
+-                        {
+-                            case ENTITY:
+-                                EntityRayTraceResult entityraytraceresult = (EntityRayTraceResult)this.objectMouseOver;
+-                                Entity entity = entityraytraceresult.getEntity();
+-                                ActionResultType actionresulttype = this.playerController.interactWithEntity(this.player, entity, entityraytraceresult, hand);
+-
+-                                if (!actionresulttype.isSuccessOrConsume())
+-                                {
+-                                    actionresulttype = this.playerController.interactWithEntity(this.player, entity, hand);
+-                                }
+-
+-                                if (actionresulttype.isSuccessOrConsume())
+-                                {
+-                                    if (actionresulttype.isSuccess())
+-                                    {
 -                                        this.player.swingArm(hand);
-+                                    	//Vivecraft
-+                                        this.player.swingArm(hand, VRFirstPersonArmSwing.Use);
-+                                        //
-                                     }
- 
-                                     return;
-@@ -1497,14 +1868,15 @@
-                             case BLOCK:
-                                 BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
-                                 int i = itemstack.getCount();
+-                                    }
+-
+-                                    return;
+-                                }
+-
+-                                break;
+-
+-                            case BLOCK:
+-                                BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
+-                                int i = itemstack.getCount();
 -                                ActionResultType actionresulttype1 = this.playerController.func_217292_a(this.player, this.world, hand, blockraytraceresult);
-+                                ActionResultType actionresulttype1 = this.playerController.processRightClickBlock(this.player, this.world, hand, blockraytraceresult);
- 
-                                 if (actionresulttype1.isSuccessOrConsume())
-                                 {
-                                     if (actionresulttype1.isSuccess())
-                                     {
+-
+-                                if (actionresulttype1.isSuccessOrConsume())
+-                                {
+-                                    if (actionresulttype1.isSuccess())
+-                                    {
 -                                        this.player.swingArm(hand);
 -
-+                                    	//Vivecraft
-+                                    	this.player.swingArm(hand, VRFirstPersonArmSwing.Use);
-+                                        //
-                                         if (!itemstack.isEmpty() && (itemstack.getCount() != i || this.playerController.isInCreativeMode()))
-                                         {
-                                             this.gameRenderer.itemRenderer.resetEquippedProgress(hand);
-@@ -1520,7 +1892,9 @@
-                                 }
-                         }
-                     }
+-                                        if (!itemstack.isEmpty() && (itemstack.getCount() != i || this.playerController.isInCreativeMode()))
+-                                        {
+-                                            this.gameRenderer.itemRenderer.resetEquippedProgress(hand);
+-                                        }
+-                                    }
 -
-+                    //pi stuff
-+                    physicalGuiManager.preClickAction();
-+                    //
-                     if (!itemstack.isEmpty())
-                     {
-                         ActionResultType actionresulttype2 = this.playerController.processRightClick(this.player, this.world, hand);
-@@ -1529,7 +1903,9 @@
-                         {
-                             if (actionresulttype2.isSuccess())
-                             {
+-                                    return;
+-                                }
+-
+-                                if (actionresulttype1 == ActionResultType.FAIL)
+-                                {
+-                                    return;
+-                                }
+-                        }
+-                    }
+-
+-                    if (!itemstack.isEmpty())
+-                    {
+-                        ActionResultType actionresulttype2 = this.playerController.processRightClick(this.player, this.world, hand);
+-
+-                        if (actionresulttype2.isSuccessOrConsume())
+-                        {
+-                            if (actionresulttype2.isSuccess())
+-                            {
 -                                this.player.swingArm(hand);
-+                            	//Vivecraft
-+                                this.player.swingArm(hand, VRFirstPersonArmSwing.Use);
-+                                //
-                             }
+-                            }
+-
+-                            this.gameRenderer.itemRenderer.resetEquippedProgress(hand);
+-                            return;
+-                        }
+-                    }
+-                }
+-            }
+-        }
++    	//Vivecraft check seated
++    	if (!this.playerController.getIsHittingBlock() || vrSettings.seated == false) {
++    		//
++    		//Vivecraft delay
++    		this.rightClickDelayTimer = vrSettings.seated ? 4 : vrSettings.rightclickDelay; 
++    		//
++
++    		if (!this.player.isRowingBoat())
++    		{
++    			if (this.objectMouseOver == null)
++    			{
++    				LOGGER.warn("Null returned as 'hitResult', this shouldn't happen!");
++    			}
++
++    			for (Hand hand : Hand.values())
++    			{
++    				ItemStack itemstack = this.player.getHeldItem(hand);
++
++    				if (this.objectMouseOver != null)
++    				{
++    					switch (this.objectMouseOver.getType())
++    					{
++    					case ENTITY:
++    						//ft where are you
++    						physicalGuiManager.preClickAction();
++    						//
++    						EntityRayTraceResult entityraytraceresult = (EntityRayTraceResult)this.objectMouseOver;
++    						Entity entity = entityraytraceresult.getEntity();
++    						ActionResultType actionresulttype = this.playerController.interactWithEntity(this.player, entity, entityraytraceresult, hand);
++
++    						if (!actionresulttype.isSuccessOrConsume())
++    						{
++    							actionresulttype = this.playerController.interactWithEntity(this.player, entity, hand);
++    						}
++
++    						if (actionresulttype.isSuccessOrConsume())
++    						{
++    							if (actionresulttype.isSuccess())
++    							{
++    								//Vivecraft
++    								this.player.swingArm(hand, VRFirstPersonArmSwing.Use);
++    								//
++    							}
++
++    							return;
++    						}
++
++    						break;
++
++    					case BLOCK:
++    						BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
++    						int i = itemstack.getCount();
++    						ActionResultType actionresulttype1 = this.playerController.processRightClickBlock(this.player, this.world, hand, blockraytraceresult);
++
++    						if (actionresulttype1.isSuccessOrConsume())
++    						{
++    							if (actionresulttype1.isSuccess())
++    							{
++    								//Vivecraft
++    								this.player.swingArm(hand, VRFirstPersonArmSwing.Use);
++    								//
++    								if (!itemstack.isEmpty() && (itemstack.getCount() != i || this.playerController.isInCreativeMode()))
++    								{
++    									this.gameRenderer.itemRenderer.resetEquippedProgress(hand);
++    								}
++    							}
++
++    							return;
++    						}
++
++    						if (actionresulttype1 == ActionResultType.FAIL)
++    						{
++    							return;
++    						}
++    					}
++    				}
++    				//pi stuff
++    				physicalGuiManager.preClickAction();
++    				//
++    				if (!itemstack.isEmpty())
++    				{
++    					ActionResultType actionresulttype2 = this.playerController.processRightClick(this.player, this.world, hand);
++
++    					if (actionresulttype2.isSuccessOrConsume())
++    					{
++    						if (actionresulttype2.isSuccess())
++    						{
++    							//Vivecraft
++    							this.player.swingArm(hand, VRFirstPersonArmSwing.Use);
++    							//
++    						}
++
++    						this.gameRenderer.itemRenderer.resetEquippedProgress(hand);
++    						return;
++    					}
++    				}
++    			}
++    		}
++    	}
+     }
  
-                             this.gameRenderer.itemRenderer.resetEquippedProgress(hand);
-@@ -1548,6 +1924,9 @@
+     public MusicTicker getMusicTicker()
+@@ -1548,6 +1920,9 @@
  
      public void runTick()
      {
@@ -954,7 +1063,7 @@
          if (this.rightClickDelayTimer > 0)
          {
              --this.rightClickDelayTimer;
-@@ -1561,7 +1940,7 @@
+@@ -1561,7 +1936,7 @@
          }
  
          this.profiler.endSection();
@@ -963,7 +1072,7 @@
          this.tutorial.onMouseHover(this.world, this.objectMouseOver);
          this.profiler.startSection("gameMode");
  
-@@ -1572,10 +1951,11 @@
+@@ -1572,10 +1947,11 @@
  
          this.profiler.endStartSection("textures");
  
@@ -978,7 +1087,7 @@
  
          if (this.currentScreen == null && this.player != null)
          {
-@@ -1593,6 +1973,7 @@
+@@ -1593,6 +1969,7 @@
              this.displayGuiScreen((Screen)null);
          }
  
@@ -986,7 +1095,7 @@
          if (this.currentScreen != null)
          {
              this.leftClickCounter = 10000;
-@@ -1610,6 +1991,11 @@
+@@ -1610,6 +1987,11 @@
          {
              this.ingameGUI.reset();
          }
@@ -998,7 +1107,7 @@
  
          if (this.loadingGui == null && (this.currentScreen == null || this.currentScreen.passEvents))
          {
-@@ -1622,8 +2008,27 @@
+@@ -1622,8 +2004,27 @@
              }
          }
  
@@ -1028,7 +1137,7 @@
              this.profiler.endStartSection("gameRenderer");
  
              if (!this.isGamePaused)
-@@ -1655,8 +2060,13 @@
+@@ -1655,8 +2056,13 @@
              this.gameRenderer.stopUseShader();
          }
  
@@ -1044,7 +1153,7 @@
              this.musicTicker.tick();
          }
  
-@@ -1719,25 +2129,28 @@
+@@ -1719,25 +2125,28 @@
          this.profiler.endSection();
      }
  
@@ -1092,7 +1201,7 @@
          }
  
          while (this.gameSettings.keyBindSmoothCamera.isPressed())
-@@ -1797,7 +2210,9 @@
+@@ -1797,7 +2206,9 @@
          {
              if (!this.player.isSpectator() && this.player.func_225609_n_(Screen.hasControlDown()))
              {
@@ -1103,7 +1212,7 @@
              }
          }
  
-@@ -1805,7 +2220,7 @@
+@@ -1805,7 +2216,7 @@
  
          if (flag2)
          {
@@ -1112,7 +1221,7 @@
              {
                  this.displayGuiScreen(new ChatScreen(""));
              }
-@@ -1816,10 +2231,10 @@
+@@ -1816,10 +2227,10 @@
              }
          }
  
@@ -1127,7 +1236,7 @@
                  this.playerController.onStoppedUsingItem(this.player);
              }
  
-@@ -1840,10 +2255,18 @@
+@@ -1840,10 +2251,18 @@
          }
          else
          {
@@ -1149,7 +1258,7 @@
  
              while (this.gameSettings.keyBindUseItem.isPressed())
              {
-@@ -1861,7 +2284,7 @@
+@@ -1861,7 +2280,7 @@
              this.rightClickMouse();
          }
  
@@ -1158,7 +1267,7 @@
      }
  
      public void launchIntegratedServer(String folderName, String worldName, @Nullable WorldSettings worldSettingsIn)
-@@ -1952,6 +2375,9 @@
+@@ -1952,6 +2371,9 @@
  
      public void loadWorld(ClientWorld worldClientIn)
      {
@@ -1168,7 +1277,7 @@
          WorkingScreen workingscreen = new WorkingScreen();
          workingscreen.displaySavingString(new TranslationTextComponent("connect.joining"));
          this.updateScreenTick(workingscreen);
-@@ -2223,6 +2649,8 @@
+@@ -2223,6 +2645,8 @@
                  }
              }
          }
@@ -1177,7 +1286,7 @@
      }
  
      private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
-@@ -2740,4 +3168,604 @@
+@@ -2740,4 +3164,602 @@
      {
          this.modelManager.setMaxMipmapLevel(p_228020_1_);
      }
@@ -1192,7 +1301,7 @@
 +		}
 +	}
 +
-+	public Matrix4f getMRTransform() {
++	public net.minecraft.client.renderer.Matrix4f getMRTransform() {
 +		// I swear to god this should be correct for column-major and
 +		// post-multiplication for view matrix
 +
@@ -1268,9 +1377,10 @@
 +		GlStateManager.popMatrix();
 +
 +		matrixBuffer.rewind();
-+		this.thirdPassViewMatrix.load(matrixBuffer);
++		net.minecraft.client.renderer.Matrix4f out = new net.minecraft.client.renderer.Matrix4f();
++		out.read(matrixBuffer);
 +		matrixBuffer.rewind();
-+		return thirdPassViewMatrix;
++		return out;
 +	}
 +
 +	public void printGLMatrix(String derp) {
@@ -1287,9 +1397,6 @@
 +		int var2 = GL11.glGetError();
 +	}
 +
-+	// public org.lwjgl.util.vector.Matrix4f thirdPassInverseViewMatrix = new
-+	// org.lwjgl.util.vector.Matrix4f();
-+	public org.vivecraft.utils.lwjgl.Matrix4f thirdPassViewMatrix = new Matrix4f();
 +
 +	private boolean copyToMirror(RenderPass currentPass2) {
 +		// VIVE start - render eye buffers to the desktop window
@@ -1326,7 +1433,7 @@
 +			if (this.vrSettings.displayMirrorMode == vrSettings.MIRROR_FIRST_PERSON) {
 +				source = stereoProvider.framebufferUndistorted;
 +			} else if (this.vrSettings.displayMirrorMode == vrSettings.MIRROR_THIRD_PERSON) {
-+				getMRTransform();
++				gameRenderer.thirdPassViewMatrix = getMRTransform();
 +				source = stereoProvider.framebufferMR;
 +			} else if (this.vrSettings.displayMirrorMode == vrSettings.MIRROR_ON_DUAL) {
 +				ports = 2;
@@ -1390,12 +1497,12 @@
 +		// vrPlayer.checkandUpdateRotateScale(true, 0);
 +		//
 +
-+		getMRTransform();
++		gameRenderer.thirdPassViewMatrix = getMRTransform();
 +
 +		Vec3d derp = vrPlayer.vrdata_world_render.getController(2).getPosition();
 +
-+		Vec3d camplayer = new Vec3d(-thirdPassViewMatrix.m30, -thirdPassViewMatrix.m31, -thirdPassViewMatrix.m32)
-+				.subtract(vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
++		Vec3d camplayer = vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition().subtract(gameRenderer.thirdPassViewMatrix.translationComponent());
++	
 +		// Vec3d camplayer =
 +		// derp.subtract(vrPlayer.vrdata_world_render.getEye(renderPass.Center).getPosition());
 +
@@ -1415,7 +1522,7 @@
 +		// org.lwjgl.util.vector.Vector3f((float) Math.sin(yaw), 0f,
 +		// (float)Math.cos(yaw));
 +
-+		org.vivecraft.utils.lwjgl.Matrix4f viewMatrix = new org.vivecraft.utils.lwjgl.Matrix4f(thirdPassViewMatrix);
++		org.vivecraft.utils.lwjgl.Matrix4f viewMatrix = new org.vivecraft.utils.lwjgl.Matrix4f(gameRenderer.thirdPassViewMatrix);
 +		viewMatrix.m33 = 1;
 +		viewMatrix.m30 = 0;
 +		viewMatrix.m31 = 0;
@@ -1589,7 +1696,7 @@
 +	private boolean renderSingleView(int eye, float nano, boolean renderworld) {
 +		boolean shouldupdate = false;
 +
-+		GlStateManager.clearColor(0f, 0, 0, 1f);
++		GlStateManager.clearColor(1f, 0, 0, 1f);
 +		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 +		GlStateManager.enableTexture();
 +		GlStateManager.enableDepthTest();
