@@ -16,7 +16,24 @@
  
  public class WorldRenderer implements AutoCloseable, IResourceManagerReloadListener
  {
-@@ -1754,7 +1756,7 @@
+@@ -546,9 +548,13 @@
+         ResourceLocation resourcelocation = new ResourceLocation("shaders/post/entity_outline.json");
+ 
+         try
+-        {
+-            this.entityOutlineShader = new ShaderGroup(this.mc.getTextureManager(), this.mc.getResourceManager(), this.mc.getFramebuffer(), resourcelocation);
+-            this.entityOutlineShader.createBindFramebuffers(this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
++        {     	
++        	// VIVECRAFT: Use render framebuffer instead of window
++        	Framebuffer fb = Minecraft.getInstance().getFramebuffer();
++        	if (Minecraft.getInstance().stereoProvider.framebufferVrRender != null)
++        		fb = Minecraft.getInstance().stereoProvider.framebufferVrRender;
++            this.entityOutlineShader = new ShaderGroup(this.mc.getTextureManager(), this.mc.getResourceManager(), fb, resourcelocation);
++            this.entityOutlineShader.createBindFramebuffers(fb.framebufferWidth, fb.framebufferHeight);
+             this.entityOutlineFramebuffer = this.entityOutlineShader.getFramebufferRaw("final");
+         }
+         catch (IOException ioexception)
+@@ -1754,7 +1760,7 @@
          this.renderManager.renderEntityStatic(entityIn, d0 - camX, d1 - camY, d2 - camZ, f, partialTicks, matrixStackIn, bufferIn, this.renderManager.getPackedLight(entityIn, partialTicks));
      }
  
@@ -25,7 +42,7 @@
      {
          blockLayerIn.setupRenderState();
  
-@@ -2161,7 +2163,7 @@
+@@ -2161,7 +2167,7 @@
  
              if (flag)
              {
@@ -34,7 +51,7 @@
              }
  
              Vec3d vec3d = this.world.getSkyColor(this.mc.gameRenderer.getActiveRenderInfo().getBlockPos(), partialTicks);
-@@ -2219,7 +2221,7 @@
+@@ -2219,7 +2225,7 @@
  
                  if (flag)
                  {
@@ -43,7 +60,7 @@
                  }
  
                  RenderSystem.shadeModel(7425);
-@@ -2254,7 +2256,7 @@
+@@ -2254,7 +2260,7 @@
  
              if (flag)
              {
@@ -52,7 +69,7 @@
              }
  
              RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-@@ -2316,7 +2318,7 @@
+@@ -2316,7 +2322,7 @@
  
              if (flag)
              {
@@ -61,7 +78,7 @@
              }
  
              float f12 = this.world.getStarBrightness(partialTicks) * f10;
-@@ -2346,7 +2348,7 @@
+@@ -2346,7 +2352,7 @@
  
              if (flag)
              {
@@ -70,7 +87,7 @@
              }
  
              RenderSystem.color3f(0.0F, 0.0F, 0.0F);
-@@ -3282,6 +3284,8 @@
+@@ -3282,6 +3288,8 @@
      {
          Random random = this.world.rand;
  
@@ -79,7 +96,7 @@
          switch (type)
          {
              case 1000:
-@@ -3337,18 +3341,26 @@
+@@ -3337,18 +3345,26 @@
                  break;
  
              case 1011:
@@ -106,7 +123,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3369,14 +3381,26 @@
+@@ -3369,14 +3385,26 @@
                  break;
  
              case 1019:
@@ -133,7 +150,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3405,10 +3429,17 @@
+@@ -3405,10 +3433,17 @@
                  break;
  
              case 1030:
@@ -151,7 +168,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3429,6 +3460,9 @@
+@@ -3429,6 +3464,9 @@
                  break;
  
              case 1036:

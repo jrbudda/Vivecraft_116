@@ -1,0 +1,56 @@
+# Key bindings
+vivecraft.key.hotbarNext=Hotbar Next
+vivecraft.key.hotbarPrev=Hotbar Previous
+vivecraft.key.hotbarScroll=Hotbar Scroll
+vivecraft.key.hotbarSwipeX=Hotbar Swipe (Left/Right)
+vivecraft.key.hotbarSwipeY=Hotbar Swipe (Up/Down)
+vivecraft.key.rotateLeft=Rotate Left
+vivecraft.key.rotateRight=Rotate Right
+vivecraft.key.rotateAxis=Rotate Only
+vivecraft.key.rotateFree=Rotate Free
+vivecraft.key.walkabout=Walkabout
+vivecraft.key.teleport=Teleport
+vivecraft.key.teleportFallback=Walk Forwards When Teleport Disabled
+vivecraft.key.freeMoveRotate=Move/Rotate
+vivecraft.key.freeMoveStrafe=Move/Strafe
+vivecraft.key.toggleMovement=Toggle Movement Mode
+vivecraft.key.quickTorch=Quick Torch
+vivecraft.key.ingameMenuButton=Game Menu
+vivecraft.key.exportWorld=Export Menu World
+vivecraft.key.radialMenu=Open Radial Menu
+vivecraft.key.swapMirrorView=Swap Mirror View
+vivecraft.key.toggleKeyboard=Show/Hide Keyboard
+vivecraft.key.moveThirdPersonCam=Move Third Person Camera
+vivecraft.key.togglePlayerList=Toggle Player List
+vivecraft.key.trackpadTouch=Trackpad Touch
+vivecraft.key.vrInteract=Contextual Interact
+vivecraft.key.guiLeftClick=Left Click
+vivecraft.key.guiRightClick=Right Click
+vivecraft.key.guiMiddleClick=Middle Click
+vivecraft.key.guiShift=Shift
+vivecraft.key.guiCtrl=Ctrl
+vivecraft.key.guiAlt=Alt
+vivecraft.key.guiScrollUp=Scroll Up
+vivecraft.key.guiScrollDown=Scroll Down
+vivecraft.key.guiScrollAxis=Scroll
+vivecraft.key.keyboardClick=Click
+vivecraft.key.keyboardShift=Shift
+vivecraft.key.climbeyGrab=Climb Claws
+vivecraft.key.climbeyJump=Jump Boots
+
+# Key binding categories
+vivecraft.key.category.gui=GUI
+vivecraft.key.category.climbey=Climbey Motion
+vivecraft.key.category.keyboard=Keyboard
+
+# Action set names
+vivecraft.actionset.ingame=In-Game
+vivecraft.actionset.gui=GUI
+vivecraft.actionset.global=Global
+vivecraft.actionset.contextual=Contextual
+vivecraft.actionset.keyboard=Keyboard
+vivecraft.actionset.mixedReality=Mixed Reality
+vivecraft.actionset.technical=Technical
+
+# Options
+vivecraft.options.gamma.cantseeshitcaptain=I Can't See

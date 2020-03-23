@@ -33,15 +33,17 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.audio.BubbleColumnAmbientSoundHandler;
  import net.minecraft.client.audio.ElytraSound;
-@@ -22,6 +43,7 @@
+@@ -22,7 +43,9 @@
  import net.minecraft.client.gui.screen.JigsawScreen;
  import net.minecraft.client.gui.screen.Screen;
  import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 +import net.minecraft.client.main.Main;
  import net.minecraft.client.network.play.ClientPlayNetHandler;
++import net.minecraft.client.renderer.FirstPersonRenderer.VRFirstPersonArmSwing;
  import net.minecraft.client.util.ClientRecipeBook;
  import net.minecraft.client.world.ClientWorld;
-@@ -31,24 +53,18 @@
+ import net.minecraft.entity.Entity;
+@@ -31,24 +54,18 @@
  import net.minecraft.entity.Pose;
  import net.minecraft.entity.item.BoatEntity;
  import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
@@ -71,7 +73,7 @@
  import net.minecraft.particles.ParticleTypes;
  import net.minecraft.potion.Effect;
  import net.minecraft.potion.EffectInstance;
-@@ -70,11 +86,13 @@
+@@ -70,11 +87,13 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
@@ -85,7 +87,7 @@
  import net.minecraft.world.dimension.DimensionType;
  
  public class ClientPlayerEntity extends AbstractClientPlayerEntity
-@@ -98,6 +116,23 @@
+@@ -98,6 +117,23 @@
      public MovementInput movementInput;
      protected final Minecraft mc;
      protected int sprintToggleTimer;
@@ -109,7 +111,7 @@
      public int sprintingTicksLeft;
      public float renderArmYaw;
      public float renderArmPitch;
-@@ -127,6 +162,79 @@
+@@ -127,6 +163,79 @@
          this.ambientSoundHandlers.add(new UnderwaterAmbientSoundHandler(this, p_i744_1_.getSoundHandler()));
          this.ambientSoundHandlers.add(new BubbleColumnAmbientSoundHandler(this));
      }
@@ -189,7 +191,7 @@
  
      public boolean isGlowing()
      {
-@@ -135,6 +243,21 @@
+@@ -135,6 +244,21 @@
  
      public boolean attackEntityFrom(DamageSource source, float amount)
      {
@@ -211,7 +213,7 @@
          return false;
      }
  
-@@ -142,6 +265,8 @@
+@@ -142,6 +266,8 @@
      {
      }
  
@@ -220,7 +222,7 @@
      public boolean startRiding(Entity entityIn, boolean force)
      {
          if (!super.startRiding(entityIn, force))
-@@ -161,7 +286,10 @@
+@@ -161,7 +287,10 @@
                  this.rotationYaw = entityIn.rotationYaw;
                  this.setRotationYawHead(entityIn.rotationYaw);
              }
@@ -232,7 +234,7 @@
              return true;
          }
      }
-@@ -170,6 +298,10 @@
+@@ -170,6 +299,10 @@
      {
          super.stopRiding();
          this.rowingBoat = false;
@@ -243,7 +245,7 @@
      }
  
      public float getPitch(float partialTicks)
-@@ -280,6 +412,13 @@
+@@ -280,6 +413,13 @@
              }
  
              this.prevOnGround = this.onGround;
@@ -257,7 +259,7 @@
              this.autoJumpEnabled = this.mc.gameSettings.autoJump;
          }
      }
-@@ -294,10 +433,24 @@
+@@ -294,10 +434,31 @@
      public void sendChatMessage(String message)
      {
          this.connection.sendPacket(new CChatMessagePacket(message));
@@ -265,6 +267,13 @@
      }
  
 +    public String lastMsg = null;
++   
++    //Vivecraft
++    public void swingArm(Hand hand, VRFirstPersonArmSwing animation) {
++    	mc.getFirstPersonRenderer().swingType = animation;
++    	this.swingArm(hand);
++    }
++    ///
 +    
      public void swingArm(Hand hand)
      {
@@ -282,7 +291,7 @@
          super.swingArm(hand);
          this.connection.sendPacket(new CAnimateHandPacket(hand));
      }
-@@ -915,6 +1068,9 @@
+@@ -915,6 +1076,9 @@
          }
  
          super.livingTick();
@@ -292,7 +301,7 @@
  
          if (this.onGround && this.abilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
-@@ -1010,10 +1166,76 @@
+@@ -1010,10 +1174,76 @@
  
      public void move(MoverType typeIn, Vec3d pos)
      {
@@ -373,7 +382,7 @@
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1031,13 +1253,17 @@
+@@ -1031,13 +1261,17 @@
              float f = this.getAIMoveSpeed();
              float f1 = (float)vec3d2.lengthSquared();
  
@@ -393,7 +402,7 @@
                  vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vec3d2.lengthSquared();
  
-@@ -1220,4 +1446,398 @@
+@@ -1220,4 +1454,398 @@
              return this.eyesInWaterPlayer;
          }
      }

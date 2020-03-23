@@ -647,16 +647,16 @@ public class GuiHandler {
   			scale = 2;
 
   			Vec3d posAvg = new Vec3d(0, 0, 0);
-  			for (Vec3d vec : mc.hmdPosSamples) {
+  			for (Vec3d vec : MCOpenVR.hmdPosSamples) {
   				posAvg = new Vec3d(posAvg.x + vec.x, posAvg.y + vec.y, posAvg.z + vec.z);
   			}
-  			posAvg = new Vec3d(posAvg.x / mc.hmdPosSamples.size(), posAvg.y / mc.hmdPosSamples.size(), posAvg.z / mc.hmdPosSamples.size());
+  			posAvg = new Vec3d(posAvg.x / MCOpenVR.hmdPosSamples.size(), posAvg.y / MCOpenVR.hmdPosSamples.size(), posAvg.z / MCOpenVR.hmdPosSamples.size());
 
   			float yawAvg = 0;
-  			for (float f : mc.hmdYawSamples) {
+  			for (float f : MCOpenVR.hmdYawSamples) {
   				yawAvg += f;
   			}
-  			yawAvg /= mc.hmdYawSamples.size();
+  			yawAvg /= MCOpenVR.hmdYawSamples.size();
   			yawAvg = (float)Math.toRadians(yawAvg);
 
   			Vec3d dir = new Vec3d(-Math.sin(yawAvg), 0, Math.cos(yawAvg));

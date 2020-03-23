@@ -175,18 +175,24 @@
      }
  
      public void close()
-@@ -199,7 +285,9 @@
+@@ -197,9 +283,13 @@
+             }
+ 
              try
-             {
-                 this.shaderGroup = new ShaderGroup(this.mc.getTextureManager(), this.resourceManager, this.mc.getFramebuffer(), resourceLocationIn);
+-            {
+-                this.shaderGroup = new ShaderGroup(this.mc.getTextureManager(), this.resourceManager, this.mc.getFramebuffer(), resourceLocationIn);
 -                this.shaderGroup.createBindFramebuffers(this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
-+                //this.shaderGroup.createBindFramebuffers(this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
-+                // VIVECRAFT: Use eye framebuffer instead of window
-+                this.shaderGroup.createBindFramebuffers(this.mc.stereoProvider.framebufferVrRender.framebufferWidth, this.mc.stereoProvider.framebufferVrRender.framebufferHeight);
++            {         
++            	// VIVECRAFT: Use eye framebuffer instead of window
++            	Framebuffer fb = Minecraft.getInstance().getFramebuffer();
++            	if (Minecraft.getInstance().stereoProvider.framebufferVrRender != null)
++            		fb = Minecraft.getInstance().stereoProvider.framebufferVrRender;
++                this.shaderGroup = new ShaderGroup(this.mc.getTextureManager(), this.resourceManager, fb, resourceLocationIn);
++                this.shaderGroup.createBindFramebuffers(fb.framebufferWidth, fb.framebufferHeight);
                  this.useShader = true;
              }
              catch (IOException ioexception)
-@@ -215,6 +303,7 @@
+@@ -215,6 +305,7 @@
                  this.useShader = false;
              }
          }
@@ -194,7 +200,7 @@
      }
  
      public void onResourceManagerReload(IResourceManager resourceManager)
-@@ -297,13 +386,18 @@
+@@ -297,13 +388,18 @@
      {
          Entity entity = this.mc.getRenderViewEntity();
  
@@ -216,7 +222,7 @@
              boolean flag = false;
              int i = 3;
              double d1 = d0;
-@@ -329,8 +423,9 @@
+@@ -329,8 +425,9 @@
              {
                  d1 = this.mc.objectMouseOver.getHitVec().squareDistanceTo(vec3d);
              }
@@ -228,7 +234,7 @@
              Vec3d vec3d2 = vec3d.add(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0);
              float f = 1.0F;
              AxisAlignedBB axisalignedbb = entity.getBoundingBox().expand(vec3d1.scale(d0)).grow(1.0D, 1.0D, 1.0D);
-@@ -390,6 +485,10 @@
+@@ -390,6 +487,10 @@
  
      private double getFOVModifier(ActiveRenderInfo activeRenderInfoIn, float partialTicks, boolean useFOVSetting)
      {
@@ -239,7 +245,7 @@
          if (this.debugView)
          {
              return 90.0D;
-@@ -493,7 +592,149 @@
+@@ -493,7 +594,151 @@
              matrixStackIn.rotate(Vector3f.XP.rotationDegrees(Math.abs(MathHelper.cos(f1 * (float)Math.PI - 0.2F) * f2) * 5.0F));
          }
      }
@@ -288,7 +294,7 @@
 +        */
 +        
 +        float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
-+
+ 
 +        if (f > 0.0F)
 +        {
 +            int i = 20;
@@ -297,7 +303,7 @@
 +            {
 +                i = 7;
 +            }
- 
++
 +            float f1 = 5.0F / (f * f + 5.0F) - f * 0.04F;
 +            f1 = f1 * f1;
 +                 
@@ -330,7 +336,7 @@
 +    	this.setupCameraTransform(partialTicks, false);
 +    }
 +    
-+    private void renderVRHand_Main(MatrixStack matrix, float partialTicks)
++    private void renderVRHand_Main(float partialTicks)
 +    {
 +	
 +		if(Config.isShaders()){
@@ -346,6 +352,8 @@
 +			applyCameraDepth(false);
 +			if (this.mc.gameSettings.thirdPersonView == 0) 
 +			{
++				Matrix4f mat = new Matrix4f();
++				mat.setIdentity();
 +				// VIVE START - from HMD to controller
 +				SetupRenderingAtController(0);
 +
@@ -355,7 +363,7 @@
 +					item=override;
 +
 +				if(mc.climbTracker.isClimbeyClimb() && (item.getItem() != Items.SHEARS)){
-+					itemRenderer.renderItemInFirstPerson(matrix, mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), override==null? mc.player.getHeldItemOffhand() : override, 0);
++				//	itemRenderer.renderItemInFirstPerson(mat, mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), override==null? mc.player.getHeldItemOffhand() : override, 0);
 +				}
 +
 +				if(BowTracker.isHoldingBow(mc.player, Hand.MAIN_HAND)){
@@ -364,17 +372,17 @@
 +					if (mc.vrSettings.vrReverseShootingEye) c = 1;				
 +					ItemStack ammo = mc.bowTracker.findAmmoItemStack(mc.player);
 +					if (ammo !=null  && !mc.bowTracker.isNotched()) { //render the arrow in right, left hand will check for and render bow.
-+						itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ammo, 0);
++					//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ammo, 0);
 +					} else {
-+						itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
++				//		itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
 +					}
 +				}
 +				else if(BowTracker.isHoldingBow(mc.player, Hand.OFF_HAND) && mc.bowTracker.isNotched()){
 +					int c = 0;
 +					if (mc.vrSettings.vrReverseShootingEye) c = 1;				
-+					itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
++				//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
 +				}else {
-+					itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), item, 0);
++				//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), item, 0);
 +				}
 +			}	
 +		if(Config.isShaders())
@@ -389,7 +397,7 @@
      private void renderHand(MatrixStack matrixStackIn, ActiveRenderInfo activeRenderInfoIn, float partialTicks)
      {
          this.renderHand(matrixStackIn, activeRenderInfoIn, partialTicks, true, true, false);
-@@ -602,21 +843,26 @@
+@@ -602,21 +847,26 @@
          return i > 200 ? 1.0F : 0.7F + MathHelper.sin(((float)i - entitylivingbaseIn) * (float)Math.PI * 0.2F) * 0.3F;
      }
  
@@ -430,7 +438,7 @@
  
          if (!this.mc.skipRenderWorld)
          {
-@@ -687,6 +933,7 @@
+@@ -687,6 +937,7 @@
  
                  if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null)
                  {
@@ -438,7 +446,7 @@
                      RenderSystem.defaultAlphaFunc();
                      this.renderItemActivation(this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), partialTicks);
                      this.mc.ingameGUI.renderGameOverlay(partialTicks);
-@@ -700,13 +947,14 @@
+@@ -700,13 +951,14 @@
                      {
                          Lagometer.showLagometer((int)this.mc.getMainWindow().getGuiScaleFactor());
                      }
@@ -454,7 +462,7 @@
              if (this.guiLoadingVisible != (this.mc.loadingGui != null))
              {
                  if (this.mc.loadingGui != null)
-@@ -772,8 +1020,37 @@
+@@ -772,8 +1024,37 @@
                      throw new ReportedException(crashreport1);
                  }
              }
@@ -492,7 +500,7 @@
          }
  
          this.frameFinish();
-@@ -781,10 +1058,12 @@
+@@ -781,10 +1062,12 @@
          MemoryMonitor.update();
          Lagometer.updateLagometer();
  
@@ -505,7 +513,7 @@
      }
  
      private void createWorldIcon()
-@@ -827,7 +1106,10 @@
+@@ -827,7 +1110,10 @@
  
      private boolean isDrawBlockOutline()
      {
@@ -517,7 +525,7 @@
          {
              return false;
          }
-@@ -864,14 +1146,29 @@
+@@ -864,14 +1150,29 @@
  
      public void renderWorld(float partialTicks, long finishTimeNano, MatrixStack matrixStackIn)
      {
@@ -548,7 +556,7 @@
  
          if (Config.isShaders())
          {
-@@ -889,17 +1186,7 @@
+@@ -889,17 +1190,7 @@
          boolean flag1 = this.isDrawBlockOutline();
          this.mc.getProfiler().endStartSection("camera");
          ActiveRenderInfo activerenderinfo = this.activeRender;
@@ -567,7 +575,7 @@
  
          MatrixStack matrixstack = new MatrixStack();
          matrixstack.getLast().getMatrix().mul(this.getProjectionMatrix(activerenderinfo, partialTicks, true));
-@@ -965,6 +1252,11 @@
+@@ -965,6 +1256,11 @@
              }
          }
  
@@ -579,7 +587,7 @@
          if (flag)
          {
              Shaders.endRender();
-@@ -1254,7 +1546,7 @@
+@@ -1254,7 +1550,7 @@
              RenderSystem.disableCull();
              MatrixStack matrixstack = new MatrixStack();
              matrixstack.push();
@@ -588,7 +596,7 @@
              float f7 = 50.0F + 175.0F * MathHelper.sin(f4);
              matrixstack.scale(f7, -f7, f7);
              matrixstack.rotate(Vector3f.YP.rotationDegrees(900.0F * MathHelper.abs(MathHelper.sin(f4))));
-@@ -1295,4 +1587,2094 @@
+@@ -1295,4 +1591,2095 @@
      {
          return this.overlayTexture;
      }
@@ -1381,16 +1389,16 @@
 +	  			item=override;
 +	
 +	  		if(mc.climbTracker.isClimbeyClimb() && (item==null || item.getItem() != Items.SHEARS)){
-+	  			itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.OFF_HAND, mc.player.getSwingProgress(partialTicks), mc.player.getHeldItemMainhand(), 0);
++	  		//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.OFF_HAND, mc.player.getSwingProgress(partialTicks), mc.player.getHeldItemMainhand(), 0);
 +	  		}
 +	
 +	  		if(BowTracker.isHoldingBow(mc.player, Hand.MAIN_HAND)){ //render bow
 +	  			int c = 1;
 +	  			if (mc.vrSettings.vrReverseShootingEye) c = 0;
-+	  			itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.OFF_HAND, mc.player.getSwingProgress(partialTicks), mc.player.getHeldItemMainhand(), 0);
++	  	//		itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.OFF_HAND, mc.player.getSwingProgress(partialTicks), mc.player.getHeldItemMainhand(), 0);
 +	  		}
 +	  		else { //just hand
-+	  			itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.OFF_HAND, mc.player.getSwingProgress(partialTicks), item, 0);
++	  		//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.OFF_HAND, mc.player.getSwingProgress(partialTicks), item, 0);
 +	  		}
 +
 +  		GlStateManager.popMatrix();//back to hmd rendering
@@ -2549,7 +2557,8 @@
 +        this.colorBuffer.flip();
 +        return this.colorBuffer;
 +    }
-+    private void renderVRLit(boolean translucentSecondPass, float partialTicks) {
++    
++    private void renderVRLit(boolean translucentSecondPass, float partialTicks, MatrixStack matrixStackin, float x, float y, float z) {
 +    	renderVRGuiElements(translucentSecondPass, partialTicks);
 +
 +    	if (translucentSecondPass) {
@@ -2564,14 +2573,14 @@
 +            GlStateManager.enableCull();
 +            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 +            GlStateManager.alphaFunc(516, 0.1F);
-+            this.fogRenderer.updateFogColor(activeRender, 0);
++            FogRenderer.updateFogColor(activeRender, partialTicks, this.mc.world, this.mc.gameSettings.renderDistanceChunks, getBossColorModifier(partialTicks));
 +            GlStateManager.enableBlend();
 +            GlStateManager.depthMask(false);
 +            this.mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 +            GlStateManager.shadeModel(7425);
 +
 +            // Yeah I know this seems a bit silly, but it didn't seem to have a noticeable impact on performance, so it's probably fine
-+            this.mc.worldRenderer.renderBlockLayer(RenderType.getTranslucent(), activeRender);
++            this.mc.worldRenderer.renderBlockLayer(RenderType.getTranslucent(), matrixStackin, x, y, z);
 +
 +            this.mc.getProfiler().endSection();
 +
@@ -2584,7 +2593,7 @@
 +        this.mc.getProfiler().startSection("hands");
 +
 +        RenderHelper.enableStandardItemLighting();
-+        itemRenderer.setLightmap(0);
++        lightmapTexture.enableLightmap();
 +        GlStateManager.enableRescaleNormal();
 +        //Render Physical Inventories
 +        mc.physicalGuiManager.doRender(partialTicks);

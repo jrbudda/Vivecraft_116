@@ -1,0 +1,29 @@
+--- a/net/minecraft/client/renderer/Matrix4f.java
++++ b/net/minecraft/client/renderer/Matrix4f.java
+@@ -546,4 +546,26 @@
+         this.m32 = p_setRandom_1_.nextFloat();
+         this.m33 = p_setRandom_1_.nextFloat();
+     }
++
++    //Vivecraft - just for now
++    @Deprecated
++    public void read(FloatBuffer floatBufferIn) {
++    	this.m00 = floatBufferIn.get(bufferIndex(0, 0));
++    	this.m01 = floatBufferIn.get(bufferIndex(0, 1));
++    	this.m02 = floatBufferIn.get(bufferIndex(0, 2));
++    	this.m03 = floatBufferIn.get(bufferIndex(0, 3));
++    	this.m10 = floatBufferIn.get(bufferIndex(1, 0));
++    	this.m11 = floatBufferIn.get(bufferIndex(1, 1));
++    	this.m12 = floatBufferIn.get(bufferIndex(1, 2));
++    	this.m13 = floatBufferIn.get(bufferIndex(1, 3));
++    	this.m20 = floatBufferIn.get(bufferIndex(2, 0));
++    	this.m21 = floatBufferIn.get(bufferIndex(2, 1));
++    	this.m22 = floatBufferIn.get(bufferIndex(2, 2));
++    	this.m23 = floatBufferIn.get(bufferIndex(2, 3));
++    	this.m30 = floatBufferIn.get(bufferIndex(3, 0));
++    	this.m31 = floatBufferIn.get(bufferIndex(3, 1));
++    	this.m32 = floatBufferIn.get(bufferIndex(3, 2));
++    	this.m33 = floatBufferIn.get(bufferIndex(3, 3));
++    }
++    //
+ }

@@ -218,7 +218,16 @@ public class MCOpenVR
 	public static float mrControllerRoll;
 
 	private static Set<KeyBinding> keyBindingSet;
-
+	
+	//hmd sampling
+	public static int hmdAvgLength = 90;
+	public static LinkedList<Vec3d> hmdPosSamples = new LinkedList<Vec3d>();
+	public static LinkedList<Float> hmdYawSamples = new LinkedList<Float>();
+	private static float hmdYawTotal;
+	private static float hmdYawLast;
+	private static boolean trigger;
+	//
+	
 	public String getName() {
 		return "OpenVR";
 	}
@@ -1170,9 +1179,57 @@ public class MCOpenVR
 		mc.getProfiler().endStartSection("processInputs");
 		processInputs();
 
+		mc.getProfiler().endStartSection("hmdSampling");
+		hmdSampling();
+		
 		mc.getProfiler().endSection();
 	}
+	
+	private static void hmdSampling() {
+    	if (hmdPosSamples.size() == hmdAvgLength)
+    		hmdPosSamples.removeFirst();
+    	if (hmdYawSamples.size() == hmdAvgLength)
+    		hmdYawSamples.removeFirst();
 
+    	float yaw = mc.vrPlayer.vrdata_room_pre.hmd.getYaw();
+    	if (yaw < 0)
+    		yaw += 360;
+    	hmdYawTotal += angleDiff(yaw, hmdYawLast);
+    	hmdYawLast = yaw;
+    	if (Math.abs(angleNormalize(hmdYawTotal) - hmdYawLast) > 1 || hmdYawTotal > 100000) {
+    		hmdYawTotal = hmdYawLast;
+    		System.out.println("HMD yaw desync/overflow corrected");
+    	}
+    	hmdPosSamples.add(mc.vrPlayer.vrdata_room_pre.hmd.getPosition());
+    	float yawAvg = 0;
+    	if (hmdYawSamples.size() > 0) {
+    		for (float f : hmdYawSamples) {
+    			yawAvg += f;
+    		}
+    		yawAvg /= hmdYawSamples.size();
+    	}
+    	if (Math.abs((hmdYawTotal - yawAvg)) > 20)
+    		trigger = true;
+    	if (Math.abs((hmdYawTotal - yawAvg)) < 1)
+    		trigger = false;
+    	if (trigger || hmdYawSamples.isEmpty())
+    		hmdYawSamples.add(hmdYawTotal);
+	}
+	
+	private static float angleNormalize(float angle) {
+		angle %= 360;
+		if (angle < 0)
+			angle += 360;
+		return angle;
+	}
+
+	private static float angleDiff(float a, float b) {
+		float d = Math.abs(a - b) % 360;
+		float r = d > 180 ? 360 - d : d;
+		int sign = (a - b >= 0 && a - b <= 180) || (a - b <= -180 && a - b >= -360) ? 1 : -1;
+		return r * sign;
+	}
+	
 	private static int quickTorchPreviousSlot;
 
 	private static void processHotbar() {

@@ -219,15 +219,13 @@ public class InteractTracker extends Tracker{
 					 if (mc.playerController.interactWithEntity(mc.player, inEntity[c], hand)  != ActionResultType.SUCCESS) {
 						 continue;
 					 }
-                	mc.getFirstPersonRenderer().swingType = VRFirstPersonArmSwing.Interact;
-					mc.player.swingArm(hand);
+					mc.player.swingArm(hand, VRFirstPersonArmSwing.Interact);
 					MCOpenVR.triggerHapticPulse(c, 750);
 				}
 				else if (inBlockHit[c]!=null) {
 					if(	mc.playerController.processRightClickBlock(mc.player, (ClientWorld) mc.player.world, hand, inBlockHit[c]) == ActionResultType.SUCCESS)
 					{
-	                	mc.getFirstPersonRenderer().swingType = VRFirstPersonArmSwing.Interact;
-						mc.player.swingArm(hand);
+						mc.player.swingArm(hand, VRFirstPersonArmSwing.Interact);
 						MCOpenVR.triggerHapticPulse(c, 750);	
 					}
 				}
