@@ -1368,7 +1368,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				prof.put("lastVersionId", minecriftVer + mod);
-				int minAlloc = ramAllocation.getSelectedItem() == 1 ? 1 : 2;
+				int minAlloc = ramAllocation.getSelectedItem() == "1" ? 1 : 2;
 				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + minAlloc + "G -XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
 				prof.put("name", profileName);
 				prof.put("icon", "Creeper_Head");

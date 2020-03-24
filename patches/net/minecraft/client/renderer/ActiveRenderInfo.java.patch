@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ActiveRenderInfo.java
 +++ b/net/minecraft/client/renderer/ActiveRenderInfo.java
-@@ -17,16 +17,16 @@
+@@ -17,17 +17,17 @@
  
  public class ActiveRenderInfo
  {
@@ -17,11 +17,13 @@
 -    private final Vector3f left = new Vector3f(1.0F, 0.0F, 0.0F);
 -    private float pitch;
 -    private float yaw;
+-    private final Quaternion rotation = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
 +    protected final Vector3f look = new Vector3f(0.0F, 0.0F, 1.0F);
 +    protected final Vector3f up = new Vector3f(0.0F, 1.0F, 0.0F);
 +    protected final Vector3f left = new Vector3f(1.0F, 0.0F, 0.0F);
 +    protected float pitch;
 +    protected float yaw;
-     private final Quaternion rotation = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
++    protected final Quaternion rotation = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
      private boolean thirdPerson;
      private boolean thirdPersonReverse;
+     private float height;

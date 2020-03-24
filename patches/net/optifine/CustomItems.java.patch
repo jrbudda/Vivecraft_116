@@ -1,14 +1,6 @@
 --- a/net/optifine/CustomItems.java
 +++ b/net/optifine/CustomItems.java
-@@ -46,6 +46,7 @@
- import net.optifine.util.PropertiesOrdered;
- import net.optifine.util.ResUtils;
- import net.optifine.util.StrUtils;
-+import org.apache.logging.log4j.LogManager;
- 
- public class CustomItems
- {
-@@ -69,7 +70,7 @@
+@@ -69,7 +69,7 @@
      private static final String TYPE_POTION_NORMAL = "normal";
      private static final String TYPE_POTION_SPLASH = "splash";
      private static final String TYPE_POTION_LINGER = "linger";
@@ -17,11 +9,3 @@
      public static void update()
      {
          itemProperties = (CustomItemProperties[][])null;
-@@ -260,6 +261,7 @@
- 
-     public static void loadModels(ModelBakery modelBakery)
-     {
-+    	
-         for (CustomItemProperties customitemproperties : getAllProperties())
-         {
-             customitemproperties.loadModels(modelBakery);

@@ -11,3 +11,48 @@
      }
  
      public void close()
+@@ -305,17 +307,19 @@
+     {
+         if (windowPointer == this.handle)
+         {
+-            int i = this.getFramebufferWidth();
+-            int j = this.getFramebufferHeight();
++            this.mc.updateWindowSize();
++
++            int i = this.getWidth();
++            int j = this.getHeight();
+ 
+             if (framebufferWidth != 0 && framebufferHeight != 0)
+             {
+                 this.framebufferWidth = framebufferWidth;
+                 this.framebufferHeight = framebufferHeight;
+ 
+-                if (this.getFramebufferWidth() != i || this.getFramebufferHeight() != j)
++                if (this.getWidth() != i || this.getHeight() != j)
+                 {
+-                    this.mc.updateWindowSize();
++                 //   this.mc.updateWindowSize();
+                 }
+             }
+         }
+@@ -500,12 +504,18 @@
+ 
+     public int getFramebufferWidth()
+     {
+-        return this.framebufferWidth;
++    	//Vivecraft experiment
++    	return Minecraft.getInstance().getFramebuffer().framebufferWidth;
++    	//
++        //return this.framebufferWidth;
+     }
+ 
+     public int getFramebufferHeight()
+     {
+-        return this.framebufferHeight;
++    	//Vivecraft experiment
++    	return Minecraft.getInstance().getFramebuffer().framebufferHeight;
++    	//
++        //return this.framebufferHeight;
+     }
+ 
+     public int getWidth()

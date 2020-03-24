@@ -184,7 +184,7 @@ public class VRSettings
     public boolean vrUseStencil = true;
     public boolean insideBlockSolidColor = false; //unused
     public float renderScaleFactor = 1.0f;
-    public int displayMirrorMode = MIRROR_ON_DUAL;
+    public int displayMirrorMode = MIRROR_ON_SINGLE;
 	public boolean shouldRenderSelf=false;
 	public boolean tmpRenderSelf;
 	public int menuWorldSelection = MENU_WORLD_BOTH;

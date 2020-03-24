@@ -599,16 +599,16 @@ public class OpenVRStereoRenderer
 			displayFBWidth = (int) Math.ceil(eyew * mc.vrSettings.renderScaleFactor);
 			displayFBHeight = (int) Math.ceil(eyeh * mc.vrSettings.renderScaleFactor);
 			
-			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false);
+			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, true);
 			mc.print(framebufferVrRender.toString());
 			checkGLError("3D framebuffer setup");
 			
-			mirrorFBWidth = mc.mainWindow.getFramebufferWidth();
-			mirrorFBHeight = mc.mainWindow.getFramebufferHeight();
+			mirrorFBWidth = mc.mainWindow.getWidth();
+			mirrorFBHeight = mc.mainWindow.getHeight();
 			if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY) {
-				mirrorFBWidth = mc.mainWindow.getFramebufferWidth() / 2;
+				mirrorFBWidth = mc.mainWindow.getWidth() / 2;
 				if(mc.vrSettings.mixedRealityUnityLike)
-					mirrorFBHeight = mc.mainWindow.getFramebufferHeight() / 2;
+					mirrorFBHeight = mc.mainWindow.getHeight() / 2;
 			}
 
 			if (Config.isShaders()) {
@@ -635,15 +635,15 @@ public class OpenVRStereoRenderer
 				checkGLError("Undistorted view framebuffer setup");
 			}
 			
-			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
+			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.mainWindow.getWidth(), mc.mainWindow.getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(GuiHandler.guiFramebuffer.toString());
 			checkGLError("GUI framebuffer setup");
 
-			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
+			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.mainWindow.getWidth(), mc.mainWindow.getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(KeyboardHandler.Framebuffer.toString());
 			checkGLError("Keyboard framebuffer setup");
 
-			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
+			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.mainWindow.getWidth(), mc.mainWindow.getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(RadialHandler.Framebuffer.toString());
 			checkGLError("Radial framebuffer setup");
 
@@ -695,8 +695,8 @@ public class OpenVRStereoRenderer
 				VRShaders.setupDepthMask();
 				ShaderHelper.checkGLError("init depth shader");
 				VRShaders.setupFOVReduction();
-				ShaderHelper.checkGLError("init FOV shader");			
-		        mc.worldRenderer.makeEntityOutlineShader();
+				ShaderHelper.checkGLError("init FOV shader");		
+		        mc.gameRenderer.updateShaderGroupSize(mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight());
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				System.exit(-1);
@@ -709,7 +709,6 @@ public class OpenVRStereoRenderer
 				int l = mc.mainWindow.getScaledHeight();
 				mc.currentScreen.init(mc, k, l);
 			}
-
 
 			System.out.println("[Minecrift] New render config:" +
 					"\nRender target width:  " + (true ? eyew + eyew: mc.mainWindow.getWidth()) +
@@ -762,21 +761,21 @@ public class OpenVRStereoRenderer
 		GL11.glStencilFunc(GL11.GL_ALWAYS, 0xFF, 0xFF); // Set any stencil to 1
 
 		if (verts != null) {
-			GlStateManager.disableAlphaTest();
-			GlStateManager.disableDepthTest();
-			GlStateManager.disableTexture();
-			GlStateManager.disableCull();
+			RenderSystem.disableAlphaTest();
+			RenderSystem.disableDepthTest();
+			RenderSystem.disableTexture();
+			RenderSystem.disableCull();
 
 			RenderSystem.color3f(0, 0, 0);
-			GlStateManager.depthMask(false); // Don't write to depth buffer
-			GlStateManager.matrixMode(GL11.GL_PROJECTION);
-			GlStateManager.pushMatrix();
-			GlStateManager.loadIdentity();
-			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-			GlStateManager.pushMatrix();
-			GlStateManager.loadIdentity();
-			GlStateManager.ortho(0.0D, framebufferVrRender.framebufferWidth, 0.0D, framebufferVrRender.framebufferHeight, -10, 20.0D);
-			GlStateManager.viewport(0, 0, framebufferVrRender.framebufferWidth, framebufferVrRender.framebufferHeight);
+			RenderSystem.depthMask(false); // Don't write to depth buffer
+			RenderSystem.matrixMode(GL11.GL_PROJECTION);
+			RenderSystem.pushMatrix();
+			RenderSystem.loadIdentity();
+			RenderSystem.matrixMode(GL11.GL_MODELVIEW);
+			RenderSystem.pushMatrix();
+			RenderSystem.loadIdentity();
+			RenderSystem.ortho(0.0D, framebufferVrRender.framebufferWidth, 0.0D, framebufferVrRender.framebufferHeight, -10, 20.0D);
+			RenderSystem.viewport(0, 0, framebufferVrRender.framebufferWidth, framebufferVrRender.framebufferHeight);
 			//this viewport might be wrong for some shaders.
 			GL11.glBegin(GL11.GL_TRIANGLES);
 
@@ -786,16 +785,16 @@ public class OpenVRStereoRenderer
 			GL11.glEnd();
 
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
-			GlStateManager.popMatrix();
+			RenderSystem.popMatrix();
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-			GlStateManager.popMatrix();
+			RenderSystem.popMatrix();
 
-			GlStateManager.depthMask(true); // Do write to depth buffer
+			RenderSystem.depthMask(true); // Do write to depth buffer
 
-			GlStateManager.enableDepthTest();
-			GlStateManager.enableAlphaTest();
-			GlStateManager.enableTexture();
-			GlStateManager.enableCull();
+			RenderSystem.enableDepthTest();
+			RenderSystem.enableAlphaTest();
+			RenderSystem.enableTexture();
+			RenderSystem.enableCull();
 		}
 
 		GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0xFF, 1);

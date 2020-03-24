@@ -73,28 +73,19 @@ def parse_srg_classnames(srgfile):
 
 def create_install(mcp_dir):
     print "Creating Installer..."
-    reobf = os.path.join(mcp_dir,'reobf','minecraft')
+    srg = os.path.join(mcp_dir,'class','srg')
+    obf = os.path.join(mcp_dir,'class','obf')
     resources = os.path.join(base_dir,"resources")
     patches = os.path.join(base_dir,'patches')
     
     in_mem_zip = StringIO.StringIO()
     with zipfile.ZipFile( in_mem_zip,'w', zipfile.ZIP_DEFLATED) as zipout:
         vanilla = parse_srg_classnames(os.path.join(mcp_dir, "conf", "joined.srg"))
-        for abs_path, _, filelist in os.walk(reobf, followlinks=True):
-            arc_path = os.path.relpath( abs_path, reobf ).replace('\\','/').replace('.','') + '/'
+        for abs_path, _, filelist in os.walk(obf, followlinks=True):
+            arc_path = os.path.relpath( abs_path, obf ).replace('\\','/').replace('.','') + '/'
             for cur_file in fnmatch.filter(filelist, '*.class'):
                 #print arc_path + cur_file
                 flg = False
-                #if cur_file in {'MinecriftVanillaTweaker.class','MinecriftClassTransformer.class','MinecriftForgeTweaker.class','MinecriftClassTransformer$Stage.class','MinecriftClassTransformer$1.class','MinecriftClassTransformer$2.class','MinecriftClassTransformer$3.class','MinecriftClassTransformer$4.class'}:
-                #if cur_file in {'brl.class', 'brl$1.class', 'brl$2.class', 'brl$3.class', 'brl$4.class', 'brl$5.class', 'brl$a.class'}: #skip facebakery
-                #    continue
-                #if cur_file in {'aej.class', 'aej$1.class', 'aej$2.class', 'aej$3.class', 'aej$4.class', 'aej$5.class', 'aej$6.class', 'aej$7.class', 'aej$8.class', 'aej$9.class', 'aej$10.class', 'aej$11.class', 'aej$12.class'}: #skip creativetabs - wtf
-                #    continue
-                #if cur_file in {'bmg.class', 'bmp.class', 'bmp$a.class', 'bmp$b.class', 'bmp$c.class', 'bhe.class'}: #skip guicontainer and guicontainercreative - asm
-                #    continue
-                #if cur_file in {'Matrix4f.class'}: #why
-                #    continue
-                #if cur_file in vanilla or 'optifine' in arc_path: #these misbehave when loaded in this jar, do some magic.
                 if not '$' in cur_file and not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
                     flg = True
                     ok = False
@@ -114,20 +105,40 @@ def create_install(mcp_dir):
                         continue
                 if "blaze3d" in arc_path:
                     flg = True
-                #if cur_file in {'bsz.class', 'bsz$1.class', 'bsz$2.class', 'bsz$3.class', 'bsz$a.class'}: #skip chunkrenderdispatcher
-                #    continue
-                #if cur_file in {'atm.class', 'atm$1.class', 'atm$a.class', 'atm$Builder.class'}: #skip blockstatecontainer
-                #    continue
-                #if cur_file in {'byz.class', 'byz$1.class'}: #skip textureatlassprite
-                #    continue
-                #if cur_file in {'byy.class', 'byy$1.class', 'byy$2.class', 'byy$3.class'}: #skip texturemap
-                #    continue
-                #if cur_file in {'bpy.class', 'bpy$1.class', 'bpy$2.class', 'bpy$a.class'}: #skip vertexbuffer
-                #    continue
                 in_file= os.path.join(abs_path,cur_file)
                 arcname =  arc_path + cur_file
                 if flg:
                     arcname =  arc_path.replace('/','.') + cur_file.replace('.class', '.clazz')
+                zipout.write(in_file, arcname.strip('.'))
+
+        for abs_path, _, filelist in os.walk(srg, followlinks=True):
+            arc_path = os.path.relpath(abs_path, srg ).replace('\\','/').replace('.','') + '/'
+            for cur_file in fnmatch.filter(filelist, '*.class'):
+                #print arc_path + cur_file
+                flg = False
+                if not '$' in cur_file and not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
+                    flg = True
+                    ok = False
+                    v = (arc_path + cur_file).replace('/','\\').split('$')[0].replace('.class', '')
+                    cur_file_parent = cur_file.split('$')[0].replace('.class','') + '.class'
+                    if cur_file_parent in vanilla:
+                        v = vanilla[cur_file_parent].replace('/','\\')               
+                    for patch_path, _, patchlist in os.walk(patches, followlinks=True):
+                        for patch in fnmatch.filter(patchlist, '*.patch'):
+                            p = patch_path + '\\' + patch
+                            if v in p:
+                                #print 'Found ' + v + ' ' + p
+                                ok = True
+                                break
+                    if not ok:
+                        print "WARNING: Skipping unexpected file with no patch " + arc_path + cur_file_parent + ' (' + v + ')'
+                        continue
+                if "blaze3d" in arc_path:
+                    flg = True
+                in_file= os.path.join(abs_path,cur_file)
+                arcname =  "/srg/" + arc_path + cur_file
+                if flg:
+                    arcname =   "/srg/" + arc_path + cur_file.replace('.class', '.clsrg')
                 zipout.write(in_file, arcname.strip('.'))
         print "Checking Resources..."
         for a, b, c in os.walk(resources):
@@ -232,11 +243,14 @@ def main(mcp_dir):
     os.chdir(mcp_dir)
 
     reobf = os.path.join(mcp_dir,'reobf','minecraft')
-    try:
-        pass
-        shutil.rmtree(reobf)
-    except OSError:
-        quit
+    srg = os.path.join(mcp_dir,'class','srg')
+    obf = os.path.join(mcp_dir,'class','obf')
+    
+    from runtime.commands import reallyrmtree
+
+    reallyrmtree(reobf)
+    reallyrmtree(srg)
+    reallyrmtree(obf)
 		       
     # Update Minecrift version
     minecraft_java_file = os.path.join(mcp_dir,'src','minecraft','net','minecraft','client','Minecraft.java')
@@ -251,8 +265,25 @@ def main(mcp_dir):
     recompile_side( commands, CLIENT)
 
     print("Reobfuscating...")
+    commands.creatergcfg(reobf=True, keep_lvt=True, keep_generics=True, srg_names=True)
+    reobfuscate_side( commands, CLIENT , srg_names=True)
+  
+
+    try:   
+        pass
+        shutil.move(reobf, srg)
+    except OSError:
+        quit
+   
     commands.creatergcfg(reobf=True, keep_lvt=True, keep_generics=True, srg_names=False)
     reobfuscate_side( commands, CLIENT )
+    
+    try:   
+        pass
+        shutil.move(reobf, obf)
+    except OSError:
+        quit
+        
     create_install( mcp_dir )
     
 if __name__ == '__main__':

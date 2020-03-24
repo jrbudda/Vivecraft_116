@@ -102,7 +102,7 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     @Override
     protected void loadDefaults() {
     	this.settings.renderScaleFactor = 1.0f;
-    	this.settings.displayMirrorMode = VRSettings.MIRROR_ON_DUAL;
+    	this.settings.displayMirrorMode = VRSettings.MIRROR_ON_SINGLE;
     	this.settings.mixedRealityKeyColor = new Color(0, 0, 0);
     	this.settings.mixedRealityRenderHands = false;
     	this.settings.insideBlockSolidColor = false;

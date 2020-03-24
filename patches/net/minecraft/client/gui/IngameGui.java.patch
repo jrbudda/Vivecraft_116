@@ -19,7 +19,7 @@
  import net.minecraft.block.Blocks;
  import net.minecraft.client.GameSettings;
  import net.minecraft.client.Minecraft;
-@@ -23,6 +28,7 @@
+@@ -23,11 +28,13 @@
  import net.minecraft.client.gui.overlay.DebugOverlayGui;
  import net.minecraft.client.gui.overlay.PlayerTabOverlayGui;
  import net.minecraft.client.gui.overlay.SubtitleOverlayGui;
@@ -27,7 +27,13 @@
  import net.minecraft.client.gui.screen.inventory.ContainerScreen;
  import net.minecraft.client.renderer.ActiveRenderInfo;
  import net.minecraft.client.renderer.BufferBuilder;
-@@ -106,6 +112,8 @@
+ import net.minecraft.client.renderer.ItemRenderer;
+ import net.minecraft.client.renderer.Tessellator;
++import net.minecraft.client.renderer.WorldVertexBufferUploader;
+ import net.minecraft.client.renderer.texture.AtlasTexture;
+ import net.minecraft.client.renderer.texture.PotionSpriteUploader;
+ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+@@ -106,6 +113,8 @@
      private int scaledWidth;
      private int scaledHeight;
      private final Map<ChatType, List<IChatListener>> chatListeners = Maps.newHashMap();
@@ -36,7 +42,7 @@
  
      public IngameGui(Minecraft p_i231_1_)
      {
-@@ -146,32 +154,43 @@
+@@ -146,32 +155,43 @@
          FontRenderer fontrenderer = this.getFontRenderer();
          RenderSystem.enableBlend();
  
@@ -100,7 +106,7 @@
  
          if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
          {
-@@ -188,9 +207,13 @@
+@@ -188,9 +208,13 @@
              this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
              RenderSystem.enableBlend();
              RenderSystem.enableAlphaTest();
@@ -116,7 +122,7 @@
              this.mc.getProfiler().startSection("bossHealth");
              this.overlayBoss.render();
              this.mc.getProfiler().endSection();
-@@ -223,6 +246,10 @@
+@@ -223,6 +247,10 @@
              {
                  this.spectatorGui.renderSelectedItem();
              }
@@ -127,7 +133,7 @@
          }
  
          if (this.mc.player.getSleepTimer() > 0)
-@@ -276,7 +303,9 @@
+@@ -276,7 +304,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight - 68), 0.0F);
                      RenderSystem.enableBlend();
@@ -138,7 +144,7 @@
                      int k1 = 16777215;
  
                      if (this.animateOverlayMessageColor)
-@@ -318,7 +347,9 @@
+@@ -318,7 +348,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight / 2), 0.0F);
                      RenderSystem.enableBlend();
@@ -149,7 +155,7 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.scalef(4.0F, 4.0F, 4.0F);
                      int l1 = j1 << 24 & -16777216;
-@@ -365,9 +396,30 @@
+@@ -365,9 +397,30 @@
              {
                  this.renderScoreboard(scoreobjective1);
              }
@@ -181,7 +187,7 @@
              RenderSystem.disableAlphaTest();
              RenderSystem.pushMatrix();
              RenderSystem.translatef(0.0F, (float)(this.scaledHeight - 48), 0.0F);
-@@ -377,7 +429,7 @@
+@@ -377,7 +430,7 @@
              RenderSystem.popMatrix();
              scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
  
@@ -190,7 +196,7 @@
              {
                  this.overlayPlayerList.setVisible(true);
                  this.overlayPlayerList.render(this.scaledWidth, scoreboard, scoreobjective1);
-@@ -594,6 +646,9 @@
+@@ -594,6 +647,9 @@
              int k = 182;
              int l = 91;
              this.setBlitOffset(-90);
@@ -200,7 +206,7 @@
              this.blit(i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
              this.blit(i - 91 - 1 + playerentity.inventory.currentItem * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
  
-@@ -612,7 +667,9 @@
+@@ -612,7 +668,9 @@
              this.setBlitOffset(j);
              RenderSystem.enableRescaleNormal();
              RenderSystem.enableBlend();
@@ -211,7 +217,7 @@
              CustomItems.setRenderOffHand(false);
  
              for (int i1 = 0; i1 < 9; ++i1)
-@@ -766,7 +823,9 @@
+@@ -766,7 +824,9 @@
              {
                  RenderSystem.pushMatrix();
                  RenderSystem.enableBlend();
@@ -222,7 +228,7 @@
                  fill(i - 2, j - 2, i + this.getFontRenderer().getStringWidth(s) + 2, j + 9 + 2, this.mc.gameSettings.getChatBackgroundColor(0));
                  FontRenderer fontrenderer = null;
  
-@@ -1199,6 +1258,7 @@
+@@ -1199,6 +1259,7 @@
          }
      }
  
@@ -230,7 +236,7 @@
      private void renderPumpkinOverlay()
      {
          RenderSystem.disableDepthTest();
-@@ -1230,6 +1290,8 @@
+@@ -1230,6 +1291,8 @@
          }
      }
  
@@ -239,7 +245,7 @@
      private void renderVignette(Entity entityIn)
      {
          if (!Config.isVignetteEnabled())
-@@ -1282,6 +1344,7 @@
+@@ -1282,6 +1345,7 @@
          }
      }
  
@@ -247,7 +253,7 @@
      private void renderPortal(float timeInPortal)
      {
          if (timeInPortal < 1.0F)
-@@ -1504,4 +1567,91 @@
+@@ -1504,4 +1568,74 @@
      {
          this.overlayDebug.resetChunk();
      }
@@ -293,49 +299,32 @@
 +
 +	public void drawMouseMenuQuad(int mouseX, int mouseY)
 +	{	
-+		GlStateManager.enableBlend();
-+		GlStateManager.enableAlphaTest();
-+		GlStateManager.disableDepthTest();
-+		GlStateManager.disableLighting();
-+		GlStateManager.color4f(1, 1, 1, 1);
++		RenderSystem.enableBlend();
++		RenderSystem.enableAlphaTest();
++		RenderSystem.disableDepthTest();
++		RenderSystem.disableLighting();
++		RenderSystem.color4f(1, 1, 1, 1);
 +
 +		this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
 +		float menuMousePointerSize = 16f * this.mc.vrSettings.menuCrosshairScale;
 +		
-+		//Why didnt we think of this sooner?
-+		/*GlStateManager.colorMask(false, false, false, true);
-+		GlStateManager.blendFunc(SourceFactor.CONSTANT_ALPHA, DestFactor.ZERO);
-+		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);
-+		
-+		GlStateManager.blendFunc(SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ONE_MINUS_SRC_COLOR);
-+		GlStateManager.colorMask(true, true, true, false);
-+		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);*/
-+
 +		// Turns out all we needed was some blendFuncSeparate magic :)
 +		// Also color DestFactor of ZERO produces better results with non-white crosshairs
 +		RenderSystem.blendFuncSeparate(SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ZERO, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 +		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);
-+
-+		GlStateManager.disableBlend();
-+		RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-+		GlStateManager.enableDepthTest();
-+		GlStateManager.enableLighting();
-+		//GlStateManager.colorMask(true, true, true, false);
 +	}
-+	/**
-+	 * Draws a centred textured rectangle at the stored z-value. Args: x, y, width, height, u, v, texwidth, texheight
-+	 */
++	
 +	public void drawCentredTexturedModalRect(int centreX, int centreY, float width, float height, int u, int v, int texWidth, int texHeight)
 +	{   	
-+		float f = 0.00390625F;
-+		float f1 = 0.00390625F;
-+		Tessellator tessellator = Tessellator.getInstance();
-+		tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-+		tessellator.getBuffer().pos(0, 0, 0).tex(u, v);
-+		tessellator.getBuffer().pos((double)(centreX - (width / 2f)), (double)(centreY + (height / 2f)), (double)this.getBlitOffset()).tex(((float)(u + 0) * f), ((float)(v + texHeight) * f1)).endVertex();
-+		tessellator.getBuffer().pos((double)(centreX + (width / 2f)), (double)(centreY + (height / 2f)), (double)this.getBlitOffset()).tex( ((float)(u + texWidth) * f), ((float)(v + texHeight) * f1)).endVertex();
-+		tessellator.getBuffer().pos((double)(centreX + (width / 2f)), (double)(centreY - (height / 2f)), (double)this.getBlitOffset()).tex( ((float)(u + texWidth) * f), ((float)(v + 0) * f1)).endVertex();
-+		tessellator.getBuffer().pos((double)(centreX - (width / 2f)), (double)(centreY - (height / 2f)), (double)this.getBlitOffset()).tex( ((float)(u + 0) * f), ((float)(v + 0) * f1)).endVertex();
-+		tessellator.draw();
++		float f = 1f/256;
++		float f1 = 1f/256;
++		BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
++		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
++		bufferbuilder.pos((double)(centreX - (width / 2f)), (double)(centreY + (height / 2f)), (double)this.getBlitOffset()).tex(((float)(u + 0) * f), ((float)(v + texHeight) * f1)).endVertex();
++		bufferbuilder.pos((double)(centreX + (width / 2f)), (double)(centreY + (height / 2f)), (double)this.getBlitOffset()).tex( ((float)(u + texWidth) * f), ((float)(v + texHeight) * f1)).endVertex();
++		bufferbuilder.pos((double)(centreX + (width / 2f)), (double)(centreY - (height / 2f)), (double)this.getBlitOffset()).tex( ((float)(u + texWidth) * f), ((float)(v + 0) * f1)).endVertex();
++		bufferbuilder.pos((double)(centreX - (width / 2f)), (double)(centreY - (height / 2f)), (double)this.getBlitOffset()).tex( ((float)(u + 0) * f), ((float)(v + 0) * f1)).endVertex();
++	    bufferbuilder.finishDrawing();
++	    WorldVertexBufferUploader.draw(bufferbuilder);
 +	}
  }

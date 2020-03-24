@@ -243,155 +243,154 @@
          if (this.debugView)
          {
              return 90.0D;
-@@ -493,7 +592,147 @@
+@@ -493,7 +592,145 @@
              matrixStackIn.rotate(Vector3f.XP.rotationDegrees(Math.abs(MathHelper.cos(f1 * (float)Math.PI - 0.2F) * f2) * 5.0F));
          }
      }
+-
 +    
-+    public void setupCameraTransform(float partialTicks, boolean isClouds)
-+    {
-+        GlStateManager.matrixMode(5889);
-+        GlStateManager.loadIdentity();
-+		if (mc.currentPass == RenderPass.LEFT || mc.currentPass == RenderPass.RIGHT)
-+		{
-+			int i = mc.currentPass.ordinal();
-+			if(i>1) i = 0;
-+			if(isClouds){
-+				GlStateManager.multMatrix(mc.stereoProvider.cloudeyeproj[i]);
-+			}else{
-+				GlStateManager.multMatrix(mc.stereoProvider.eyeproj[i]);
-+			}
-+		}
-+		else
-+		{
-+			float clip = isClouds ? clipDistance * 4 : clipDistance;
-+			if (mc.currentPass == RenderPass.THIRD) {
-+			    if (this.mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY)
-+				GlStateManager.multMatrix(Matrix4f.perspective(this.mc.vrSettings.mixedRealityFov, this.mc.vrSettings.mixedRealityAspectRatio , minClipDistance, clip));
-+			    else
-+                    GlStateManager.multMatrix(Matrix4f.perspective(this.mc.vrSettings.mixedRealityFov, (float)this.mc.mainWindow.getFramebufferWidth() / (float)this.mc.mainWindow.getFramebufferHeight(), minClipDistance, clip));
-+				GL11.glGetFloatv(GL11.GL_PROJECTION_MATRIX, matrixBuffer);
-+				matrixBuffer.rewind();
-+				this.thirdPassProjectionMatrix.read(matrixBuffer); //save it.
-+				matrixBuffer.rewind();
-+			} else {
-+		        GlStateManager.multMatrix(Matrix4f.perspective(this.getFOVModifier(this.activeRender, partialTicks, true), (float)this.mc.mainWindow.getFramebufferWidth() / (float)this.mc.mainWindow.getFramebufferHeight(), minClipDistance, this.clipDistance));
-+			}
-+		}
-+		//
-+        GlStateManager.matrixMode(5888);
-+        GlStateManager.loadIdentity();
-+       
-+        /*
-+        this.hurtCameraEffect(partialTicks);
-+
-+        if (this.mc.gameSettings.viewBobbing)
-+        {
-+            this.applyBobbing(partialTicks);
-+        }
-+        */
-+        
-+        float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
-+
-+        if (f > 0.0F)
-+        {
-+            int i = 20;
- 
-+            if (this.mc.player.isPotionActive(Effects.NAUSEA))
-+            {
-+                i = 7;
-+            }
-+
-+            float f1 = 5.0F / (f * f + 5.0F) - f * 0.04F;
-+            f1 = f1 * f1;
-+                 
-+            //Vivecraft tone that shit down
-+            i = i / 5;
-+            f1 = 1.1f;
-+            //
-+            
-+            GlStateManager.rotatef(((float)this.rendererUpdateCount + partialTicks) * (float)i, 0.0F, 1.0F, 1.0F);
-+            GlStateManager.scalef(1.0F / f1, 1.0F, 1.0F);
-+            GlStateManager.rotatef(-((float)this.rendererUpdateCount + partialTicks) * (float)i, 0.0F, 1.0F, 1.0F);
-+        }
-+        
-+        switch (mc.currentPass) {
-+        case CENTER:
-+        case LEFT:
-+        case RIGHT:
-+        	GlStateManager.multMatrix(mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getMatrix().toFloatBuffer());
-+        	break;
-+        case THIRD:
-+        	mc.gameRenderer.applyMRCameraRotation(false);	
-+        	break;
-+        default:
-+        	break;		
-+        }
-+	
-+    }
-+    
-+    public void setupCameraTransform(float partialTicks){
-+    	this.setupCameraTransform(partialTicks, false);
-+    }
++//    public void setupCameraTransform(float partialTicks, boolean isClouds)
++//    {
++//        GlStateManager.matrixMode(5889);
++//        GlStateManager.loadIdentity();
++//		if (mc.currentPass == RenderPass.LEFT || mc.currentPass == RenderPass.RIGHT)
++//		{
++//			int i = mc.currentPass.ordinal();
++//			if(i>1) i = 0;
++//			if(isClouds){
++//				GlStateManager.multMatrix(mc.stereoProvider.cloudeyeproj[i]);
++//			}else{
++//				GlStateManager.multMatrix(mc.stereoProvider.eyeproj[i]);
++//			}
++//		}
++//		else
++//		{
++//			float clip = isClouds ? clipDistance * 4 : clipDistance;
++//			if (mc.currentPass == RenderPass.THIRD) {
++//			    if (this.mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY)
++//				GlStateManager.multMatrix(Matrix4f.perspective(this.mc.vrSettings.mixedRealityFov, this.mc.vrSettings.mixedRealityAspectRatio , minClipDistance, clip));
++//			    else
++//                    GlStateManager.multMatrix(Matrix4f.perspective(this.mc.vrSettings.mixedRealityFov, (float)this.mc.mainWindow.getFramebufferWidth() / (float)this.mc.mainWindow.getFramebufferHeight(), minClipDistance, clip));
++//				GL11.glGetFloatv(GL11.GL_PROJECTION_MATRIX, matrixBuffer);
++//				matrixBuffer.rewind();
++//				this.thirdPassProjectionMatrix.read(matrixBuffer); //save it.
++//				matrixBuffer.rewind();
++//			} else {
++//		        GlStateManager.multMatrix(Matrix4f.perspective(this.getFOVModifier(this.activeRender, partialTicks, true), (float)this.mc.mainWindow.getFramebufferWidth() / (float)this.mc.mainWindow.getFramebufferHeight(), minClipDistance, this.clipDistance));
++//			}
++//		}
++//		//
++//        GlStateManager.matrixMode(5888);
++//        GlStateManager.loadIdentity();
++//       
++//        /*
++//        this.hurtCameraEffect(partialTicks);
++//
++//        if (this.mc.gameSettings.viewBobbing)
++//        {
++//            this.applyBobbing(partialTicks);
++//        }
++//        */
++//        
++//        float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
++//
++//        if (f > 0.0F)
++//        {
++//            int i = 20;
++//
++//            if (this.mc.player.isPotionActive(Effects.NAUSEA))
++//            {
++//                i = 7;
++//            }
++//
++//            float f1 = 5.0F / (f * f + 5.0F) - f * 0.04F;
++//            f1 = f1 * f1;
++//                 
++//            //Vivecraft tone that shit down
++//            i = i / 5;
++//            f1 = 1.1f;
++//            //
++//            
++//            GlStateManager.rotatef(((float)this.rendererUpdateCount + partialTicks) * (float)i, 0.0F, 1.0F, 1.0F);
++//            GlStateManager.scalef(1.0F / f1, 1.0F, 1.0F);
++//            GlStateManager.rotatef(-((float)this.rendererUpdateCount + partialTicks) * (float)i, 0.0F, 1.0F, 1.0F);
++//        }
++//        
++//        switch (mc.currentPass) {
++//        case CENTER:
++//        case LEFT:
++//        case RIGHT:
++//        	GlStateManager.multMatrix(mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getMatrix().toFloatBuffer());
++//        	break;
++//        case THIRD:
++//        	mc.gameRenderer.applyMRCameraRotation(false);	
++//        	break;
++//        default:
++//        	break;		
++//        }
++//	
++//    }
++//    
++//    public void setupCameraTransform(float partialTicks){
++//    	this.setupCameraTransform(partialTicks, false);
++//    }
 +    
 +    private void renderVRHand_Main(float partialTicks)
 +    {
-+	
-+		if(Config.isShaders()){
-+			Shaders.beginHand(false);
-+		}else {
-+			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-+			GlStateManager.pushMatrix();
-+		}	
-+			//from player face to HMD
-+			setupCameraTransform(partialTicks);
-+			applyCameraDepth(false);
-+			if (this.mc.gameSettings.thirdPersonView == 0) 
-+			{
-+				Matrix4f mat = new Matrix4f();
-+				mat.setIdentity();
-+				// VIVE START - from HMD to controller
-+				SetupRenderingAtController(0);
++    	if(Config.isShaders()){
++    		Shaders.beginHand(false);
++    	}else {
++    		GL11.glMatrixMode(GL11.GL_MODELVIEW);
++    		GlStateManager.pushMatrix();
++    	}	
++    	//from player face to HMD
++    	applyVRModelViewLegacy(mc.currentPass);
++    	if (this.mc.gameSettings.thirdPersonView == 0) 
++    	{
++    		Matrix4f mat = new Matrix4f();
++    		mat.setIdentity();
++    		// VIVE START - from HMD to controller
++    		SetupRenderingAtController(0);
 +
-+				ItemStack item = mc.player.getHeldItemMainhand();
-+				ItemStack override=mc.physicalGuiManager.getHeldItemOverride();
-+				if(override!=null)
-+					item=override;
++    		ItemStack item = mc.player.getHeldItemMainhand();
++    		ItemStack override=mc.physicalGuiManager.getHeldItemOverride();
++    		if(override!=null)
++    			item=override;
 +
-+				if(mc.climbTracker.isClimbeyClimb() && (item.getItem() != Items.SHEARS)){
-+				//	itemRenderer.renderItemInFirstPerson(mat, mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), override==null? mc.player.getHeldItemOffhand() : override, 0);
-+				}
++    		if(mc.climbTracker.isClimbeyClimb() && (item.getItem() != Items.SHEARS)){
++    			//	itemRenderer.renderItemInFirstPerson(mat, mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), override==null? mc.player.getHeldItemOffhand() : override, 0);
++    		}
 +
-+				if(BowTracker.isHoldingBow(mc.player, Hand.MAIN_HAND)){
-+					//do ammo override
-+					int c = 0;
-+					if (mc.vrSettings.vrReverseShootingEye) c = 1;				
-+					ItemStack ammo = mc.bowTracker.findAmmoItemStack(mc.player);
-+					if (ammo !=null  && !mc.bowTracker.isNotched()) { //render the arrow in right, left hand will check for and render bow.
-+					//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ammo, 0);
-+					} else {
-+				//		itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
-+					}
-+				}
-+				else if(BowTracker.isHoldingBow(mc.player, Hand.OFF_HAND) && mc.bowTracker.isNotched()){
-+					int c = 0;
-+					if (mc.vrSettings.vrReverseShootingEye) c = 1;				
-+				//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
-+				}else {
-+				//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), item, 0);
-+				}
-+			}	
-+		if(Config.isShaders())
-+			Shaders.endHand();
-+		else {
-+			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-+			GlStateManager.popMatrix();
-+		}	
-+	}
++    		if(BowTracker.isHoldingBow(mc.player, Hand.MAIN_HAND)){
++    			//do ammo override
++    			int c = 0;
++    			if (mc.vrSettings.vrReverseShootingEye) c = 1;				
++    			ItemStack ammo = mc.bowTracker.findAmmoItemStack(mc.player);
++    			if (ammo !=null  && !mc.bowTracker.isNotched()) { //render the arrow in right, left hand will check for and render bow.
++    				//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ammo, 0);
++    			} else {
++    				//		itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
++    			}
++    		}
++    		else if(BowTracker.isHoldingBow(mc.player, Hand.OFF_HAND) && mc.bowTracker.isNotched()){
++    			int c = 0;
++    			if (mc.vrSettings.vrReverseShootingEye) c = 1;				
++    			//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), ItemStack.EMPTY, 0);
++    		}else {
++    			//	itemRenderer.renderItemInFirstPerson(mc.player, partialTicks, 0, Hand.MAIN_HAND, mc.player.getSwingProgress(partialTicks), item, 0);
++    		}
++    	}	
++    	if(Config.isShaders())
++    		Shaders.endHand();
++    	else {
++    		GL11.glMatrixMode(GL11.GL_MODELVIEW);
++    		GlStateManager.popMatrix();
++    	}	
++    }
      private void renderHand(MatrixStack matrixStackIn, ActiveRenderInfo activeRenderInfoIn, float partialTicks)
      {
          this.renderHand(matrixStackIn, activeRenderInfoIn, partialTicks, true, true, false);
-@@ -577,23 +816,41 @@
+@@ -577,23 +814,41 @@
  
      public Matrix4f getProjectionMatrix(ActiveRenderInfo activeRenderInfoIn, float partialTicks, boolean useFovSetting)
      {
@@ -450,12 +449,9 @@
      }
  
      public static float getNightVisionBrightness(LivingEntity livingEntityIn, float entitylivingbaseIn)
-@@ -602,21 +859,26 @@
-         return i > 200 ? 1.0F : 0.7F + MathHelper.sin(((float)i - entitylivingbaseIn) * (float)Math.PI * 0.2F) * 0.3F;
-     }
+@@ -604,187 +859,101 @@
  
--    public void updateCameraAndRender(float partialTicks, long nanoTime, boolean renderWorldIn)
-+    public void renderGame(float partialTicks, long nanoTime, boolean renderWorldIn)
+     public void updateCameraAndRender(float partialTicks, long nanoTime, boolean renderWorldIn)
      {
 -        this.frameInit();
 -
@@ -470,12 +466,176 @@
 -        {
 -            this.prevFrameTime = Util.milliTime();
 -        }
-+    	
+-
+-        if (!this.mc.skipRenderWorld)
+-        {
+-            int i = (int)(this.mc.mouseHelper.getMouseX() * (double)this.mc.getMainWindow().getScaledWidth() / (double)this.mc.getMainWindow().getWidth());
+-            int j = (int)(this.mc.mouseHelper.getMouseY() * (double)this.mc.getMainWindow().getScaledHeight() / (double)this.mc.getMainWindow().getHeight());
+-            MatrixStack matrixstack = new MatrixStack();
+-
+-            if (Config.isShaders())
+-            {
+-                Shaders.setViewport(0, 0, this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
+-            }
+-            else
+-            {
+-                RenderSystem.viewport(0, 0, this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
+-            }
+-
+-            if (renderWorldIn && this.mc.world != null && !Config.isReloadingResources())
+-            {
+-                this.mc.getProfiler().startSection("level");
+-                this.renderWorld(partialTicks, nanoTime, matrixstack);
+-
+-                if (this.mc.isSingleplayer() && this.timeWorldIcon < Util.milliTime() - 1000L)
+-                {
+-                    this.timeWorldIcon = Util.milliTime();
+-
+-                    if (!this.mc.getIntegratedServer().isWorldIconSet())
+-                    {
+-                        this.createWorldIcon();
+-                    }
+-                }
+-
+-                this.mc.worldRenderer.renderEntityOutlineFramebuffer();
+-
+-                if (this.shaderGroup != null && this.useShader)
+-                {
+-                    RenderSystem.disableBlend();
+-                    RenderSystem.disableDepthTest();
+-                    RenderSystem.disableAlphaTest();
+-                    RenderSystem.enableTexture();
+-                    RenderSystem.matrixMode(5890);
+-                    RenderSystem.pushMatrix();
+-                    RenderSystem.loadIdentity();
+-                    this.shaderGroup.render(partialTicks);
+-                    RenderSystem.popMatrix();
+-                }
+-
+-                this.mc.getFramebuffer().bindFramebuffer(true);
+-            }
+-
+-            MainWindow mainwindow = this.mc.getMainWindow();
+-            RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
+-            RenderSystem.matrixMode(5889);
+-            RenderSystem.loadIdentity();
+-            RenderSystem.ortho(0.0D, (double)mainwindow.getFramebufferWidth() / mainwindow.getGuiScaleFactor(), (double)mainwindow.getFramebufferHeight() / mainwindow.getGuiScaleFactor(), 0.0D, 1000.0D, 3000.0D);
+-            RenderSystem.matrixMode(5888);
+-            RenderSystem.loadIdentity();
+-            RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
+-            RenderHelper.setupGui3DDiffuseLighting();
+-
+-            if (this.lightmapTexture.isCustom())
+-            {
+-                this.lightmapTexture.setAllowed(false);
+-            }
+-
+-            if (renderWorldIn && this.mc.world != null)
+-            {
+-                this.mc.getProfiler().endStartSection("gui");
+-
+-                if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null)
+-                {
+-                    RenderSystem.defaultAlphaFunc();
+-                    this.renderItemActivation(this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), partialTicks);
+-                    this.mc.ingameGUI.renderGameOverlay(partialTicks);
+-
+-                    if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo)
+-                    {
+-                        Config.drawFps();
+-                    }
+-
+-                    if (this.mc.gameSettings.showDebugInfo)
+-                    {
+-                        Lagometer.showLagometer((int)this.mc.getMainWindow().getGuiScaleFactor());
+-                    }
+-
+-                    RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
+-                }
+ 
+-                this.mc.getProfiler().endSection();
+-            }
+-
+-            if (this.guiLoadingVisible != (this.mc.loadingGui != null))
+-            {
+-                if (this.mc.loadingGui != null)
+-                {
+-                    this.mc.getTextureManager().deleteTexture(Config.LOCATION_MOJANG_LOGO);
+-
+-                    if (this.mc.loadingGui instanceof ResourceLoadProgressGui)
+-                    {
+-                        ResourceLoadProgressGui resourceloadprogressgui = (ResourceLoadProgressGui)this.mc.loadingGui;
+-                        resourceloadprogressgui.update();
+-                    }
+-                }
 +    	if(mc.currentPass == RenderPass.LEFT) { //Vivecraft once per pass
 +    		this.frameInit();
-+
-+    		setupClipPlanes();
-+
+ 
+-                this.guiLoadingVisible = this.mc.loadingGui != null;
+-            }
+-
+-            if (this.mc.loadingGui != null)
+-            {
+-                try
+-                {
+-                    this.mc.loadingGui.render(i, j, this.mc.getTickLength());
+-                }
+-                catch (Throwable throwable1)
+-                {
+-                    CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Rendering overlay");
+-                    CrashReportCategory crashreportcategory = crashreport.makeCategory("Overlay render details");
+-                    crashreportcategory.addDetail("Overlay name", () ->
+-                    {
+-                        return this.mc.loadingGui.getClass().getCanonicalName();
+-                    });
+-                    throw new ReportedException(crashreport);
+-                }
+-            }
+-            else if (this.mc.currentScreen != null)
+-            {
+-                try
+-                {
+-                    if (Reflector.ForgeHooksClient_drawScreen.exists())
+-                    {
+-                        Reflector.callVoid(Reflector.ForgeHooksClient_drawScreen, this.mc.currentScreen, i, j, this.mc.getTickLength());
+-                    }
+-                    else
+-                    {
+-                        this.mc.currentScreen.render(i, j, this.mc.getTickLength());
+-                    }
+-                }
+-                catch (Throwable throwable1)
+-                {
+-                    CrashReport crashreport1 = CrashReport.makeCrashReport(throwable1, "Rendering screen");
+-                    CrashReportCategory crashreportcategory1 = crashreport1.makeCategory("Screen render details");
+-                    crashreportcategory1.addDetail("Screen name", () ->
+-                    {
+-                        return this.mc.currentScreen.getClass().getCanonicalName();
+-                    });
+-                    crashreportcategory1.addDetail("Mouse location", () ->
+-                    {
+-                        return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%f, %f)", i, j, this.mc.mouseHelper.getMouseX(), this.mc.mouseHelper.getMouseY());
+-                    });
+-                    crashreportcategory1.addDetail("Screen size", () ->
+-                    {
+-                        return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %f", this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight(), this.mc.getMainWindow().getGuiScaleFactor());
+-                    });
+-                    throw new ReportedException(crashreport1);
+-                }
+-            }
+-
+-            this.lightmapTexture.setAllowed(true);
+-        }
+-
+-        this.frameFinish();
+-        this.waitForServerThread();
+-        MemoryMonitor.update();
+-        Lagometer.updateLagometer();
+-
+-        if (this.mc.gameSettings.ofProfiler)
+-        {
+-            this.mc.gameSettings.showDebugProfilerChart = true;
+-        }
 +    		if (!always_true && !this.mc.isGameFocused() && this.mc.gameSettings.pauseOnLostFocus && (!this.mc.gameSettings.touchscreen || !this.mc.mouseHelper.isRightDown()))
 +    		{//never pause on focus loss.
 +    			if (Util.milliTime() - this.prevFrameTime > 500L)
@@ -488,122 +648,89 @@
 +    			this.prevFrameTime = Util.milliTime();
 +    		}
 +    	}
- 
-         if (!this.mc.skipRenderWorld)
-         {
-@@ -624,14 +886,16 @@
-             int j = (int)(this.mc.mouseHelper.getMouseY() * (double)this.mc.getMainWindow().getScaledHeight() / (double)this.mc.getMainWindow().getHeight());
-             MatrixStack matrixstack = new MatrixStack();
- 
-+            //Vivecraft correct viewport size
-             if (Config.isShaders())
-             {
--                Shaders.setViewport(0, 0, this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
-+                Shaders.setViewport(0, 0, Shaders.renderWidth, Shaders.renderHeight);
-             }
-             else
-             {
--                RenderSystem.viewport(0, 0, this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
-+                RenderSystem.viewport(0, 0, this.mc.getFramebuffer().framebufferWidth, this.mc.getFramebuffer().framebufferHeight);
-             }
-+            //
- 
-             if (renderWorldIn && this.mc.world != null && !Config.isReloadingResources())
-             {
-@@ -665,7 +929,7 @@
- 
-                 this.mc.getFramebuffer().bindFramebuffer(true);
-             }
--
-+/*
-             MainWindow mainwindow = this.mc.getMainWindow();
-             RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
-             RenderSystem.matrixMode(5889);
-@@ -675,7 +939,7 @@
-             RenderSystem.loadIdentity();
-             RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
-             RenderHelper.setupGui3DDiffuseLighting();
--
-+*/
-             if (this.lightmapTexture.isCustom())
-             {
-                 this.lightmapTexture.setAllowed(false);
-@@ -687,6 +951,7 @@
- 
-                 if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null)
-                 {
-+/*
-                     RenderSystem.defaultAlphaFunc();
-                     this.renderItemActivation(this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), partialTicks);
-                     this.mc.ingameGUI.renderGameOverlay(partialTicks);
-@@ -700,13 +965,14 @@
-                     {
-                         Lagometer.showLagometer((int)this.mc.getMainWindow().getGuiScaleFactor());
-                     }
--
-+*/
-                     RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
-                 }
- 
-                 this.mc.getProfiler().endSection();
-             }
- 
-+/*
-             if (this.guiLoadingVisible != (this.mc.loadingGui != null))
-             {
-                 if (this.mc.loadingGui != null)
-@@ -772,8 +1038,37 @@
-                     throw new ReportedException(crashreport1);
-                 }
-             }
-+*/
- 
-             this.lightmapTexture.setAllowed(true);
-+    	GlStateManager.disableBlend();
-+    	GlStateManager.disableAlphaTest();
-+    	GlStateManager.enableDepthTest();
-+    	GlStateManager.enableTexture();
 +
-+    	if (this.isInMenuRoom()) {
-+    		this.mc.getProfiler().startSection("renderGui");
-+    		GL11.glDisable(GL11.GL_STENCIL_TEST);
++    	if (!this.mc.skipRenderWorld)
++    	{
 +
-+    		renderGuiLayer(partialTicks);
-+    		if(KeyboardHandler.Showing) {
-+    		    if (mc.vrSettings.physicalKeyboard)
-+    		        renderPhysicalKeyboard(partialTicks);
-+    		    else
-+                    render2D(partialTicks, KeyboardHandler.Framebuffer, KeyboardHandler.Pos_room, KeyboardHandler.Rotation_room);
-+            }
++    		//Vivecraft correct viewport size
++    		if (Config.isShaders())
++    		{
++    			Shaders.setViewport(0, 0, Shaders.renderWidth, Shaders.renderHeight);
++    		}
++    		else
++    		{
++    			RenderSystem.viewport(0, 0, this.mc.getFramebuffer().framebufferWidth, this.mc.getFramebuffer().framebufferHeight);
++    		}
++    		//
 +
-+    		if(mc.currentPass != RenderPass.THIRD || mc.vrSettings.mixedRealityRenderHands){
-+    			// VIVE START - render controllers in main menu
-+    			this.mc.getProfiler().startSection("mainMenuHands");
-+    			renderMainMenuHands(partialTicks);
++    		if (renderWorldIn && this.mc.world != null && !Config.isReloadingResources())
++    		{
++        		//This is the viewmodel matrix.
++        		MatrixStack matrixstack = new MatrixStack(); 
++
++    			this.mc.getProfiler().startSection("level");
++    			this.renderWorld(partialTicks, nanoTime, matrixstack);
++
++    			if (this.mc.isSingleplayer() && this.timeWorldIcon < Util.milliTime() - 1000L)
++    			{
++    				this.timeWorldIcon = Util.milliTime();
++
++    				if (!this.mc.getIntegratedServer().isWorldIconSet())
++    				{
++    					this.createWorldIcon();
++    				}
++    			}
++
++    			this.mc.worldRenderer.renderEntityOutlineFramebuffer();
++
++    			if (this.shaderGroup != null && this.useShader)
++    			{
++    				RenderSystem.disableBlend();
++    				RenderSystem.disableDepthTest();
++    				RenderSystem.disableAlphaTest();
++    				RenderSystem.enableTexture();
++    				RenderSystem.matrixMode(5890);
++    				RenderSystem.pushMatrix();
++    				RenderSystem.loadIdentity();
++    				this.shaderGroup.render(partialTicks);
++    				RenderSystem.popMatrix();
++    			}
++
++    			this.mc.getFramebuffer().bindFramebuffer(true);
++    		} else {
++    			this.mc.getProfiler().startSection("MainMenu");
++	    			GL11.glDisable(GL11.GL_STENCIL_TEST);
++	    			
++	    	        this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
++
++	    	        RenderSystem.pushMatrix();
++	    		  		GL11.glLoadIdentity();
++	    		  		applyVRModelViewLegacy(this.mc.currentPass);
++	    		
++	    		  		renderGuiLayer(partialTicks);
++	    			
++		    			if(KeyboardHandler.Showing) {
++		    				if (mc.vrSettings.physicalKeyboard)
++		    					renderPhysicalKeyboard(partialTicks);
++		    				else
++		    					render2D(partialTicks, KeyboardHandler.Framebuffer, KeyboardHandler.Pos_room, KeyboardHandler.Rotation_room);
++		    			}
++		
++		    			if(mc.currentPass != RenderPass.THIRD || mc.vrSettings.mixedRealityRenderHands){
++		    				// VIVE START - render controllers in main menu
++		    				this.mc.getProfiler().startSection("mainMenuHands");
++		    				//	renderMainMenuHands(partialTicks);
++		    				this.mc.getProfiler().endSection();
++		    			}
++		    			
++	    		      RenderSystem.popMatrix();
 +    			this.mc.getProfiler().endSection();
 +    		}
-+
-+    		this.mc.getProfiler().endSection();
 +    	}
-+
-+    	handleNotificationText();
-         }
- 
-         this.frameFinish();
-@@ -781,10 +1076,12 @@
-         MemoryMonitor.update();
-         Lagometer.updateLagometer();
- 
-+/*
-         if (this.mc.gameSettings.ofProfiler)
-         {
-             this.mc.gameSettings.showDebugProfilerChart = true;
-         }
-+*/
      }
  
      private void createWorldIcon()
-@@ -827,7 +1124,10 @@
+@@ -827,7 +996,10 @@
  
      private boolean isDrawBlockOutline()
      {
@@ -615,9 +742,12 @@
          {
              return false;
          }
-@@ -864,14 +1164,29 @@
+@@ -862,16 +1034,32 @@
+         }
+     }
  
-     public void renderWorld(float partialTicks, long finishTimeNano, MatrixStack matrixStackIn)
+-    public void renderWorld(float partialTicks, long finishTimeNano, MatrixStack matrixStackIn)
++    public void renderWorld(float partialTicks, long finishTimeNano, MatrixStack viewModel)
      {
 -        this.lightmapTexture.updateLightmap(partialTicks);
 +    	if(mc.currentPass == RenderPass.LEFT) {
@@ -632,6 +762,7 @@
 +    	//Vivecraft
 +    	cacheRVEPos((LivingEntity) mc.getRenderViewEntity());	
 +    	setupRVE();
++    	
 +    	setupOverlayStatus(partialTicks); 
 +    	
 +     	if(mc.currentPass == RenderPass.LEFT) {
@@ -646,7 +777,7 @@
  
          if (Config.isShaders())
          {
-@@ -889,29 +1204,18 @@
+@@ -889,29 +1077,18 @@
          boolean flag1 = this.isDrawBlockOutline();
          this.mc.getProfiler().endStartSection("camera");
          ActiveRenderInfo activerenderinfo = this.activeRender;
@@ -661,17 +792,21 @@
 -        {
 -            this.farPlaneDistance *= 0.83F;
 -        }
+-
+-        MatrixStack matrixstack = new MatrixStack();
+-        matrixstack.getLast().getMatrix().mul(this.getProjectionMatrix(activerenderinfo, partialTicks, true));
+-        this.hurtCameraEffect(matrixstack, partialTicks);
 +        setupClipPlanes();
  
-         MatrixStack matrixstack = new MatrixStack();
-         matrixstack.getLast().getMatrix().mul(this.getProjectionMatrix(activerenderinfo, partialTicks, true));
++        MatrixStack projectionBuilder = new MatrixStack();
++        projectionBuilder.getLast().getMatrix().mul(this.getProjectionMatrix(activerenderinfo, partialTicks, true));
 + 
-+        //
-         this.hurtCameraEffect(matrixstack, partialTicks);
--
++        //Minecraft now does all this to the projection matrix cause reasons.
++        //no hurt  this.hurtCameraEffect(matrixstack, partialTicks);
          if (this.mc.gameSettings.viewBobbing)
          {
-             this.applyBobbing(matrixstack, partialTicks);
+-            this.applyBobbing(matrixstack, partialTicks);
++         //no bob   this.applyBobbing(matrixstack, partialTicks);
          }
 -
          float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
@@ -679,38 +814,100 @@
          if (f > 0.0F)
          {
              int i = 20;
-@@ -929,12 +1233,15 @@
+@@ -923,26 +1100,64 @@
+ 
+             float f1 = 5.0F / (f * f + 5.0F) - f * 0.04F;
+             f1 = f1 * f1;
++            
++            //Vivecraft tone that shit down
++            i = i / 5;
++            f1 = 1.1f;
++            //
++            
+             Vector3f vector3f = new Vector3f(0.0F, MathHelper.SQRT_2 / 2.0F, MathHelper.SQRT_2 / 2.0F);
+-            matrixstack.rotate(vector3f.rotationDegrees(((float)this.rendererUpdateCount + partialTicks) * (float)i));
+-            matrixstack.scale(1.0F / f1, 1.0F, 1.0F);
++            projectionBuilder.rotate(vector3f.rotationDegrees(((float)this.rendererUpdateCount + partialTicks) * (float)i));
++            projectionBuilder.scale(1.0F / f1, 1.0F, 1.0F);
              float f2 = -((float)this.rendererUpdateCount + partialTicks) * (float)i;
-             matrixstack.rotate(vector3f.rotationDegrees(f2));
+-            matrixstack.rotate(vector3f.rotationDegrees(f2));
++            projectionBuilder.rotate(vector3f.rotationDegrees(f2));
          }
 -
+-        Matrix4f matrix4f = matrixstack.getLast().getMatrix();
+-        this.resetProjectionMatrix(matrix4f);
 +        //
 +        
-         Matrix4f matrix4f = matrixstack.getLast().getMatrix();
-         this.resetProjectionMatrix(matrix4f);
++        Matrix4f projection = projectionBuilder.getLast().getMatrix();
++        
++        this.resetProjectionMatrix(projection);
          activerenderinfo.update(this.mc.world, (Entity)(this.mc.getRenderViewEntity() == null ? this.mc.player : this.mc.getRenderViewEntity()), this.mc.gameSettings.thirdPersonView > 0, this.mc.gameSettings.thirdPersonView == 2, partialTicks);
 -        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(activerenderinfo.getPitch()));
 -        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(activerenderinfo.getYaw() + 180.0F));
+-        this.mc.worldRenderer.updateCameraAndRender(matrixStackIn, partialTicks, finishTimeNano, flag1, activerenderinfo, this, this.lightmapTexture, matrix4f);
 +        
 +        //matrixStackIn.rotate(Vector3f.XP.rotationDegrees(activerenderinfo.getPitch()));
 +        //matrixStackIn.rotate(Vector3f.YP.rotationDegrees(activerenderinfo.getYaw() + 180.0F));
 +        
-         this.mc.worldRenderer.updateCameraAndRender(matrixStackIn, partialTicks, finishTimeNano, flag1, activerenderinfo, this, this.lightmapTexture, matrix4f);
++        applyVRModelView(mc.currentPass, viewModel); //this is just rotation.
++    	
++        this.mc.worldRenderer.updateCameraAndRender(viewModel, partialTicks, finishTimeNano, flag1, activerenderinfo, this, this.lightmapTexture, projection);
++
++        this.mc.getProfiler().endStartSection("VR");
++	        lightmapTexture.enableLightmap();
++	        boolean forgeHands = false;
++	
++	//        boolean correctTranslucentGui = !Config.isShaders();// jrbudda: I think I prefer it [false]. Water doesnt render 'thru' the hud or hands, but they both interact with water always.
++	//        // Techjar: Nah it looks bad, and the hands don't render behind it either. It's especially problematic with chat messages on the screen.
++	//        // We'll only disable it with shaders, as otherwise it gets weird because of how shaders works.
++	//        //Shaders.isItemToRenderMainTranslucent() ||
++	//        //Shaders.isItemToRenderOffTranslucent() || mc.getItemRenderer().getFade() < 1;
++	
++	        if (flag)
++	        	Shaders.useProgram(Shaders.ProgramTexturedLit);
++	        renderVRLit(false, partialTicks);
++	
++	        if (shouldRenderHands())
++	        	renderVRHands(false, partialTicks);
  
          if (Reflector.ForgeHooksClient_dispatchRenderLast.exists())
-@@ -965,6 +1272,11 @@
+         {
+-            this.mc.getProfiler().endStartSection("forge_render_last");
+-            Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, this.mc.worldRenderer, matrixStackIn, finishTimeNano);
++        	this.mc.getProfiler().endStartSection("forge_render_last");
++        	Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, this.mc.worldRenderer, viewModel, finishTimeNano);
+         }
++        
++    	GL11.glDisable(GL11.GL_STENCIL_TEST);
+ 
++        this.mc.getProfiler().endStartSection("ShadersEnd");
++        if ( flag && !forgeHands && this.renderHand && !Shaders.isShadowPass)
++        {
++        	Shaders.renderCompositeFinal();
++        }
++        
++        /*
+         this.mc.getProfiler().endStartSection("hand");
+ 
+         if (this.renderHand && !Shaders.isShadowPass)
+@@ -964,11 +1179,15 @@
+                 this.renderHand(matrixStackIn, activerenderinfo, partialTicks);
              }
          }
- 
-+        //Vivecraft - VR Stencil
-+    	this.mc.getProfiler().endStartSection("stencil");
-+        this.drawEyeStencil();
-+		//     
+-
++        */
 +        
          if (flag)
          {
              Shaders.endRender();
-@@ -1254,7 +1566,7 @@
+         }
++        
++
++        restoreRVEPos((LivingEntity) mc.getRenderViewEntity()); //unhack the RVE position.
+ 
+         this.mc.getProfiler().endSection();
+     }
+@@ -1254,7 +1473,7 @@
              RenderSystem.disableCull();
              MatrixStack matrixstack = new MatrixStack();
              matrixstack.push();
@@ -719,7 +916,7 @@
              float f7 = 50.0F + 175.0F * MathHelper.sin(f4);
              matrixstack.scale(f7, -f7, f7);
              matrixstack.rotate(Vector3f.YP.rotationDegrees(900.0F * MathHelper.abs(MathHelper.sin(f4))));
-@@ -1295,4 +1607,1989 @@
+@@ -1295,4 +1514,2116 @@
      {
          return this.overlayTexture;
      }
@@ -863,7 +1060,7 @@
 +  	        // VIVE START - custom GUI position
 +            GlStateManager.pushMatrix();
 +  			GL11.glLoadIdentity();
-+  				applyMenuRoomModelView(this.mc.currentPass);
++  				applyVRModelViewLegacy(this.mc.currentPass);
 +  						
 +  					GlStateManager.loadIdentity();
 +  					Vec3d guipos = apply2DModelView(this.mc.currentPass, pos, rot);
@@ -972,13 +1169,7 @@
 +    	if(RadialHandler.isShowing()) return;
 +
 +  		boolean inMenuRoom = this.isInMenuRoom();
-+  		
-+        this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, par1, true));
 +
-+        GlStateManager.pushMatrix();
-+	  		GL11.glLoadIdentity();
-+	  		applyMenuRoomModelView(this.mc.currentPass);
-+	  		
 +	  		///MAIN MENU ENVIRONMENT
 +	  		if(inMenuRoom){
 +	  			if (mc.menuWorldRenderer != null && mc.menuWorldRenderer.isReady()) {
@@ -988,86 +1179,83 @@
 +	  			}
 +	  		}
 +	  		//END AWESOME MAIN MENU ENVIRONMENT
-+	
-+	  		GlStateManager.loadIdentity();
-+	  		Vec3d guipos = GuiHandler.applyGUIModelView(this.mc.currentPass);
-+	
-+	  		GuiHandler.guiFramebuffer.bindFramebufferTexture();
-+	
-+	  		GlStateManager.disableCull();
-+	  		//	RenderHelper.disableStandardItemLighting();
-+	  		GlStateManager.enableTexture();
-+	
-+	  		// Prevent black border at top / bottom of GUI
-+	  		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-+	  		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-+	
-+	  		// Set texture filtering
-+	  		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-+	  		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-+	  		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
-+	
-+	  		GlStateManager.Color color = new GlStateManager.Color();
-+	  		if (!inMenuRoom)
-+	  		{
-+	  		    if (mc.currentScreen == null)
-+	  		        color.alpha = mc.vrSettings.hudOpacity;
-+	            if (mc.player != null && mc.player.isShiftKeyDown())
-+	                color.alpha *= 0.75f;
-+	  			GlStateManager.enableBlend();
-+	  			RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA); // Mods can just stop being dumb, m'kay?
-+	  		}
-+	  		else{
-+	  			GlStateManager.disableBlend();
-+	  		}
-+	
-+	  		//boolean iamlazy = mc.vrSettings.vrHudLockMode == VRSettings.HUD_LOCK_WRIST && MCOpenVR.hudPopup;
-+	
-+	  		if (!this.shouldOccludeGui()){ //|| iamlazy){
-+	  			// Never use depth test for in game menu - so you can always see it!
-+	  			GlStateManager.depthFunc(GL11.GL_ALWAYS);
-+	  		} else {
-+	  			GlStateManager.depthFunc(GL11.GL_LEQUAL);
-+	  		}
-+	
-+	  		if(mc.currentPass == RenderPass.THIRD){
-+	  			GlStateManager.depthFunc(GL11.GL_LEQUAL);
-+	  		}
-+	
-+	  		//the framebuffer has to be drawn with color blending transparency to support non-alpha cursors. Always has a black background.
-+	  		GlStateManager.alphaFunc(GL11.GL_GREATER, 1f / 255f);
-+	  		GlStateManager.depthMask(true);
-+            GlStateManager.enableDepthTest();
-+	
-+	  		//Render framebuffer onto world projection
-+	  		if(inMenuRoom)
-+	  			GlStateManager.disableAlphaTest();
-+	  		else
-+	  			GlStateManager.enableAlphaTest();
-+	
-+	  		GlStateManager.disableLighting();
-+	
-+	        if(mc.world != null){
-+	            if (itemRenderer.isInsideOpaqueBlock(guipos, false))
-+	                guipos = mc.vrPlayer.vrdata_world_render.hmd.getPosition();
-+	
-+	            int minLight = Config.isShaders() ? 8 : 4;
-+	            int i = WorldRenderer.getCombinedLight(mc.world, new BlockPos(guipos));
-+	            //TODO: fix minLight                       
-+	            drawSizedQuadWithLightmap(this.mc.mainWindow.getScaledWidth(), this.mc.mainWindow.getScaledHeight(), 1.5f, i, color);
-+	        } else {
-+	            drawSizedQuad(this.mc.mainWindow.getScaledWidth(), this.mc.mainWindow.getScaledHeight(), 1.5f, color);
-+	        }
-+	
-+	  		GL14.glBlendColor(1, 1, 1, 1);
-+	  		RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-+	  		GlStateManager.enableDepthTest();
-+	  		GlStateManager.depthFunc(GL11.GL_LEQUAL);
-+	  		GlStateManager.enableCull();
-+	
-+	  		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-+  		GlStateManager.popMatrix();
-+
++	  		RenderSystem.pushMatrix();
++		  		RenderSystem.loadIdentity();
++		  		Vec3d guipos = GuiHandler.applyGUIModelView(this.mc.currentPass);
++		
++		  		GuiHandler.guiFramebuffer.bindFramebufferTexture();
++		
++		  		RenderSystem.disableCull();
++		  		//	RenderHelper.disableStandardItemLighting();
++		  		RenderSystem.enableTexture();
++		
++		  		// Prevent black border at top / bottom of GUI
++		  		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
++		  		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
++		
++		  		// Set texture filtering
++		  		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
++		  		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
++		  		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
++		
++		  		GlStateManager.Color color = new GlStateManager.Color();
++		  		if (!inMenuRoom)
++		  		{
++		  		    if (mc.currentScreen == null)
++		  		        color.alpha = mc.vrSettings.hudOpacity;
++		            if (mc.player != null && mc.player.isShiftKeyDown())
++		                color.alpha *= 0.75f;
++		  			GlStateManager.enableBlend();
++		  			RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA); // Mods can just stop being dumb, m'kay?
++		  		}
++		  		else{
++		  			GlStateManager.disableBlend();
++		  		}
++		
++		  		//boolean iamlazy = mc.vrSettings.vrHudLockMode == VRSettings.HUD_LOCK_WRIST && MCOpenVR.hudPopup;
++		
++		  		if (!this.shouldOccludeGui()){ //|| iamlazy){
++		  			// Never use depth test for in game menu - so you can always see it!
++		  			GlStateManager.depthFunc(GL11.GL_ALWAYS);
++		  		} else {
++		  			GlStateManager.depthFunc(GL11.GL_LEQUAL);
++		  		}
++		
++		  		if(mc.currentPass == RenderPass.THIRD){
++		  			GlStateManager.depthFunc(GL11.GL_LEQUAL);
++		  		}
++		
++		  		//the framebuffer has to be drawn with color blending transparency to support non-alpha cursors. Always has a black background.
++		  		GlStateManager.alphaFunc(GL11.GL_GREATER, 1f / 255f);
++		  		GlStateManager.depthMask(true);
++	            GlStateManager.enableDepthTest();
++		
++		  		//Render framebuffer onto world projection
++		  		if(inMenuRoom)
++		  			GlStateManager.disableAlphaTest();
++		  		else
++		  			GlStateManager.enableAlphaTest();
++		
++		  		GlStateManager.disableLighting();
++		
++		        if(mc.world != null){
++		            if (itemRenderer.isInsideOpaqueBlock(guipos, false))
++		                guipos = mc.vrPlayer.vrdata_world_render.hmd.getPosition();
++		
++		            int minLight = Config.isShaders() ? 8 : 4;
++		            int i = WorldRenderer.getCombinedLight(mc.world, new BlockPos(guipos));
++		            //TODO: fix minLight                       
++		            drawSizedQuadWithLightmap(this.mc.mainWindow.getScaledWidth(), this.mc.mainWindow.getScaledHeight(), 1.5f, i, color);
++		        } else {
++		            drawSizedQuad(this.mc.mainWindow.getScaledWidth(), this.mc.mainWindow.getScaledHeight(), 1.5f, color);
++		        }
++		
++		  		GL14.glBlendColor(1, 1, 1, 1);
++		  		RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
++		  		GlStateManager.enableDepthTest();
++		  		GlStateManager.depthFunc(GL11.GL_LEQUAL);
++		  		GlStateManager.enableCull();
++		  	RenderSystem.popMatrix();
 +  	}
 +
 +  	//VIVE
@@ -1114,11 +1302,164 @@
 +
 +  	}
 +  	
-+  	//TODO: move this into Guiingame where it belongs.
-+  	/** This draws the normal 2d menu/GUI elements to the framebuffer, to be rendered into the world projection later (in renderFramebufferIntoWorld)
-+  	 * @param renderPartialTicks
-+  	 * @param tickDuration
-+  	 */
++  	public void drawFramebufferNEW(float partialTicks, boolean renderWorldIn) {
++  		if (!this.mc.skipRenderWorld)
++  		{
++  			int i = (int)(this.mc.mouseHelper.getMouseX() * (double)this.mc.getMainWindow().getScaledWidth() / (double)this.mc.getMainWindow().getWidth());
++  			int j = (int)(this.mc.mouseHelper.getMouseY() * (double)this.mc.getMainWindow().getScaledHeight() / (double)this.mc.getMainWindow().getHeight());
++
++  			MainWindow mainwindow = this.mc.getMainWindow();
++  			RenderSystem.clearColor(0, 0, 0, 0);
++  			RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
++  			RenderSystem.matrixMode(5889);
++  			RenderSystem.loadIdentity();
++  			RenderSystem.ortho(0.0D, (double)mainwindow.getWidth() / mainwindow.getGuiScaleFactor(), (double)mainwindow.getHeight() / mainwindow.getGuiScaleFactor(), 0.0D, 1000.0D, 3000.0D);
++  			RenderSystem.matrixMode(5888);
++  			RenderSystem.loadIdentity();
++  			RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
++  			RenderHelper.setupGui3DDiffuseLighting();
++  			RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE);
++  			RenderSystem.alphaFunc(GL11.GL_GREATER, 0.01F);
++
++  			if (this.lightmapTexture.isCustom())
++  			{
++  				this.lightmapTexture.setAllowed(false);
++  			}
++
++  			if (renderWorldIn && this.mc.world != null)
++  			{
++  				this.mc.getProfiler().endStartSection("gui");
++
++  				if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null)
++  				{
++  					//RenderSystem.defaultAlphaFunc();
++  					//this.renderItemActivation(this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), partialTicks);
++  					if(!Main.viewonly)
++  						this.mc.ingameGUI.renderGameOverlay(partialTicks);
++
++  					if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo)
++  					{
++  						Config.drawFps();
++  					}
++
++  					if (this.mc.gameSettings.showDebugInfo)
++  					{
++  						Lagometer.showLagometer((int)this.mc.getMainWindow().getGuiScaleFactor());
++  					}
++
++  					RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
++  				}
++
++  				this.mc.getProfiler().endSection();
++  			}
++
++  			RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
++
++  			if (this.guiLoadingVisible != (this.mc.loadingGui != null))
++  			{
++  				if (this.mc.loadingGui != null)
++  				{
++  					this.mc.getTextureManager().deleteTexture(Config.LOCATION_MOJANG_LOGO);
++
++  					if (this.mc.loadingGui instanceof ResourceLoadProgressGui)
++  					{
++  						ResourceLoadProgressGui resourceloadprogressgui = (ResourceLoadProgressGui)this.mc.loadingGui;
++  						resourceloadprogressgui.update();
++  					}
++  				}
++
++  				this.guiLoadingVisible = this.mc.loadingGui != null;
++  			}
++
++  			if (this.mc.loadingGui != null)
++  			{
++  				try
++  				{
++  					this.mc.loadingGui.render(i, j, this.mc.getTickLength());
++  				}
++  				catch (Throwable throwable1)
++  				{
++  					CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Rendering overlay");
++  					CrashReportCategory crashreportcategory = crashreport.makeCategory("Overlay render details");
++  					crashreportcategory.addDetail("Overlay name", () ->
++  					{
++  						return this.mc.loadingGui.getClass().getCanonicalName();
++  					});
++  					throw new ReportedException(crashreport);
++  				}
++  			}
++  			else if (this.mc.currentScreen != null)
++  			{
++  				try
++  				{
++  					if (Reflector.ForgeHooksClient_drawScreen.exists())
++  					{
++  						Reflector.callVoid(Reflector.ForgeHooksClient_drawScreen, this.mc.currentScreen, i, j, this.mc.getTickLength());
++  					}
++  					else
++  					{
++  						this.mc.currentScreen.render(i, j, this.mc.getTickLength());
++  					}
++  					mc.ingameGUI.drawMouseMenuQuad(i, j);
++  				}
++  				catch (Throwable throwable1)
++  				{
++  					CrashReport crashreport1 = CrashReport.makeCrashReport(throwable1, "Rendering screen");
++  					CrashReportCategory crashreportcategory1 = crashreport1.makeCategory("Screen render details");
++  					crashreportcategory1.addDetail("Screen name", () ->
++  					{
++  						return this.mc.currentScreen.getClass().getCanonicalName();
++  					});
++  					crashreportcategory1.addDetail("Mouse location", () ->
++  					{
++  						return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%f, %f)", i, j, this.mc.mouseHelper.getMouseX(), this.mc.mouseHelper.getMouseY());
++  					});
++  					crashreportcategory1.addDetail("Screen size", () ->
++  					{
++  						return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %f", this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight(), this.mc.getMainWindow().getGuiScaleFactor());
++  					});
++  					throw new ReportedException(crashreport1);
++  				}
++  			}
++  			
++  			//TODO - evaulate this block
++            RenderSystem.enableColorMaterial();
++            RenderSystem.disableBlend();
++            RenderSystem.disableLighting();
++            RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE);
++            //
++            
++  	  		mc.getProfiler().startSection("toasts");
++  	  		mc.toastGui.render();
++  	  		mc.getProfiler().endSection();
++  			
++  			this.lightmapTexture.setAllowed(true);
++  		} //end !skipRenderWorld
++
++  		// VIVE added debug info to HUD
++  		if (mc.gameSettings.showDebugProfilerChart && !mc.gameSettings.hideGUI)
++  		{
++  			mc.drawProfiler();
++  		}
++  		
++        this.frameFinish();
++        this.waitForServerThread();
++        MemoryMonitor.update();
++        Lagometer.updateLagometer();
++        
++        if (this.mc.gameSettings.ofProfiler)
++        {
++            this.mc.gameSettings.showDebugProfilerChart = true;
++        }
++        
++  		this.mc.getFramebuffer().bindFramebufferTexture();
++  		this.mc.getFramebuffer().genMipMaps();
++  		this.mc.getFramebuffer().unbindFramebufferTexture();
++  		
++  	}
++
++  	
++  	//unused - reference
 +  	public void drawFramebuffer(float renderPartialTicks, boolean renderWorldIn)    // VIVE - added parameter for debug info
 +  	{
 +
@@ -1402,8 +1743,7 @@
 +  		boolean shadersModShadowPass = false;
 +
 +  		//from player face to HMD
-+  		setupCameraTransform(partialTicks);
-+  		applyCameraDepth(false);
++  		applyVRModelViewLegacy(mc.currentPass);
 +  		if(shadersMod){
 +  			shadersModShadowPass = Shaders.isShadowPass;
 +  			Shaders.beginHand(false);
@@ -1930,13 +2270,11 @@
 +  			return;
 +
 +  		if (mc.climbTracker.isGrabbingLadder(0))
-+  			return;
-+
-+  		
++  			return;	
 + 		
 +  		this.mc.getProfiler().endStartSection("crosshair");
 +
-+  		GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1.0f); //white crosshair, with blending
++  		RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f); //white crosshair, with blending
 +
 +  		Vec3d crosshairRenderPos = crossVec;
 +  		
@@ -1953,7 +2291,8 @@
 +  		
 +  		crosshairRenderPos = crosshairRenderPos.add((aim.normalize().scale(-0.01))); //scooch closer a bit for light calc.		
 +  		
-+  		GlStateManager.pushMatrix();
++        RenderSystem.pushMatrix();
++  			
 +  			Vec3d translate = crosshairRenderPos.subtract(mc.getRenderViewEntity().getPositionVector());
 +	  		GL11.glTranslated(translate.x , translate.y , translate.z );
 +	
@@ -2003,32 +2342,30 @@
 +	  		}
 +
 +	  		lightmapTexture.enableLightmap();
-+	  		GL11.glScalef(scale, scale, scale);
-+	  		GlStateManager.depthMask(false);
-+	  		GlStateManager.disableLighting();
-+	  		GlStateManager.disableCull();
++	  		RenderSystem.scalef(scale, scale, scale);
++	  		RenderSystem.depthMask(false);
++	  		RenderSystem.disableLighting();
++	  		RenderSystem.disableCull();
 +	
 +	  		if (!this.mc.vrSettings.useCrosshairOcclusion)	
-+            GlStateManager.disableDepthTest();
++	  			RenderSystem.disableDepthTest();
 +	  		else
-+	  			GlStateManager.enableAlphaTest();
++	  			RenderSystem.enableAlphaTest();
 +	
 +	  		boolean shadersMod = Config.isShaders();
 +
-+            GlStateManager.enableBlend(); // Fuck it, we want a proper crosshair
++	  		RenderSystem.enableBlend(); // Fuck it, we want a proper crosshair
 +            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR, GlStateManager.DestFactor.ZERO, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-+	  		GlStateManager.colorMask(true, true, true, true);
++            RenderSystem.colorMask(true, true, true, true);
 +	  		
 +            int light = WorldRenderer.getCombinedLight(mc.world, new BlockPos(crosshairRenderPos));
 +
 +            float brightness = 1.0F;
 +	  		if (mc.objectMouseOver == null || mc.objectMouseOver.getType() == RayTraceResult.Type.MISS) {
 +                brightness = 0.5F;
-+        }
-+
-+	  		//System.out.println(light + " " + j + " " + k);
-+
-+	  		GlStateManager.color4f(1, 1, 1, 1);
++	  		}
++	  		RenderSystem.enableAlphaTest();
++	  		RenderSystem.color4f(1, 1, 1, 1);
 +	  		this.mc.getTextureManager().bindTexture(Screen.GUI_ICONS_LOCATION);
 +	
 +	  		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
@@ -2051,14 +2388,12 @@
 +	
 +	  		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 +	
-+	  		GlStateManager.colorMask(true, true, true, true);
-+	  		GlStateManager.depthMask(true);
-+	  		GlStateManager.disableBlend();
-+	  		GlStateManager.enableDepthTest();
-+	  		GlStateManager.color4f(1, 1, 1, 1);
-+  		GlStateManager.popMatrix();
-+
-+
++	  		RenderSystem.colorMask(true, true, true, true);
++	  		RenderSystem.depthMask(true);
++	  		RenderSystem.disableBlend();
++	  		RenderSystem.enableDepthTest();
++	  		RenderSystem.color4f(1, 1, 1, 1);
++	  	RenderSystem.popMatrix();
 +  	}
 +  	
 +  	public void renderFadeBlend(float r, float g, float b,  float fadeAlpha)
@@ -2155,8 +2490,18 @@
 +
 +		return guipos;
 +	}
-+      
-+  	private void applyMenuRoomModelView(RenderPass currentPass)
++      	
++  	private void applyVRModelView(RenderPass currentPass, MatrixStack matrix)
++  	{
++  		// counter head rotation
++  		if (currentPass != RenderPass.THIRD) {
++  			matrix.getLast().getMatrix().mul(mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().transposed().toMCMatrix());
++  		} else {
++  			applyMRCameraRotation(false);		
++  		}
++  	}  	
++  	
++  	private void applyVRModelViewLegacy(RenderPass currentPass)
 +  	{
 +  		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition();
 +  		
@@ -2164,9 +2509,25 @@
 +  		if (currentPass != RenderPass.THIRD) {
 +  				GL11.glMultMatrixf(mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().toFloatBuffer());
 +  		} else {
-+  			applyMRCameraRotation(false);		}
++  			applyMRCameraRotation(false);		
++  		}
 +
-+  		GL11.glTranslatef((float)(mc.vrPlayer.vrdata_world_render.origin.x - eye.x), (float)(mc.vrPlayer.vrdata_world_render.origin.y - eye.y), (float)(mc.vrPlayer.vrdata_world_render.origin.z - eye.z));
++  		removeStereo(currentPass);  
++  	}  	
++  	
++ 	
++  	private void applystereo(RenderPass currentPass)
++  	{
++  		if(currentPass == RenderPass.THIRD || currentPass == RenderPass.CENTER) return;
++  		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
++  		GL11.glTranslatef((float)eye.x, (float)eye.y, (float)eye.z);
++  	}
++  	
++  	private void removeStereo(RenderPass currentPass)
++  	{
++  		if(currentPass == RenderPass.THIRD || currentPass == RenderPass.CENTER) return;
++  		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
++  		GL11.glTranslatef((float)-eye.x, (float)-eye.y, (float)-eye.z);
 +  	}
 +           
 +  	private void setupPolyRendering(boolean enable){
@@ -2272,23 +2633,7 @@
 +
 +  		cached = false;
 +  	}
-+  	
-+  	private Vec3d getRVEPositionEyes(float partialTicks) {
-+  		if (mc.getRenderViewEntity() == null) return new Vec3d(0, 0, 0);
-+  		if (cached) {
-+  			if (partialTicks == 1.0F) {
-+  				return new Vec3d(rveX, rveY + mc.getRenderViewEntity().getEyeHeight(), rveZ);
-+  			} else {
-+  				double d0 = rveprevX + (rveX - rveprevX) * partialTicks;
-+  				double d1 = rveprevY + (rveY - rveprevY) * partialTicks + mc.getRenderViewEntity().getEyeHeight();
-+  				double d2 = rveprevZ + (rveZ - rveprevZ) * partialTicks;
-+  				return new Vec3d(d0, d1, d2);
-+  			}
-+  		} else {
-+  			return mc.getRenderViewEntity().getEyePosition(partialTicks);
-+  		}
-+  	}
-+  	
++  		
 +  	private void setupOverlayStatus(float partialTicks) {
 +  		inblock = false;
 +  		inwater = false;
@@ -2320,8 +2665,7 @@
 +  				GlStateManager.pushMatrix();
 +  				GlStateManager.loadIdentity();
 +  				
-+  					setupCameraTransform(par1);
-+  					applyCameraDepth(false);
++  				applyVRModelViewLegacy(mc.currentPass);
 +  	
 +  					Vec3d o = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition();
 +  					if (mc.currentPass == RenderPass.THIRD)
@@ -2361,8 +2705,7 @@
 +  				GL11.glMatrixMode(GL11.GL_MODELVIEW);
 +  				GlStateManager.pushMatrix();
 +
-+  				setupCameraTransform(par1);
-+  				applyCameraDepth(false);
++  				applyVRModelViewLegacy(mc.currentPass);
 +
 +  				Vec3d cam = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.THIRD).getPosition();
 +  				Vec3d o = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition();
@@ -2390,47 +2733,47 @@
 +  			
 +  	}
 +  	
++  	//TODO: this has to be redone.
 +  	public void applyMRCameraRotation(boolean invert){
-+        org.vivecraft.utils.lwjgl.Matrix4f view = new org.vivecraft.utils.lwjgl.Matrix4f(thirdPassViewMatrix);
-+        view.m30 = 0;
-+        view.m31 = 0;
-+        view.m32 = 0;
-+        if (MCOpenVR.mrMovingCamActive) { // yeah this is gross but whatever
-+            org.vivecraft.utils.lwjgl.Matrix4f.mul(view, mc.vrSettings.mrMovingCamOffsetRotQuat.getMatrix(), view);
-+            view.translate(new org.vivecraft.utils.lwjgl.Vector3f(mc.vrSettings.mrMovingCamOffsetX, mc.vrSettings.mrMovingCamOffsetY, mc.vrSettings.mrMovingCamOffsetZ));
-+            org.vivecraft.utils.lwjgl.Matrix4f.mul(view, (org.vivecraft.utils.lwjgl.Matrix4f)mc.vrSettings.mrMovingCamOffsetRotQuat.getMatrix().invert(), view);
-+        }
-+        if(!invert) view = (org.vivecraft.utils.lwjgl.Matrix4f) view.invert(); //yea yea i know.
-+        view.store(matrixBuffer);
-+        matrixBuffer.rewind();
-+        GlStateManager.multMatrix(matrixBuffer);
-+        matrixBuffer.rewind();
++//        org.vivecraft.utils.lwjgl.Matrix4f view = new org.vivecraft.utils.lwjgl.Matrix4f(thirdPassViewMatrix);
++//        view.m30 = 0;
++//        view.m31 = 0;
++//        view.m32 = 0;
++//        if (MCOpenVR.mrMovingCamActive) { // yeah this is gross but whatever
++//            org.vivecraft.utils.lwjgl.Matrix4f.mul(view, mc.vrSettings.mrMovingCamOffsetRotQuat.getMatrix(), view);
++//            view.translate(new org.vivecraft.utils.lwjgl.Vector3f(mc.vrSettings.mrMovingCamOffsetX, mc.vrSettings.mrMovingCamOffsetY, mc.vrSettings.mrMovingCamOffsetZ));
++//            org.vivecraft.utils.lwjgl.Matrix4f.mul(view, (org.vivecraft.utils.lwjgl.Matrix4f)mc.vrSettings.mrMovingCamOffsetRotQuat.getMatrix().invert(), view);
++//        }
++//        if(!invert) view = (org.vivecraft.utils.lwjgl.Matrix4f) view.invert(); //yea yea i know.
++//        view.store(matrixBuffer);
++//        matrixBuffer.rewind();
++//        GlStateManager.multMatrix(matrixBuffer);
++//        matrixBuffer.rewind();
 +  	}
 +
-+  	private void drawEyeStencil() {
-+        if(mc.currentPass != RenderPass.THIRD && mc.currentPass != RenderPass.CENTER && mc.vrSettings.vrUseStencil && MCOpenVR.isHMDTracking()){
-+            Program lastProgram = Shaders.activeProgram;
-+            if(Config.isShaders()){
-+                GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, Shaders.dfb);
-+                Shaders.useProgram(Shaders.ProgramNone);
-+                
-+                for (int i = 0; i < Shaders.usedDepthBuffers; ++i)
-+    {
-+                    GlStateManager.bindTexture(Shaders.dfbDepthTextures.get(i));
-+                    mc.stereoProvider.doStencilForEye(mc.currentPass == RenderPass.LEFT ? 0 : 1);
-+                }
-+               
-+                Shaders.useProgram(lastProgram);
++  	void drawEyeStencil(boolean shaders) {
++  		if(mc.currentPass != RenderPass.THIRD && mc.currentPass != RenderPass.CENTER && mc.vrSettings.vrUseStencil && MCOpenVR.isHMDTracking()){
++  			Program lastProgram = Shaders.activeProgram;
++  			if(shaders){
++  				GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, Shaders.dfb);
++  				Shaders.useProgram(Shaders.ProgramNone);
 +
-+            } else {
-+                mc.stereoProvider.doStencilForEye(mc.currentPass == RenderPass.LEFT ? 0 : 1);
-+            }
-+            GL11.glEnable(GL11.GL_STENCIL_TEST);
-+        }
-+        else{
-+            GL11.glDisable(GL11.GL_STENCIL_TEST);
-+        }
-+    }
++  				for (int i = 0; i < Shaders.usedDepthBuffers; ++i)
++  				{
++  					GlStateManager.bindTexture(Shaders.dfbDepthTextures.get(i));
++  					mc.stereoProvider.doStencilForEye(mc.currentPass == RenderPass.LEFT ? 0 : 1);
++  				}
++
++  				Shaders.useProgram(lastProgram);
++
++  			} else {
++  				mc.stereoProvider.doStencilForEye(mc.currentPass == RenderPass.LEFT ? 0 : 1);
++  			}
++  		}
++  		else{
++  			GL11.glDisable(GL11.GL_STENCIL_TEST);
++  		}
++  	}
 +
 +    private boolean shouldOccludeGui() {
 +  	    Vec3d pos = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
@@ -2575,45 +2918,44 @@
 +        return this.colorBuffer;
 +    }
 +    
-+    private void renderVRLit(boolean translucentSecondPass, float partialTicks, MatrixStack matrixStackin, float x, float y, float z) {
++    private void renderVRLit(boolean translucentSecondPass, float partialTicks) {
 +    	renderVRGuiElements(translucentSecondPass, partialTicks);
++//
++//    	if (translucentSecondPass) {
++//            if (!this.shouldOccludeGui() && shouldRenderHands()) {
++//            	lightmapTexture.enableLightmap();
++//            	renderVRHands(true, partialTicks);
++//            }
++//
++//            this.mc.getProfiler().startSection("extra_translucent_pass");
++//
++//            GlStateManager.disableBlend();
++//            GlStateManager.enableCull();
++//            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
++//            GlStateManager.alphaFunc(516, 0.1F);
++//            FogRenderer.updateFogColor(activeRender, partialTicks, this.mc.world, this.mc.gameSettings.renderDistanceChunks, getBossColorModifier(partialTicks));
++//            GlStateManager.enableBlend();
++//            GlStateManager.depthMask(false);
++//            this.mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
++//            GlStateManager.shadeModel(7425);
++//
++//            // Yeah I know this seems a bit silly, but it didn't seem to have a noticeable impact on performance, so it's probably fine
++//          //   this.mc.worldRenderer.renderBlockLayer(RenderType.getTranslucent(), matrixStackin, x, y, z);
 +
-+    	if (translucentSecondPass) {
-+            if (!this.shouldOccludeGui() && shouldRenderHands()) {
-+            	lightmapTexture.enableLightmap();
-+            	renderVRHands(true, partialTicks);
-+            }
-+
-+            this.mc.getProfiler().startSection("extra_translucent_pass");
-+
-+            GlStateManager.disableBlend();
-+            GlStateManager.enableCull();
-+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-+            GlStateManager.alphaFunc(516, 0.1F);
-+            FogRenderer.updateFogColor(activeRender, partialTicks, this.mc.world, this.mc.gameSettings.renderDistanceChunks, getBossColorModifier(partialTicks));
-+            GlStateManager.enableBlend();
-+            GlStateManager.depthMask(false);
-+            this.mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-+            GlStateManager.shadeModel(7425);
-+
-+            // Yeah I know this seems a bit silly, but it didn't seem to have a noticeable impact on performance, so it's probably fine
-+            this.mc.worldRenderer.renderBlockLayer(RenderType.getTranslucent(), matrixStackin, x, y, z);
-+
-+            this.mc.getProfiler().endSection();
++//          this.mc.getProfiler().endSection();
 +
 +            // Put back the eye stencil
-+            this.drawEyeStencil();
-+        }
++//          this.drawEyeStencil(Config.isShaders());
++//        }
 +    }
 +
 +    private void renderVRHands(boolean translucentSecondPass, float partialTicks) {
 +        this.mc.getProfiler().startSection("hands");
 +
-+        RenderHelper.enableStandardItemLighting();
-+        lightmapTexture.enableLightmap();
-+        GlStateManager.enableRescaleNormal();
 +        //Render Physical Inventories
 +        mc.physicalGuiManager.doRender(partialTicks);
++        //
++            
 +        if (KeyboardHandler.Showing && mc.vrSettings.physicalKeyboard) {
 +            renderMainMenuHands(partialTicks);
 +        } else {
@@ -2621,68 +2963,50 @@
 +            this.renderVRHand_Offhand(partialTicks, !translucentSecondPass);
 +        }
 +
-+        //
-+        //forgeHands = ReflectorForge.renderFirstPersonHand(this.mc.renderGlobal, partialTicks, pass);
-+        //
-+
-+        GlStateManager.disableRescaleNormal();
-+        RenderHelper.disableStandardItemLighting();
-+        GlStateManager.enableTexture();
-+
 +        this.mc.getProfiler().endSection();
 +    }
 +    
 +    void renderVRGuiElements(boolean drawToStencil, float partialTicks) {
 +        this.mc.getProfiler().startSection("hud");
++       
++  		GL11.glLoadIdentity();
++	  	applyVRModelViewLegacy(this.mc.currentPass);
 +
-+    	renderCrosshairAtDepth();
++	        renderCrosshairAtDepth();
++	
++	    	if (drawToStencil) {
++	    		// Stencil trickery to draw hands over hud without messing stuff up
++	    		GL11.glEnable(GL11.GL_STENCIL_TEST);
++	    		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
++	    		GL11.glStencilMask(0xFF);
++	    		GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT);
++	    		GL11.glStencilFunc(GL11.GL_ALWAYS, 0xFF, 0xFF);
++	    	}
++	
++	    	renderGuiLayer(partialTicks);
++	
++	        if(KeyboardHandler.Showing) {
++	            if (mc.vrSettings.physicalKeyboard)
++	                renderPhysicalKeyboard(partialTicks);
++	            else
++	                render2D(partialTicks, KeyboardHandler.Framebuffer, KeyboardHandler.Pos_room, KeyboardHandler.Rotation_room);
++	        }
++	
++	        if(RadialHandler.isShowing())
++	            render2D(partialTicks, RadialHandler.Framebuffer, RadialHandler.Pos_room, RadialHandler.Rotation_room);
++	
++	        if(Config.isShaders()){
++	            GlStateManager.enableLighting();
++	            GlStateManager.colorMask(true, true, true, true);
++	        }
++	
++	        if (drawToStencil) {
++	            GL11.glStencilFunc(GL11.GL_EQUAL, 0xFF, 1);
++	            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
++	            GL11.glStencilMask(0x0);
++	        }
 +
-+    	if (drawToStencil) {
-+    		// Stencil trickery to draw hands over hud without messing stuff up
-+    		GL11.glEnable(GL11.GL_STENCIL_TEST);
-+    		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-+    		GL11.glStencilMask(0xFF);
-+    		GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT);
-+    		GL11.glStencilFunc(GL11.GL_ALWAYS, 0xFF, 0xFF);
-+    	}
-+
-+    	renderGuiLayer(partialTicks);
-+
-+        if(KeyboardHandler.Showing) {
-+            if (mc.vrSettings.physicalKeyboard)
-+                renderPhysicalKeyboard(partialTicks);
-+            else
-+                render2D(partialTicks, KeyboardHandler.Framebuffer, KeyboardHandler.Pos_room, KeyboardHandler.Rotation_room);
-+        }
-+
-+        if(RadialHandler.isShowing())
-+            render2D(partialTicks, RadialHandler.Framebuffer, RadialHandler.Pos_room, RadialHandler.Rotation_room);
-+
-+        if(Config.isShaders()){
-+            GlStateManager.enableLighting();
-+            GlStateManager.colorMask(true, true, true, true);
-+        }
-+
-+        if (drawToStencil) {
-+            GL11.glStencilFunc(GL11.GL_EQUAL, 0xFF, 1);
-+            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-+            GL11.glStencilMask(0x0);
-+        }
-+
-+        this.mc.getProfiler().endSection();
-+    }
-+        //do this separate to hide it from shadersmod shadow pass, also do the sky.
-+    public void applyCameraDepth(boolean reverse){
-+		if(mc.currentPass == RenderPass.THIRD) return; //FUCK YOU stupid thing.
-+			// Position
-+			Vec3d campos =  mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition().subtract(mc.getRenderViewEntity().getPositionVector());
-+			float x = (float) (campos.x );
-+			float y = (float) (campos.y);
-+			float z = (float) (campos.z );
-+			int i = 1;
-+			if(reverse) i = -1;
-+			//This is just for depth.
-+			GlStateManager.translatef(-x*i, -y*i, -z*i);	
++	        this.mc.getProfiler().endSection();
 +    }
 +    
 +    public void setupClipPlanes() {

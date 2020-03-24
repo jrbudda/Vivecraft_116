@@ -43,7 +43,21 @@
  
      public Matrix4f()
      {
-@@ -546,4 +548,50 @@
+@@ -434,6 +436,13 @@
+         this.m13 += p_226597_1_.getY();
+         this.m23 += p_226597_1_.getZ();
+     }
++    
++    public void translate(float x, float y, float z)
++    {
++        this.m03 += x;
++        this.m13 += y;
++        this.m23 += z;
++    }
+ 
+     public Matrix4f copy()
+     {
+@@ -546,4 +555,50 @@
          this.m32 = p_setRandom_1_.nextFloat();
          this.m33 = p_setRandom_1_.nextFloat();
      }

@@ -29,7 +29,7 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 		
 		// This is the center position of the camera, not the exact eye.
 		
-		VRDevicePose src = mc.vrPlayer.vrdata_world_render.hmd;		
+		VRDevicePose src = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass);		
 		
 		switch (mc.currentPass) {
 		case CENTER:
@@ -56,6 +56,12 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 		//what even are you
 		Vec3d left = src.getCustomVector(new Vec3d(1, 0, 0));
 		this.left.set((float)up.x,(float) up.y,(float) up.z);
+
+		//This is used for rendering sprites normal to the camera dir, which is terrible and needs to change.
+        this.rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
+        this.rotation.multiply(Vector3f.YP.rotationDegrees(-pitch));
+        this.rotation.multiply(Vector3f.XP.rotationDegrees(yaw));
+
 	}
 
 	@Override
