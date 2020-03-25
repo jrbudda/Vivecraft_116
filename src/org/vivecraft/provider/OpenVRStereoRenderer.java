@@ -427,8 +427,8 @@ public class OpenVRStereoRenderer
 	{
 		Minecraft mc = Minecraft.getInstance();
 
-		int h = mc.mainWindow.getHeight();
-		int w = mc.mainWindow.getWidth();
+		int h = mc.getMainWindow().getHeight();
+		int w = mc.getMainWindow().getWidth();
 		
 		boolean was = dispLastHeight != h || dispLastWidth != w;
 		dispLastHeight = h;
@@ -468,9 +468,9 @@ public class OpenVRStereoRenderer
 		//mc.showNativeMouseCursor(!mc.isGameFocused());
 
 		// Check for changes in window handle
-		if (mc.mainWindow.getHandle() != lastWindow)
+		if (mc.getMainWindow().getHandle() != lastWindow)
 		{
-			lastWindow = mc.mainWindow.getHandle();
+			lastWindow = mc.getMainWindow().getHandle();
 			reinitFrameBuffers("Window Handle Changed");
 		}
 
@@ -489,8 +489,8 @@ public class OpenVRStereoRenderer
 			this.reinitShadersFlag = true;
 			checkGLError("Start Init");
 
-			int displayFBWidth = (mc.mainWindow.getWidth() < 1) ? 1 : mc.mainWindow.getWidth();
-			int displayFBHeight = (mc.mainWindow.getHeight()  < 1) ? 1 : mc.mainWindow.getHeight();
+			int displayFBWidth = (mc.getMainWindow().getWidth() < 1) ? 1 : mc.getMainWindow().getWidth();
+			int displayFBHeight = (mc.getMainWindow().getHeight()  < 1) ? 1 : mc.getMainWindow().getHeight();
 				
 			int eyew, eyeh;
 			
@@ -603,12 +603,12 @@ public class OpenVRStereoRenderer
 			mc.print(framebufferVrRender.toString());
 			checkGLError("3D framebuffer setup");
 			
-			mirrorFBWidth = mc.mainWindow.getWidth();
-			mirrorFBHeight = mc.mainWindow.getHeight();
+			mirrorFBWidth = mc.getMainWindow().getWidth();
+			mirrorFBHeight = mc.getMainWindow().getHeight();
 			if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY) {
-				mirrorFBWidth = mc.mainWindow.getWidth() / 2;
+				mirrorFBWidth = mc.getMainWindow().getWidth() / 2;
 				if(mc.vrSettings.mixedRealityUnityLike)
-					mirrorFBHeight = mc.mainWindow.getHeight() / 2;
+					mirrorFBHeight = mc.getMainWindow().getHeight() / 2;
 			}
 
 			if (Config.isShaders()) {
@@ -635,15 +635,15 @@ public class OpenVRStereoRenderer
 				checkGLError("Undistorted view framebuffer setup");
 			}
 			
-			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.mainWindow.getWidth(), mc.mainWindow.getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
+			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(GuiHandler.guiFramebuffer.toString());
 			checkGLError("GUI framebuffer setup");
 
-			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.mainWindow.getWidth(), mc.mainWindow.getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
+			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(KeyboardHandler.Framebuffer.toString());
 			checkGLError("Keyboard framebuffer setup");
 
-			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.mainWindow.getWidth(), mc.mainWindow.getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
+			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
 			mc.print(RadialHandler.Framebuffer.toString());
 			checkGLError("Radial framebuffer setup");
 
@@ -696,7 +696,7 @@ public class OpenVRStereoRenderer
 				ShaderHelper.checkGLError("init depth shader");
 				VRShaders.setupFOVReduction();
 				ShaderHelper.checkGLError("init FOV shader");		
-		        mc.gameRenderer.updateShaderGroupSize(mc.mainWindow.getFramebufferWidth(), mc.mainWindow.getFramebufferHeight());
+		        mc.gameRenderer.updateShaderGroupSize(mc.getMainWindow().getFramebufferWidth(), mc.getMainWindow().getFramebufferHeight());
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				System.exit(-1);
@@ -705,14 +705,14 @@ public class OpenVRStereoRenderer
 			// Init screen size
 			if (mc.currentScreen != null)
 			{
-				int k = mc.mainWindow.getScaledWidth();
-				int l = mc.mainWindow.getScaledHeight();
+				int k = mc.getMainWindow().getScaledWidth();
+				int l = mc.getMainWindow().getScaledHeight();
 				mc.currentScreen.init(mc, k, l);
 			}
 
 			System.out.println("[Minecrift] New render config:" +
-					"\nRender target width:  " + (true ? eyew + eyew: mc.mainWindow.getWidth()) +
-					", height: " + (true ? Math.max(eyeh, eyeh) : mc.mainWindow.getHeight()) +
+					"\nRender target width:  " + (true ? eyew + eyew: mc.getMainWindow().getWidth()) +
+					", height: " + (true ? Math.max(eyeh, eyeh) : mc.getMainWindow().getHeight()) +
 					(true ? " [Render scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +
 					(mc.vrSettings.useFsaa ? " [FSAA Scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +
 					"\nDisplay target width: " + displayFBWidth + ", height: " + displayFBHeight);

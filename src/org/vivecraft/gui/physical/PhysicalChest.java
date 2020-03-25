@@ -268,32 +268,32 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 
 	@Override
 	public boolean isFullyClosed() {
-		if(isOpen)
-			return false;
-
-		if(!wasOpen)
-			return true;
-
-		if(!(lidAngle==0 && lastLidAngle==0))
-			return false;
-
-		TileEntity te=mc.world.getTileEntity(blockPos);
-		if(te!=null && te instanceof ChestTileEntity){
-			ChestTileEntity teChest=(ChestTileEntity) te;
-			if(teChest.prevLidAngle == 0 && teChest.lidAngle == 0){
-				wasOpen=false;
-				return true;
-			}else
-				return false;
-		}
-		if(te!=null && te instanceof EnderChestTileEntity){
-			EnderChestTileEntity teChest=(EnderChestTileEntity) te;
-			if( teChest.prevLidAngle==0 && teChest.lidAngle==0){
-				wasOpen=false;
-				return true;
-			}else
-				return false;
-		}
+//		if(isOpen)
+//			return false;
+//
+//		if(!wasOpen)
+//			return true;
+//
+//		if(!(lidAngle==0 && lastLidAngle==0))
+//			return false;
+//
+//		TileEntity te=mc.world.getTileEntity(blockPos);
+//		if(te!=null && te instanceof ChestTileEntity){
+//			ChestTileEntity teChest=(ChestTileEntity) te;
+//			if(teChest.prevLidAngle == 0 && teChest.lidAngle == 0){
+//				wasOpen=false;
+//				return true;
+//			}else
+//				return false;
+//		}
+//		if(te!=null && te instanceof EnderChestTileEntity){
+//			EnderChestTileEntity teChest=(EnderChestTileEntity) te;
+//			if( teChest.prevLidAngle==0 && teChest.lidAngle==0){
+//				wasOpen=false;
+//				return true;
+//			}else
+//				return false;
+//		}
 		return super.isFullyClosed();
 	}
 

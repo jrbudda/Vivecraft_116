@@ -1,0 +1,13 @@
+--- a/com/mojang/blaze3d/platform/GLX.java
++++ b/com/mojang/blaze3d/platform/GLX.java
+@@ -33,6 +33,10 @@
+     private static final Logger LOGGER = LogManager.getLogger();
+     private static String capsString = "";
+     private static String cpuInfo;
++    
++    public int intentionallModifyThisClassCauseItWontLoadProperlyFromOptifine = 69;
++
++    
+     private static final Map<Integer, String> LOOKUP_MAP = make(Maps.newHashMap(), (p_lambda$static$0_0_) ->
+     {
+         p_lambda$static$0_0_.put(0, "No error");

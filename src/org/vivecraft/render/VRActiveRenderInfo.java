@@ -27,22 +27,9 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 		this.renderViewEntity = renderViewEntity;
 		Minecraft mc = Minecraft.getInstance();
 		
-		// This is the center position of the camera, not the exact eye.
-		
-		VRDevicePose src = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass);		
-		
-		switch (mc.currentPass) {
-		case CENTER:
-		case LEFT:
-		case RIGHT:
-			break;
-		case THIRD:	
-			src = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.THIRD);
-			break;
-		default:
-			break;
-		}		
+		VRDevicePose src = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass);	
 		this.setPostion(src.getPosition());
+			
 		// this.setDirection(mc.vrPlayer.vrdata_world_render.hmd.getYaw(),mc.vrPlayer.vrdata_world_render.hmd.getPitch());
 		this.pitch = -src.getPitch(); //No, I do not know why this is negative.
 		this.yaw = src.getYaw();

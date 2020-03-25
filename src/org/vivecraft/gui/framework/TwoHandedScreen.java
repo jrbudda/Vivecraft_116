@@ -26,8 +26,8 @@ public abstract class TwoHandedScreen extends Screen
 	{
 		if(super.mouseClicked(mouseX, mouseY, mouseButton))
 		{	
-			double d0 = Math.min(Math.max((int)cursorX2, 0), minecraft.mainWindow.getWidth())
-					 * (double)minecraft.mainWindow.getScaledWidth() / (double)minecraft.mainWindow.getWidth();
+			double d0 = Math.min(Math.max((int)cursorX2, 0), minecraft.getMainWindow().getWidth())
+					 * (double)minecraft.getMainWindow().getScaledWidth() / (double)minecraft.getMainWindow().getWidth();
 			return true;
 		}
 		return false;
@@ -42,14 +42,14 @@ public abstract class TwoHandedScreen extends Screen
             reinit = false;
         }
 		       
-        double mX1 = (cursorX1 * this.width / this.minecraft.mainWindow.getScaledWidth())
-        		 * (double)minecraft.mainWindow.getScaledWidth() / (double)minecraft.mainWindow.getWidth();
-        double mY1 = (cursorY1 * this.height / this.minecraft.mainWindow.getScaledHeight())
-        		 * (double)minecraft.mainWindow.getScaledWidth() / (double)minecraft.mainWindow.getWidth();
-        double mX2 = (cursorX2 * this.width / this.minecraft.mainWindow.getScaledWidth())
-        		 * (double)minecraft.mainWindow.getScaledWidth() / (double)minecraft.mainWindow.getWidth();
-        double mY2 = (cursorY2 * this.height / this.minecraft.mainWindow.getScaledHeight())
-        		 * (double)minecraft.mainWindow.getScaledWidth() / (double)minecraft.mainWindow.getWidth();
+        double mX1 = (cursorX1 * this.width / this.minecraft.getMainWindow().getScaledWidth())
+        		 * (double)minecraft.getMainWindow().getScaledWidth() / (double)minecraft.getMainWindow().getWidth();
+        double mY1 = (cursorY1 * this.height / this.minecraft.getMainWindow().getScaledHeight())
+        		 * (double)minecraft.getMainWindow().getScaledWidth() / (double)minecraft.getMainWindow().getWidth();
+        double mX2 = (cursorX2 * this.width / this.minecraft.getMainWindow().getScaledWidth())
+        		 * (double)minecraft.getMainWindow().getScaledWidth() / (double)minecraft.getMainWindow().getWidth();
+        double mY2 = (cursorY2 * this.height / this.minecraft.getMainWindow().getScaledHeight())
+        		 * (double)minecraft.getMainWindow().getScaledWidth() / (double)minecraft.getMainWindow().getWidth();
 
         Widget hoveredButtonId1 = null, hoveredButtonId2 = null;
         for (int i = 0; i < this.buttons.size(); ++i)

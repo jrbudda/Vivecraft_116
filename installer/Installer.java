@@ -60,7 +60,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MC_MD5            = "1d87e7d75a99172f0cffc4f96cdc44da";
 	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
     private static final String OF_FILE_NAME      = "1.15.2_HD_U_G1";
-    private static final String OF_MD5            = "";
+    private static final String OF_MD5            = "5B5956541C9D36B49A72B22FCD2C2907";
     private static final String OF_VERSION_EXT    = ".jar";
     private static String FORGE_VERSION     = "14.25.0.110";
 	/* END OF DO NOT RENAME */

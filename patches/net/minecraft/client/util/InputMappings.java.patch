@@ -27,7 +27,7 @@
 +    
 +    public static boolean isKeyDown(int p_216506_2_)
 +    {
-+    	return GLFW.glfwGetKey(Minecraft.getInstance().mainWindow.getHandle(), p_216506_2_) == 1 || InputSimulator.isKeyDown(p_216506_2_);
++    	return GLFW.glfwGetKey(Minecraft.getInstance().getMainWindow().getHandle(), p_216506_2_) == 1 || InputSimulator.isKeyDown(p_216506_2_);
      }
  
      public static void setKeyCallbacks(long p_216505_0_, GLFWKeyCallbackI p_216505_2_, GLFWCharModsCallbackI p_216505_3_)

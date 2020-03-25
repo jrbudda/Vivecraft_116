@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/particle/ItemPickupParticle.java
++++ b/net/minecraft/client/particle/ItemPickupParticle.java
+@@ -2,6 +2,8 @@
+ 
+ import com.mojang.blaze3d.matrix.MatrixStack;
+ import com.mojang.blaze3d.vertex.IVertexBuilder;
++
++import net.minecraft.client.Minecraft;
+ import net.minecraft.client.renderer.ActiveRenderInfo;
+ import net.minecraft.client.renderer.IRenderTypeBuffer;
+ import net.minecraft.client.renderer.RenderTypeBuffers;
+@@ -61,6 +63,14 @@
+         double d5 = MathHelper.lerp((double)f, this.item.getPosZ(), d2);
+         IRenderTypeBuffer.Impl irendertypebuffer$impl = this.renderTypeBuffers.getBufferSource();
+         Vec3d vec3d = renderInfo.getProjectedView();
++     
++        //Vivecraft
++        Minecraft mc = Minecraft.getInstance();
++        if (target== mc.player) {
++        	vec3d = mc.gameRenderer.getControllerRenderPos(0);
++        }   
++        //
++        
+         this.renderManager.renderEntityStatic(this.item, d3 - vec3d.getX(), d4 - vec3d.getY(), d5 - vec3d.getZ(), this.item.rotationYaw, partialTicks, new MatrixStack(), irendertypebuffer$impl, this.renderManager.getPackedLight(this.item, partialTicks));
+         irendertypebuffer$impl.finish();
+ 

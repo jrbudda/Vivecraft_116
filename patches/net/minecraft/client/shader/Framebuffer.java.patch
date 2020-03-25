@@ -43,7 +43,7 @@
 +        this.depthBuffer = -1;
 +        this.framebufferColor = new float[4];
 +        this.framebufferColor[0] = 1.0F;
-+        this.framebufferColor[1] = 0.8F;
++        this.framebufferColor[1] = 1.0F;
 +        this.framebufferColor[2] = 1.0F;
 +        this.framebufferColor[3] = 0.0F;
 +        this.resize(width, height, onMac);

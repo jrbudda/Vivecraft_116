@@ -1171,7 +1171,7 @@ public class MCOpenVR
 		mc.getProfiler().endStartSection("processEvents");
 		processVREvents();
 
-		mc.getProfiler().endStartSection("updatePose");
+		mc.getProfiler().endStartSection("updatePose/Vsync");
 		updatePose();
 
 		mc.getProfiler().endStartSection("processInputs");
@@ -2423,11 +2423,11 @@ public class MCOpenVR
 
 				float hRange = 110;
 				float vRange = 180;
-				double h = mc.mouseHelper.getMouseX() / (double) mc.mainWindow.getWidth() * hRange - (hRange / 2);
+				double h = mc.mouseHelper.getMouseX() / (double) mc.getMainWindow().getWidth() * hRange - (hRange / 2);
 			
 				h = MathHelper.clamp(h, -hRange/2, hRange/2);
 
-				int hei  = mc.mainWindow.getHeight();
+				int hei  = mc.getMainWindow().getHeight();
 				if(hei % 2 != 0)
 					hei-=1; //fix drifting vertical mouse.
 
@@ -2437,8 +2437,8 @@ public class MCOpenVR
 				if(mc.isGameFocused()){
 					float rotStart = mc.vrSettings.keyholeX;
 					float rotSpeed = 2000 * mc.vrSettings.xSensitivity;
-					int leftedge=(int)((-rotStart + (hRange / 2)) *(double) mc.mainWindow.getWidth() / hRange )+1;
-					int rightedge=(int)((rotStart + (hRange / 2)) *(double) mc.mainWindow.getWidth() / hRange )-1;
+					int leftedge=(int)((-rotStart + (hRange / 2)) *(double) mc.getMainWindow().getWidth() / hRange )+1;
+					int rightedge=(int)((rotStart + (hRange / 2)) *(double) mc.getMainWindow().getWidth() / hRange )-1;
 					float rotMul = ((float)Math.abs(h) - rotStart) / ((hRange / 2) - rotStart); // Scaled 0...1 from rotStart to FOV edge
 					if(rotMul > 0.15) rotMul = 0.15f;
 
@@ -2464,7 +2464,7 @@ public class MCOpenVR
 					nPitch=MathHelper.clamp(nPitch,-89.9,89.9);
 					
 					InputSimulator.setMousePos(xpos, hei/2);
-					GLFW.glfwSetCursorPos(mc.mainWindow.getHandle(), xpos, hei/2);
+					GLFW.glfwSetCursorPos(mc.getMainWindow().getHandle(), xpos, hei/2);
 
 					temp.rotate((float) Math.toRadians(-nPitch), new org.vivecraft.utils.lwjgl.Vector3f(1,0,0));
 					temp.rotate((float) Math.toRadians(-180 + h - hmdForwardYaw), new org.vivecraft.utils.lwjgl.Vector3f(0,1,0));

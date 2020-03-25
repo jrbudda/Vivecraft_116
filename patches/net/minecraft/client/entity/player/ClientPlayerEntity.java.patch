@@ -402,7 +402,7 @@
                  vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vec3d2.lengthSquared();
  
-@@ -1220,4 +1454,398 @@
+@@ -1220,4 +1454,385 @@
              return this.eyesInWaterPlayer;
          }
      }
@@ -624,11 +624,9 @@
 +    			}
 +    		}
 +
-+
 +    		mX = directionVec.x;
 +    		mY = directionVec.y;
 +    		mZ = directionVec.z;
-+
 +
 +    		// Modify acceleration sequence (each tick)
 +    		if(!this.abilities.isFlying && !this.inWater) addFactor = VRSettings.getInertiaAddFactor(inertiaFactor);
@@ -649,26 +647,15 @@
 +    	//    System.out.println(String.format("FLYING: %B, forward: %.4f, strafe: %.4f, pitch: %.4f, yaw: %.4f, mx: %.4f, mz: %.4f, my: %.4f", allowYAdjust, forward, strafe, this.headPitch, this.rotationYaw, mX, mZ, mY));
 +    	//}
 +
-+
 +    	if(!this.abilities.isFlying && !this.inWater) doDrag();       //TODO put back intertia while flying.. doesnt work for some reason. 
 +
 +    	/** END MINECRIFT **/
 +
 +    }
 +
-+    	public float eyeHeightOverride = 0;
-+    	public boolean overrideEyeHeight;
-+
-+    	@Override
-+    	public float getEyeHeight(){
-+    		if(overrideEyeHeight) return eyeHeightOverride;
-+    		return super.getEyeHeight();
-+
-+    	}
-+
-+    	private boolean isThePlayer(){
-+    		return this == Minecraft.getInstance().player;
-+    	}
++    private boolean isThePlayer(){
++    	return this == Minecraft.getInstance().player;
++    }
 +
 +    	//Vivecraft override from LivingEntity because addItemParticles is private
 +    	@Override

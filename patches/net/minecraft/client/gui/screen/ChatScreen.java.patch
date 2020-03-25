@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/ChatScreen.java
++++ b/net/minecraft/client/gui/screen/ChatScreen.java
+@@ -41,6 +41,8 @@
+         this.field_228174_e_ = new CommandSuggestionHelper(this.minecraft, this, this.inputField, this.font, false, false, 1, 10, true, -805306368);
+         this.field_228174_e_.func_228111_a_();
+         this.setFocusedDefault(this.inputField);
++        //Vivecraft
++        this.inputField.setCanLoseFocus(false);
+     }
+ 
+     public void resize(Minecraft p_resize_1_, int p_resize_2_, int p_resize_3_)

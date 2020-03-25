@@ -35,8 +35,8 @@ public class RadialHandler {
 		if(mc.vrSettings.seated) showingState = false;
 		int ret = 1;
 		if (showingState) {		
-			int i = mc.mainWindow.getScaledWidth();
-			int j = mc.mainWindow.getScaledHeight();
+			int i = mc.getMainWindow().getScaledWidth();
+			int j = mc.getMainWindow().getScaledHeight();
 			UI.init(Minecraft.getInstance(), i, j);
 			Showing = true;
 			activecontroller = controller;
@@ -75,15 +75,15 @@ public class RadialHandler {
 		}
 		else if (UI.cursorX2 == -1.0f)
 		{
-			UI.cursorX2 = (int) (u * mc.mainWindow.getWidth());
-			UI.cursorY2 = (int) (v * mc.mainWindow.getHeight());
+			UI.cursorX2 = (int) (u * mc.getMainWindow().getWidth());
+			UI.cursorY2 = (int) (v * mc.getMainWindow().getHeight());
 			PointedR = true;
 		}
 		else
 		{
 			// apply some smoothing between mouse positions
-			float newX = (int) (u * mc.mainWindow.getWidth());
-			float newY = (int) (v * mc.mainWindow.getHeight());
+			float newX = (int) (u * mc.getMainWindow().getWidth());
+			float newY = (int) (v * mc.getMainWindow().getHeight());
 			UI.cursorX2 = UI.cursorX2 * 0.7f + newX * 0.3f;
 			UI.cursorY2 = UI.cursorY2 * 0.7f + newY * 0.3f;
 			PointedR = true;
@@ -101,15 +101,15 @@ public class RadialHandler {
 		}
 		else if (UI.cursorX1 == -1.0f)
 		{
-			UI.cursorX1 = (int) (u * mc.mainWindow.getWidth());
-			UI.cursorY1 = (int) (v * mc.mainWindow.getHeight());
+			UI.cursorX1 = (int) (u * mc.getMainWindow().getWidth());
+			UI.cursorY1 = (int) (v * mc.getMainWindow().getHeight());
 			PointedL = true;
 		}
 		else
 		{
 			// apply some smoothing between mouse positions
-			float newX = (int) (u * mc.mainWindow.getWidth());
-			float newY = (int) (v * mc.mainWindow.getHeight());
+			float newX = (int) (u * mc.getMainWindow().getWidth());
+			float newY = (int) (v * mc.getMainWindow().getHeight());
 			UI.cursorX1 = UI.cursorX1 * 0.7f + newX * 0.3f;
 			UI.cursorY1 = UI.cursorY1 * 0.7f + newY * 0.3f;
 			PointedL = true;
@@ -176,15 +176,15 @@ public class RadialHandler {
 			lastPressedShiftR = false;
 		}
 		
-		double d0 = Math.min(Math.max((int) UI.cursorX1, 0), mc.mainWindow.getWidth())
-				 * (double)mc.mainWindow.getScaledWidth() / (double)mc.mainWindow.getWidth();
-		double d1 = Math.min(Math.max((int) UI.cursorY1, 0), mc.mainWindow.getWidth())
-				 * (double)mc.mainWindow.getScaledHeight() / (double)mc.mainWindow.getHeight();
+		double d0 = Math.min(Math.max((int) UI.cursorX1, 0), mc.getMainWindow().getWidth())
+				 * (double)mc.getMainWindow().getScaledWidth() / (double)mc.getMainWindow().getWidth();
+		double d1 = Math.min(Math.max((int) UI.cursorY1, 0), mc.getMainWindow().getWidth())
+				 * (double)mc.getMainWindow().getScaledHeight() / (double)mc.getMainWindow().getHeight();
 		
-		double d2 = Math.min(Math.max((int) UI.cursorX2, 0), mc.mainWindow.getWidth())
-				 * (double)mc.mainWindow.getScaledWidth() / (double)mc.mainWindow.getWidth();
-		double d3 = Math.min(Math.max((int) UI.cursorY2, 0), mc.mainWindow.getWidth())
-				 * (double)mc.mainWindow.getScaledHeight() / (double)mc.mainWindow.getHeight();
+		double d2 = Math.min(Math.max((int) UI.cursorX2, 0), mc.getMainWindow().getWidth())
+				 * (double)mc.getMainWindow().getScaledWidth() / (double)mc.getMainWindow().getWidth();
+		double d3 = Math.min(Math.max((int) UI.cursorY2, 0), mc.getMainWindow().getWidth())
+				 * (double)mc.getMainWindow().getScaledHeight() / (double)mc.getMainWindow().getHeight();
 
 		if(mc.vrSettings.radialModeHold) {
 			if (activecontroller == null)

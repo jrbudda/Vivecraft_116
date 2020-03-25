@@ -264,8 +264,8 @@
 +          //VIVE SPRINTDICATOR
 +          if (this.mc.getRenderViewEntity() instanceof PlayerEntity)
 +          {
-+        	  int i = mc.mainWindow.getScaledWidth();
-+        	  int j = mc.mainWindow.getScaledHeight();
++        	  int i = mc.getMainWindow().getScaledWidth();
++        	  int j = mc.getMainWindow().getScaledHeight();
 +        	  FontRenderer fontrenderer = mc.ingameGUI.getFontRenderer();
 +        	  PlayerEntity entityplayer = (PlayerEntity)this.mc.getRenderViewEntity();
 +        	  int iconp = 0;    	  
@@ -278,8 +278,8 @@
 +        	  
 +        	  if(iconp == -1){
 +            	  GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-+        		  int w = this.mc.mainWindow.getScaledWidth() / 2 - 109;
-+        		  int h = this.mc.mainWindow.getScaledHeight() -39;	 
++        		  int w = this.mc.getMainWindow().getScaledWidth() / 2 - 109;
++        		  int h = this.mc.getMainWindow().getScaledHeight() -39;	 
 +        		  //TODO: this aint right.
 +        		  TextureAtlasSprite textureatlassprite =  this.mc.getAtlasSpriteGetter(new ResourceLocation("minecraft")).apply(new ResourceLocation("items/elytra"));
 +        		  this.mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
@@ -289,8 +289,8 @@
 +        	      TextureAtlasSprite sprite = mc.getPotionSpriteUploader().getSprite(e);
 +            	  GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 +        		  this.mc.getTextureManager().bindTexture(sprite.getAtlasTexture().getTextureLocation());
-+        		  int w = this.mc.mainWindow.getScaledWidth() / 2 - 109;
-+        		  int h = this.mc.mainWindow.getScaledHeight() -39;      			  
++        		  int w = this.mc.getMainWindow().getScaledWidth() / 2 - 109;
++        		  int h = this.mc.getMainWindow().getScaledHeight() -39;      			  
 +        		  AbstractGui.blit(w, h, 0, 18, 18, sprite);        			
 +        	  }       	  
 +          }

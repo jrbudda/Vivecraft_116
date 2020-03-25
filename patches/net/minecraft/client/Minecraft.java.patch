@@ -181,24 +181,13 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.15.2 jrbudda-1-a0";
++    public final String minecriftVerString = "Vivecraft 1.15.2 jrbudda-1-a0-noarms";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
      public static final boolean IS_RUNNING_ON_MAC = Util.getOSType() == Util.OS.OSX;
      public static final ResourceLocation DEFAULT_FONT_RENDERER_NAME = new ResourceLocation("default");
-@@ -218,7 +341,9 @@
-     private final TextureManager textureManager;
-     private final DataFixer dataFixer;
-     private final VirtualScreen virtualScreen;
--    private final MainWindow mainWindow;
-+    //Vivecraft Public
-+    public final MainWindow mainWindow;
-+    //
-     private final Timer timer = new Timer(20.0F, 0L);
-     private final Snooper snooper = new Snooper("client", this, Util.milliTime());
-     private final RenderTypeBuffers renderTypeBuffers;
-@@ -234,7 +359,7 @@
+@@ -234,7 +357,7 @@
      public final DebugRenderer debugRenderer;
      private final AtomicReference<TrackingChunkStatusListener> refChunkStatusListener = new AtomicReference<>();
      public final IngameGui ingameGUI;
@@ -207,7 +196,7 @@
      private final CreativeSettings creativeSettings;
      public final MouseHelper mouseHelper;
      public final KeyboardListener keyboardListener;
-@@ -256,7 +381,7 @@
+@@ -256,7 +379,7 @@
      private final LanguageManager languageManager;
      private final BlockColors blockColors;
      private final ItemColors itemColors;
@@ -216,7 +205,7 @@
      private final SoundHandler soundHandler;
      private final MusicTicker musicTicker;
      private final FontResourceManager fontResourceMananger;
-@@ -267,7 +392,7 @@
+@@ -267,7 +390,7 @@
      private final BlockRendererDispatcher blockRenderDispatcher;
      private final PaintingSpriteUploader paintingSprites;
      private final PotionSpriteUploader potionSprites;
@@ -225,7 +214,7 @@
      private final MinecraftGame game = new MinecraftGame(this);
      private final Tutorial tutorial;
      public static byte[] memoryReserve = new byte[10485760];
-@@ -320,194 +445,229 @@
+@@ -320,194 +443,228 @@
  
      public Minecraft(GameConfiguration p_i800_1_)
      {
@@ -580,7 +569,6 @@
 +
 +    		menuWorldRenderer = new MenuWorldRenderer();
 +    		// VIVE
-+    		// this.renderGlobal.makeEntityOutlineShader();
 +    		vrSettings.firstRun = false;
 +    		vrSettings.saveOptions();
 +    		// END VIVE
@@ -634,7 +622,7 @@
          stringbuilder.append(" ");
          stringbuilder.append(SharedConstants.getVersion().getName());
          ClientPlayNetHandler clientplaynethandler = this.getConnection();
-@@ -537,6 +697,7 @@
+@@ -537,6 +694,7 @@
          return stringbuilder.toString();
      }
  
@@ -642,7 +630,7 @@
      public boolean func_230151_c_()
      {
          return !"vanilla".equals(ClientBrandRetriever.getClientModName()) || Minecraft.class.getSigners() == null;
-@@ -790,6 +951,13 @@
+@@ -790,6 +948,13 @@
                  List<IResourcePack> list = this.resourcePackRepository.getEnabledPacks().stream().map(ResourcePackInfo::getResourcePack).collect(Collectors.toList());
                  this.setLoadingGui(new ResourceLoadProgressGui(this, this.resourceManager.reloadResources(Util.getServerExecutor(), this, RESOURCE_RELOAD_INIT_TASK, list), (p_229992_3_) ->
                  {
@@ -656,7 +644,7 @@
                      Util.acceptOrElse(p_229992_3_, this::restoreResourcePacks, () -> {
                          this.languageManager.parseLanguageMetadata(list);
                          this.worldRenderer.loadRenderers();
-@@ -901,6 +1069,10 @@
+@@ -901,6 +1066,10 @@
              this.ingameGUI.getChatGUI().clearChatMessages(true);
          }
  
@@ -667,7 +655,7 @@
          this.currentScreen = guiScreenIn;
  
          if (guiScreenIn != null)
-@@ -964,6 +1136,12 @@
+@@ -964,6 +1133,12 @@
          finally
          {
              Util.nanoTimeSupplier = System::nanoTime;
@@ -680,7 +668,7 @@
  
              if (this.crashReporter == null)
              {
-@@ -1002,140 +1180,317 @@
+@@ -1002,140 +1177,314 @@
  
      private void runGameLoop(boolean renderWorldIn)
      {
@@ -856,8 +844,6 @@
 +    		this.frameDelta = (i - this.prevFrameTime) / 1000000000F;
 +    		this.prevFrameTime = i;
 +    		// avoid having to change GLX
-+    		gameSettings.ofUseFbo = true;
-+    		gameSettings.ofUseVbo = true;
 +    		gameSettings.ofFastRender = false;
 +    	}
 +    	
@@ -900,7 +886,7 @@
 +    	/** END MINECRIFT */
 +
 +    	// VIVECRAFT
-+    	this.profiler.startSection("Poll");
++    	this.profiler.startSection("VR Poll/VSync");
 +    	// Poll sensors
 +    	MCOpenVR.poll(frameIndex);
 +    	this.profiler.endSection();
@@ -988,8 +974,6 @@
 +          
 +    	if (!this.skipRenderWorld)
 +    	{
-+    		this.profiler.endStartSection("gameRenderer");
-+
 +    		// VIVECRAFT RENDERING MAIN
 +    		if (minecriftDebug)
 +    			print("FrameIndex: " + frameIndex);
@@ -1049,11 +1033,11 @@
 +    		//
 +
 +    		if (this.vrSettings.displayMirrorMode == VRSettings.MIRROR_OFF && MCOpenVR.isHMDTracking()) {
-+    			GlStateManager.viewport(0, 0, this.mainWindow.getWidth(), this.mainWindow.getHeight());
++    			RenderSystem.viewport(0, 0, this.mainWindow.getWidth(), this.mainWindow.getHeight());
 +    			shouldupdate = true;
 +    			this.framebuffer.unbindFramebuffer(); // draw directly to window
-+    			GlStateManager.clearColor(0, 0, 0, 1);
-+    			GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT);
++    			RenderSystem.clearColor(0, 0, 0, 1);
++    			RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT, IS_RUNNING_ON_MAC);
 +    			gameRenderer.displayNotificationText("Mirror is OFF", "", "", this.mainWindow.getWidth(),
 +    					this.mainWindow.getHeight(), false, true);
 +    			// this.framebuffer.bindFramebuffer(true);
@@ -1067,7 +1051,6 @@
 +    		}
 +    		profiler.endSection();
 +
-+    		profiler.endSection(); // gamerenderer
 +    		checkGLError("post submit ");
 +
 +    		//// END MAIN VIVECRAFT RENDERING
@@ -1083,6 +1066,8 @@
 +    	 * GlStateManager.popMatrix(); this.mainWindow.update(true); Thread.yield();
 +    	 * 
 +    	 */
++    	
++    	this.getProfiler().endSection(); //render
 +    	
 +    	this.mainWindow.setRenderPhase("Post render");
 +    	this.mainWindow.flipFrame();
@@ -1132,7 +1117,7 @@
      }
  
      public void updateWindowSize()
-@@ -1148,9 +1503,9 @@
+@@ -1148,9 +1497,9 @@
              this.currentScreen.resize(this, this.mainWindow.getScaledWidth(), this.mainWindow.getScaledHeight());
          }
  
@@ -1145,7 +1130,7 @@
          this.mouseHelper.setIgnoreFirstMove();
      }
  
-@@ -1228,7 +1583,7 @@
+@@ -1228,7 +1577,7 @@
          }
      }
  
@@ -1154,7 +1139,7 @@
      {
          if (this.profiler.getFixedProfiler().isEnabled())
          {
-@@ -1395,12 +1750,13 @@
+@@ -1395,12 +1744,13 @@
                      if (this.playerController.onPlayerDamageBlock(blockpos, direction))
                      {
                          this.particles.addBlockHitEffects(blockpos, direction);
@@ -1172,7 +1157,7 @@
                  this.playerController.resetBlockRemoving();
              }
          }
-@@ -1442,103 +1798,114 @@
+@@ -1442,103 +1792,114 @@
                          {
                              this.leftClickCounter = 10;
                          }
@@ -1377,7 +1362,7 @@
      }
  
      public MusicTicker getMusicTicker()
-@@ -1548,6 +1915,9 @@
+@@ -1548,12 +1909,15 @@
  
      public void runTick()
      {
@@ -1387,7 +1372,14 @@
          if (this.rightClickDelayTimer > 0)
          {
              --this.rightClickDelayTimer;
-@@ -1561,7 +1931,7 @@
+         }
+ 
+-        this.profiler.startSection("gui");
++        this.profiler.startSection("guitick");
+ 
+         if (!this.isGamePaused)
+         {
+@@ -1561,7 +1925,7 @@
          }
  
          this.profiler.endSection();
@@ -1396,7 +1388,7 @@
          this.tutorial.onMouseHover(this.world, this.objectMouseOver);
          this.profiler.startSection("gameMode");
  
-@@ -1572,10 +1942,11 @@
+@@ -1572,10 +1936,11 @@
  
          this.profiler.endStartSection("textures");
  
@@ -1411,7 +1403,7 @@
  
          if (this.currentScreen == null && this.player != null)
          {
-@@ -1593,6 +1964,7 @@
+@@ -1593,6 +1958,7 @@
              this.displayGuiScreen((Screen)null);
          }
  
@@ -1419,7 +1411,7 @@
          if (this.currentScreen != null)
          {
              this.leftClickCounter = 10000;
-@@ -1610,6 +1982,11 @@
+@@ -1610,6 +1976,11 @@
          {
              this.ingameGUI.reset();
          }
@@ -1431,7 +1423,7 @@
  
          if (this.loadingGui == null && (this.currentScreen == null || this.currentScreen.passEvents))
          {
-@@ -1622,8 +1999,27 @@
+@@ -1622,8 +1993,27 @@
              }
          }
  
@@ -1461,7 +1453,7 @@
              this.profiler.endStartSection("gameRenderer");
  
              if (!this.isGamePaused)
-@@ -1655,8 +2051,13 @@
+@@ -1655,8 +2045,13 @@
              this.gameRenderer.stopUseShader();
          }
  
@@ -1477,7 +1469,7 @@
              this.musicTicker.tick();
          }
  
-@@ -1719,25 +2120,28 @@
+@@ -1719,25 +2114,28 @@
          this.profiler.endSection();
      }
  
@@ -1525,7 +1517,7 @@
          }
  
          while (this.gameSettings.keyBindSmoothCamera.isPressed())
-@@ -1797,7 +2201,9 @@
+@@ -1797,7 +2195,9 @@
          {
              if (!this.player.isSpectator() && this.player.func_225609_n_(Screen.hasControlDown()))
              {
@@ -1536,7 +1528,7 @@
              }
          }
  
-@@ -1805,7 +2211,7 @@
+@@ -1805,7 +2205,7 @@
  
          if (flag2)
          {
@@ -1545,7 +1537,7 @@
              {
                  this.displayGuiScreen(new ChatScreen(""));
              }
-@@ -1816,10 +2222,10 @@
+@@ -1816,10 +2216,10 @@
              }
          }
  
@@ -1560,7 +1552,7 @@
                  this.playerController.onStoppedUsingItem(this.player);
              }
  
-@@ -1840,10 +2246,18 @@
+@@ -1840,10 +2240,18 @@
          }
          else
          {
@@ -1582,7 +1574,7 @@
  
              while (this.gameSettings.keyBindUseItem.isPressed())
              {
-@@ -1861,7 +2275,7 @@
+@@ -1861,7 +2269,7 @@
              this.rightClickMouse();
          }
  
@@ -1591,7 +1583,7 @@
      }
  
      public void launchIntegratedServer(String folderName, String worldName, @Nullable WorldSettings worldSettingsIn)
-@@ -1952,6 +2366,9 @@
+@@ -1952,6 +2360,9 @@
  
      public void loadWorld(ClientWorld worldClientIn)
      {
@@ -1601,7 +1593,7 @@
          WorkingScreen workingscreen = new WorkingScreen();
          workingscreen.displaySavingString(new TranslationTextComponent("connect.joining"));
          this.updateScreenTick(workingscreen);
-@@ -2223,6 +2640,8 @@
+@@ -2223,6 +2634,8 @@
                  }
              }
          }
@@ -1610,7 +1602,7 @@
      }
  
      private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
-@@ -2740,4 +3159,601 @@
+@@ -2740,4 +3153,608 @@
      {
          this.modelManager.setMaxMipmapLevel(p_228020_1_);
      }
@@ -1769,6 +1761,13 @@
 +				if (currentPass2 == RenderPass.LEFT)
 +					return false;
 +			}
++			
++			//debug
++			//	source = GuiHandler.guiFramebuffer;
++			//	source = stereoProvider.framebufferEye0;
++			//	source = stereoProvider.framebufferEye1;
++			//	source = GuiHandler.guiFramebuffer;
++			
 +			this.framebuffer.unbindFramebuffer(); // draw directly to window
 +			source.framebufferRenderExt((mainWindow.getWidth() / 2) * i,
 +					mainWindow.getWidth() / ports, mainWindow.getHeight(), 0, true);
@@ -1895,20 +1894,20 @@
 +
 +		for (int i = 0; i < (alphaMask ? 3 : 2); i++) {
 +
-+			int resW = mainWindow.getFramebufferWidth() / 2;
-+			int resH = mainWindow.getFramebufferHeight();
-+			int posW = (mainWindow.getFramebufferWidth() / 2) * i;
++			int resW = mainWindow.getWidth() / 2;
++			int resH = mainWindow.getHeight();
++			int posW = (mainWindow.getWidth() / 2) * i;
 +			int posH = 0;
 +
 +			if (this.vrSettings.mixedRealityUnityLike) {
-+				resW = mainWindow.getFramebufferWidth() / 2;
-+				resH = mainWindow.getFramebufferHeight() / 2;
++				resW = mainWindow.getWidth() / 2;
++				resH = mainWindow.getHeight() / 2;
 +				if (this.vrSettings.mixedRealityAlphaMask && i == 2) {
-+					posW = mainWindow.getFramebufferWidth() / 2;
-+					posH = mainWindow.getFramebufferHeight() / 2;
++					posW = mainWindow.getWidth() / 2;
++					posH = mainWindow.getHeight() / 2;
 +				} else {
 +					posW = 0;
-+					posH = (mainWindow.getFramebufferHeight() / 2) * (1 - i);
++					posH = (mainWindow.getHeight() / 2) * (1 - i);
 +				}
 +			}
 +

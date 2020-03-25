@@ -119,24 +119,24 @@ public class GuiHandler {
 		}
 		else if (controllerMouseX == -1.0f)
 		{
-			controllerMouseX = (int) (u * mc.mainWindow.getWidth());
-			controllerMouseY = (int) (v * mc.mainWindow.getHeight());
+			controllerMouseX = (int) (u * mc.getMainWindow().getWidth());
+			controllerMouseY = (int) (v * mc.getMainWindow().getHeight());
 		}
 		else
 		{
 			// apply some smoothing between mouse positions
-			float newX = (int) (u * mc.mainWindow.getWidth());
-			float newY = (int) (v * mc.mainWindow.getHeight());
+			float newX = (int) (u * mc.getMainWindow().getWidth());
+			float newY = (int) (v * mc.getMainWindow().getHeight());
 			controllerMouseX = controllerMouseX * 0.7f + newX * 0.3f;
 			controllerMouseY = controllerMouseY * 0.7f + newY * 0.3f;
 		}
 
-		if (controllerMouseX >= 0 && controllerMouseX < mc.mainWindow.getWidth()
-				&& controllerMouseY >=0 && controllerMouseY < mc.mainWindow.getHeight())
+		if (controllerMouseX >= 0 && controllerMouseX < mc.getMainWindow().getWidth()
+				&& controllerMouseY >=0 && controllerMouseY < mc.getMainWindow().getHeight())
 		{
 			// mouse on screen
-			double mouseX = Math.min(Math.max((int) controllerMouseX, 0), mc.mainWindow.getWidth());
-			double mouseY = Math.min(Math.max((int) controllerMouseY, 0), mc.mainWindow.getHeight());
+			double mouseX = Math.min(Math.max((int) controllerMouseX, 0), mc.getMainWindow().getWidth());
+			double mouseY = Math.min(Math.max((int) controllerMouseY, 0), mc.getMainWindow().getHeight());
 
 			int deltaX = 0;//?
 			int deltaY = 0;//?
@@ -189,7 +189,7 @@ public class GuiHandler {
 				float u = relativePoint.dot(guiRight.divide(1.0f / guiWidth));
 				float v = relativePoint.dot(guiUp.divide(1.0f / guiWidth));
 
-				float AR = (float) mc.mainWindow.getScaledHeight() / mc.mainWindow.getScaledWidth();
+				float AR = (float) mc.getMainWindow().getScaledHeight() / mc.getMainWindow().getScaledWidth();
 
 				u = (u - 0.5f) / 1.5f / guiScale + 0.5f;
 				v = (v - 0.5f) / AR / 1.5f / guiScale + 0.5f;
@@ -203,18 +203,18 @@ public class GuiHandler {
 	}
 
 	public static void processBindingsGui() {
-		boolean mouseValid = controllerMouseX >= 0 && controllerMouseX < mc.mainWindow.getWidth()
-				&& controllerMouseY >=0 && controllerMouseY < mc.mainWindow.getWidth();
+		boolean mouseValid = controllerMouseX >= 0 && controllerMouseX < mc.getMainWindow().getWidth()
+				&& controllerMouseY >=0 && controllerMouseY < mc.getMainWindow().getWidth();
 
 			//This is how the MouseHelper do.
 			/*double deltaX = (controllerMouseX - lastMouseX)
-			 * (double)mc.mainWindow.getScaledWidth() / (double)mc.mainWindow.getWidth();
+			 * (double)mc.getMainWindow().getScaledWidth() / (double)mc.getMainWindow().getWidth();
 			double deltaY = (controllerMouseY - lastMouseY)
-			 * (double)mc.mainWindow.getScaledHeight() / (double)mc.mainWindow.getHeight();
-			double d0 = Math.min(Math.max((int) controllerMouseX, 0), mc.mainWindow.getWidth())
-			 * (double)mc.mainWindow.getScaledWidth() / (double)mc.mainWindow.getWidth();
-			double d1 = Math.min(Math.max((int) controllerMouseY, 0), mc.mainWindow.getWidth())
-			 * (double)mc.mainWindow.getScaledHeight() / (double)mc.mainWindow.getHeight();*/
+			 * (double)mc.getMainWindow().getScaledHeight() / (double)mc.getMainWindow().getHeight();
+			double d0 = Math.min(Math.max((int) controllerMouseX, 0), mc.getMainWindow().getWidth())
+			 * (double)mc.getMainWindow().getScaledWidth() / (double)mc.getMainWindow().getWidth();
+			double d1 = Math.min(Math.max((int) controllerMouseY, 0), mc.getMainWindow().getWidth())
+			 * (double)mc.getMainWindow().getScaledHeight() / (double)mc.getMainWindow().getHeight();*/
 
 				//if (keyLeftClick.isKeyDown() && mc.currentScreen != null)
 				//	mc.currentScreen.mouseDragged(d0, d1, 0, deltaX, deltaY);//Signals mouse move

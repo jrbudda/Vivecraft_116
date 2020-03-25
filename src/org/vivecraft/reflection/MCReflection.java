@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.model.ModelManager;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.dimension.Dimension;
 
 public class MCReflection {
@@ -22,7 +23,7 @@ public class MCReflection {
 	public static final ReflectionField SoundManager_sndSystem = new ReflectionField(SoundEngine.class, "field_217937_g");
 	public static final ReflectionMethod SoundEngine_reload = new ReflectionMethod(SoundEngine.class, "func_148596_a");
 
-	//TODO: Verify srg
+	//TODO: Verify srg of commented fields
 	public static final String BlockState_OnBlockActivated = "func_225533_a_";
 //	public static final ReflectionMethod Dimension_generateLightBrightnessTable = new ReflectionMethod(Dimension.class, "func_76556_a");
 //	public static final ReflectionMethod Dimension_hasSkyLight = new ReflectionMethod(Dimension.class, "func_191066_m");
@@ -38,6 +39,9 @@ public class MCReflection {
 	public static final ReflectionField KeyBinding_keyCode = new ReflectionField(KeyBinding.class, "field_74512_d");
 	public static final ReflectionField KeyBinding_CATEGORY_ORDER = new ReflectionField(KeyBinding.class, "field_193627_d");
 
+	public static final ReflectionField Entity_eyeHeight = new ReflectionField(Entity.class, "field_213326_aJ");
+
+	
 	public static final ReflectionMethod RenderPlayer_setModelVisibilities = new ReflectionMethod(PlayerRenderer.class, "func_177137_d", AbstractClientPlayerEntity.class);
 //	public static final ReflectionField TileEntityRendererDispatcher_fontRenderer = new ReflectionField(TileEntityRendererDispatcher.class, "field_147557_n");
 //	public static final ReflectionField TextureMap_listAnimatedSprites = new ReflectionField(TextureMap.class, "field_94258_i");

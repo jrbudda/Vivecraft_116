@@ -11,12 +11,17 @@
 	"mainClass": "net.minecraft.launchwrapper.Launch",
 	"arguments": {
     "game": [
+      "--tweakClass",
+      "optifine.OptiFineTweaker",
 	  "--tweakClass",
 	  "org.vivecraft.tweaker.MinecriftVanillaTweaker"
     ]
   },
 	"order": 6,
 	"libraries": [
+	{
+		"name": "optifine:OptiFine:$OFVERSION"
+	},
 	{
 		"name": "org.ow2.asm:asm-all:5.2",
 		"url": "http://files.minecraftforge.net/maven/"

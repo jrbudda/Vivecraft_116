@@ -11,3 +11,50 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
+@@ -46,6 +50,7 @@
+ import net.minecraft.util.math.BlockRayTraceResult;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.RayTraceContext;
++import net.minecraft.util.math.RayTraceResult.Type;
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.IWorld;
+@@ -191,15 +196,33 @@
+         }
+         else
+         {
++        	//VIVE FIX
+             Vec3d vec3d = player.getLook(1.0F).normalize();
+             Vec3d vec3d1 = new Vec3d(this.getPosX() - player.getPosX(), this.getPosYEye() - player.getPosYEye(), this.getPosZ() - player.getPosZ());
+-            double d0 = vec3d1.length();
+-            vec3d1 = vec3d1.normalize();
+-            double d1 = vec3d.dotProduct(vec3d1);
+-            return d1 > 1.0D - 0.025D / d0 ? player.canEntityBeSeen(this) : false;
++            
++        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(player.getUniqueID());
++        	boolean vr = vp !=null && vp.isVR();
++        	if (vr)
++        	{
++        		vec3d = vp.getHMDDir();
++        		Vec3d hmdpos = vp.getHMDPos();
++        		vec3d1 = new Vec3d(this.getPosX() - hmdpos.x, this.getBoundingBox().minY + (double)this.getEyeHeight() - hmdpos.y, this.getPosZ() - hmdpos.z);
++        	}
++        	//          
++        	double d0 = vec3d1.length();
++        	vec3d1 = vec3d1.normalize();
++        	double d1 = vec3d.dotProduct(vec3d1);
++        	//Vivecraft
++        	return d1 > 1.0D - 0.025D / d0 ? (vr ? canSee(vp.getHMDPos(), this.getEyePosition(1)): player.canEntityBeSeen(this)) : false;
++        	//
+         }
+     }
+-
++    
++    private boolean canSee(Vec3d source, Vec3d Target)
++    {
++        return this.world.rayTraceBlocks(new RayTraceContext(source, Target, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this)).getType() == Type.MISS;
++    }
++    
+     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
+     {
+         return 2.55F;
