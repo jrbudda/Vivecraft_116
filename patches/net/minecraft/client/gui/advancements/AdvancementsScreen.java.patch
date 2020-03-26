@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/gui/advancements/AdvancementsScreen.java
++++ b/net/minecraft/client/gui/advancements/AdvancementsScreen.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.client.gui.advancements;
+ 
+ import com.google.common.collect.Maps;
++import com.mojang.blaze3d.platform.GlStateManager;
+ import com.mojang.blaze3d.systems.RenderSystem;
+ import java.util.Map;
+ import javax.annotation.Nullable;
+@@ -162,7 +163,9 @@
+             }
+ 
+             RenderSystem.enableRescaleNormal();
+-            RenderSystem.defaultBlendFunc();
++            //RenderSystem.defaultBlendFunc();
++            //VIVECRAFT: DestFactor of ONE is really what we want here, because math
++            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+ 
+             for (AdvancementTabGui advancementtabgui1 : this.tabs.values())
+             {

@@ -114,7 +114,15 @@
          RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
  
          if (Config.isCustomItems())
-@@ -460,4 +515,21 @@
+@@ -306,7 +361,6 @@
+         {
+             RenderHelper.setupGuiFlatDiffuseLighting();
+         }
+-
+         this.renderItem(stack, ItemCameraTransforms.TransformType.GUI, false, matrixstack, irendertypebuffer$impl, 15728880, OverlayTexture.NO_OVERLAY, bakedmodel);
+         irendertypebuffer$impl.finish();
+         RenderSystem.enableDepthTest();
+@@ -460,4 +514,21 @@
      {
          return VanillaResourceType.MODELS;
      }

@@ -46,9 +46,8 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 
 		//This is used for rendering sprites normal to the camera dir, which is terrible and needs to change.
         this.rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-        this.rotation.multiply(Vector3f.YP.rotationDegrees(-pitch));
-        this.rotation.multiply(Vector3f.XP.rotationDegrees(yaw));
-
+        this.rotation.multiply(Vector3f.YP.rotationDegrees(-yaw));
+        this.rotation.multiply(Vector3f.XP.rotationDegrees(pitch));
 	}
 
 	@Override

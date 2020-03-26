@@ -1,10 +1,11 @@
 --- a/net/minecraft/client/renderer/FirstPersonRenderer.java
 +++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
-@@ -2,8 +2,16 @@
+@@ -2,15 +2,28 @@
  
  import com.google.common.base.MoreObjects;
  import com.mojang.blaze3d.matrix.MatrixStack;
 +import com.mojang.blaze3d.platform.GlStateManager;
++import com.mojang.blaze3d.systems.RenderSystem;
  import com.mojang.blaze3d.vertex.IVertexBuilder;
 +
 +import java.util.HashMap;
@@ -17,15 +18,18 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
  import net.minecraft.client.entity.player.ClientPlayerEntity;
-@@ -11,6 +19,7 @@
+ import net.minecraft.client.renderer.entity.EntityRendererManager;
  import net.minecraft.client.renderer.entity.PlayerRenderer;
  import net.minecraft.client.renderer.model.ItemCameraTransforms;
++import net.minecraft.client.renderer.model.ModelBakery;
++import net.minecraft.client.renderer.texture.AtlasTexture;
  import net.minecraft.client.renderer.texture.OverlayTexture;
++import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 +import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  import net.minecraft.entity.LivingEntity;
  import net.minecraft.item.CrossbowItem;
  import net.minecraft.item.FilledMapItem;
-@@ -20,7 +29,9 @@
+@@ -20,7 +33,9 @@
  import net.minecraft.util.Hand;
  import net.minecraft.util.HandSide;
  import net.minecraft.util.ResourceLocation;
@@ -35,7 +39,7 @@
  import net.minecraft.world.storage.MapData;
  import net.optifine.Config;
  import net.optifine.reflect.Reflector;
-@@ -39,12 +50,40 @@
+@@ -39,12 +54,40 @@
      private float prevEquippedProgressOffHand;
      private final EntityRendererManager renderManager;
      private final ItemRenderer itemRenderer;
@@ -76,7 +80,7 @@
      }
  
      public void renderItemSide(LivingEntity livingEntityIn, ItemStack itemStackIn, ItemCameraTransforms.TransformType transformTypeIn, boolean leftHand, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn)
-@@ -556,4 +595,154 @@
+@@ -556,4 +599,100 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }
@@ -89,43 +93,7 @@
 +    		return 1.0F - (this.prevEquippedProgressOffHand + (this.equippedProgressOffHand - this.prevEquippedProgressOffHand) * partialTicks);
 +    }
 +
-+    public void renderFaceInBlock() {
-+        Tessellator tessellator = Tessellator.getInstance();
-+        BufferBuilder bufferbuilder = tessellator.getBuffer();
-+        
-+        GlStateManager.color4f(0f, 0F, 0F, mc.gameRenderer.inBlock);
-+        
-+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-+        GlStateManager.pushMatrix();
-+        	GlStateManager.loadIdentity();
-+	        GlStateManager.ortho(0.0D, 1, 0, 1, 0, 100);
-+	        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-+	        GlStateManager.pushMatrix();
-+		        GlStateManager.loadIdentity();
-+		        
-+		        GlStateManager.disableDepthTest();
-+		        GlStateManager.disableTexture();
-+		        GlStateManager.enableBlend();	               
-+		        GlStateManager.disableCull();
-+
-+		        bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
-+		        bufferbuilder.pos(-1 ,-1, 0).endVertex();
-+		        bufferbuilder.pos(2, -1, 0).endVertex();
-+		        bufferbuilder.pos(2, 2, 0).endVertex();
-+		        bufferbuilder.pos(-1, 2, 0).endVertex();
-+		        tessellator.draw();
-+		        
-+
-+	        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-+	        GlStateManager.popMatrix();
-+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-+        GlStateManager.popMatrix();
-+        
-+        //GlStateManager.enableDepth();
-+        GlStateManager.enableTexture();
-+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-+    }
-+    
++     
 +    public boolean isInsideOpaqueBlock(Vec3d in, boolean set)
 +    {
 +
@@ -186,26 +154,6 @@
 +    	
 +    }
 +    
-+    public void renderFaceOverlay(float par1){ //replaced with shader
-+    	boolean shadersMod = Config.isShaders();
-+    	if (shadersMod) {
-+    		//just disables caps
-+    		Shaders.beginFPOverlay();
-+    	}
-+
-+    	if(mc.gameRenderer.inblock) {
-+    		renderFaceInBlock();
-+    		mc.gameRenderer.renderVRGuiElements(false, par1);
-+    	}
-+
-+//    	if(mc.gameRenderer.onfire)
-+//    		renderFireInFirstPerson();
-+
-+    	if (shadersMod) {
-+    		//does nothing at all.
-+    		Shaders.endFPOverlay();
-+    	}
-+    }
 +    
 +//    public boolean isInsideOfMaterial(Vec3d pos, Material materialIn)
 +//    {
@@ -229,5 +177,7 @@
 +//   }
 +    //
 +    
++    
++
  }
 +

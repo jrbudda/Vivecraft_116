@@ -143,7 +143,34 @@
  
      public void sendChunkLoad(ChunkPos p_213844_1_, IPacket<?> p_213844_2_, IPacket<?> p_213844_3_)
      {
-@@ -1568,4 +1660,4 @@
+@@ -1542,6 +1634,7 @@
+         return new SSpawnPlayerPacket(this);
+     }
+ 
++    @Override
+     public ItemEntity dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
+     {
+         ItemEntity itementity = super.dropItem(droppedItem, dropAround, traceItem);
+@@ -1552,6 +1645,18 @@
+         }
+         else
+         {
++        	//Vivecraft, set spwanpos of dropped item.
++            ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());    
++            if (vp != null && vp.isVR() && !dropAround) {
++    			Vec3d pos = vp.getControllerPos(0);    	
++    			Vec3d aim = vp.getControllerDir(0);
++    			float f2 = 0.3F;
++    			itementity.setMotion(aim.x * f2, aim.y * f2, aim.z * f2);
++    			itementity.setPosition(pos.getX() + itementity.getMotion().getX(), 
++    					pos.getY()+itementity.getMotion().getY(), 
++    					pos.getZ() + itementity.getMotion().getZ());
++            }
++            //         
+             this.world.addEntity(itementity);
+             ItemStack itemstack = itementity.getItem();
+ 
+@@ -1568,4 +1673,4 @@
              return itementity;
          }
      }

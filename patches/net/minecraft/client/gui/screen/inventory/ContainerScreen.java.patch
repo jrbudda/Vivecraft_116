@@ -1,6 +1,24 @@
 --- a/net/minecraft/client/gui/screen/inventory/ContainerScreen.java
 +++ b/net/minecraft/client/gui/screen/inventory/ContainerScreen.java
-@@ -458,7 +458,7 @@
+@@ -1,6 +1,7 @@
+ package net.minecraft.client.gui.screen.inventory;
+ 
+ import com.google.common.collect.Sets;
++import com.mojang.blaze3d.platform.GlStateManager;
+ import com.mojang.blaze3d.systems.RenderSystem;
+ import com.mojang.datafixers.util.Pair;
+ import java.util.Set;
+@@ -235,7 +236,9 @@
+             {
+                 TextureAtlasSprite textureatlassprite = this.minecraft.getAtlasSpriteGetter(pair.getFirst()).apply(pair.getSecond());
+                 this.minecraft.getTextureManager().bindTexture(textureatlassprite.getAtlasTexture().getTextureLocation());
++               // RenderSystem.colorMask(true,  true,  true,  false);
+                 blit(i, j, this.getBlitOffset(), 16, 16, textureatlassprite);
++              //  RenderSystem.colorMask(true,  true,  true,  true);
+                 flag1 = true;
+             }
+         }
+@@ -458,7 +461,7 @@
                  }
              }
          }

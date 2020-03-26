@@ -9,17 +9,19 @@
  import com.mojang.blaze3d.systems.RenderSystem;
  import java.util.Collection;
  import java.util.Iterator;
-@@ -12,6 +14,9 @@
+@@ -12,6 +14,11 @@
  import java.util.Map;
  import java.util.Random;
  import java.util.stream.Collectors;
++
++import javax.annotation.Nullable;
 +
 +import org.lwjgl.opengl.GL11;
 +
  import net.minecraft.block.Blocks;
  import net.minecraft.client.GameSettings;
  import net.minecraft.client.Minecraft;
-@@ -23,11 +28,13 @@
+@@ -23,11 +30,13 @@
  import net.minecraft.client.gui.overlay.DebugOverlayGui;
  import net.minecraft.client.gui.overlay.PlayerTabOverlayGui;
  import net.minecraft.client.gui.overlay.SubtitleOverlayGui;
@@ -33,7 +35,15 @@
  import net.minecraft.client.renderer.texture.AtlasTexture;
  import net.minecraft.client.renderer.texture.PotionSpriteUploader;
  import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-@@ -106,6 +113,8 @@
+@@ -41,6 +50,7 @@
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.inventory.container.INamedContainerProvider;
+ import net.minecraft.item.ItemStack;
++import net.minecraft.item.Items;
+ import net.minecraft.potion.Effect;
+ import net.minecraft.potion.EffectInstance;
+ import net.minecraft.potion.Effects;
+@@ -106,6 +116,8 @@
      private int scaledWidth;
      private int scaledHeight;
      private final Map<ChatType, List<IChatListener>> chatListeners = Maps.newHashMap();
@@ -42,7 +52,7 @@
  
      public IngameGui(Minecraft p_i231_1_)
      {
-@@ -146,32 +155,43 @@
+@@ -146,32 +158,43 @@
          FontRenderer fontrenderer = this.getFontRenderer();
          RenderSystem.enableBlend();
  
@@ -106,7 +116,7 @@
  
          if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
          {
-@@ -188,9 +208,13 @@
+@@ -188,9 +211,13 @@
              this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
              RenderSystem.enableBlend();
              RenderSystem.enableAlphaTest();
@@ -122,7 +132,7 @@
              this.mc.getProfiler().startSection("bossHealth");
              this.overlayBoss.render();
              this.mc.getProfiler().endSection();
-@@ -223,6 +247,10 @@
+@@ -223,6 +250,10 @@
              {
                  this.spectatorGui.renderSelectedItem();
              }
@@ -133,7 +143,7 @@
          }
  
          if (this.mc.player.getSleepTimer() > 0)
-@@ -276,7 +304,9 @@
+@@ -276,7 +307,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight - 68), 0.0F);
                      RenderSystem.enableBlend();
@@ -144,7 +154,7 @@
                      int k1 = 16777215;
  
                      if (this.animateOverlayMessageColor)
-@@ -318,7 +348,9 @@
+@@ -318,7 +351,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight / 2), 0.0F);
                      RenderSystem.enableBlend();
@@ -155,7 +165,7 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.scalef(4.0F, 4.0F, 4.0F);
                      int l1 = j1 << 24 & -16777216;
-@@ -365,9 +397,30 @@
+@@ -365,9 +400,30 @@
              {
                  this.renderScoreboard(scoreobjective1);
              }
@@ -187,7 +197,7 @@
              RenderSystem.disableAlphaTest();
              RenderSystem.pushMatrix();
              RenderSystem.translatef(0.0F, (float)(this.scaledHeight - 48), 0.0F);
-@@ -377,7 +430,7 @@
+@@ -377,7 +433,7 @@
              RenderSystem.popMatrix();
              scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
  
@@ -196,7 +206,7 @@
              {
                  this.overlayPlayerList.setVisible(true);
                  this.overlayPlayerList.render(this.scaledWidth, scoreboard, scoreobjective1);
-@@ -594,6 +647,9 @@
+@@ -594,6 +650,9 @@
              int k = 182;
              int l = 91;
              this.setBlitOffset(-90);
@@ -206,7 +216,7 @@
              this.blit(i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
              this.blit(i - 91 - 1 + playerentity.inventory.currentItem * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
  
-@@ -612,7 +668,9 @@
+@@ -612,7 +671,9 @@
              this.setBlitOffset(j);
              RenderSystem.enableRescaleNormal();
              RenderSystem.enableBlend();
@@ -217,7 +227,7 @@
              CustomItems.setRenderOffHand(false);
  
              for (int i1 = 0; i1 < 9; ++i1)
-@@ -766,7 +824,9 @@
+@@ -766,7 +827,9 @@
              {
                  RenderSystem.pushMatrix();
                  RenderSystem.enableBlend();
@@ -228,7 +238,7 @@
                  fill(i - 2, j - 2, i + this.getFontRenderer().getStringWidth(s) + 2, j + 9 + 2, this.mc.gameSettings.getChatBackgroundColor(0));
                  FontRenderer fontrenderer = null;
  
-@@ -1199,6 +1259,7 @@
+@@ -1199,6 +1262,7 @@
          }
      }
  
@@ -236,7 +246,7 @@
      private void renderPumpkinOverlay()
      {
          RenderSystem.disableDepthTest();
-@@ -1230,6 +1291,8 @@
+@@ -1230,6 +1294,8 @@
          }
      }
  
@@ -245,7 +255,7 @@
      private void renderVignette(Entity entityIn)
      {
          if (!Config.isVignetteEnabled())
-@@ -1282,6 +1345,7 @@
+@@ -1282,6 +1348,7 @@
          }
      }
  
@@ -253,7 +263,7 @@
      private void renderPortal(float timeInPortal)
      {
          if (timeInPortal < 1.0F)
-@@ -1504,4 +1568,74 @@
+@@ -1504,4 +1571,80 @@
      {
          this.overlayDebug.resetChunk();
      }
@@ -273,19 +283,25 @@
 +        	  Effect e = null;
 +        	  if(entityplayer.isSprinting()) e = Effects.SPEED;      	  
 +        	  if(entityplayer.isShiftKeyDown()) e = Effects.BLINDNESS;
-+        	  
++        	  if(entityplayer.isActualySwimming()) e = Effects.DOLPHINS_GRACE;
 +        	  if(entityplayer.isElytraFlying()) iconp = -1;
 +        	  
 +        	  if(iconp == -1){
-+            	  GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
++//            	  GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 +        		  int w = this.mc.getMainWindow().getScaledWidth() / 2 - 109;
 +        		  int h = this.mc.getMainWindow().getScaledHeight() -39;	 
-+        		  //TODO: this aint right.
-+        		  TextureAtlasSprite textureatlassprite =  this.mc.getAtlasSpriteGetter(new ResourceLocation("minecraft")).apply(new ResourceLocation("items/elytra"));
-+        		  this.mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-+        		  AbstractGui.blit(w,h,0,16,16,textureatlassprite);
++//        		  //TODO: this aint right.
++//        		  TextureAtlasSprite textureatlassprite =  this.mc.getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(new ResourceLocation("textures/items/elytra"));
++//        		  this.mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
++//        		  AbstractGui.blit(w,h,0,16,16,textureatlassprite);
++//        		  
++        		  mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.ELYTRA), w, h);
++        		  
++        	//	    public void renderItemAndEffectIntoGUI(@Nullable LivingEntity entityIn, ItemStack itemIn, int x, int y)
++
++        		  
 +        	  } 
-+        	  else if (e!=null) {  		  
++        	  else if (e!=null) {  		   
 +        	      TextureAtlasSprite sprite = mc.getPotionSpriteUploader().getSprite(e);
 +            	  GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 +        		  this.mc.getTextureManager().bindTexture(sprite.getAtlasTexture().getTextureLocation());

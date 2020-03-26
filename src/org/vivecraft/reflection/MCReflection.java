@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.vivecraft.asm.ObfNames;
 
 import net.minecraft.client.audio.SoundEngine;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.multiplayer.PlayerController;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -20,7 +21,7 @@ import net.minecraft.world.dimension.Dimension;
 
 public class MCReflection {
 
-	public static final ReflectionField SoundManager_sndSystem = new ReflectionField(SoundEngine.class, "field_217937_g");
+	public static final ReflectionField SoundHandler_sndManager = new ReflectionField(SoundHandler.class, "field_147694_f");
 	public static final ReflectionMethod SoundEngine_reload = new ReflectionMethod(SoundEngine.class, "func_148596_a");
 
 	//TODO: Verify srg of commented fields

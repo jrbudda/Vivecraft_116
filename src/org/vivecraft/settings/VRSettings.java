@@ -1532,7 +1532,7 @@ public class VRSettings
                         this.hrtfSelection = -1;
 
                     // Reload the sound engine to get the new HRTF
-                    MCReflection.SoundEngine_reload.invoke(MCReflection.SoundManager_sndSystem.get(mc.getSoundHandler()), (Object[])null);
+                    MCReflection.SoundEngine_reload.invoke(MCReflection.SoundHandler_sndManager.get(mc.getSoundHandler()), (Object[])null);
                 }
                 break;
             case RIGHT_CLICK_DELAY:

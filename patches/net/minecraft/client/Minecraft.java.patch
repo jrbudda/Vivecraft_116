@@ -181,7 +181,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.15.2 jrbudda-1-a0-noarms";
++    public final String minecriftVerString = "Vivecraft 1.15.2 jrbudda-1-a1-noArms";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
@@ -2035,7 +2035,7 @@
 +		this.profiler.endSection();
 +		checkGLError("post game render " + eye);
 +
-+		gameRenderer.itemRenderer.renderFaceOverlay(nano);
++		gameRenderer.renderFaceOverlay(nano);
 +		
 +		if (currentPass == RenderPass.LEFT || currentPass == RenderPass.RIGHT) {
 +			// copies the rendered scen-e to eye tex with fsaa and other postprocessing

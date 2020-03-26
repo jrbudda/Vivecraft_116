@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/tileentity/EndPortalTileEntityRenderer.java
++++ b/net/minecraft/client/renderer/tileentity/EndPortalTileEntityRenderer.java
+@@ -39,6 +39,7 @@
+             int i = this.getPasses(d0);
+             float f = this.getOffset();
+             Matrix4f matrix4f = matrixStackIn.getLast().getMatrix();
++            
+             this.renderCube(tileEntityIn, f, 0.15F, matrix4f, bufferIn.getBuffer(RENDER_TYPES.get(0)));
+ 
+             for (int j = 1; j < i; ++j)

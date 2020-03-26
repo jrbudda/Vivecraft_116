@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/gui/advancements/AdvancementEntryGui.java
++++ b/net/minecraft/client/gui/advancements/AdvancementEntryGui.java
+@@ -170,7 +170,11 @@
+             }
+ 
+             this.minecraft.getTextureManager().bindTexture(WIDGETS);
++            //VIVECRAFT Prevent invisible background
++            RenderSystem.colorMask(true, true, true, false);
+             this.blit(p_191817_1_ + this.x + 3, p_191817_2_ + this.y, this.displayInfo.getFrame().getIcon(), 128 + advancementstate.getId() * 26, 26, 26);
++            RenderSystem.colorMask(true, true, true, true);
++            //
+             this.minecraft.getItemRenderer().renderItemAndEffectIntoGUI((LivingEntity)null, this.displayInfo.getIcon(), p_191817_1_ + this.x + 8, p_191817_2_ + this.y + 5);
+         }
+ 

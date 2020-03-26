@@ -32,7 +32,17 @@
  
  public class ClientPlayNetHandler implements IClientPlayNetHandler
  {
-@@ -370,7 +382,9 @@
+@@ -330,6 +342,9 @@
+         this.profile = p_i1816_4_;
+         this.advancementManager = new ClientAdvancementManager(p_i1816_1_);
+         this.clientSuggestionProvider = new ClientSuggestionProvider(this, p_i1816_1_);
++        //VIVECRAFT
++        NetworkHelper.resetServerSettings();
++        //
+     }
+ 
+     public ClientSuggestionProvider getSuggestionProvider()
+@@ -370,7 +385,9 @@
          this.client.player.preparePlayerToSpawn();
          int i = packetIn.getPlayerId();
          this.world.addPlayer(i, this.client.player);
@@ -43,7 +53,23 @@
          this.client.playerController.setPlayerCapabilities(this.client.player);
          this.client.renderViewEntity = this.client.player;
          this.client.player.dimension = packetIn.getDimension();
-@@ -904,6 +918,11 @@
+@@ -382,6 +399,15 @@
+         this.client.gameSettings.sendSettingsToServer();
+         this.netManager.sendPacket(new CCustomPayloadPacket(CCustomPayloadPacket.BRAND, (new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
+         this.client.getMinecraftGame().startGameSession();
++        // VIVE START - ask server if it's running this mod
++        byte[] version = Minecraft.getInstance().minecriftVerString.getBytes(Charsets.UTF_8);
++        String s = NetworkHelper.channel.toString();
++        PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
++        pb.writeBytes(s.getBytes());
++        this.netManager.sendPacket(new CCustomPayloadPacket(new ResourceLocation("minecraft:register"), pb));
++        this.netManager.sendPacket(NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.VERSION, version));
++        this.client.vrPlayer.teleportWarningTimer = 20 * 3;
++        // VIVE END - ask server if it's running this mod
+     }
+ 
+     public void handleSpawnObject(SSpawnObjectPacket packetIn)
+@@ -904,6 +930,11 @@
      public void handleDisconnect(SDisconnectPacket packetIn)
      {
          this.netManager.closeChannel(packetIn.getReason());
@@ -55,7 +81,7 @@
      }
  
      public void onDisconnect(ITextComponent reason)
-@@ -966,8 +985,31 @@
+@@ -966,8 +997,31 @@
  
      public void handleChat(SChatPacket packetIn)
      {
@@ -89,7 +115,7 @@
      }
  
      public void handleAnimation(SAnimateHandPacket packetIn)
-@@ -1100,7 +1142,9 @@
+@@ -1100,7 +1154,9 @@
  
                      if (entity1 == this.client.player && !flag)
                      {
@@ -100,7 +126,7 @@
                      }
                  }
              }
-@@ -1208,7 +1252,9 @@
+@@ -1208,7 +1264,9 @@
          clientplayerentity1.setServerBrand(s);
          this.world.addPlayer(i, clientplayerentity1);
          clientplayerentity1.rotationYaw = -180.0F;
@@ -111,7 +137,7 @@
          this.client.playerController.setPlayerCapabilities(clientplayerentity1);
          clientplayerentity1.setReducedDebug(clientplayerentity.hasReducedDebug());
          clientplayerentity1.setShowDeathScreen(clientplayerentity.isShowDeathScreen());
-@@ -1305,7 +1351,7 @@
+@@ -1305,7 +1363,7 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
          Container container = null;
@@ -120,7 +146,7 @@
  
          if (packetIn.getWindowId() == 0)
          {
-@@ -1320,6 +1366,9 @@
+@@ -1320,6 +1378,9 @@
          {
              this.sendPacket(new CConfirmTransactionPacket(packetIn.getWindowId(), packetIn.getActionNumber(), true));
          }
@@ -130,7 +156,7 @@
      }
  
      public void handleWindowItems(SWindowItemsPacket packetIn)
-@@ -2344,6 +2393,107 @@
+@@ -2344,6 +2405,107 @@
                  int l5 = packetbuffer.readInt();
                  this.client.debugRenderer.field_229018_q_.func_229022_a_(blockpos7, l3, s10, l5);
              }
@@ -238,7 +264,7 @@
              else
              {
                  LOGGER.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
-@@ -2699,4 +2849,14 @@
+@@ -2699,4 +2861,14 @@
      {
          return this.sessionId;
      }

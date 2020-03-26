@@ -696,7 +696,8 @@ public class OpenVRStereoRenderer
 				ShaderHelper.checkGLError("init depth shader");
 				VRShaders.setupFOVReduction();
 				ShaderHelper.checkGLError("init FOV shader");		
-		        mc.gameRenderer.updateShaderGroupSize(mc.getMainWindow().getFramebufferWidth(), mc.getMainWindow().getFramebufferHeight());
+		        mc.worldRenderer.makeEntityOutlineShader();
+				mc.gameRenderer.updateShaderGroupSize(mc.getMainWindow().getFramebufferWidth(), mc.getMainWindow().getFramebufferHeight());
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				System.exit(-1);
