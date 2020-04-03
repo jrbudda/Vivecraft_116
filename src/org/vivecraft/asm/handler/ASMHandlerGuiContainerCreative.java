@@ -1,12 +1,5 @@
 package org.vivecraft.asm.handler;
 
-import org.vivecraft.asm.ASMClassHandler;
-import org.vivecraft.asm.ASMMethodHandler;
-import org.vivecraft.asm.ASMUtil;
-import org.vivecraft.asm.ClassTuple;
-import org.vivecraft.asm.MethodTuple;
-import org.vivecraft.asm.ObfNames;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -15,6 +8,12 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+import org.vivecraft.asm.ASMClassHandler;
+import org.vivecraft.asm.ASMMethodHandler;
+import org.vivecraft.asm.ASMUtil;
+import org.vivecraft.asm.ClassTuple;
+import org.vivecraft.asm.MethodTuple;
+import org.vivecraft.asm.ObfNames;
 
 public class ASMHandlerGuiContainerCreative extends ASMClassHandler {
 	@Override

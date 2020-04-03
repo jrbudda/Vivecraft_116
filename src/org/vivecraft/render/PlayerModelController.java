@@ -17,9 +17,7 @@ import org.vivecraft.utils.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -161,7 +159,7 @@ public class PlayerModelController {
 		if(heightscale > 1.5f)
 			heightscale = 1.5f;
 		
-		out.heightScale = heightscale;
+		out.heightScale =heightscale;
 		
 		vivePlayersReceived.put(uuid, out);
 

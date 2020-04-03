@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/MainWindow.java
 +++ b/net/minecraft/client/MainWindow.java
+@@ -121,7 +121,7 @@
+         GL.createCapabilities();
+         this.updateVideoMode();
+         this.updateFramebufferSize();
+-        GLFW.glfwSetFramebufferSizeCallback(this.handle, this::onFramebufferSizeUpdate);
++   //     GLFW.glfwSetFramebufferSizeCallback(this.handle, this::onFramebufferSizeUpdate);
+         GLFW.glfwSetWindowPosCallback(this.handle, this::onWindowPosUpdate);
+         GLFW.glfwSetWindowSizeCallback(this.handle, this::onWindowSizeUpdate);
+         GLFW.glfwSetWindowFocusCallback(this.handle, this::onWindowFocusUpdate);
 @@ -282,7 +282,9 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
@@ -11,14 +20,17 @@
      }
  
      public void close()
-@@ -305,17 +307,19 @@
+@@ -301,21 +303,22 @@
+         this.windowY = windowYIn;
+     }
+ 
++    //TODO: remove all usages (Screenshots)
+     private void onFramebufferSizeUpdate(long windowPointer, int framebufferWidth, int framebufferHeight)
      {
          if (windowPointer == this.handle)
          {
 -            int i = this.getFramebufferWidth();
 -            int j = this.getFramebufferHeight();
-+            this.mc.updateWindowSize();
-+
 +            int i = this.getWidth();
 +            int j = this.getHeight();
  
@@ -31,28 +43,64 @@
 +                if (this.getWidth() != i || this.getHeight() != j)
                  {
 -                    this.mc.updateWindowSize();
-+                 //   this.mc.updateWindowSize();
++                	this.mc.updateWindowSize();
                  }
              }
          }
-@@ -500,12 +504,18 @@
+@@ -333,8 +336,13 @@
+ 
+     private void onWindowSizeUpdate(long windowPointer, int windowWidthIn, int windowHeightIn)
+     {
++    	//Vivecraft dont explode when minimized
++    	if(windowHeightIn*windowWidthIn == 0) return;
++    	//
++    	
+         this.width = windowWidthIn;
+         this.height = windowHeightIn;
++        this.mc.updateWindowSize();
+     }
+ 
+     private void onWindowFocusUpdate(long windowPointer, boolean hasFocus)
+@@ -461,7 +469,7 @@
+     {
+         int i;
+ 
+-        for (i = 1; i != guiScaleIn && i < this.framebufferWidth && i < this.framebufferHeight && this.framebufferWidth / (i + 1) >= 320 && this.framebufferHeight / (i + 1) >= 240; ++i)
++        for (i = 1; i != guiScaleIn && i < this.width && i < this.height && this.width / (i + 1) >= 320 && this.height / (i + 1) >= 240; ++i)
+         {
+             ;
+         }
+@@ -477,10 +485,10 @@
+     public void setGuiScale(double scaleFactor)
+     {
+         this.guiScaleFactor = scaleFactor;
+-        int i = (int)((double)this.framebufferWidth / scaleFactor);
+-        this.scaledWidth = (double)this.framebufferWidth / scaleFactor > (double)i ? i + 1 : i;
+-        int j = (int)((double)this.framebufferHeight / scaleFactor);
+-        this.scaledHeight = (double)this.framebufferHeight / scaleFactor > (double)j ? j + 1 : j;
++        int i = (int)((double)this.width / scaleFactor);
++        this.scaledWidth = (double)this.width / scaleFactor > (double)i ? i + 1 : i;
++        int j = (int)((double)this.height / scaleFactor);
++        this.scaledHeight = (double)this.height / scaleFactor > (double)j ? j + 1 : j;
+     }
+ 
+     public void func_230148_b_(String p_230148_1_)
+@@ -500,12 +508,16 @@
  
      public int getFramebufferWidth()
      {
 -        return this.framebufferWidth;
 +    	//Vivecraft experiment
-+    	return Minecraft.getInstance().getFramebuffer().framebufferWidth;
++       	return Minecraft.getInstance().getFramebuffer().framebufferWidth;
 +    	//
-+        //return this.framebufferWidth;
      }
  
      public int getFramebufferHeight()
      {
 -        return this.framebufferHeight;
 +    	//Vivecraft experiment
-+    	return Minecraft.getInstance().getFramebuffer().framebufferHeight;
++       	return Minecraft.getInstance().getFramebuffer().framebufferHeight;
 +    	//
-+        //return this.framebufferHeight;
      }
  
      public int getWidth()

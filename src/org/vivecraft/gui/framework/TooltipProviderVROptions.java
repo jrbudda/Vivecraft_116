@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 import net.optifine.gui.TooltipProvider;
 
 public class TooltipProviderVROptions implements TooltipProvider

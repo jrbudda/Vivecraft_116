@@ -1,29 +1,41 @@
 package org.vivecraft.gui.physical;
 
-import net.minecraft.item.ItemGroup;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.lwjgl.opengl.GL11;
 import org.vivecraft.api.VRData;
+import org.vivecraft.gui.physical.interactables.ArmorDisplay;
+import org.vivecraft.gui.physical.interactables.Button;
+import org.vivecraft.gui.physical.interactables.CreativeItemSlot;
+import org.vivecraft.gui.physical.interactables.CreativeTabButton;
+import org.vivecraft.gui.physical.interactables.HotBarItemSlot;
+import org.vivecraft.gui.physical.interactables.Interactable;
+import org.vivecraft.gui.physical.interactables.MiniCrafting;
+import org.vivecraft.gui.physical.interactables.PhysicalItemSlot;
+import org.vivecraft.gui.physical.interactables.Slider;
+import org.vivecraft.gui.physical.interactables.Trashbin;
+import org.vivecraft.utils.Utils;
+import org.vivecraft.utils.math.Quaternion;
+
+import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.AtlasTexture;
-
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
-import org.vivecraft.gui.physical.interactables.*;
-import org.vivecraft.utils.Utils;
-import org.vivecraft.utils.math.Convert;
-import org.vivecraft.utils.math.Quaternion;
-
-import java.util.*;
-import java.util.logging.Logger;
 
 public class PhysicalInventory extends PhysicalItemSlotGui {
 	public Hotbar hotbar;

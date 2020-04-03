@@ -9,10 +9,23 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.lwjgl.glfw.GLFW;
 import org.vivecraft.api.Vec3History;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.control.HandedKeyBinding;
@@ -50,8 +63,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+
 import jopenvr.HmdMatrix34_t;
-import jopenvr.HmdVector2_t;
 import jopenvr.InputOriginInfo_t;
 import jopenvr.InputPoseActionData_t;
 import jopenvr.JOpenVRLibrary;
@@ -64,8 +77,6 @@ import jopenvr.TrackedDevicePose_t;
 import jopenvr.VRActiveActionSet_t;
 import jopenvr.VREvent_t;
 import jopenvr.VRTextureBounds_t;
-import jopenvr.VRTextureDepthInfo_t;
-import jopenvr.VRTextureWithDepth_t;
 import jopenvr.VR_IVRApplications_FnTable;
 import jopenvr.VR_IVRChaperone_FnTable;
 import jopenvr.VR_IVRCompositor_FnTable;
@@ -85,14 +96,11 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MovementInputFromOptions;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.ArrayUtils;
-import org.lwjgl.glfw.GLFW;
 
 public class MCOpenVR 
 {
@@ -142,6 +150,25 @@ public class MCOpenVR
 	public static Vec3History hmdPivotHistory = new Vec3History();
 	public static Vec3History[] controllerHistory = new Vec3History[] { new Vec3History(), new Vec3History()};
 
+	//Covid-19 Quarantine Helper Code
+	private static final Matrix4f Neutral_HMD = new Matrix4f(1,0,0,0f,
+													 		0,1,0,1.62f,
+														 	0,0,1,0f,
+														 	0,0,0,1);
+	
+	private static final Matrix4f TPose_Left =  new Matrix4f(1,0,0,.25f,
+													 	   	0,1,0,1.62f,
+														 	0,0,1,.25f,
+														 	0,0,0,1);
+	
+	private static final Matrix4f TPose_Right =  new Matrix4f(1,0,0,.75f,
+													 		0,1,0,1.62f,
+														 	0,0,1,.75f,
+														 	0,0,0,1);
+	private static final boolean TPose = false;
+	//
+	
+	
 	/**
 	 * Do not make this public and reference it! Call the {@link #getHardwareType()} method instead!
 	 */
@@ -1024,7 +1051,7 @@ public class MCOpenVR
 					//	System.out.println("gun angle " + angledeg + " default angle " + angletestdeg);
 						
 						gunStyle = angledeg > 10;
-
+						gunAngle = angledeg;
 					} catch (Exception e) {
 						failed = true;
 					}
@@ -1983,6 +2010,29 @@ public class MCOpenVR
 			hmdPose.M[1][3] = 1.62f;
 		}
 
+		if(TPose) {
+			TPose_Right.M[0][3] = 0f;
+			TPose_Right.M[1][3] = 0f;
+			TPose_Right.M[2][3] = 0f;
+			OpenVRUtil.Matrix4fCopy(TPose_Right.rotationY(-120), TPose_Right);
+			TPose_Right.M[0][3] = .5f;
+			TPose_Right.M[1][3] = 1.65f;
+			TPose_Right.M[2][3] = -.5f;
+
+			TPose_Left.M[0][3] = 0f;
+			TPose_Left.M[1][3] = 0f;
+			TPose_Left.M[2][3] = 0f;
+			OpenVRUtil.Matrix4fCopy(TPose_Left.rotationY(120), TPose_Left);
+			TPose_Left.M[0][3] = -.5f;
+			TPose_Left.M[1][3] = 1.65f;
+			TPose_Left.M[2][3] = -.5f;
+			
+			Neutral_HMD.M[0][3] = 0f;
+			
+			OpenVRUtil.Matrix4fCopy(Neutral_HMD, hmdPose);
+			headIsTracking = true;
+		}
+		
 		// Gotta do this here so we can get the poses
 		if(inputInitialized) {
 			
@@ -2007,24 +2057,8 @@ public class MCOpenVR
 			}
 			updateControllerPose(THIRD_CONTROLLER, externalCameraPoseHandle);
 		}
-		/*for (int c=0;c<3;c++)
-		{
-			if (controllerDeviceIndex[c] != -1)
-			{
-				controllerTracking[c] = true;
-				if (c < 2) controllers[c].tracking = true;
-				OpenVRUtil.Matrix4fCopy(poseMatrices[controllerDeviceIndex[c]], controllerPose[c]);
-			}
-			else
-			{
-				controllerTracking[c] = false;
-				if (c < 2) controllers[c].tracking = false;
-				//OpenVRUtil.Matrix4fSetIdentity(controllerPose[c]);
-			}
-		}*/
 
 		updateAim();
-		//VRHotkeys.snapMRCam(mc, 0);
 
 	}
 
@@ -2073,6 +2107,17 @@ public class MCOpenVR
 	}
 
 	private static void updateControllerPose(int controller, long actionHandle) {
+	
+		if(TPose) {
+			if(controller == 0) {
+				OpenVRUtil.Matrix4fCopy(TPose_Right, controllerPose[controller]);
+			}
+			else if(controller == 1) {
+				OpenVRUtil.Matrix4fCopy(TPose_Left, controllerPose[controller]);		
+			}
+			controllerTracking[controller] = true;
+		}
+		
 		readPoseData(actionHandle);
 		if (poseData.activeOrigin != JOpenVRLibrary.k_ulInvalidInputValueHandle) {
 			readOriginInfo(poseData.activeOrigin);
@@ -2097,6 +2142,8 @@ public class MCOpenVR
 
 		//OpenVRUtil.Matrix4fSetIdentity(controllerPose[controller]);
 		controllerTracking[controller] = false;
+		
+
 	}
 
 	public static boolean isControllerTracking(int controller) {
@@ -2585,9 +2632,15 @@ public class MCOpenVR
 	}
 
 	private static boolean gunStyle = false; 
-	
+	private static double gunAngle = 0; 
+
 	public static boolean isGunStyle() {
 		return gunStyle;
+	}
+	
+	public static double getGunAngle() {
+		//return 40;
+		return gunAngle;
 	}
 
 	public static void resetPosition() {

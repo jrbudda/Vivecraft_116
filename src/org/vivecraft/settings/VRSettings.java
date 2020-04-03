@@ -6,16 +6,15 @@ package org.vivecraft.settings;
 
 import java.awt.Color;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Supplier;
 
-import org.vivecraft.api.NetworkHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.settings.profile.ProfileManager;
@@ -29,15 +28,11 @@ import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundSystem;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
 
 public class VRSettings
 {
@@ -82,6 +77,7 @@ public class VRSettings
     public static final int MIRROR_FIRST_PERSON = 13;
     public static final int MIRROR_THIRD_PERSON = 14;
     public static final int MIRROR_MIXED_REALITY = 15;
+    public static final int MIRROR_ON_CROPPED = 16;
     
     public static final int HUD_LOCK_HEAD= 1;
     public static final int HUD_LOCK_HAND= 2;
@@ -97,6 +93,7 @@ public class VRSettings
     public static final int MENU_WORLD_BOTH = 0;
     public static final int MENU_WORLD_CUSTOM = 1;
     public static final int MENU_WORLD_OFFICIAL = 2;
+    public static final int MENU_WORLD_NONE = 3;
     
     public static final int NO_SHADER = -1;
 
@@ -184,7 +181,8 @@ public class VRSettings
     public boolean vrUseStencil = true;
     public boolean insideBlockSolidColor = false; //unused
     public float renderScaleFactor = 1.0f;
-    public int displayMirrorMode = MIRROR_ON_SINGLE;
+    public int displayMirrorMode = MIRROR_ON_CROPPED;
+    public boolean displayMirrorLeftEye = false;
 	public boolean shouldRenderSelf=false;
 	public boolean tmpRenderSelf;
 	public int menuWorldSelection = MENU_WORLD_BOTH;
@@ -217,7 +215,7 @@ public class VRSettings
     public float hudYawOffset = 0.0f;
     public boolean floatInventory = true; //false not working yet, have to account for rotation and tilt in MCOpenVR>processGui()
 	public boolean menuAlwaysFollowFace;
-    public int vrHudLockMode = HUD_LOCK_HAND;
+    public int vrHudLockMode = HUD_LOCK_WRIST;
     public boolean hudOcclusion = true;
     public float crosshairScale = 1.0f;
 	public boolean crosshairScalesWithDistance = false;
@@ -341,6 +339,12 @@ public class VRSettings
                     if (optionTokens[0].equals("displayMirrorMode"))
                     {
                         this.displayMirrorMode = Integer.parseInt(optionTokens[1]);
+                        if (this.displayMirrorMode == 15) this.displayMirrorMode = 16;
+                    }
+
+                    if (optionTokens[0].equals("displayMirrorLeftEye"))
+                    {
+                        this.displayMirrorLeftEye = optionTokens[1].equals("true");
                     }
 
                     if (optionTokens[0].equals("mixedRealityKeyColor"))
@@ -921,8 +925,12 @@ public class VRSettings
                         return var4 + "3rd Person (slow)";
                     case MIRROR_MIXED_REALITY:
                         return var4 + "Mixed Reality (slow)";
+                    case MIRROR_ON_CROPPED:
+                        return var4 + "Cropped (fast)";
 
                 }
+            case MIRROR_EYE:
+                return this.displayMirrorLeftEye ? var4 + "Left" : var4 + "Right";
             case MIXED_REALITY_KEY_COLOR:
                 if (this.mixedRealityKeyColor.equals(new Color(0, 0, 0))) {
                 	return var4 + "Black";
@@ -977,7 +985,8 @@ public class VRSettings
             case HUD_HIDE:
                 return this.mc.gameSettings.hideGUI ? var4 + "YES" : var4 + "NO";
             case RENDER_SCALEFACTOR:
-            	return var4 + String.format("%.1f", this.renderScaleFactor);
+                Framebuffer eye0 = mc.stereoProvider.framebufferEye0;
+            	return var4 + Math.round(this.renderScaleFactor * 100) + "% (" + (int)Math.ceil(eye0.framebufferWidth * Math.sqrt(this.renderScaleFactor)) + "x" + (int)Math.ceil(eye0.framebufferHeight * Math.sqrt(this.renderScaleFactor)) + ")";
             case FSAA:
             	return this.useFsaa ? var4 + "ON" : var4 + "OFF";
             case CROSSHAIR_SCALE:
@@ -1160,6 +1169,8 @@ public class VRSettings
                         return var4 + "Custom Only";
                     case MENU_WORLD_OFFICIAL:
                         return var4 + "Official Only";
+                    case MENU_WORLD_NONE:
+                        return var4 + "None";
                 }
             case HRTF_SELECTION: {
                 if (this.hrtfSelection == -1)
@@ -1284,11 +1295,35 @@ public class VRSettings
                 if (this.renderFullFirstPersonModelMode > RENDER_FIRST_PERSON_NONE)
                     this.renderFullFirstPersonModelMode = RENDER_FIRST_PERSON_FULL;
 	            break;
-             case MIRROR_DISPLAY:
-                this.displayMirrorMode++;
-                if (this.displayMirrorMode > MIRROR_MIXED_REALITY)
-                    this.displayMirrorMode = MIRROR_OFF;
+            case MIRROR_DISPLAY:
+                switch (this.displayMirrorMode) {
+                    case MIRROR_OFF:
+                    default:
+                        this.displayMirrorMode = MIRROR_ON_CROPPED;
+                        break;
+                    case MIRROR_ON_CROPPED:
+                        this.displayMirrorMode = MIRROR_ON_SINGLE;
+                        break;
+                    case MIRROR_ON_SINGLE:
+                        this.displayMirrorMode = MIRROR_ON_DUAL;
+                        break;
+                    case MIRROR_ON_DUAL:
+                        this.displayMirrorMode = MIRROR_FIRST_PERSON;
+                        break;
+                    case MIRROR_FIRST_PERSON:
+                        this.displayMirrorMode = MIRROR_THIRD_PERSON;
+                        break;
+                    case MIRROR_THIRD_PERSON:
+                        this.displayMirrorMode = MIRROR_OFF;
+                        break;
+                    case MIRROR_MIXED_REALITY:
+                        this.displayMirrorMode = MIRROR_OFF;
+                        break;
+                }
                 this.mc.stereoProvider.reinitFrameBuffers("Mirror Setting Changed");
+                break;
+            case MIRROR_EYE:
+                this.displayMirrorLeftEye = !this.displayMirrorLeftEye;
                 break;
             case MIXED_REALITY_KEY_COLOR:
             	if (this.mixedRealityKeyColor.equals(new Color(0, 0, 0))) {
@@ -1521,6 +1556,9 @@ public class VRSettings
                         this.menuWorldSelection = MENU_WORLD_OFFICIAL;
                         break;
                     case MENU_WORLD_OFFICIAL:
+                        this.menuWorldSelection = MENU_WORLD_NONE;
+                        break;
+                    case MENU_WORLD_NONE:
                         this.menuWorldSelection = MENU_WORLD_BOTH;
                         break;
                 }
@@ -1689,6 +1727,7 @@ public class VRSettings
             var5.println("renderFullFirstPersonModelMode:" + this.renderFullFirstPersonModelMode);
             var5.println("shaderIndex:" + this.shaderIndex);
             var5.println("displayMirrorMode:" + this.displayMirrorMode);
+            var5.println("displayMirrorLeftEye:" + this.displayMirrorLeftEye);
             var5.println("mixedRealityKeyColor:" + this.mixedRealityKeyColor.getRed() + "," + this.mixedRealityKeyColor.getGreen() + "," + this.mixedRealityKeyColor.getBlue());
             var5.println("mixedRealityRenderHands:" + this.mixedRealityRenderHands);
             var5.println("mixedRealityUnityLike:" + this.mixedRealityUnityLike);
@@ -2006,16 +2045,19 @@ public class VRSettings
 
 
         //HMD/render
-        FSAA("FSAA", false, true,new String[] {
+        FSAA("Lanczos Scaler", false, true,new String[] {
                 "Uses a fancier method of resampling the",
                 "game before sending it to the HMD. Works best",
                 "at high render scales. "}),
-        MIRROR_DISPLAY("Mirror Display", false, true,new String[] {
+        MIRROR_DISPLAY("Desktop Mirror", false, true,new String[] {
                 "Mirrors image on HMD to separate desktop window.",
                 "Can be set to OFF, single or dual hmd-view, ",
                 "first-person undistorted, third person undistorted",
                 "and Mixed Reality. The undistorted and MR views have",
                 "a performance cost"
+        }),
+        MIRROR_EYE("Mirror Eye", false, true, new String[] {
+                "Which eye to use in cropped and single modes."
         }),
         MIXED_REALITY_KEY_COLOR("Key Color", false, false,new String[] {
                 "The color drawn to the \"transparent\" areas of the",
@@ -2166,10 +2208,10 @@ public class VRSettings
                 "Standing or seated play mode",
                 "Standing is vastly superior."           
         }),
-        RENDER_SCALEFACTOR("Render Scale Factor", true, false, 0.5f, 4, 0.1f, new String[] {
+        RENDER_SCALEFACTOR("Resolution", true, false, 0.1f, 9f, 0.1f, new String[] {
                 "The internal rendering scale of the game, relative",
                 "to the native HMD display. Higher values improve visual",
-                "quality, espeically with FSAA on, at the cost of performance"
+                "quality at the cost of performance"
         }),
         MONO_FOV("Undistorted FOV", true, false, 0, 179, 1, new String[] {
                 "The FOV used for the undistorted mirror mode."
@@ -2318,7 +2360,7 @@ public class VRSettings
         		"",
         		"Requires a restart to take effect."
         }),
-        MENU_WORLD_SELECTION("Menu Worlds", false, false, new String[] {
+        MENU_WORLD_SELECTION("Worlds", false, false, new String[] {
                 "Which menu worlds to load on startup.",
                 "",
                 "If no custom worlds are found, official worlds",

@@ -1,8 +1,8 @@
 package org.vivecraft.api;
 
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.render.PlayerModelController;
 import org.vivecraft.render.RenderPass;
+import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Matrix4f;
 import org.vivecraft.utils.math.Vector3;
@@ -100,8 +100,16 @@ public class VRData{
 		c1 = new VRDevicePose(this, MCOpenVR.getAimRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(1));
 		h0 = new VRDevicePose(this, MCOpenVR.getHandRotation(0),MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(0));
 		h1 = new VRDevicePose(this, MCOpenVR.getHandRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(1));
-		c2 = new VRDevicePose(this, MCOpenVR.getAimRotation(2),MCOpenVR.getAimSource(2).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(2));
-	
+		
+		if (MCOpenVR.mrMovingCamActive)
+			c2 = new VRDevicePose(this, MCOpenVR.getAimRotation(2),MCOpenVR.getAimSource(2).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(2));
+		else {
+			VRSettings settings = Minecraft.getInstance().vrSettings;
+			Matrix4f rot = new Matrix4f(settings.vrFixedCamrotQuat).transposed();
+			Vec3d pos = new Vec3d(settings.vrFixedCamposX, settings.vrFixedCamposY, settings.vrFixedCamposZ);
+			Vec3d dir = rot.transform(Vector3.forward()).toVec3d();
+			c2 = new VRDevicePose(this, rot, pos.subtract(hmd_raw).add(scaledPos), dir);
+		}
 	}
 	
 	public VRDevicePose getController(int c){

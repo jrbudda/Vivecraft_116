@@ -18,15 +18,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Formatter;
+import java.util.List;
+import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.IParticleFactory;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleType;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.vivecraft.render.VRShaders;
 import org.vivecraft.tweaker.MinecriftClassTransformer;
@@ -45,8 +46,9 @@ import com.google.common.io.Files;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import jopenvr.HmdMatrix34_t;
+import net.minecraft.client.Minecraft;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.util.math.Vec3d;
-import org.apache.commons.io.IOUtils;
 
 public class Utils
 {
@@ -460,6 +462,22 @@ public class Utils
 		br.close();
 		conn.disconnect();
 		return line;
+	}
+
+	public static List<String> httpReadAllLines(String url) throws IOException {
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		conn.setReadTimeout(3000);
+		conn.setUseCaches(false);
+		conn.setDoInput(true);
+		BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		ArrayList<String> list = new ArrayList<>();
+		String line;
+		while ((line = br.readLine()) != null) {
+			list.add(line);
+		}
+		br.close();
+		conn.disconnect();
+		return list;
 	}
 
 	public static byte[] httpReadAll(String url) throws IOException {

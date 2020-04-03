@@ -1,11 +1,8 @@
 package org.vivecraft.gameplay.screenhandlers;
 
-import java.util.function.Predicate;
-
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.gui.GuiKeyboard;
 import org.vivecraft.gui.PhysicalKeyboard;
-import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.provider.OpenVRUtil;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Matrix4f;
@@ -32,7 +29,7 @@ public class KeyboardHandler {
 
 	public static boolean setOverlayShowing(boolean showingState) {
 		if (Main.kiosk) return false;
-		if(mc.vrSettings.seated) showingState = false;
+		//if(mc.vrSettings.seated) showingState = false;
 		int ret = 1;
 		if (showingState) {		
             int i = mc.getMainWindow().getScaledWidth();

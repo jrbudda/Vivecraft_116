@@ -1,20 +1,25 @@
 --- a/net/minecraft/client/shader/Framebuffer.java
 +++ b/net/minecraft/client/shader/Framebuffer.java
-@@ -2,7 +2,13 @@
+@@ -1,10 +1,16 @@
+ package net.minecraft.client.shader;
  
- import com.mojang.blaze3d.platform.GlStateManager;
- import com.mojang.blaze3d.systems.RenderSystem;
-+
 +import java.nio.ByteBuffer;
- import java.nio.IntBuffer;
++import java.nio.IntBuffer;
 +
 +import org.lwjgl.opengl.GL11;
 +import org.lwjgl.opengl.GL30;
 +
+ import com.mojang.blaze3d.platform.GlStateManager;
+ import com.mojang.blaze3d.systems.RenderSystem;
+-import java.nio.IntBuffer;
++
  import net.minecraft.client.renderer.BufferBuilder;
- import net.minecraft.client.renderer.Tessellator;
+-import net.minecraft.client.renderer.Tessellator;
++import net.minecraft.client.renderer.WorldVertexBufferUploader;
  import net.minecraft.client.renderer.texture.TextureUtil;
-@@ -20,11 +26,40 @@
+ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+ 
+@@ -20,11 +26,42 @@
      public int depthBuffer;
      public final float[] framebufferColor;
      public int framebufferFilter;
@@ -26,16 +31,18 @@
 + 	private int texid = NO_TEXTURE_ID;
 + 	private String name = "Default";
 + 	private boolean useTextureInsteadofRenderBuffer = false;
++ 	private boolean linearFilter;
 + 	//
 +
 + 	//Vivecraft extended constructor
-+    public Framebuffer(String name, int width, int height, boolean usedepth, boolean onMac, int texid, boolean depthtex)
++    public Framebuffer(String name, int width, int height, boolean usedepth, boolean onMac, int texid, boolean depthtex, boolean linearFilter)
 +    {        
 +    	RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
 +    	//
 +    	this.name = name;
 +    	this.texid = texid;
 +    	this.depthisTex = depthtex;
++    	this.linearFilter = linearFilter;
 +    	//
 +        this.useDepth = usedepth;
 +        this.framebufferObject = -1;
@@ -58,7 +65,7 @@
          this.framebufferObject = -1;
          this.framebufferTexture = -1;
          this.depthBuffer = -1;
-@@ -33,7 +68,7 @@
+@@ -33,7 +70,7 @@
          this.framebufferColor[1] = 1.0F;
          this.framebufferColor[2] = 1.0F;
          this.framebufferColor[3] = 0.0F;
@@ -67,7 +74,7 @@
      }
  
      public void resize(int p_216491_1_, int p_216491_2_, boolean p_216491_3_)
-@@ -90,7 +125,8 @@
+@@ -90,7 +127,8 @@
              this.framebufferObject = -1;
          }
      }
@@ -77,7 +84,7 @@
      public void createBuffers(int p_216492_1_, int p_216492_2_, boolean p_216492_3_)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
-@@ -99,11 +135,22 @@
+@@ -99,24 +137,50 @@
          this.framebufferTextureWidth = p_216492_1_;
          this.framebufferTextureHeight = p_216492_2_;
          this.framebufferObject = GlStateManager.genFramebuffers();
@@ -101,8 +108,14 @@
 +        	//
          }
  
-         this.setFramebufferFilter(9728);
-@@ -113,10 +160,22 @@
+-        this.setFramebufferFilter(9728);
++        if (linearFilter)
++            this.setFramebufferFilter(GL11.GL_LINEAR);
++        else
++            this.setFramebufferFilter(9728);
+         GlStateManager.bindTexture(this.framebufferTexture);
+         GlStateManager.texImage2D(3553, 0, 32856, this.framebufferTextureWidth, this.framebufferTextureHeight, 0, 6408, 5121, (IntBuffer)null);
+         GlStateManager.bindFramebuffer(FramebufferConstants.GL_FRAMEBUFFER, this.framebufferObject);
          GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_COLOR_ATTACHMENT0, 3553, this.framebufferTexture, 0);
  
          if (this.useDepth)
@@ -116,8 +129,8 @@
 +            	GL11.glBindTexture((int)3553, this.depthBuffer );
 +            	GL11.glTexParameteri((int)3553, (int)10242, (int)10496);
 +            	GL11.glTexParameteri((int)3553, (int)10243, (int)10496);
-+            	GL11.glTexParameteri((int)3553, (int)10241, (int)9728);
-+            	GL11.glTexParameteri((int)3553, (int)10240, (int)9728);
++            	GL11.glTexParameteri((int)3553, (int)10241, linearFilter ? GL11.GL_LINEAR : (int)9728);
++            	GL11.glTexParameteri((int)3553, (int)10240, linearFilter ? GL11.GL_LINEAR : (int)9728);
 +            	GL11.glTexParameteri((int)3553, (int)34891, (int)6409);
 +            	GL11.glTexImage2D(GL11.GL_TEXTURE_2D, (int)0, GL30.GL_DEPTH24_STENCIL8, framebufferWidth, framebufferHeight, (int)0, GL30.GL_DEPTH_STENCIL,  GL30.GL_UNSIGNED_INT_24_8, (ByteBuffer)null);
 +            	GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL11.GL_TEXTURE_2D, depthBuffer, (int)0);
@@ -129,49 +142,153 @@
          }
  
          this.checkFramebufferComplete();
-@@ -232,7 +291,8 @@
+@@ -179,17 +243,17 @@
+     }
+ 
+     public void bindFramebuffer(boolean setViewportIn)
+-    {
++    { //vivecraft its easier to just always set the viewport.
+         if (!RenderSystem.isOnRenderThread())
+         {
+             RenderSystem.recordRenderCall(() ->
+             {
+-                this.bindFramebufferRaw(setViewportIn);
++                this.bindFramebufferRaw(true);
+             });
+         }
+         else
+         {
+-            this.bindFramebufferRaw(setViewportIn);
++            this.bindFramebufferRaw(true);
+         }
+     }
+ 
+@@ -232,7 +296,8 @@
          this.framebufferRenderExt(width, height, true);
      }
  
 -    public void framebufferRenderExt(int width, int height, boolean p_178038_3_)
 +	//Vivecraft add x/y offsets
-+    public void framebufferRenderExt(int left, int width, int height, int top, boolean disableBlend)
++    public void framebufferRenderExt(int left, int width, int height, int top, boolean disableBlend, float xCropFactor, float yCropFactor, boolean keepAspect)
      {
          RenderSystem.assertThread(RenderSystem::isOnGameThreadOrInit);
  
-@@ -240,16 +300,17 @@
+@@ -240,55 +305,84 @@
          {
              RenderSystem.recordRenderCall(() ->
              {
 -                this.framebufferRenderExtRaw(width, height, p_178038_3_);
-+                this.framebufferRenderExtRaw(left, width, height, top, disableBlend);
++                this.framebufferRenderExtRaw(left, width, height, top, disableBlend, xCropFactor, yCropFactor, keepAspect);
              });
          }
          else
          {
 -            this.framebufferRenderExtRaw(width, height, p_178038_3_);
-+            this.framebufferRenderExtRaw(left, width, height, top, disableBlend);
++            this.framebufferRenderExtRaw(left, width, height, top, disableBlend, xCropFactor, yCropFactor, keepAspect);
          }
      }
  
 -    private void framebufferRenderExtRaw(int width, int height, boolean p_227588_3_)
-+	//Vivecraft add x/y offsets
-+    private void framebufferRenderExtRaw(int left, int width, int height, int top, boolean p_227588_3_)
++    //Vivecraft extended framebuffer drawing.
++    public void framebufferRenderExtRaw(int left, int width, int height, int top, boolean p_227588_3_, float xCropFactor, float yCropFactor, boolean keepAspect)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThread);
-         GlStateManager.colorMask(true, true, true, false);
-@@ -261,7 +322,9 @@
-         GlStateManager.matrixMode(5888);
-         GlStateManager.loadIdentity();
-         GlStateManager.translatef(0.0F, 0.0F, -2000.0F);
+-        GlStateManager.colorMask(true, true, true, false);
+-        GlStateManager.disableDepthTest();
+-        GlStateManager.depthMask(false);
+-        GlStateManager.matrixMode(5889);
+-        GlStateManager.loadIdentity();
+-        GlStateManager.ortho(0.0D, (double)width, (double)height, 0.0D, 1000.0D, 3000.0D);
+-        GlStateManager.matrixMode(5888);
+-        GlStateManager.loadIdentity();
+-        GlStateManager.translatef(0.0F, 0.0F, -2000.0F);
 -        GlStateManager.viewport(0, 0, width, height);
+-        GlStateManager.enableTexture();
+-        GlStateManager.disableLighting();
+-        GlStateManager.disableAlphaTest();
++        RenderSystem.colorMask(true, true, true, false);
++        RenderSystem.disableDepthTest();
++        RenderSystem.depthMask(false);
++        RenderSystem.matrixMode(5889);
++        RenderSystem.loadIdentity();
++        RenderSystem.ortho(0.0D, (double)width, (double)height, 0.0D, 1000.0D, 3000.0D);
++        RenderSystem.matrixMode(5888);
++        RenderSystem.loadIdentity();
++        RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
 +    	//Vivecraft add x/y offsets
-+        GlStateManager.viewport(left, top, width, height);
++        RenderSystem.viewport(left, top, width, height);
 +        //
-         GlStateManager.enableTexture();
-         GlStateManager.disableLighting();
-         GlStateManager.disableAlphaTest();
-@@ -307,4 +370,26 @@
++        RenderSystem.enableTexture();
++        RenderSystem.disableLighting();
++        RenderSystem.disableAlphaTest();
+ 
+         if (p_227588_3_)
+         {
+-            GlStateManager.disableBlend();
+-            GlStateManager.enableColorMaterial();
++        	RenderSystem.disableBlend();
++            RenderSystem.enableColorMaterial();
+         }
+ 
+-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
++        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+         this.bindFramebufferTexture();
+-        float f = (float)width;
+-        float f1 = (float)height;
++        
++        float displayAspect = (float)width / (float)height;
++        float frameAspect = (float)this.framebufferWidth / (float)this.framebufferHeight;
++        
++        
++        float rightV = (float)width;
++        float bottomV = (float)height;
++        float leftV = 0; 
++        float topV = 0;
++        
++        if (keepAspect) {
++        	if (displayAspect > frameAspect) {
++        		float factor = (float)width / (float)this.framebufferWidth;
++        		leftV = 0;
++        		rightV = width;
++        		topV = height / 2f - ((this.framebufferHeight / 2f) * factor);
++        		bottomV = height / 2f + ((this.framebufferHeight / 2f) * factor);
++        	} else {
++        		float factor = (float)height / (float)this.framebufferHeight;
++        		leftV = width / 2f - ((this.framebufferWidth / 2f) * factor);
++        		rightV = width / 2f + ((this.framebufferWidth / 2f) * factor);
++        		topV = 0;
++        		bottomV = height;
++        	}
++        }
++        
++
+         float f2 = (float)this.framebufferWidth / (float)this.framebufferTextureWidth;
+         float f3 = (float)this.framebufferHeight / (float)this.framebufferTextureHeight;
+-        Tessellator tessellator = RenderSystem.renderThreadTesselator();
+-        BufferBuilder bufferbuilder = tessellator.getBuffer();
++        
++        BufferBuilder bufferbuilder = RenderSystem.renderThreadTesselator().getBuffer();
+         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+-        bufferbuilder.pos(0.0D, (double)f1, 0.0D).tex(0.0F, 0.0F).color(255, 255, 255, 255).endVertex();
+-        bufferbuilder.pos((double)f, (double)f1, 0.0D).tex(f2, 0.0F).color(255, 255, 255, 255).endVertex();
+-        bufferbuilder.pos((double)f, 0.0D, 0.0D).tex(f2, f3).color(255, 255, 255, 255).endVertex();
+-        bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0F, f3).color(255, 255, 255, 255).endVertex();
+-        tessellator.draw();
++        bufferbuilder.pos(leftV, bottomV, 0.0D).tex(xCropFactor, yCropFactor).color(255, 255, 255, 255).endVertex();
++        bufferbuilder.pos(rightV, bottomV, 0.0D).tex(f2 - xCropFactor, yCropFactor).color(255, 255, 255, 255).endVertex();
++        bufferbuilder.pos(rightV, topV, 0.0D).tex(f2 - xCropFactor, f3 - yCropFactor).color(255, 255, 255, 255).endVertex();
++        bufferbuilder.pos(leftV, topV, 0.0D).tex(xCropFactor, f3 - yCropFactor).color(255, 255, 255, 255).endVertex();
++        bufferbuilder.finishDrawing();
++        WorldVertexBufferUploader.draw(bufferbuilder);
+         this.unbindFramebufferTexture();
+-        GlStateManager.depthMask(true);
+-        GlStateManager.colorMask(true, true, true, true);
++        RenderSystem.depthMask(true);
++        RenderSystem.colorMask(true, true, true, true);
+     }
+ 
+     public void framebufferClear(boolean onMac)
+@@ -307,4 +401,26 @@
          GlStateManager.clear(i, onMac);
          this.unbindFramebuffer();
      }
@@ -183,7 +300,7 @@
 +      
 +    public void framebufferRenderExt(int width, int height, boolean noblend)
 +    {
-+        this.framebufferRenderExt(0,width, height,0, noblend);
++        this.framebufferRenderExt(0,width, height,0, noblend,0,0, false);
 +    }
 +    
 +    public String toString()

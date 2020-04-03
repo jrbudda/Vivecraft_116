@@ -11,7 +11,15 @@
  import net.minecraft.block.Blocks;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
-@@ -49,6 +53,15 @@
+@@ -12,6 +16,7 @@
+ import net.minecraft.network.IPacket;
+ import net.minecraft.network.play.server.SSpawnObjectPacket;
+ import net.minecraft.particles.ParticleTypes;
++import net.minecraft.util.Hand;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockRayTraceResult;
+ import net.minecraft.util.math.MathHelper;
+@@ -49,6 +54,17 @@
          this(p_i405_1_, p_i405_2_.getPosX(), p_i405_2_.getPosYEye() - (double)0.1F, p_i405_2_.getPosZ(), p_i405_3_);
          this.owner = p_i405_2_;
          this.ownerId = p_i405_2_.getUniqueID();
@@ -19,15 +27,17 @@
 +        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(owner.getUniqueID());
 +        if (vp !=null && vp.isVR())
 +        {
-+        	Vec3d aimSource = vp.getControllerPos(0);
-+        	Vec3d aimDir = vp.getControllerDir(0).scale(0.6f);
++			int c = 0;
++			if (p_i405_2_.getActiveHand() == Hand.OFF_HAND) c = 1;
++        	Vec3d aimSource = vp.getControllerPos(c);
++        	Vec3d aimDir = vp.getControllerDir(vp.isSeated() ? 0 : c).scale(0.6f);
 +        	this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        } 
 +        ///
      }
  
      public boolean isInRangeToRenderDist(double distance)
-@@ -66,6 +79,15 @@
+@@ -66,6 +82,17 @@
  
      public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
      {
@@ -35,7 +45,9 @@
 +        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(owner.getUniqueID());
 +        if (vp !=null && vp.isVR())
 +        {
-+        	Vec3d aim = vp.getControllerDir(0);
++			int c = 0;
++			if (((LivingEntity) entityThrower).getActiveHand() == Hand.OFF_HAND) c = 1;
++        	Vec3d aim = vp.getControllerDir(vp.isSeated() ? 0 : c);
 +        	rotationPitchIn = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 +			rotationYawIn = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		
 +        	}

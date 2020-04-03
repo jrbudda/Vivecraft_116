@@ -1,22 +1,15 @@
 package org.vivecraft.gui.physical.interactables;
 
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.inventory.container.Slot;
-
 import org.vivecraft.gui.physical.PhysicalItemSlotGui;
 import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-import org.vivecraft.utils.Utils;
-import org.vivecraft.utils.math.Convert;
-import org.vivecraft.utils.math.Quaternion;
 
 public class PhysicalItemSlot implements Interactable {
 	public PhysicalItemSlotGui gui;

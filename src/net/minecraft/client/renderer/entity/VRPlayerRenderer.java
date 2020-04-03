@@ -1,6 +1,14 @@
 package net.minecraft.client.renderer.entity;
 
+import java.util.UUID;
+
+import org.vivecraft.render.PlayerModelController;
+import org.vivecraft.render.RenderPass;
+import org.vivecraft.utils.math.Quaternion;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -8,18 +16,19 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.layers.ArrowLayer;
 import net.minecraft.client.renderer.entity.layers.BeeStingerLayer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
-import net.minecraft.client.renderer.entity.layers.CapeLayer;
-import net.minecraft.client.renderer.entity.layers.Deadmau5HeadLayer;
 import net.minecraft.client.renderer.entity.layers.ElytraLayer;
 import net.minecraft.client.renderer.entity.layers.HeadLayer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.layers.SpinAttackEffectLayer;
+import net.minecraft.client.renderer.entity.layers.VRHMDLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.entity.model.PlayerModel;
+import net.minecraft.client.renderer.entity.model.VRArmorModel;
+import net.minecraft.client.renderer.entity.model.VRPlayerModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
@@ -34,7 +43,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>>
+public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity, VRPlayerModel<AbstractClientPlayerEntity>>
 {
     public VRPlayerRenderer(EntityRendererManager p_i1295_1_)
     {
@@ -43,21 +52,34 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
 
     public VRPlayerRenderer(EntityRendererManager p_i1296_1_, boolean p_i1296_2_)
     {
-        super(p_i1296_1_, new PlayerModel<>(0.0F, p_i1296_2_), 0.5F);
-        this.addLayer(new BipedArmorLayer<>(this, new BipedModel(0.5F), new BipedModel(1.0F)));
+        super(p_i1296_1_, new VRPlayerModel<>(0.0F, p_i1296_2_), 0.5F);       
+        BipedArmorLayer layer = new BipedArmorLayer(this, new VRArmorModel<>(0.5f), new VRArmorModel(1.0f));
+        this.addLayer(layer);
+        ((VRPlayerModel)this.entityModel).armor = layer;    
+        this.addLayer(new VRHMDLayer(this));    
         this.addLayer(new HeldItemLayer<>(this));
-        this.addLayer(new ArrowLayer<>(this));
-        this.addLayer(new Deadmau5HeadLayer(this));
-        this.addLayer(new CapeLayer(this));
+        this.addLayer(new ArrowLayer(this));
+    //    this.addLayer(new Deadmau5HeadLayer(this));
+   //     this.addLayer(new CapeLayer(this));
         this.addLayer(new HeadLayer<>(this));
         this.addLayer(new ElytraLayer<>(this));
-        this.addLayer(new ParrotVariantLayer<>(this));
-        this.addLayer(new SpinAttackEffectLayer<>(this));
-        this.addLayer(new BeeStingerLayer<>(this));
+        this.addLayer(new ParrotVariantLayer(this));
+        this.addLayer(new SpinAttackEffectLayer(this));
+        this.addLayer(new BeeStingerLayer(this));
     }
 
     public void render(AbstractClientPlayerEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
     {
+    	
+    	if (Minecraft.getInstance().currentPass == RenderPass.GUI && entityIn.isUser()) {
+    		//smile for the camera. 		
+    		matrixStackIn.getLast().getMatrix().setIdentity();
+    		matrixStackIn.translate(0.0D, 0.0D, 1000.0D);
+    		matrixStackIn.scale((float)20, (float)20, (float)20);
+    		matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180.0F));
+    		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180 + Minecraft.getInstance().vrPlayer.vrdata_world_pre.getBodyYaw()));
+    	}
+    	
         this.setModelVisibilities(entityIn);
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
@@ -69,7 +91,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
 
     private void setModelVisibilities(AbstractClientPlayerEntity clientPlayer)
     {
-        PlayerModel<AbstractClientPlayerEntity> playermodel = this.getEntityModel();
+        VRPlayerModel<AbstractClientPlayerEntity> playermodel = this.getEntityModel();
 
         if (clientPlayer.isSpectator())
         {
@@ -81,6 +103,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
         {
             ItemStack itemstack = clientPlayer.getHeldItemMainhand();
             ItemStack itemstack1 = clientPlayer.getHeldItemOffhand();
+          
             playermodel.setVisible(true);
             playermodel.bipedHeadwear.showModel = clientPlayer.isWearing(PlayerModelPart.HAT);
             playermodel.bipedBodyWear.showModel = clientPlayer.isWearing(PlayerModelPart.JACKET);
@@ -202,7 +225,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
 
     private void renderItem(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, AbstractClientPlayerEntity playerIn, ModelRenderer rendererArmIn, ModelRenderer rendererArmwearIn)
     {
-        PlayerModel<AbstractClientPlayerEntity> playermodel = this.getEntityModel();
+        VRPlayerModel<AbstractClientPlayerEntity> playermodel = this.getEntityModel();
         this.setModelVisibilities(playerIn);
         playermodel.swingProgress = 0.0F;
         playermodel.isSneak = false;
@@ -214,8 +237,25 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
         rendererArmwearIn.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntityTranslucent(playerIn.getLocationSkin())), combinedLightIn, OverlayTexture.NO_OVERLAY);
     }
 
+    @Override
     protected void applyRotations(AbstractClientPlayerEntity entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks)
     {
+        //VIVECRAFT
+        if(this.getEntityModel() instanceof VRPlayerModel && entityLiving instanceof PlayerEntity){
+        	UUID uuid = entityLiving.getUniqueID();
+        	VRPlayerModel mp = (VRPlayerModel) getEntityModel();
+        	double d3 = entityLiving.lastTickPosX + (entityLiving.getPosX() - entityLiving.lastTickPosX) * (double)partialTicks;
+        	double d4 = entityLiving.lastTickPosY + (entityLiving.getPosY() - entityLiving.lastTickPosY) * (double)partialTicks;
+        	double d5 = entityLiving.lastTickPosZ + (entityLiving.getPosZ() - entityLiving.lastTickPosZ) * (double)partialTicks;
+        	mp.renderPos = new Vec3d(d3, d4, d5);
+        	if(PlayerModelController.getInstance().isTracked(uuid)){
+        		PlayerModelController.RotInfo rotInfo=PlayerModelController.getInstance().getRotationsForPlayer(uuid);	
+        		rotationYaw = (float) Math.toDegrees(rotInfo.getBodyYawRadians());
+        	}
+        }
+        float wasyaw = entityLiving.rotationYaw;
+        //
+    	
         float f = entityLiving.getSwimAnimation(partialTicks);
 
         if (entityLiving.isElytraFlying())
@@ -258,4 +298,5 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             super.applyRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
         }
     }
+        
 }

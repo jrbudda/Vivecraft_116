@@ -7,8 +7,8 @@ import org.vivecraft.provider.MCOpenVR;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.item.UseAction;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
@@ -80,7 +80,7 @@ private Random r = new Random();
 
 				if(!eating[c]){
 					Minecraft.getInstance().physicalGuiManager.preClickAction();
-					if(	mc.playerController.processRightClick(player, player.world,c==0?Hand.MAIN_HAND:Hand.OFF_HAND)==ActionResultType.SUCCESS){
+					if(	mc.playerController.processRightClick(player, player.world,c==0?Hand.MAIN_HAND:Hand.OFF_HAND).isSuccessOrConsume()){
 						mc.gameRenderer.itemRenderer.resetEquippedProgress(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);
 						eating[c]=true;
 						eatStart=Util.milliTime();

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.zip.DataFormatException;
 
 import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.Utils;
@@ -18,18 +17,12 @@ import org.vivecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 
 public class MenuWorldDownloader {
-	private static final String baseUrl = "https://cache.techjargaming.com/vivecraft/114/";
+	private static final String baseUrl = "https://cache.techjargaming.com/vivecraft/115/";
 	private static boolean init;
-	private static int worldCount;
 	private static Random rand;
 	
 	public static void init() {
 		if (init) return;
-		try {
-			worldCount = Integer.parseInt(Utils.httpReadLine(baseUrl + "menuworldcount.txt"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		rand = new Random();
 		rand.nextInt();
 		init = true;
@@ -92,10 +85,11 @@ public class MenuWorldDownloader {
 		return new ArrayList<>();
 	}
 
-	private static List<MenuWorldItem> getOfficialWorlds() {
+	private static List<MenuWorldItem> getOfficialWorlds() throws IOException {
 		List<MenuWorldItem> list = new ArrayList<>();
-		for (int i = 0; i < worldCount; i++)
-			list.add(new MenuWorldItem("menuworlds/world" + i + ".mmw", null));
+		List<String> resultList = Utils.httpReadAllLines(baseUrl + "menuworlds_list.php?minver=" + MenuWorldExporter.MIN_VERSION + "&maxver=" + MenuWorldExporter.VERSION);
+		for (String str : resultList)
+			list.add(new MenuWorldItem("menuworlds/" + str, null));
 		return list;
 	}
 	
@@ -114,7 +108,6 @@ public class MenuWorldDownloader {
 		List<MenuWorldItem> worlds = new ArrayList<>();
 		List<File> files = Arrays.asList(dir.listFiles(file -> file.isFile() && file.getName().toLowerCase().endsWith(".mmw")));
 		if (files.size() > 0) {
-			Collections.shuffle(files, rand);
 			for (File file : files) {
 				int version = MenuWorldExporter.readVersion(file);
 				if (version >= MenuWorldExporter.MIN_VERSION && version <= MenuWorldExporter.VERSION)

@@ -1,15 +1,14 @@
 package org.vivecraft.gui.settings;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.text.TextFormatting;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 public class GuiRadialItemsList extends ExtendedList
 {

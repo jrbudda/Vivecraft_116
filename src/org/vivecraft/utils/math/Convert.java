@@ -1,14 +1,8 @@
 package org.vivecraft.utils.math;
 
-//import org.vivecraft.utils.Matrix4f;
-//import javax.vecmath.Matrix4f;
-//import net.minecraft.client.renderer.Matrix4f;
-
-import org.vivecraft.utils.lwjgl.Quaternion;
+import java.nio.FloatBuffer;
 
 import net.minecraft.client.renderer.Matrix4f;
-
-import java.nio.FloatBuffer;
 
 public class Convert {
 	public static Convert.Matrix matrix(float[] floatArray){

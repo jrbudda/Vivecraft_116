@@ -47,7 +47,7 @@
  
  public class ServerPlayerEntity extends PlayerEntity implements IContainerListener
  {
-@@ -322,6 +332,20 @@
+@@ -322,6 +332,22 @@
      public void addSelfToInternalCraftingInventory()
      {
          this.openContainer.addListener(this);
@@ -61,6 +61,8 @@
 +				else
 +					stack = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), Potions.WATER)
 +					.setDisplayName(new StringTextComponent("DRINK ME"));
++				stack.getTag().putInt("HideFlags", 32);
++				
 +				if (this.inventory.addItemStackToInventory(stack))
 +					this.container.detectAndSendChanges();
 +			}
@@ -68,7 +70,7 @@
      }
  
      public void sendEnterCombat()
-@@ -1507,6 +1531,74 @@
+@@ -1507,6 +1533,79 @@
              this.server.getPlayerList().sendInventory(this);
          }
      }
@@ -126,13 +128,18 @@
 +            vec3d = vec3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
 +            double d0 = (double)(-this.rand.nextFloat()) * 0.6D - 0.3D;
 +            Vec3d vec3d1 = new Vec3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
-+			//VIVE
-+			Hand hand = getActiveHand();
-+			if(hand == Hand.MAIN_HAND){
-+				vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
-+			} else {
-+				vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();                 	
++		
++            if(this.isUser()) { 
++            	//TODO: wait what
++	            //VIVE
++				Hand hand = getActiveHand();
++				if(hand == Hand.MAIN_HAND){
++					vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
++				} else {
++					vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();      
++				}
 +			}
++               
 +            // vec3d1 = vec3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
 +            // vec3d1 = vec3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
 +            // vec3d1 = vec3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
@@ -143,7 +150,7 @@
  
      public void sendChunkLoad(ChunkPos p_213844_1_, IPacket<?> p_213844_2_, IPacket<?> p_213844_3_)
      {
-@@ -1542,6 +1634,7 @@
+@@ -1542,6 +1641,7 @@
          return new SSpawnPlayerPacket(this);
      }
  
@@ -151,7 +158,7 @@
      public ItemEntity dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
      {
          ItemEntity itementity = super.dropItem(droppedItem, dropAround, traceItem);
-@@ -1552,6 +1645,18 @@
+@@ -1552,6 +1652,18 @@
          }
          else
          {
@@ -170,7 +177,7 @@
              this.world.addEntity(itementity);
              ItemStack itemstack = itementity.getItem();
  
-@@ -1568,4 +1673,4 @@
+@@ -1568,4 +1680,4 @@
              return itementity;
          }
      }

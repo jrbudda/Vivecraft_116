@@ -8,7 +8,7 @@
  
  public class OptionsSoundsScreen extends SettingsScreen
  {
-@@ -30,6 +31,16 @@
+@@ -30,6 +31,17 @@
                  ++i;
              }
          }
@@ -17,6 +17,7 @@
 +        this.addButton(new Button(this.width / 2 - 155 + i % 2 * 160, this.height / 6 -12 + 24 * (i >>1), 150, 20, minecraft.vrSettings.getButtonDisplayString(VRSettings.VrOptions.HRTF_SELECTION), (p_213104_1_) ->
 +        {
 +        	this.buttons.clear();
++        	this.children.clear();
 +        	minecraft.vrSettings.setOptionValue(VRSettings.VrOptions.HRTF_SELECTION);
 +        	minecraft.vrSettings.saveOptions();
 +        	this.init();

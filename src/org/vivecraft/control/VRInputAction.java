@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.lwjgl.glfw.GLFW;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.utils.math.Vector2;
@@ -15,13 +16,13 @@ import org.vivecraft.utils.math.Vector3;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.LongByReference;
+
 import jopenvr.InputAnalogActionData_t;
 import jopenvr.InputDigitalActionData_t;
 import jopenvr.JOpenVRLibrary;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
 import net.optifine.reflect.Reflector;
-import org.lwjgl.glfw.GLFW;
 
 public class VRInputAction {
 	public final KeyBinding keyBinding;

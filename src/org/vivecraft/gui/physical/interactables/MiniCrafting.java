@@ -1,17 +1,17 @@
 package org.vivecraft.gui.physical.interactables;
 
+import java.util.ArrayList;
+
 import org.vivecraft.gui.physical.PhysicalInventory;
 import org.vivecraft.gui.physical.WindowCoordinator;
 import org.vivecraft.utils.math.Quaternion;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
-
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.ArrayList;
 
 public class MiniCrafting implements Interactable {
 	Minecraft mc;

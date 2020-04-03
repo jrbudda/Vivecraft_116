@@ -111,13 +111,20 @@
      public int sprintingTicksLeft;
      public float renderArmYaw;
      public float renderArmPitch;
-@@ -127,6 +163,79 @@
+@@ -127,6 +163,86 @@
          this.ambientSoundHandlers.add(new UnderwaterAmbientSoundHandler(this, p_i744_1_.getSoundHandler()));
          this.ambientSoundHandlers.add(new BubbleColumnAmbientSoundHandler(this));
      }
 +    //VIVE
-+    public void setItemInUseClient(ItemStack item){
++    public void setItemInUseClient(ItemStack item, Hand hand){
 +    	this.activeItemStack = item;
++    	if (item != ItemStack.EMPTY) {
++	    	this.handActive = true;
++	    	this.activeHand = hand;
++    	} else {
++    	  	this.handActive = false;
++	    	this.activeHand = hand;
++    	}
 +    }
 +    
 +    public void setItemInUseCountClient(int count){
@@ -191,12 +198,12 @@
  
      public boolean isGlowing()
      {
-@@ -135,6 +244,21 @@
+@@ -135,6 +251,21 @@
  
      public boolean attackEntityFrom(DamageSource source, float amount)
      {
 +    	//VIVECRAFT
-+    	if(amount > 0){
++    	if(amount > 0 && !isCreative()){
 +    		int dur = 1000;
 +    		if(source.isExplosion())dur = 2000;
 +    		if(source == DamageSource.CACTUS) dur = 200;
@@ -213,7 +220,7 @@
          return false;
      }
  
-@@ -142,6 +266,8 @@
+@@ -142,6 +273,8 @@
      {
      }
  
@@ -222,7 +229,7 @@
      public boolean startRiding(Entity entityIn, boolean force)
      {
          if (!super.startRiding(entityIn, force))
-@@ -161,7 +287,10 @@
+@@ -161,7 +294,10 @@
                  this.rotationYaw = entityIn.rotationYaw;
                  this.setRotationYawHead(entityIn.rotationYaw);
              }
@@ -234,7 +241,7 @@
              return true;
          }
      }
-@@ -170,6 +299,10 @@
+@@ -170,6 +306,10 @@
      {
          super.stopRiding();
          this.rowingBoat = false;
@@ -245,7 +252,7 @@
      }
  
      public float getPitch(float partialTicks)
-@@ -280,6 +413,13 @@
+@@ -280,6 +420,13 @@
              }
  
              this.prevOnGround = this.onGround;
@@ -259,7 +266,7 @@
              this.autoJumpEnabled = this.mc.gameSettings.autoJump;
          }
      }
-@@ -294,10 +434,31 @@
+@@ -294,10 +441,31 @@
      public void sendChatMessage(String message)
      {
          this.connection.sendPacket(new CChatMessagePacket(message));
@@ -291,7 +298,7 @@
          super.swingArm(hand);
          this.connection.sendPacket(new CAnimateHandPacket(hand));
      }
-@@ -915,6 +1076,9 @@
+@@ -915,6 +1083,9 @@
          }
  
          super.livingTick();
@@ -301,7 +308,7 @@
  
          if (this.onGround && this.abilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
-@@ -1010,10 +1174,76 @@
+@@ -1010,10 +1181,76 @@
  
      public void move(MoverType typeIn, Vec3d pos)
      {
@@ -382,12 +389,12 @@
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1031,13 +1261,17 @@
+@@ -1031,13 +1268,17 @@
              float f = this.getAIMoveSpeed();
              float f1 = (float)vec3d2.lengthSquared();
  
-+                    //VIVE
-+                    float yaw = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getBodyYaw();
++            //VIVE
++            float yaw = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getBodyYaw();
 +               
              if (f1 <= 0.001F)
              {
@@ -402,7 +409,7 @@
                  vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vec3d2.lengthSquared();
  
-@@ -1220,4 +1454,385 @@
+@@ -1220,4 +1461,385 @@
              return this.eyesInWaterPlayer;
          }
      }
@@ -780,7 +787,7 @@
 +        {
 +        	// Just wanna be safe here, I dunno if this is ever called on the client for non-self
 +    		if (this == Minecraft.getInstance().player && p_213357_2_.getDisplayName().getString().equals("EAT ME")) {
-+    			Minecraft.getInstance().vrPlayer.wfMode = 1;
++    			Minecraft.getInstance().vrPlayer.wfMode = 0.5f;
 +    			Minecraft.getInstance().vrPlayer.wfCount = 400;
 +    		}
 +        }

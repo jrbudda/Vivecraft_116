@@ -12,6 +12,7 @@ import org.vivecraft.tweaker.MinecriftClassTransformer;
 import org.vivecraft.tweaker.MinecriftClassTransformer.Stage;
 
 import com.google.common.base.Throwables;
+
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 

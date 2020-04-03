@@ -2,20 +2,14 @@ package org.vivecraft.render;
 
 import org.vivecraft.api.VRData.VRDevicePose;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-
-import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.shader.Shader;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.fluid.IFluidState;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockReader;
+import net.optifine.shaders.Shaders;
 
 public class VRActiveRenderInfo extends ActiveRenderInfo {
 
@@ -27,7 +21,12 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 		this.renderViewEntity = renderViewEntity;
 		Minecraft mc = Minecraft.getInstance();
 		
-		VRDevicePose src = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass);	
+		RenderPass p = mc.currentPass;
+		
+		if (Shaders.isShadowPass && p != RenderPass.THIRD)
+			p = RenderPass.CENTER;
+		
+		VRDevicePose src = mc.vrPlayer.vrdata_world_render.getEye(p);	
 		this.setPostion(src.getPosition());
 			
 		// this.setDirection(mc.vrPlayer.vrdata_world_render.hmd.getYaw(),mc.vrPlayer.vrdata_world_render.hmd.getPitch());

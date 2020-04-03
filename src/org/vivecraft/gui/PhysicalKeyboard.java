@@ -3,8 +3,9 @@ package org.vivecraft.gui;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.control.InputSimulator;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
@@ -13,14 +14,13 @@ import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 import org.vivecraft.utils.lwjgl.Vector3f;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -28,8 +28,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 public class PhysicalKeyboard {
 	private final Minecraft mc = Minecraft.getInstance();
@@ -388,6 +386,7 @@ public class PhysicalKeyboard {
 
 			GlStateManager.disableTexture();
 			GlStateManager.enableLighting();
+			GlStateManager.enableBlend(); // dammit FontRenderer
 		}
 
 		GlStateManager.enableTexture();

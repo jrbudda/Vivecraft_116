@@ -23,13 +23,12 @@ public class GuiMenuWorldSettings extends GuiVROptionsBase {
 					}),
 					new VROptionEntry(VRSettings.VrOptions.DUMMY),
 					new VROptionEntry("Load New Menu World", (button, mousePos) -> {
-						if (minecraft.menuWorldRenderer.getWorld() != null) {
-							try {
+						try {
+							if (minecraft.menuWorldRenderer.isReady())
 								minecraft.menuWorldRenderer.destroy();
-								minecraft.menuWorldRenderer.init();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+							minecraft.menuWorldRenderer.init();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 						return true;
 					}),
@@ -42,7 +41,7 @@ public class GuiMenuWorldSettings extends GuiVROptionsBase {
 	@Override
 	public void init()
 	{
-		vrTitle = "Miscellaneous Settings";
+		vrTitle = "Menu World Settings";
 
 		super.init(miscSettings, true);
 

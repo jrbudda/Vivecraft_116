@@ -8,7 +8,6 @@ import org.vivecraft.utils.math.Quaternion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.item.BoatEntity;
-import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 

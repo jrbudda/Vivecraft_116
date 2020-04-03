@@ -12,12 +12,9 @@ import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.multiplayer.PlayerController;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
-import net.minecraft.client.renderer.model.ModelManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.dimension.Dimension;
 
 public class MCReflection {
 

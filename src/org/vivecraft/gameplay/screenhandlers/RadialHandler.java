@@ -1,7 +1,5 @@
 package org.vivecraft.gameplay.screenhandlers;
 
-import java.util.function.Predicate;
-
 import org.vivecraft.api.VRData.VRDevicePose;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.gui.GuiRadial;

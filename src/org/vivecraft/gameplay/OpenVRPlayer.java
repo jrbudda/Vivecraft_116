@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.vivecraft.api.NetworkHelper;
-import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
-import org.vivecraft.control.InputSimulator;
 import org.vivecraft.api.VRData;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
@@ -13,7 +11,7 @@ import org.vivecraft.gameplay.screenhandlers.RadialHandler;
 import org.vivecraft.gameplay.trackers.BowTracker;
 import org.vivecraft.gameplay.trackers.Tracker;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.settings.AutoCalibration;
+import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.block.BlockState;
@@ -22,19 +20,14 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.WinGameScreen;
 import net.minecraft.client.particle.DiggingParticle;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
-import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.EggItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.SnowballItem;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.network.play.client.CCustomPayloadPacket;
-import net.minecraft.particles.BlockParticleData;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -102,13 +95,13 @@ public class OpenVRPlayer
 		return Minecraft.getInstance().vrPlayer;
 	}
 
-	public Vec3d room_to_world_pos(Vec3d pos, VRData data){
-		Vec3d out = new Vec3d(pos.x*data.worldScale, pos.y*data.worldScale, pos.z*worldScale);
+	public static Vec3d room_to_world_pos(Vec3d pos, VRData data){
+		Vec3d out = new Vec3d(pos.x*data.worldScale, pos.y*data.worldScale, pos.z*data.worldScale);
 		out =out.rotateYaw(data.rotation_radians);
 		return out.add(data.origin.x, data.origin.y, data.origin.z);
 	}
 
-	public Vec3d world_to_room_pos(Vec3d pos, VRData data){
+	public static Vec3d world_to_room_pos(Vec3d pos, VRData data){
 		Vec3d out = pos.add(-data.origin.x, -data.origin.y, -data.origin.z);
 		out = new Vec3d(out.x/data.worldScale, out.y/data.worldScale, out.z/data.worldScale);
 		return out.rotateYaw(-data.rotation_radians);
@@ -122,28 +115,38 @@ public class OpenVRPlayer
 	}
 
 	public void preTick(){
-		
+	
+		this.vrdata_world_pre = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
+
 		//adjust world scale
-		float scale = mc.vrSettings.overrides.getSetting(VRSettings.VrOptions.WORLD_SCALE).getFloat();
-		if (mc.world == null || mc.currentScreen instanceof WinGameScreen) 
+		float scaleSetting = mc.vrSettings.overrides.getSetting(VRSettings.VrOptions.WORLD_SCALE).getFloat();
+		if (mc.gameRenderer.isInMenuRoom()) 
 			this.worldScale = 1.0f;
 		else if (this.wfCount > 0 && !mc.isGamePaused()) {
-			if(this.wfCount < 40){
-				this.worldScale-=this.wfMode / 2;
-				if(this.worldScale >  scale && this.wfMode <0) this.worldScale = scale;
-				if(this.worldScale <  scale && this.wfMode >0) this.worldScale = scale;
-			} else {
-				this.worldScale+=this.wfMode / 2;
-				if(this.worldScale >  scale*20) this.worldScale = 20;
-				if(this.worldScale <  scale/10) this.worldScale = 0.1f;
+			if(this.wfCount < 40){		
+				worldScale = (float) (worldScale - wfMode);
+				if(wfMode > 0) { //go back.
+					if(this.worldScale < scaleSetting)
+						this.worldScale = scaleSetting;
+				} else if (wfMode < 0) {
+					if(this.worldScale >  scaleSetting)
+						this.worldScale = scaleSetting;				
+				}					
+			} else { //shrink or grow
+				worldScale = (float) (worldScale + wfMode);
+				if(wfMode > 0) {
+					if(this.worldScale >  20f) 
+						this.worldScale = 20f;
+				} else if (wfMode < 0) {
+					if(this.worldScale <  0.1f) 
+						this.worldScale = 0.1f;				
+				}			
 			}
 			this.wfCount--;
 		} else {
-			this.worldScale = scale;
+			this.worldScale = scaleSetting;
 		}
 		
-		this.vrdata_world_pre = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
-
 		if(mc.vrSettings.seated && !mc.gameRenderer.isInMenuRoom())
 			mc.vrSettings.vrWorldRotation = MCOpenVR.seatedRot;
 
@@ -151,14 +154,21 @@ public class OpenVRPlayer
 		doLookOverride(vrdata_world_pre);
 
 	}
-
+  
 	public void postTick(){
 		Minecraft mc = Minecraft.getInstance();
+
+		//translational position change due only to scale. - move room to fix entity in place during scale changes.
+		VRData tempps = new VRData(vrdata_world_pre.origin, mc.vrSettings.walkMultiplier, vrdata_world_pre.worldScale, vrdata_world_pre.rotation_radians);		
+		VRData temps = new VRData(vrdata_world_pre.origin, mc.vrSettings.walkMultiplier, worldScale, vrdata_world_pre.rotation_radians);	
+		Vec3d scaleOffset = temps.hmd.getPosition().subtract(tempps.hmd.getPosition());
+	    this.roomOrigin = this.roomOrigin.subtract(scaleOffset);
+		//
 		
 		//Handle all room translations up to this point and then rotate it around the hmd.
-		VRData temp = new VRData(roomOrigin, mc.vrSettings.walkMultiplier, this.worldScale, vrdata_world_pre.rotation_radians);		
+		VRData temp = new VRData(roomOrigin, mc.vrSettings.walkMultiplier, worldScale, vrdata_world_pre.rotation_radians);	
 		float end = mc.vrSettings.vrWorldRotation;
-		float start = (float) Math.toDegrees(vrdata_world_pre.rotation_radians);	
+		float start = (float) Math.toDegrees(vrdata_world_pre.rotation_radians);			
 		rotateOriginAround(-end+start, temp.getHeadPivot());
 		//
 		
@@ -192,14 +202,14 @@ public class OpenVRPlayer
 				end += 2*Math.PI;
 
 		float interpolatedWorldRotation_Radians = (float) (end*par1 + start*(1-par1));
-		//worldRotationRadians += 0.01;
+	
 		Vec3d interPolatedRoomOrigin = new Vec3d(
 				vrdata_world_pre.origin.x + (vrdata_world_post.origin.x - vrdata_world_pre.origin.x) * (double)par1,
 				vrdata_world_pre.origin.y + (vrdata_world_post.origin.y - vrdata_world_pre.origin.y) * (double)par1,
 				vrdata_world_pre.origin.z + (vrdata_world_post.origin.z - vrdata_world_pre.origin.z) * (double)par1
 				);
-
-		//System.out.println(vrdata_world_post.origin.x + " " + vrdata_world_pre.origin.x + " = " + interPolatedRoomOrigin.x);
+		
+//		System.out.println(vrdata_world_post.origin.x + " " + vrdata_world_pre.origin.x + " = " + interPolatedRoomOrigin.x);
 
 		this.vrdata_world_render = new VRData(interPolatedRoomOrigin, mc.vrSettings.walkMultiplier, interpolatedWorldScale, interpolatedWorldRotation_Radians);
 
@@ -322,19 +332,16 @@ public class OpenVRPlayer
 		if(!player.initFromServer) return;
 
 		if(!initdone){
-
 			System.out.println("<Debug info start>");
 			System.out.println("Room object: "+this);
 			System.out.println("Room origin: " + vrdata_world_pre.origin);
 			System.out.println("Hmd position room: " + vrdata_room_pre.hmd.getPosition());
 			System.out.println("Hmd position world: " + vrdata_world_pre.hmd.getPosition());
+			System.out.println("Hmd Projection Left: " + mc.stereoProvider.eyeproj[0]);
+			System.out.println("Hmd Projection Right: " + mc.stereoProvider.eyeproj[1]);
 			System.out.println("<Debug info end>");
-
 			initdone =true;
 		}
-
-		
-		AutoCalibration.logHeadPos(MCOpenVR.hmdPivotHistory.latest());
 
 		doPlayerMoveInRoom(player);
 		

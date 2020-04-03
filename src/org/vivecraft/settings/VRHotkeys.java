@@ -7,10 +7,10 @@ package org.vivecraft.settings;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+import org.lwjgl.glfw.GLFW;
 import org.vivecraft.api.VRData;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.settings.VRSettings.VrOptions;
@@ -26,12 +26,8 @@ import com.google.common.util.concurrent.Runnables;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.WinGameScreen;
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
-
-import org.lwjgl.glfw.GLFW;
 
 public class VRHotkeys {
 
@@ -169,8 +165,9 @@ public class VRHotkeys {
             mc.displayGuiScreen(new WinGameScreen(false, Runnables.doNothing()));
 			gotKey = true;
 		}
-		if(mc.world == null && action == GLFW.GLFW_PRESS && key == GLFW.GLFW_KEY_F5) {
+		if((mc.world == null || mc.currentScreen != null) && action == GLFW.GLFW_PRESS && key == GLFW.GLFW_KEY_F5) {
 			mc.vrSettings.setOptionValue(VrOptions.MIRROR_DISPLAY);
+			mc.notifyMirror(mc.vrSettings.getButtonDisplayString(VrOptions.MIRROR_DISPLAY), false, 3000);
 		}
 		// VIVE END - hotkeys
 

@@ -1,17 +1,10 @@
 package org.vivecraft.gui.settings;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import org.vivecraft.gui.framework.GuiVROptionButton;
 import org.vivecraft.gui.framework.GuiVROptionsBase;
 import org.vivecraft.gui.framework.VROptionEntry;
 import org.vivecraft.settings.VRSettings;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 
 public class GuiStandingSettings extends GuiVROptionsBase
 {

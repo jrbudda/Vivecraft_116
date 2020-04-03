@@ -1,18 +1,9 @@
 package org.vivecraft.physicalinventory;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.ModelManager;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
+
+import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.util.ResourceLocation;
 
 public class ExtendedModelManager {
 //	public ExtendedModelManager(AtlasTexture p_i1132_1_, BlockColors p_i1132_2_) {

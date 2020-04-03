@@ -1,6 +1,6 @@
 --- a/net/optifine/shaders/Shaders.java
 +++ b/net/optifine/shaders/Shaders.java
-@@ -110,6 +110,7 @@
+@@ -114,6 +114,7 @@
  import net.optifine.util.TimedEvent;
  import org.apache.commons.io.IOUtils;
  import org.lwjgl.BufferUtils;
@@ -8,7 +8,7 @@
  import org.lwjgl.opengl.ARBGeometryShader4;
  import org.lwjgl.opengl.ARBShaderObjects;
  import org.lwjgl.opengl.ARBVertexShader;
-@@ -804,6 +805,7 @@
+@@ -809,6 +810,7 @@
  
      public static void loadShaderPack()
      {
@@ -16,7 +16,7 @@
          boolean flag = shaderPackLoaded;
          boolean flag1 = isOldLighting();
  
-@@ -1010,7 +1012,7 @@
+@@ -1088,7 +1090,7 @@
          Set set = props.keySet();
          List<ICustomTexture> list = new ArrayList<>();
  
@@ -25,7 +25,7 @@
          {
              if (s1.startsWith(s))
              {
-@@ -1969,10 +1971,10 @@
+@@ -2047,10 +2049,10 @@
          SMCLog.info(stringbuilder.toString());
      }
  
@@ -38,7 +38,7 @@
          mc = Minecraft.getInstance();
          capabilities = GL.getCapabilities();
          glVersionString = GL11.glGetString(GL11.GL_VERSION);
-@@ -2385,11 +2387,11 @@
+@@ -2462,11 +2464,11 @@
  
      private static int getDrawBuffer(Program p, String str, int i)
      {
@@ -52,7 +52,7 @@
          }
          else
          {
-@@ -4237,14 +4239,14 @@
+@@ -4314,14 +4316,14 @@
          GlStateManager.activeTexture(33984);
      }
  
@@ -71,7 +71,7 @@
              int j = getDimensionId(world);
  
              if (j != i)
-@@ -5687,7 +5689,7 @@
+@@ -5765,7 +5767,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

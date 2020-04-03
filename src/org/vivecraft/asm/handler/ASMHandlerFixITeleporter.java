@@ -2,17 +2,16 @@ package org.vivecraft.asm.handler;
 
 import java.util.Iterator;
 
-import org.vivecraft.asm.ASMClassHandler;
-import org.vivecraft.asm.ASMMethodHandler;
-import org.vivecraft.asm.ClassTuple;
-import org.vivecraft.asm.MethodTuple;
-
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.vivecraft.asm.ASMClassHandler;
+import org.vivecraft.asm.ASMMethodHandler;
+import org.vivecraft.asm.ClassTuple;
+import org.vivecraft.asm.MethodTuple;
 
 public class ASMHandlerFixITeleporter extends ASMClassHandler {
 	@Override

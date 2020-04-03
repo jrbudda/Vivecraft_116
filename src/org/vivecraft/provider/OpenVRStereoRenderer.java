@@ -1,40 +1,37 @@
 package org.vivecraft.provider;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.gameplay.screenhandlers.RadialHandler;
 import org.vivecraft.render.RenderConfigException;
+import org.vivecraft.render.RenderPass;
 import org.vivecraft.render.ShaderHelper;
 import org.vivecraft.render.VRShaders;
-import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRSettings;
-import org.vivecraft.utils.math.Matrix4f;
-import org.vivecraft.utils.math.Vector2;
+import org.vivecraft.settings.VRSettings.VrOptions;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+
 import jopenvr.HiddenAreaMesh_t;
 import jopenvr.HmdMatrix44_t;
 import jopenvr.JOpenVRLibrary;
 import jopenvr.JOpenVRLibrary.EVRCompositorError;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.dimension.DimensionType;
 import net.optifine.Config;
 import net.optifine.shaders.Shaders;
-
-import org.lwjgl.opengl.ARBShaderObjects;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 /**
  * Created by jrbudda
  */
@@ -66,7 +63,7 @@ public class OpenVRStereoRenderer
 	public boolean lastEnableVsync = true;
 	public DimensionType lastDimensionId = DimensionType.OVERWORLD;
 	public int lastGuiScale = 0;
-	
+	public float renderScale;
 	public static final String RENDER_SETUP_FAILURE_MESSAGE = "Failed to initialise stereo rendering plugin: ";
 
 	private boolean reinitFramebuffers = true;
@@ -80,7 +77,7 @@ public class OpenVRStereoRenderer
 	private Tuple<Integer, Integer> resolution;
 	public float ss = -1;
 
-	public Tuple<Integer, Integer> getRenderTextureSizes(float renderScaleFactor)
+	public Tuple<Integer, Integer> getRenderTextureSizes()
 	{
 		if (resolution != null)
 			return resolution;
@@ -89,9 +86,9 @@ public class OpenVRStereoRenderer
 		IntByReference rty = new IntByReference();
 		MCOpenVR.vrsystem.GetRecommendedRenderTargetSize.apply(rtx, rty);
 		resolution = new Tuple<>(rtx.getValue(), rty.getValue());
-		System.out.println("OpenVR Render Res " + resolution.getA() + " x " + resolution.getB());	
+		System.out.println("OpenVR Render Res " + resolution.getA() + " x " + resolution.getB());
 		ss = MCOpenVR.getSuperSampling();
-		System.out.println("OpenVR Supersampling: " + ss);	
+		System.out.println("OpenVR Supersampling: " + ss);
 
 		for (int i = 0; i < 2; i++) {
 			hiddenMeshes[i] = MCOpenVR.vrsystem.GetHiddenAreaMesh.apply(i,0);
@@ -101,7 +98,7 @@ public class OpenVRStereoRenderer
 				hiddenMesheVertecies[i] = new float[hiddenMeshes[i].unTriangleCount * 3 * 2];
 				Pointer arrptr = new Memory(hiddenMeshes[i].unTriangleCount * 3 * 2);
 				hiddenMeshes[i].pVertexData.getPointer().read(0, hiddenMesheVertecies[i], 0, hiddenMesheVertecies[i].length);
-	
+
 				for (int ix = 0;ix < hiddenMesheVertecies[i].length;ix+=2) {
 					hiddenMesheVertecies[i][ix] = hiddenMesheVertecies[i][ix] * resolution.getA();
 					hiddenMesheVertecies[i][ix + 1] = hiddenMesheVertecies[i][ix +1] * resolution.getB();
@@ -201,13 +198,11 @@ public class OpenVRStereoRenderer
 
 	}
 
-
 	public boolean endFrame(RenderPass eye)
 	{
 		return true;
 	}
 
-	
 	public void endFrame() throws RenderConfigException {
 
 		if(MCOpenVR.vrCompositor.Submit == null) return;
@@ -229,7 +224,6 @@ public class OpenVRStereoRenderer
 			throw new RenderConfigException("Compositor Error","Texture submission error: Left/Right " + getCompostiorError(lret) + "/" + getCompostiorError(rret));		
 		}
 	}
-
 	
 	public static String getCompostiorError(int code){
 		switch (code){
@@ -259,7 +253,6 @@ public class OpenVRStereoRenderer
 		return "Unknown";
 	}
 
-	
 	public boolean providesStencilMask() {
 		return true;
 	}
@@ -436,6 +429,8 @@ public class OpenVRStereoRenderer
 		return was;
 	}
 	
+	private int lastMirror;
+	
 	public void setupRenderConfiguration() throws Exception 
 	{
 		Minecraft mc = Minecraft.getInstance();
@@ -445,27 +440,12 @@ public class OpenVRStereoRenderer
 		{
 			reinitFrameBuffers("Clip Planes Changed");
 		}
-
-		//why?
-//		if (!Display.isActive() && fullscreen)
-//		{
-//			toggleFullscreen();
-//			reinitFramebuffers = true;
-//		}
-
-//		if (wasDisplayResized())
-//		{
-//			//Display.update();     // This will set new display widths accordingly
-//			reinitFrameBuffers("Display Resized");
-//		}
-		
+	
 		if (lastGuiScale != mc.gameSettings.guiScale)
 		{
 			lastGuiScale = mc.gameSettings.guiScale;
 			reinitFrameBuffers("GUI Scale Changed");
 		}
-
-		//mc.showNativeMouseCursor(!mc.isGameFocused());
 
 		// Check for changes in window handle
 		if (mc.getMainWindow().getHandle() != lastWindow)
@@ -474,13 +454,14 @@ public class OpenVRStereoRenderer
 			reinitFrameBuffers("Window Handle Changed");
 		}
 
-//		if (lastShaderIndex != mc.vrSettings.shaderIndex) {
-//			reinitFramebuffers = true;
-//		}
-
 		if (lastEnableVsync != mc.gameSettings.vsync) {
 			reinitFrameBuffers("VSync Changed");
 			lastEnableVsync = mc.gameSettings.vsync;
+		}
+		
+		if (lastMirror != mc.vrSettings.displayMirrorMode) {
+			reinitFrameBuffers("Mirror Changed");
+			lastMirror = mc.vrSettings.displayMirrorMode;
 		}
 
 		if (reinitFramebuffers)
@@ -505,7 +486,7 @@ public class OpenVRStereoRenderer
 				throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), " " + getinitError());
 			}		
 			
-			Tuple<Integer, Integer> renderTextureInfo = getRenderTextureSizes(mc.vrSettings.renderScaleFactor);
+			Tuple<Integer, Integer> renderTextureInfo = getRenderTextureSizes();
 
 			eyew  = renderTextureInfo.getA();
 			eyeh  = renderTextureInfo.getB();
@@ -585,26 +566,27 @@ public class OpenVRStereoRenderer
 
 			checkGLError("Render Texture setup");
 				
-			framebufferEye0 = new Framebuffer("L Eye", eyew, eyeh, false, false, LeftEyeTextureId, false);
+			framebufferEye0 = new Framebuffer("L Eye", eyew, eyeh, false, false, LeftEyeTextureId, false, true);
 			mc.print(framebufferEye0.toString());
 			checkGLError("Left Eye framebuffer setup");
 			
-			framebufferEye1 = new Framebuffer("R Eye", eyew, eyeh, false, false, RightEyeTextureId, false);
+			framebufferEye1 = new Framebuffer("R Eye", eyew, eyeh, false, false, RightEyeTextureId, false, true);
 			mc.print(framebufferEye1.toString());
 			checkGLError("Right Eye framebuffer setup");
 			
 		//	MCOpenVR.texType0.depth.handle = Pointer.createConstant(framebufferEye0.depthBuffer);	
 		//	MCOpenVR.texType1.depth.handle = Pointer.createConstant(framebufferEye1.depthBuffer);	
-
-			displayFBWidth = (int) Math.ceil(eyew * mc.vrSettings.renderScaleFactor);
-			displayFBHeight = (int) Math.ceil(eyeh * mc.vrSettings.renderScaleFactor);
+			this.renderScale = (float) Math.sqrt((mc.vrSettings.renderScaleFactor));
+			displayFBWidth = (int) Math.ceil(eyew * renderScale);
+			displayFBHeight = (int) Math.ceil(eyeh * renderScale);
 			
-			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, true);
+			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, true, true);
 			mc.print(framebufferVrRender.toString());
 			checkGLError("3D framebuffer setup");
 			
 			mirrorFBWidth = mc.getMainWindow().getWidth();
 			mirrorFBHeight = mc.getMainWindow().getHeight();
+			
 			if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY) {
 				mirrorFBWidth = mc.getMainWindow().getWidth() / 2;
 				if(mc.vrSettings.mixedRealityUnityLike)
@@ -624,26 +606,26 @@ public class OpenVRStereoRenderer
 			}
 			
 			if (renderPasses.contains(RenderPass.THIRD)) {
-				framebufferMR = new Framebuffer("Mixed Reality Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false);
+				framebufferMR = new Framebuffer("Mixed Reality Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false, false);
 				mc.print(framebufferMR.toString());
 				checkGLError("Mixed reality framebuffer setup");
 			}
 			
 			if (renderPasses.contains(RenderPass.CENTER)) {
-				framebufferUndistorted = new Framebuffer("Undistorted View Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false);
+				framebufferUndistorted = new Framebuffer("Undistorted View Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false, false);
 				mc.print(framebufferUndistorted.toString());
 				checkGLError("Undistorted view framebuffer setup");
 			}
 			
-			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
+			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false, true);
 			mc.print(GuiHandler.guiFramebuffer.toString());
 			checkGLError("GUI framebuffer setup");
 
-			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
+			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false, true);
 			mc.print(KeyboardHandler.Framebuffer.toString());
 			checkGLError("Keyboard framebuffer setup");
 
-			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false);
+			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false, true);
 			mc.print(RadialHandler.Framebuffer.toString());
 			checkGLError("Radial framebuffer setup");
 
@@ -665,9 +647,9 @@ public class OpenVRStereoRenderer
 					// GL11.GL_RGBA8
 					checkGLError("pre FSAA FBO creation");
 					// Lanczos downsample FBOs
-					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO",eyew, displayFBHeight,false, false, Framebuffer.NO_TEXTURE_ID, false);
+					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO",eyew, displayFBHeight,false, false, Framebuffer.NO_TEXTURE_ID, false, false);
 					//TODO: ugh, support multiple color attachments in Framebuffer....
-					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO",eyew, eyeh,false, false, Framebuffer.NO_TEXTURE_ID, false);
+					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO",eyew, eyeh,false, false, Framebuffer.NO_TEXTURE_ID, false, false);
 			
 					mc.print(fsaaFirstPassResultFBO.toString());
 					mc.print(fsaaLastPassResultFBO.toString());
@@ -714,8 +696,7 @@ public class OpenVRStereoRenderer
 			System.out.println("[Minecrift] New render config:" +
 					"\nRender target width:  " + (true ? eyew + eyew: mc.getMainWindow().getWidth()) +
 					", height: " + (true ? Math.max(eyeh, eyeh) : mc.getMainWindow().getHeight()) +
-					(true ? " [Render scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +
-					(mc.vrSettings.useFsaa ? " [FSAA Scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +
+					(true ? " [Render scale: " + mc.vrSettings.getButtonDisplayString(VrOptions.RENDER_SCALEFACTOR) + "]" : "")+
 					"\nDisplay target width: " + displayFBWidth + ", height: " + displayFBHeight);
 
 
@@ -781,7 +762,7 @@ public class OpenVRStereoRenderer
 			GL11.glBegin(GL11.GL_TRIANGLES);
 
 			for (int ix = 0; ix < verts.length; ix += 2) {
-				GL11.glVertex2f(verts[ix] * mc.vrSettings.renderScaleFactor, verts[ix + 1] * mc.vrSettings.renderScaleFactor);
+				GL11.glVertex2f(verts[ix] * mc.stereoProvider.renderScale, verts[ix + 1] * mc.stereoProvider.renderScale);
 			}
 			GL11.glEnd();
 

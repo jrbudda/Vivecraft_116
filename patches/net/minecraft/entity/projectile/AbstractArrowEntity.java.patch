@@ -11,61 +11,77 @@
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.block.BlockState;
  import net.minecraft.enchantment.EnchantmentHelper;
-@@ -84,6 +88,21 @@
+@@ -30,6 +34,7 @@
+ import net.minecraft.network.play.server.SSpawnObjectPacket;
+ import net.minecraft.particles.ParticleTypes;
+ import net.minecraft.util.DamageSource;
++import net.minecraft.util.Hand;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.SoundEvents;
+@@ -84,7 +89,22 @@
  
          if (p_i995_2_ instanceof PlayerEntity)
          {
+-            this.pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
 +        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i995_2_.getUniqueID());
 +        	if (vp !=null && vp.isVR())
 +        	{
-+        		//VIVE SET SPAWNPOS
-+        		if(this instanceof TridentEntity) {
-+        	        Vec3d aimSource = vp.getControllerPos(0);
-+        	        Vec3d aimDir = vp.getControllerDir(0);     
-+            		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
-+        		} else {
-+        	        Vec3d aimSource = (vp.isSeated() || vp.getDraw()==0) ? vp.getControllerPos(0): vp.getControllerPos(1);
-+        	        Vec3d aimDir = getVRAim(vp).scale(0.6f);        
-+            		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
-+        		}     			
++         		//VIVE SET SPAWNPOS
++        		int c = 0;
++        		if (p_i995_2_.getActiveHand() == Hand.OFF_HAND) c = 1;
++        		Vec3d aimSource = vp.getControllerPos(c);
++        		Vec3d aimDir = vp.getControllerDir(vp.isSeated() ? 0 : c);     
++        		if (!vp.isSeated() && vp.getDraw() > 0) {
++        			aimDir = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
++        			aimSource = vp.getControllerPos(0);
++        		}   
++        		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        		//
 +        	}
-             this.pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
++        	this.pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
          }
      }
-@@ -112,9 +131,34 @@
+ 
+@@ -112,14 +132,35 @@
          this.dataManager.register(field_212362_a, Optional.empty());
          this.dataManager.register(PIERCE_LEVEL, (byte)0);
      }
 -
-+    public Vec3d getVRAim(ServerVivePlayer vp){
-+		Vec3d aim = vp.getControllerDir(0);
-+    	if(!vp.isSeated() && vp.getDraw() > 0){
-+    		aim = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
-+    	}
-+    	return aim;
-+    }
++       
      public void shoot(Entity shooter, float pitch, float yaw, float p_184547_4_, float velocity, float inaccuracy)
      {
+-        float f = -MathHelper.sin(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
+-        float f1 = -MathHelper.sin(pitch * ((float)Math.PI / 180F));
+-        float f2 = MathHelper.cos(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
+-        this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
+-        this.setMotion(this.getMotion().add(shooter.getMotion().x, shooter.onGround ? 0.0D : shooter.getMotion().y, shooter.getMotion().z));
 +    	//VIVE SET AIM AND SPEED
-+        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
-+        if (vp !=null && vp.isVR())
-+        { 
-+        	if(this instanceof TridentEntity) {
-+        		Vec3d aim = vp.getControllerDir(0);
++    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
++    	if (vp !=null && vp.isVR())
++    	{ 
++    		int c = 0;
++    		if (((LivingEntity) shooter).getActiveHand() == Hand.OFF_HAND) c = 1;
++    		Vec3d aim = vp.getControllerDir(vp.isSeated() ? 0 :c);
++    		if(this instanceof TridentEntity) {
 +    			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 +    			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		       		
-+        	} else {
-+        		Vec3d aim = getVRAim(vp);
-+            	if(!vp.isSeated() && vp.getDraw() > 0){
-+            		velocity = velocity * vp.getDraw();  
-+            		this.damage *= 2;
-+            	}
++    		} else {
++    			if(!vp.isSeated() && vp.getDraw() > 0){
++    				aim = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
++    				velocity = velocity * vp.getDraw();  
++    				this.damage *= 2;
++    			}
 +    			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 +    			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
-+        	}
-+        }
-+        ///
-         float f = -MathHelper.sin(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
-         float f1 = -MathHelper.sin(pitch * ((float)Math.PI / 180F));
-         float f2 = MathHelper.cos(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
++    		}
++    	}
++    	///
++    	float f = -MathHelper.sin(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
++    	float f1 = -MathHelper.sin(pitch * ((float)Math.PI / 180F));
++    	float f2 = MathHelper.cos(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
++    	this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
++    	this.setMotion(this.getMotion().add(shooter.getMotion().x, shooter.onGround ? 0.0D : shooter.getMotion().y, shooter.getMotion().z));
+     }
+ 
+     public void shoot(double x, double y, double z, float velocity, float inaccuracy)

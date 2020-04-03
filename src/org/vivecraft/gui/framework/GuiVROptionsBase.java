@@ -3,6 +3,7 @@ package org.vivecraft.gui.framework;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
 import org.vivecraft.gui.framework.VROptionLayout.Position;
 import org.vivecraft.settings.VRSettings;
 
@@ -15,7 +16,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.text.StringTextComponent;
 import net.optifine.gui.TooltipManager;
-import org.lwjgl.glfw.GLFW;
 
 public abstract class GuiVROptionsBase extends Screen
 {

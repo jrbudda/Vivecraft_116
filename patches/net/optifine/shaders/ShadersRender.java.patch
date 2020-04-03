@@ -1,11 +1,92 @@
 --- a/net/optifine/shaders/ShadersRender.java
 +++ b/net/optifine/shaders/ShadersRender.java
-@@ -185,7 +185,7 @@
+@@ -16,6 +16,7 @@
+ import net.minecraft.client.renderer.IRenderTypeBuffer;
+ import net.minecraft.client.renderer.Matrix3f;
+ import net.minecraft.client.renderer.Matrix4f;
++import net.minecraft.client.renderer.RenderHelper;
+ import net.minecraft.client.renderer.RenderType;
+ import net.minecraft.client.renderer.WorldRenderer;
+ import net.minecraft.client.renderer.culling.ClippingHelperImpl;
+@@ -28,6 +29,7 @@
+ import net.minecraft.tileentity.EndPortalTileEntity;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.Direction;
++import net.minecraft.util.Hand;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+@@ -88,7 +90,7 @@
+     {
+         if (Shaders.isRenderingWorld)
+         {
+-            if (Shaders.usedDepthBuffers >= 2)
++            if (Shaders.usedDepthBuffers >= 2 & !Shaders.isShadowPass)
+             {
+                 GlStateManager.activeTexture(33995);
+                 Shaders.checkGLError("pre copy depth");
+@@ -201,7 +203,7 @@
          }
      }
  
 -    public static void renderShadowMap(GameRenderer entityRenderer, ActiveRenderInfo activeRenderInfo, int pass, float partialTicks, long finishTimeNano)
 +    public static void renderShadowMap(GameRenderer gameRenderer, ActiveRenderInfo activeRenderInfo, int pass, float partialTicks, long finishTimeNano)
      {
-     }
+         if (Shaders.usedShadowDepthBuffers > 0 && --Shaders.shadowPassCounter <= 0)
+         {
+@@ -267,6 +269,9 @@
+             worldrenderer.renderBlockLayer(RenderTypes.SOLID, matrixstack, d0, d1, d2);
+             Shaders.checkGLError("shadow terrain solid");
+             GlStateManager.enableAlphaTest();
++            //Vivecraft - needed???
++            GlStateManager.alphaFunc(516, 0.1F);
++            //
+             worldrenderer.renderBlockLayer(RenderTypes.CUTOUT_MIPPED, matrixstack, d0, d1, d2);
+             Shaders.checkGLError("shadow terrain cutoutmipped");
+             minecraft.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
+@@ -282,15 +287,32 @@
+             WorldRenderer worldrenderer1 = minecraft.worldRenderer;
+             EntityRendererManager entityrenderermanager = minecraft.getRenderManager();
+             IRenderTypeBuffer.Impl irendertypebuffer$impl = worldrenderer1.getRenderTypeTextures().getBufferSource();
+-
++         
++            Matrix4f light = new Matrix4f();
++            light.setIdentity();
++            RenderHelper.setupLevelDiffuseLighting(light);
++            
+             for (Entity entity : minecraft.world.getAllEntities())
+-            {
+-                if ((entityrenderermanager.shouldRender(entity, clippinghelperimpl, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && (entity != activeRenderInfo.getRenderViewEntity() || Shaders.isShadowPass || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && (!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
++            { //always render self shadow.
++                if ((entityrenderermanager.shouldRender(entity, clippinghelperimpl, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && 
++                		(true || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && 
++                		(!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
+                 {
++                    //Vivecraft shadow location.
++                    if(entity == activeRenderInfo.getRenderViewEntity()) { 
++                    	gameRenderer.restoreRVEPos((LivingEntity) entity);
++                    }
++                    //
+                     worldrenderer1.renderedEntity = entity;
+                     Shaders.nextEntity(entity);
+                     worldrenderer1.renderEntity(entity, d0, d1, d2, partialTicks, matrixstack, irendertypebuffer$impl);
+                     worldrenderer1.renderedEntity = null;
++                    //Vivecraft
++                    if(entity == activeRenderInfo.getRenderViewEntity()) {
++                    	gameRenderer.cacheRVEPos((LivingEntity) entity);
++                    	gameRenderer.setupRVE();
++                    }
++                    //
+                 }
+             }
  
+@@ -398,7 +420,8 @@
+             GlStateManager.depthMask(true);
+             GlStateManager.enableCull();
+             GlStateManager.disableBlend();
+-            GL30.glFlush();
++            // VIVECRAFT: yeah still no 3.0
++            //GL30.glFlush();
+             Shaders.checkGLError("shadow flush");
+             Shaders.isShadowPass = false;
+             minecraft.getProfiler().endStartSection("shadow postprocess");

@@ -1,6 +1,6 @@
 --- a/net/optifine/shaders/SVertexBuilder.java
 +++ b/net/optifine/shaders/SVertexBuilder.java
-@@ -6,6 +6,8 @@
+@@ -8,6 +8,8 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.vertex.VertexFormat;

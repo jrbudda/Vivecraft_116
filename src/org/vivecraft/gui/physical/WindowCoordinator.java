@@ -1,16 +1,16 @@
 package org.vivecraft.gui.physical;
 
+import java.util.Queue;
+import java.util.concurrent.LinkedTransferQueue;
+
+import org.vivecraft.physicalinventory.Semaphore;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CCloseWindowPacket;
 import net.minecraft.network.play.client.CCreativeInventoryActionPacket;
-
-import java.util.Queue;
-import java.util.concurrent.LinkedTransferQueue;
-
-import org.vivecraft.physicalinventory.Semaphore;
 
 /**
  * Coordinator class that makes sure sequential Window Operations such as clicking are not affected by server lag

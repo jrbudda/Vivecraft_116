@@ -1,27 +1,28 @@
 package org.vivecraft.gui.physical;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.lwjgl.opengl.GL11;
 import org.vivecraft.gui.physical.interactables.Interactable;
 import org.vivecraft.gui.physical.interactables.PhysicalItemSlot;
-import org.vivecraft.provider.MCOpenVR;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.*;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.inventory.container.WorkbenchContainer;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Quaternion;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.mojang.blaze3d.platform.GlStateManager;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
 
 public class PhysicalItemSlotGui extends PhysicalGui {

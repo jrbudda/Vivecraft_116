@@ -1,24 +1,24 @@
 --- a/net/minecraft/client/renderer/texture/AtlasTexture.java
 +++ b/net/minecraft/client/renderer/texture/AtlasTexture.java
+@@ -171,7 +171,7 @@
+             {
+                 GlStateManager.bindTexture(this.getMultiTexID().norm);
+ 
+-                for (TextureAtlasSprite textureatlassprite2 : list)
++                for (TextureAtlasSprite textureatlassprite2 : (List<TextureAtlasSprite>) list)
+                 {
+                     TextureAtlasSprite textureatlassprite5 = textureatlassprite2.spriteNormal;
+ 
 @@ -186,7 +186,7 @@
+             {
+                 GlStateManager.bindTexture(this.getMultiTexID().spec);
+ 
+-                for (TextureAtlasSprite textureatlassprite3 : list)
++                for (TextureAtlasSprite textureatlassprite3 : (List<TextureAtlasSprite>) list)
                  {
-                     GlStateManager.bindTexture(this.getMultiTexID().norm);
+                     TextureAtlasSprite textureatlassprite6 = textureatlassprite3.spriteSpecular;
  
--                    for (TextureAtlasSprite textureatlassprite2 : list)
-+                    for (TextureAtlasSprite textureatlassprite2 : (List<TextureAtlasSprite>)(List<?>)list)
-                     {
-                         TextureAtlasSprite textureatlassprite5 = textureatlassprite2.spriteNormal;
- 
-@@ -201,7 +201,7 @@
-                 {
-                     GlStateManager.bindTexture(this.getMultiTexID().spec);
- 
--                    for (TextureAtlasSprite textureatlassprite3 : list)
-+                    for (TextureAtlasSprite textureatlassprite3 : (List<TextureAtlasSprite>)(List<?>)list)
-                     {
-                         TextureAtlasSprite textureatlassprite6 = textureatlassprite3.spriteSpecular;
- 
-@@ -774,7 +774,7 @@
+@@ -752,7 +752,7 @@
                              }
                              else
                              {
@@ -27,7 +27,7 @@
                                  map.put(j, k + 1);
                              }
                          }
-@@ -788,12 +788,12 @@
+@@ -766,12 +766,12 @@
          }
  
          int l = 0;
@@ -43,7 +43,7 @@
              l += l1;
          }
  
-@@ -803,7 +803,7 @@
+@@ -781,7 +781,7 @@
  
          for (int j2 : set1)
          {

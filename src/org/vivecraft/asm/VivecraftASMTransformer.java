@@ -3,11 +3,6 @@ package org.vivecraft.asm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.vivecraft.asm.handler.ASMHandlerFixITeleporter;
-import org.vivecraft.asm.handler.ASMHandlerGuiContainer;
-import org.vivecraft.asm.handler.ASMHandlerGuiContainerCreative;
-import org.vivecraft.asm.handler.ASMHandlerGuiIngameForge;
-
 import net.minecraft.launchwrapper.IClassTransformer;
 
 public class VivecraftASMTransformer implements IClassTransformer {

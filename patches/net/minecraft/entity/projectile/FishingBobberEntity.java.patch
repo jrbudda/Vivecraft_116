@@ -12,7 +12,15 @@
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.block.Block;
  import net.minecraft.block.Blocks;
-@@ -85,10 +90,24 @@
+@@ -26,6 +31,7 @@
+ import net.minecraft.stats.Stats;
+ import net.minecraft.tags.FluidTags;
+ import net.minecraft.tags.ItemTags;
++import net.minecraft.util.Hand;
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.EntityRayTraceResult;
+@@ -85,10 +91,26 @@
          float f3 = MathHelper.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
          float f4 = -MathHelper.cos(-f * ((float)Math.PI / 180F));
          float f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
@@ -24,8 +32,10 @@
 +    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(angler.getUniqueID());
 +    	if (vp !=null && vp.isVR())
 +    	{
-+    		Vec3d aim = vp.getControllerDir(0);
-+    		Vec3d aimSource = vp.getControllerPos(0);
++			int c = 0;
++			if (p_i4184_1_.getActiveHand() == Hand.OFF_HAND) c = 1;
++    		Vec3d aim = vp.getControllerDir(c);
++    		Vec3d aimSource = vp.getControllerPos(vp.isSeated() ? 0 : c);
 +    		float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 +    		float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   
 +    		this.setLocationAndAngles(aimSource.x + aim.x*0.6f, aimSource.y+aim.y*0.6f, aimSource.z+aim.z*0.6f, yaw, pitch);
@@ -41,20 +51,22 @@
          Vec3d vec3d = new Vec3d((double)(-f3), (double)MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
          double d3 = vec3d.length();
          vec3d = vec3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
-@@ -236,6 +255,18 @@
+@@ -236,6 +258,20 @@
              this.setMotion(this.getMotion().scale(0.92D));
              this.recenterBoundingBox();
          }
 +        
-+        //Vivecraft nibblehaptics
-+    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(angler.getUniqueID());
-+    	if (vp !=null && vp.isVR()) {
-+    		if(this.currentState == State.BOBBING) {
-+    			if(this.getMotion().y <= -0.24) { //server makes the bobber jump downwards on a bite.
-+                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
-+    			}				
-+    		}
-+    	}
++        if(angler.isUser()) {
++        	//Vivecraft nibblehaptics
++        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(angler.getUniqueID());
++        	if (vp !=null && vp.isVR()) {
++        		if(this.currentState == State.BOBBING) {
++        			if(this.getMotion().y <= -0.24) { //server makes the bobber jump downwards on a bite.
++        				MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
++        			}				
++        		}
++        	}
++        }
 +    	//
 +    	
      }

@@ -1,5 +1,7 @@
 package org.vivecraft.gui.physical.interactables;
 
+import java.util.ArrayList;
+
 import org.vivecraft.api.VRData;
 import org.vivecraft.gui.physical.PhysicalInventory;
 import org.vivecraft.gui.physical.PhysicalItemSlotGui;
@@ -8,8 +10,6 @@ import org.vivecraft.utils.math.Quaternion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.ArrayList;
 
 public class ArmorDisplay extends PhysicalItemSlotGui{
 	//TODO better Model

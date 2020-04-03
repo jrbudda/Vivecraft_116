@@ -1,8 +1,9 @@
 package org.vivecraft.gui.physical.interactables;
 
-import net.minecraft.item.ItemGroup;
 import org.vivecraft.gui.physical.PhysicalItemSlotGui;
 import org.vivecraft.gui.physical.WindowCoordinator;
+
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
 public class CreativeItemSlot extends PhysicalItemSlot{

@@ -1,6 +1,5 @@
 package org.vivecraft.gui.framework;
 
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import org.vivecraft.settings.VRSettings;

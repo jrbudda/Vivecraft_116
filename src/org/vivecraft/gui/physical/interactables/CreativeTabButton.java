@@ -1,9 +1,9 @@
 package org.vivecraft.gui.physical.interactables;
 
-import net.minecraft.item.ItemGroup;
 import org.vivecraft.gui.physical.PhysicalInventory;
 import org.vivecraft.utils.math.Quaternion;
 
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.math.Vec3d;
 
 public class CreativeTabButton extends Button {

@@ -16,7 +16,7 @@
 -
 +        
 +        if (entityLiving instanceof ClientPlayerEntity && stack.getDisplayName().getString().equals("DRINK ME")) {
-+        	Minecraft.getInstance().vrPlayer.wfMode = -0.1;
++        	Minecraft.getInstance().vrPlayer.wfMode = -0.05;
 +        	Minecraft.getInstance().vrPlayer.wfCount = 400;
 +        }
 +        

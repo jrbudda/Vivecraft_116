@@ -18,6 +18,7 @@ public class ASMDelegator {
 		if (tab == ItemGroup.FOOD || tab == null) {
 			ItemStack eatMe = new ItemStack(Items.PUMPKIN_PIE).setDisplayName(new StringTextComponent("EAT ME"));
 			ItemStack drinkMe = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), Potions.WATER).setDisplayName(new StringTextComponent("DRINK ME"));
+			drinkMe.getTag().putInt("HideFlags", 32);
 			list.add(eatMe);
 			list.add(drinkMe);
 		}

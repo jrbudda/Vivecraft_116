@@ -1,16 +1,15 @@
 package org.vivecraft.gui.settings;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.vivecraft.gui.framework.GuiVROptionsBase;
 import org.vivecraft.gui.framework.VROptionLayout;
 import org.vivecraft.gui.framework.VROptionLayout.Position;
-import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
-import org.apache.commons.lang3.ArrayUtils;
 
 public class GuiRadialConfiguration extends GuiVROptionsBase
 {

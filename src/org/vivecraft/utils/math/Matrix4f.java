@@ -211,4 +211,14 @@ public class Matrix4f {
 	      out.m33 = this.M[3][3];
 	      return out;
 	   }
+   
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append(this.M[0][0]).append(' ').append(this.M[1][0]).append(' ').append(this.M[2][0]).append(' ').append(this.M[3][0]).append('\n');
+		buf.append(this.M[0][1]).append(' ').append(this.M[1][1]).append(' ').append(this.M[2][1]).append(' ').append(this.M[3][1]).append('\n');
+		buf.append(this.M[0][2]).append(' ').append(this.M[1][2]).append(' ').append(this.M[2][2]).append(' ').append(this.M[3][2]).append('\n');
+		buf.append(this.M[0][3]).append(' ').append(this.M[1][3]).append(' ').append(this.M[2][3]).append(' ').append(this.M[3][3]).append('\n');
+		return buf.toString();
+	}
+	
 }

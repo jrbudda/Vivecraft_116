@@ -21,7 +21,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.UseAction;
 import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.Vec3d;
 
@@ -113,6 +112,8 @@ public class BowTracker extends Tracker {
 
 	@Override
 	public void doProcess(ClientPlayerEntity player){
+		
+		
 		VRData vrData = mc.vrPlayer.vrdata_world_render;
 		if (vrData==null)
 			vrData=mc.vrPlayer.vrdata_world_pre;
@@ -176,6 +177,14 @@ public class BowTracker extends Tracker {
 			bow = player.getHeldItemOffhand();
 		}
 		
+		player.setItemInUseClient(bow, hand);
+		player.setItemInUseCountClient(10000000);
+		
+		
+		int stage0=bow.getUseDuration();
+		int stage1=bow.getUseDuration()-15;
+		int stage2=0;
+		
 		if(ammo !=null && notchDist <= notchDistThreshold && controllersDot <= notchDotThreshold)
 		{
 			//can draw
@@ -187,14 +196,14 @@ public class BowTracker extends Tracker {
 			tsNotch = Util.milliTime();
 			
 			if(!isDrawing){
-				player.setItemInUseClient(bow);
-				player.setItemInUseCountClient(bow.getUseDuration() - 1);
+				player.setItemInUseClient(bow, hand);
+				player.setItemInUseCountClient(stage0);
 				Minecraft.getInstance().physicalGuiManager.preClickAction();
 			}
 
 		} else if((Util.milliTime() - tsNotch) > 500) {
 			canDraw = false;
-			player.setItemInUseClient(ItemStack.EMPTY);//client draw only'
+			player.setItemInUseClient(ItemStack.EMPTY, hand);//client draw only'
 		}
 			
 		if (!isDrawing && canDraw  && pressed && !lastpressed) {
@@ -225,8 +234,9 @@ public class BowTracker extends Tracker {
 			MCOpenVR.triggerHapticPulse(0, 800); 	
 			//notch     	    	
 		}
-		
+			
 		if(isDrawing){
+		
 			currentDraw = controllersDist - notchDistThreshold ;
 			if (currentDraw > maxDraw) currentDraw = maxDraw;		
 			
@@ -235,15 +245,11 @@ public class BowTracker extends Tracker {
 		
 			int use = (int) (bow.getUseDuration() - getDrawPercent() * maxDrawMillis);
 
-			int stage0=bow.getUseDuration();
-			int stage1=bow.getUseDuration()-15;
-			int stage2=0;
-
-			player.setItemInUseClient(bow);//client draw only
+			player.setItemInUseClient(bow, hand);//client draw only
+		
 			double drawperc=getDrawPercent();
 			if(drawperc>=1) {
 				player.setItemInUseCountClient(stage2);
-
 			}else if(drawperc>0.4) {
 				player.setItemInUseCountClient(stage1);
 			}else {

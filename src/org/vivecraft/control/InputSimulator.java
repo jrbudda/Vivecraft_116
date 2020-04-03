@@ -1,11 +1,12 @@
 package org.vivecraft.control;
 
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class InputSimulator {
 	private static Set<Integer> pressedKeys = new HashSet<>();

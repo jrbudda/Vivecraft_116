@@ -2,11 +2,14 @@ package org.vivecraft.menuworlds;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.CubeCoordinateIterator;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.LightType;
@@ -14,15 +17,19 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.FuzzedBiomeMagnifier;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.lighting.WorldLightManager;
 
 public class FakeBlockAccess implements IWorldReader {
+	private int version;
+	private long seed;
 	private DimensionType dimensionType;
 	private WorldType worldType;
 	private Dimension dimension;
@@ -34,8 +41,12 @@ public class FakeBlockAccess implements IWorldReader {
 	private int ySize;
 	private int zSize;
 	private int ground;
+
+	private BiomeManager biomeManager;
 	
-	public FakeBlockAccess(BlockState[] blocks, byte[] skylightmap, byte[] blocklightmap, Biome[] biomemap, int xSize, int ySize, int zSize, int ground, DimensionType dimensionType, WorldType worldType, boolean hasSkyLight) {
+	public FakeBlockAccess(int version, long seed, BlockState[] blocks, byte[] skylightmap, byte[] blocklightmap, Biome[] biomemap, int xSize, int ySize, int zSize, int ground, DimensionType dimensionType, WorldType worldType, boolean hasSkyLight) {
+		this.version = version;
+		this.seed = seed;
 		this.blocks = blocks;
 		this.skylightmap = skylightmap;
 		this.blocklightmap = blocklightmap;
@@ -46,7 +57,9 @@ public class FakeBlockAccess implements IWorldReader {
 		this.ground = ground;
 		this.dimensionType = dimensionType;
 		this.worldType = worldType;
-		this.dimension = dimensionType.create(null); 
+		this.dimension = dimensionType.create(null);
+
+		this.biomeManager = new BiomeManager(this, seed, dimensionType.getMagnifier());
 	}
 	
 	private int encodeCoords(int x, int z) {
@@ -84,6 +97,10 @@ public class FakeBlockAccess implements IWorldReader {
 	public int getZSize() {
 		return zSize;
 	}
+
+	public long getSeed() {
+		return seed;
+	}
 	
 	public DimensionType getDimensionType() {
 		return dimensionType;
@@ -118,6 +135,35 @@ public class FakeBlockAccess implements IWorldReader {
 	@Override
 	public TileEntity getTileEntity(BlockPos pos) {
 		return null; // You're a funny guy, I kill you last
+	}
+
+	@Override
+	public int getBlockColor(BlockPos blockPosIn, ColorResolver colorResolverIn) {
+		int i = Minecraft.getInstance().gameSettings.biomeBlendRadius;
+
+		if (i == 0)
+		{
+			return colorResolverIn.getColor(this.getBiome(blockPosIn), (double)blockPosIn.getX(), (double)blockPosIn.getZ());
+		}
+		else
+		{
+			int j = (i * 2 + 1) * (i * 2 + 1);
+			int k = 0;
+			int l = 0;
+			int i1 = 0;
+			CubeCoordinateIterator cubecoordinateiterator = new CubeCoordinateIterator(blockPosIn.getX() - i, blockPosIn.getY(), blockPosIn.getZ() - i, blockPosIn.getX() + i, blockPosIn.getY(), blockPosIn.getZ() + i);
+			int j1;
+
+			for (BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(); cubecoordinateiterator.hasNext(); i1 += j1 & 255)
+			{
+				blockpos$mutable.setPos(cubecoordinateiterator.getX(), cubecoordinateiterator.getY(), cubecoordinateiterator.getZ());
+				j1 = colorResolverIn.getColor(this.getBiome(blockpos$mutable), (double)blockpos$mutable.getX(), (double)blockpos$mutable.getZ());
+				k += (j1 & 16711680) >> 16;
+				l += (j1 & 65280) >> 8;
+			}
+
+			return (k / j & 255) << 16 | (l / j & 255) << 8 | i1 / j & 255;
+		}
 	}
 
 	@Override
@@ -195,10 +241,24 @@ public class FakeBlockAccess implements IWorldReader {
 
 	@Override
 	public Biome getBiome(BlockPos pos) {
-		if (!checkCoords(pos))
-			return Biomes.PLAINS;
+		if (version == 2)
+			return getNoiseBiome(pos.getX(), 0, pos.getZ());
+		else
+			return this.biomeManager.getBiome(pos);
+	}
 
-		return biomemap[encodeCoords(pos.getX(), pos.getZ())];
+	@Override
+	public Biome getNoiseBiome(int x, int y, int z) {
+		if (!checkCoords(x, y, z)) {
+			x = MathHelper.clamp(x, 0, xSize - 1);
+			y = MathHelper.clamp(y, 0, ySize - 1);
+			z = MathHelper.clamp(z, 0, zSize - 1);
+		}
+
+		if (version == 2)
+			return biomemap[encodeCoords(x, z)];
+		else
+			return biomemap[((y / 4) * (zSize / 4) + (z / 4)) * (xSize / 4) + (x / 4)];
 	}
 
 	@Override
@@ -223,19 +283,16 @@ public class FakeBlockAccess implements IWorldReader {
 
 	@Override
 	public WorldLightManager getLightManager() {
-		// TODO Auto-generated method stub
-		return null;
+		return null; // uh?
 	}
 
 	@Override
 	public BiomeManager getBiomeManager() {
-		// TODO Auto-generated method stub
-		return null;
+		return biomeManager;
 	}
 
 	@Override
 	public Biome getNoiseBiomeRaw(int x, int y, int z) {
-		// TODO Auto-generated method stub
-		return null;
+		return null; // don't need this
 	}
 }

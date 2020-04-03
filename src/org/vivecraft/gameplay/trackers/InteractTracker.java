@@ -1,74 +1,33 @@
 package org.vivecraft.gameplay.trackers;
 
-import java.lang.reflect.Field;
-import java.nio.channels.GatheringByteChannel;
 import java.util.HashSet;
-import java.util.List;
-
-import javax.swing.RowFilter.ComparisonType;
 
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.reflection.MCReflection.ReflectionMethod;
 
-import net.minecraft.block.AbstractButtonBlock;
-import net.minecraft.block.BambooBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.FenceGateBlock;
-import net.minecraft.block.LadderBlock;
-import net.minecraft.block.LeverBlock;
-import net.minecraft.block.TorchBlock;
-import net.minecraft.block.VineBlock;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.screen.inventory.HorseInventoryScreen;
 import net.minecraft.client.renderer.FirstPersonRenderer.VRFirstPersonArmSwing;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.WaterMobEntity;
-import net.minecraft.entity.passive.horse.AbstractHorseEntity;
-import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.item.AbstractMapItem;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.CarrotOnAStickItem;
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.FishingRodItem;
-import net.minecraft.item.FlintAndSteelItem;
-import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.ShearsItem;
-import net.minecraft.item.ShieldItem;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolItem;
-import net.minecraft.item.TridentItem;
-import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.world.World;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.math.RayTraceContext.BlockMode;
-import net.minecraft.util.math.RayTraceContext.FluidMode;
+import net.minecraft.world.World;
 
 public class InteractTracker extends Tracker{
 
@@ -215,15 +174,15 @@ public class InteractTracker extends Tracker{
 				if (!active[c]) continue; //how tho?
 				Hand hand = Hand.values()[c];
 				if(inEntityHit[c]!=null) {            
-					if (mc.playerController.interactWithEntity(mc.player, inEntity[c], inEntityHit[c], hand) != ActionResultType.SUCCESS)
-					 if (mc.playerController.interactWithEntity(mc.player, inEntity[c], hand)  != ActionResultType.SUCCESS) {
+					if (!mc.playerController.interactWithEntity(mc.player, inEntity[c], inEntityHit[c], hand).isSuccessOrConsume())
+					 if (!mc.playerController.interactWithEntity(mc.player, inEntity[c], hand).isSuccessOrConsume()) {
 						 continue;
 					 }
 					mc.player.swingArm(hand, VRFirstPersonArmSwing.Interact);
 					MCOpenVR.triggerHapticPulse(c, 750);
 				}
 				else if (inBlockHit[c]!=null) {
-					if(	mc.playerController.processRightClickBlock(mc.player, (ClientWorld) mc.player.world, hand, inBlockHit[c]) == ActionResultType.SUCCESS)
+					if(	mc.playerController.processRightClickBlock(mc.player, (ClientWorld) mc.player.world, hand, inBlockHit[c]).isSuccessOrConsume())
 					{
 						mc.player.swingArm(hand, VRFirstPersonArmSwing.Interact);
 						MCOpenVR.triggerHapticPulse(c, 750);	

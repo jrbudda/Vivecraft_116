@@ -1,6 +1,6 @@
 --- a/net/optifine/shaders/Shaders.java
 +++ b/net/optifine/shaders/Shaders.java
-@@ -117,13 +117,18 @@
+@@ -121,13 +121,18 @@
  import org.lwjgl.opengl.EXTFramebufferObject;
  import org.lwjgl.opengl.GL;
  import org.lwjgl.opengl.GL11;
@@ -20,7 +20,7 @@
      public static boolean isInitializedOnce = false;
      public static boolean isShaderPackInitialized = false;
      public static GLCapabilities capabilities;
-@@ -331,12 +336,12 @@
+@@ -336,12 +341,12 @@
      static final int MaxShadowColorBuffers = 8;
      static final int MaxShadowDepthBuffers = 2;
      static int usedColorBuffers = 0;
@@ -35,7 +35,7 @@
      static int sfb = 0;
      private static int[] gbuffersFormat = new int[8];
      public static boolean[] gbuffersClear = new boolean[8];
-@@ -426,7 +431,7 @@
+@@ -431,7 +436,7 @@
      private static ShaderOption[] shaderPackOptions = null;
      private static Set<String> shaderPackOptionSliders = null;
      static ShaderProfile[] shaderPackProfiles = null;
@@ -44,7 +44,7 @@
      static Map<String, IExpressionBool> shaderPackProgramConditions = new HashMap<>();
      public static final String PATH_SHADERS_PROPERTIES = "/shaders/shaders.properties";
      public static PropertyDefaultFastFancyOff shaderPackClouds = new PropertyDefaultFastFancyOff("clouds", "Clouds", 0);
-@@ -502,7 +507,7 @@
+@@ -507,7 +512,7 @@
      static final FloatBuffer tempMatrixDirectBuffer = nextFloatBuffer(16);
      static final FloatBuffer tempDirectFloatBuffer = nextFloatBuffer(16);
      static final IntBuffer dfbColorTextures = nextIntBuffer(16);
@@ -53,7 +53,7 @@
      static final IntBuffer sfbColorTextures = nextIntBuffer(8);
      static final IntBuffer sfbDepthTextures = nextIntBuffer(2);
      static final IntBuffer dfbDrawBuffers = nextIntBuffer(8);
-@@ -521,6 +526,11 @@
+@@ -526,6 +531,11 @@
      {
      }
  
@@ -65,7 +65,7 @@
      private static ByteBuffer nextByteBuffer(int size)
      {
          ByteBuffer bytebuffer = bigBuffer;
-@@ -825,7 +835,7 @@
+@@ -830,7 +840,7 @@
              shaderPackOptions = null;
              shaderPackOptionSliders = null;
              shaderPackProfiles = null;
@@ -74,7 +74,35 @@
              shaderPackProgramConditions.clear();
              shaderPackClouds.resetValue();
              shaderPackOldHandLight.resetValue();
-@@ -981,7 +991,7 @@
+@@ -886,6 +896,27 @@
+         loadShaderPackResources();
+         loadShaderPackDimensions();
+         shaderPackOptions = loadShaderPackOptions();
++    
++        //Vivecraft clean shader options
++        for (ShaderOption sh : shaderPackOptions) {
++			System.out.println("Shader Option: " + sh.toString());
++			if (sh.getName().toLowerCase().contains("motion_blur")) //seus
++				sh.setValue("false");
++			if (sh.getName().toLowerCase().contains("motionblur")) //bsl, UShader
++				sh.setValue("false");
++			if (sh.getName().toLowerCase().contains("dof")) //bsl
++				sh.setValue("false");
++			if (sh.getName().toLowerCase().contains("dirtyLens")) //bsl
++				sh.setValue("false");
++			if (sh.getName().toLowerCase().contains("lensflare")) //bsl
++				sh.setValue("false");
++			if (sh.getName().toLowerCase().contains("idle_hands")) //qol
++				sh.setValue("false");
++			if (sh.getName().toLowerCase().contains("taa")) //sildurs
++				sh.setValue("false");
++		}
++        //
++        
+         loadShaderPackProperties();
+         boolean flag3 = shaderPackLoaded != flag;
+         boolean flag4 = isOldLighting() != flag1;
+@@ -1059,7 +1090,7 @@
                  shaderPackFrustumCulling.loadFrom(properties);
                  shaderPackOptionSliders = ShaderPackParser.parseOptionSliders(properties, shaderPackOptions);
                  shaderPackProfiles = ShaderPackParser.parseProfiles(properties, shaderPackOptions);
@@ -83,7 +111,7 @@
                  shaderPackProgramConditions = ShaderPackParser.parseProgramConditions(properties, shaderPackOptions);
                  customTexturesGbuffers = loadCustomTextures(properties, 0);
                  customTexturesComposite = loadCustomTextures(properties, 1);
-@@ -1486,7 +1496,7 @@
+@@ -1564,7 +1595,7 @@
      {
          ShaderOption[] ashaderoption = (ShaderOption[])shaderPackOptions.clone();
  
@@ -92,7 +120,7 @@
          {
              if (shaderPackProfiles != null)
              {
-@@ -1500,7 +1510,7 @@
+@@ -1578,7 +1609,7 @@
          else
          {
              String s = screenName != null ? "screen." + screenName : "screen";
@@ -101,7 +129,7 @@
  
              if (screenshaderoptions == null)
              {
-@@ -1521,7 +1531,7 @@
+@@ -1599,7 +1630,7 @@
                      }
                      else if (shaderoption instanceof ShaderOptionRest)
                      {
@@ -110,7 +138,7 @@
                          list.addAll(Arrays.asList(ashaderoption2));
                      }
                      else
-@@ -1540,13 +1550,13 @@
+@@ -1618,13 +1649,13 @@
      {
          String s = screenName != null ? "screen." + screenName : "screen";
  
@@ -126,7 +154,7 @@
              return screenshaderoptions == null ? def : screenshaderoptions.getColumns();
          }
      }
-@@ -2327,6 +2337,8 @@
+@@ -2404,6 +2435,8 @@
              }
  
              checkGLError("Shaders.init");
@@ -135,7 +163,7 @@
          }
      }
  
-@@ -3443,8 +3455,14 @@
+@@ -3520,8 +3553,14 @@
                  setProgramUniform1f(uniform_viewWidth, (float)renderWidth);
                  setProgramUniform1f(uniform_viewHeight, (float)renderHeight);
                  setProgramUniform1f(uniform_near, 0.05F);
@@ -152,7 +180,15 @@
                  setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
                  setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
                  setProgramUniform3f(uniform_upPosition, upPosition[0], upPosition[1], upPosition[2]);
-@@ -3845,20 +3863,23 @@
+@@ -3893,6 +3932,7 @@
+         renderDisplayHeight = mc.getMainWindow().getFramebufferHeight();
+         renderWidth = Math.round((float)renderDisplayWidth * configRenderResMul);
+         renderHeight = Math.round((float)renderDisplayHeight * configRenderResMul);
++        System.out.println("Shaders Render Res: " + renderWidth + " x " + renderHeight);
+         setupFrameBuffer();
+     }
+ 
+@@ -3922,20 +3962,23 @@
          GL32.glDrawBuffers(0);
          GL32.glReadBuffer(0);
  
@@ -185,7 +221,7 @@
          checkGLError("FT d");
  
          for (int k = 0; k < usedColorBuffers; ++k)
-@@ -4016,7 +4037,7 @@
+@@ -4093,7 +4136,7 @@
          checkWorldChanged(mc.world);
          mc = minecraft;
          mc.getProfiler().startSection("init");
@@ -194,16 +230,36 @@
  
          if (!isShaderPackInitialized)
          {
-@@ -4119,7 +4140,7 @@
+@@ -4113,9 +4156,10 @@
+             }
+         }
+ 
+-        if (mc.getMainWindow().getFramebufferWidth() != renderDisplayWidth || mc.getMainWindow().getFramebufferHeight() != renderDisplayHeight)
++        if (mc.stereoProvider.reinitShadersFlag || mc.getMainWindow().getFramebufferWidth() != renderDisplayWidth || mc.getMainWindow().getFramebufferHeight() != renderDisplayHeight)
+         {
+             resize();
++            mc.stereoProvider.reinitShadersFlag  = false;
+         }
+ 
+         if (needResizeShadow)
+@@ -4167,7 +4211,7 @@
+ 
+             if (entity != null)
+             {
+-                isSleeping = entity instanceof LivingEntity && ((LivingEntity)entity).isSleeping();
++                isSleeping = false;//entity instanceof LivingEntity && ((LivingEntity)entity).isSleeping();
+                 eyePosY = (float)activeRenderInfo.getProjectedView().getY();
+                 eyeBrightness = mc.getRenderManager().getPackedLight(entity, partialTicks);
+                 float f2 = (float)diffSystemTime * 0.01F;
+@@ -4196,7 +4240,6 @@
  
                      if (livingentity.isPotionActive(Effects.NIGHT_VISION))
                      {
 -                        GameRenderer gamerenderer = entityRenderer;
-+                        GameRenderer gamerenderer = gameRenderer;
                          nightVision = GameRenderer.getNightVisionBrightness(livingentity, partialTicks);
                      }
  
-@@ -4162,7 +4183,9 @@
+@@ -4239,7 +4282,9 @@
          previousModelView.position(0);
          modelView.position(0);
          checkGLError("beginRender");
@@ -214,10 +270,30 @@
          mc.getProfiler().endSection();
          EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
  
-@@ -4580,13 +4603,24 @@
-         floatbuffer.clear();
-         GL32.glGetFloatv(2982, floatbuffer);
-         floatbuffer.get(tempMat, 0, 16);
+@@ -4511,9 +4556,16 @@
+         projection.position(0);
+         projectionInverse.position(0);
+         Matrix4f matrix4f = matrixStackIn.getLast().getMatrix();
+-        Matrix4f matrix4f1 = new Matrix4f(matrix4f);
+-        matrix4f1.transpose();
+-        matrix4f1.write(tempMat);
++        
++        //Vivecraft - I do not know why this is necessary to fix shadows. It should be in stereo already.
++        MatrixStack mat = new MatrixStack();
++        mat.getLast().getMatrix().setIdentity();
++        mat.getLast().getMatrix().mul(matrix4f);
++        gameRenderer.applystereo(mc.currentPass, mat);
++        //
++        
++        mat.getLast().getMatrix().transpose();
++        mat.getLast().getMatrix().write(tempMat);
+         modelView.position(0);
+         modelView.put(tempMat);
+         SMath.invertMat4FBFA((FloatBuffer)modelViewInverse.position(0), (FloatBuffer)modelView.position(0), faModelViewInverse, faModelView);
+@@ -4653,13 +4705,24 @@
+         Matrix4f matrix4f1 = new Matrix4f(matrix4f);
+         matrix4f1.transpose();
+         matrix4f1.write(tempMat);
 +    	if(Minecraft.getInstance().currentPass == RenderPass.THIRD) {
 +    		//Vivecraft
 +    		SMath.multiplyMat4xVec4(sunPositionT, tempMat, sunPosModelView);
@@ -236,7 +312,7 @@
          setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
          setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
 -
-+    	}
++	}
          if (customUniforms != null)
          {
              customUniforms.update();

@@ -102,7 +102,7 @@
 +    		if (mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_HAPTIC ||
 +    				mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_BOTH)
 +    			if(mc.vrSettings.seated == false) 
-+    				MCOpenVR.triggerHapticPulse(ControllerType.LEFT, 0.2f, 1000, 500);
++    				MCOpenVR.triggerHapticPulse(ControllerType.LEFT, 0.2f, 1000, 1);
 +
 +    		if (mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_SOUND ||
 +    				mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_BOTH) {

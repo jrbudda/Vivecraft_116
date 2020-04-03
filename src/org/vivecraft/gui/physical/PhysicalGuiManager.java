@@ -1,20 +1,21 @@
 package org.vivecraft.gui.physical;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.logging.Logger;
+
 import org.vivecraft.gameplay.trackers.Tracker;
+import org.vivecraft.utils.Utils;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.inventory.container.ClickType;
-
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import org.vivecraft.utils.Utils;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Logger;
 /**
  * Misc definitions:<br>
  * Held item: item after clicking it in the gui to pick it up.

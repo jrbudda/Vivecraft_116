@@ -13,9 +13,9 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import com.google.common.io.Files;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.IntIdentityHashBiMap;
@@ -29,7 +29,7 @@ import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.dimension.DimensionType;
 
 public class MenuWorldExporter {
-	public static final int VERSION = 2;
+	public static final int VERSION = 3;
 	public static final int MIN_VERSION = 2;
 
 	public static byte[] saveArea(World world, int xMin, int zMin, int xSize, int zSize, int ground) throws IOException {
@@ -39,14 +39,11 @@ public class MenuWorldExporter {
 		int[] blocks = new int[xSize * ySize * zSize];
 		byte[] skylightmap = new byte[xSize * ySize * zSize];
 		byte[] blocklightmap = new byte[xSize * ySize * zSize];
-		int[] biomemap = new int[xSize * zSize];
+		int[] biomemap = new int[(xSize * ySize * zSize) / 64];
 		for (int x = xMin; x < xMin + xSize; x++) {
 			int xl = x - xMin;
 			for (int z = zMin; z < zMin + zSize; z++) {
 				int zl = z - zMin;
-				int index2 = zl * xSize + xl;
-				BlockPos pos2 = new BlockPos(x, 0, z);
-				biomemap[index2] = (byte)Registry.BIOME.getId(world.getBiome(pos2));
 				for (int y = 0; y < ySize; y++) {
 					int index3 = (y * zSize + zl) * xSize + xl;
 					BlockPos pos3 = new BlockPos(x, y, z);
@@ -54,6 +51,11 @@ public class MenuWorldExporter {
 					blocks[index3] = mapper.getId(state);
 					skylightmap[index3] = (byte)world.getLightFor(LightType.SKY, pos3);
 					blocklightmap[index3] = (byte)world.getLightFor(LightType.BLOCK, pos3);
+
+					if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
+						int indexBiome = ((y / 4) * (zSize / 4) + (zl / 4)) * (xSize / 4) + (xl / 4);
+						biomemap[indexBiome] = Registry.BIOME.getId(world.getNoiseBiome(x, y, z));
+					}
 				}
 			}
 		}
@@ -67,6 +69,7 @@ public class MenuWorldExporter {
 		dos.writeInt(world.dimension.getType().getId());
 		dos.writeUTF(world.getWorldInfo().getGenerator().getName());
 		dos.writeBoolean(world.dimension.hasSkyLight()); // because we can't init it later
+		dos.writeLong(world.getWorldInfo().getSeed());
 		mapper.writePalette(dos);
 		for (int i = 0; i < blocks.length; i++) {
 			dos.writeInt(blocks[i]);
@@ -131,6 +134,9 @@ public class MenuWorldExporter {
 		if (worldType == null)
 			worldType = WorldType.DEFAULT;
 		boolean hasSkyLight = dis.readBoolean();
+		long seed = 0;
+		if (header.version >= 3)
+			seed = dis.readLong();
 		BlockStateMapper mapper = new BlockStateMapper();
 		mapper.readPalette(dis);
 		BlockState[] blocks = new BlockState[xSize * ySize * zSize];
@@ -144,12 +150,16 @@ public class MenuWorldExporter {
 			skylightmap[i] = (byte)(b & 15);
 			blocklightmap[i] = (byte)(b >> 4);
 		}
-		Biome[] biomemap = new Biome[xSize * zSize];
+		Biome[] biomemap;
+		if (header.version == 2)
+			biomemap = new Biome[xSize * zSize];
+		else
+			biomemap = new Biome[(xSize * ySize * zSize) / 64];
 		for (int i = 0; i < biomemap.length; i++) {
 			biomemap[i] = getBiome(dis.readInt());
 		}
 		
-		return new FakeBlockAccess(blocks, skylightmap, blocklightmap, biomemap, xSize, ySize, zSize, ground, dimensionType, worldType, hasSkyLight);
+		return new FakeBlockAccess(header.version, seed, blocks, skylightmap, blocklightmap, biomemap, xSize, ySize, zSize, ground, dimensionType, worldType, hasSkyLight);
 	}
     
 	public static FakeBlockAccess loadWorld(InputStream is) throws IOException, DataFormatException {
@@ -214,7 +224,7 @@ public class MenuWorldExporter {
 			paletteMap.clear();
 			int size = dis.readInt();
 			for (int i = 0; i < size; i++) {
-				CompoundNBT tag = CompressedStreamTools.read(dis);
+				CompoundNBT tag = CompoundNBT.TYPE.func_225649_b_(dis, 0, NBTSizeTracker.INFINITE);
 				paletteMap.add(NBTUtil.readBlockState(tag));
 			}
 		}

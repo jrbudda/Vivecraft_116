@@ -2,8 +2,9 @@ package org.vivecraft.gui.framework;
 
 import org.vivecraft.settings.VRSettings;
 
-import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.platform.GlStateManager;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.MathHelper;
 
 public class GuiVROptionSlider extends GuiVROptionButton

@@ -1,19 +1,13 @@
 package org.vivecraft.gui.settings;
 
-import java.util.function.BiFunction;
-
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
-import org.vivecraft.gui.framework.GuiVROptionButton;
 import org.vivecraft.gui.framework.GuiVROptionsBase;
 import org.vivecraft.gui.framework.VROptionEntry;
 import org.vivecraft.settings.VRSettings;
-import org.vivecraft.settings.VRSettings.VrOptions;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.math.Vec2f;
-import org.apache.commons.lang3.ArrayUtils;
 
 public class GuiHUDSettings extends GuiVROptionsBase
 {

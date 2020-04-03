@@ -1,8 +1,7 @@
 package org.vivecraft.render;
 
-import org.vivecraft.utils.Utils;
-
 import org.lwjgl.opengl.ARBShaderObjects;
+import org.vivecraft.utils.Utils;
 
 public class VRShaders {
 	public static int _Lanczos_shaderProgramId = -1;

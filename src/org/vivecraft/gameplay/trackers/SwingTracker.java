@@ -6,29 +6,18 @@ import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 
-import net.minecraft.block.BambooBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LadderBlock;
 import net.minecraft.block.NoteBlock;
-import net.minecraft.block.TorchBlock;
 import net.minecraft.block.VineBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.screen.inventory.HorseInventoryScreen;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.WaterMobEntity;
-import net.minecraft.entity.passive.horse.AbstractHorseEntity;
-import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.item.AbstractMapItem;
 import net.minecraft.item.ArrowItem;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.CarrotOnAStickItem;
-import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.FlintAndSteelItem;
 import net.minecraft.item.HoeItem;
@@ -36,11 +25,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.ShearsItem;
-import net.minecraft.item.ShieldItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
 import net.minecraft.item.TridentItem;
-import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -49,11 +36,10 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
+import net.minecraft.util.math.RayTraceResult.Type;
+import net.minecraft.util.math.Vec3d;
 
 public class SwingTracker extends Tracker{
 
@@ -277,7 +263,7 @@ public class SwingTracker extends Tracker{
         							this.shouldIlookatMyHand[c] = true;
         							if (IAmLookingAtMyHand[c]){
         								Minecraft.getInstance().physicalGuiManager.preClickAction();
-        								if(	Minecraft.getInstance().playerController.processRightClick(player, player.world,c==0?Hand.MAIN_HAND:Hand.OFF_HAND)==ActionResultType.SUCCESS){
+        								if(	Minecraft.getInstance().playerController.processRightClick(player, player.world,c==0?Hand.MAIN_HAND:Hand.OFF_HAND).isSuccessOrConsume()){
         									mc.gameRenderer.itemRenderer.resetEquippedProgress(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);					
         								}
         							}

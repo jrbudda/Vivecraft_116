@@ -1,13 +1,11 @@
 package org.vivecraft.gui.settings;
 
-import org.vivecraft.gui.framework.GuiVROptionButton;
 import org.vivecraft.gui.framework.GuiVROptionsBase;
 import org.vivecraft.gui.framework.VROptionEntry;
 import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
 
 public class GuiSeatedOptions extends GuiVROptionsBase
 {

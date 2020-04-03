@@ -1,17 +1,13 @@
 package org.vivecraft.gameplay.trackers;
 
-import org.vivecraft.api.VRData.VRDevicePose;
-import org.vivecraft.gameplay.OpenVRPlayer;
 import org.vivecraft.provider.MCOpenVR;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.minecart.MinecartEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 

@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/settings/AbstractOption.java
 +++ b/net/minecraft/client/settings/AbstractOption.java
+@@ -140,7 +140,7 @@
+             return d0 == p_lambda$static$23_1_.getMaxValue() ? s + I18n.format("options.framerateLimit.max") : s + I18n.format("options.framerate", (int)d0);
+         }
+     });
+-    public static final SliderPercentageOption GAMMA = new SliderPercentageOption("options.gamma", 0.0D, 1.0D, 0.0F, (p_lambda$static$24_0_) ->
++    public static final SliderPercentageOption GAMMA = new SliderPercentageOption("options.gamma", -0.5D, 1.0D, 0.0F, (p_lambda$static$24_0_) ->
+     {
+         return p_lambda$static$24_0_.gamma;
+     }, (p_lambda$static$25_0_, p_lambda$static$25_1_) ->
 @@ -151,12 +151,21 @@
          double d0 = p_lambda$static$26_1_.normalizeValue(p_lambda$static$26_1_.get(p_lambda$static$26_0_));
          String s = p_lambda$static$26_1_.getDisplayString();

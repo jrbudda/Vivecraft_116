@@ -18,7 +18,7 @@
          {
              Matcher matcher = pattern.matcher(s1);
  
-@@ -754,7 +754,7 @@
+@@ -766,7 +766,7 @@
          Map<String, IExpression> map = new HashMap<>();
          List<CustomUniform> list = new ArrayList<>();
  
@@ -27,7 +27,7 @@
          {
              String[] astring = Config.tokenize(s4, ".");
  
-@@ -851,7 +851,7 @@
+@@ -863,7 +863,7 @@
  
      public static void parseAlphaStates(Properties props)
      {
@@ -36,7 +36,7 @@
          {
              String[] astring = Config.tokenize(s, ".");
  
-@@ -915,7 +915,7 @@
+@@ -927,7 +927,7 @@
  
      public static void parseBlendStates(Properties props)
      {
@@ -45,7 +45,7 @@
          {
              String[] astring = Config.tokenize(s, ".");
  
-@@ -990,7 +990,7 @@
+@@ -1002,7 +1002,7 @@
  
      public static void parseRenderScales(Properties props)
      {
@@ -54,7 +54,7 @@
          {
              String[] astring = Config.tokenize(s, ".");
  
-@@ -1054,7 +1054,7 @@
+@@ -1066,7 +1066,7 @@
  
      public static void parseBuffersFlip(Properties props)
      {

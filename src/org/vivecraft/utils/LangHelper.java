@@ -5,13 +5,13 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.optifine.Config;
-
-import org.apache.commons.io.IOUtils;
 
 public class LangHelper {
 	public static void loadLocaleData() {

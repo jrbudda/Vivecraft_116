@@ -1,21 +1,14 @@
 package org.vivecraft.control;
 
-import net.minecraft.client.GameSettings;
-import net.minecraft.util.MovementInput;
-import org.vivecraft.control.ControllerType;
-import org.vivecraft.control.TrackedController;
-import org.vivecraft.control.VRInputAction;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
-import org.vivecraft.gameplay.screenhandlers.RadialHandler;
 import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Vector2;
 
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.main.Main;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.MovementInput;
 
 public class VivecraftMovementInput extends MovementInput {
 	private final GameSettings gameSettings;

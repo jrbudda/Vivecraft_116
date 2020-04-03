@@ -1,15 +1,14 @@
 package org.vivecraft.asm.handler;
 
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 import org.vivecraft.asm.ASMClassHandler;
 import org.vivecraft.asm.ASMMethodHandler;
 import org.vivecraft.asm.ASMUtil;
 import org.vivecraft.asm.ClassTuple;
 import org.vivecraft.asm.MethodTuple;
-
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
 
 public class ASMHandlerGuiIngameForge extends ASMClassHandler {
 	@Override
