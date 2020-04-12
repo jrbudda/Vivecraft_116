@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/gui/toasts/ToastGui.java
++++ b/net/minecraft/client/gui/toasts/ToastGui.java
+@@ -120,7 +120,9 @@
+             }
+ 
+             RenderSystem.pushMatrix();
+-            RenderSystem.translatef((float)p_193684_1_ - 160.0F * this.getVisibility(i), (float)(p_193684_2_ * 32), (float)(800 + p_193684_2_));
++            //Vivecraft - render toasts from bottom up
++            RenderSystem.translatef((float)p_193684_1_ - 160.0F * this.getVisibility(i), (float)(mc.getMainWindow().getScaledHeight() - 68 - 32 - p_193684_2_ * 32), (float)(800 + p_193684_2_));
++            //
+             IToast.Visibility itoast$visibility = this.toast.draw(ToastGui.this, i - this.visibleTime);
+             RenderSystem.popMatrix();
+ 

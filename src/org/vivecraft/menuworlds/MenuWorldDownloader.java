@@ -47,16 +47,16 @@ public class MenuWorldDownloader {
 		init();
 		VRSettings settings = Minecraft.getInstance().vrSettings;
 
-		List<MenuWorldItem> worldList = new ArrayList<>();
-		if (settings.menuWorldSelection == VRSettings.MENU_WORLD_BOTH || settings.menuWorldSelection == VRSettings.MENU_WORLD_CUSTOM)
-			worldList.addAll(getCustomWorlds());
-		if (settings.menuWorldSelection == VRSettings.MENU_WORLD_BOTH || settings.menuWorldSelection == VRSettings.MENU_WORLD_OFFICIAL || worldList.size() == 0)
-			worldList.addAll(getOfficialWorlds());
-
-		if (worldList.size() == 0) {
-			return getRandomWorldFallback();
-		}
 		try {
+			List<MenuWorldItem> worldList = new ArrayList<>();
+			if (settings.menuWorldSelection == VRSettings.MENU_WORLD_BOTH || settings.menuWorldSelection == VRSettings.MENU_WORLD_CUSTOM)
+				worldList.addAll(getCustomWorlds());
+			if (settings.menuWorldSelection == VRSettings.MENU_WORLD_BOTH || settings.menuWorldSelection == VRSettings.MENU_WORLD_OFFICIAL || worldList.size() == 0)
+				worldList.addAll(getOfficialWorlds());
+
+			if (worldList.size() == 0)
+				return getRandomWorldFallback();
+
 			MenuWorldItem world = getRandomWorldFromList(worldList);
 			return getStreamForWorld(world);
 		} catch (IOException e) {

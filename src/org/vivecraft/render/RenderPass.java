@@ -6,4 +6,4 @@ public enum RenderPass {
 	CENTER,
 	THIRD,
 	GUI
-	}
+}

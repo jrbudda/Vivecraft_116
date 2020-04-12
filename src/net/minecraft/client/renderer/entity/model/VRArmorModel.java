@@ -1,6 +1,9 @@
 package net.minecraft.client.renderer.entity.model;
 
+import org.vivecraft.render.PlayerModelController;
+
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class VRArmorModel<T extends LivingEntity> extends BipedModel<T> implements IHasArm, IHasHead
 {
@@ -13,5 +16,18 @@ public class VRArmorModel<T extends LivingEntity> extends BipedModel<T> implemen
 			float netHeadYaw, float headPitch) {
 		//Sometimes its best just to do nothing.
 		//this is handled in VRPlayerModel.
+		
+    	PlayerModelController.RotInfo rotInfo = PlayerModelController.getInstance().getRotationsForPlayer(((PlayerEntity)entityIn).getUniqueID());
+    	if(rotInfo == null) return;
+    	if(rotInfo.seated) {
+    		float tempx = this.bipedHead.rotateAngleX;
+    		float tempy = this.bipedHead.rotateAngleY;
+    		float tempz = this.bipedHead.rotateAngleZ;
+    		super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    		this.bipedHead.rotateAngleX = tempx;
+    		this.bipedHead.rotateAngleY = tempy;
+    		this.bipedHead.rotateAngleZ = tempz;
+    	}
+		
 	}
 }

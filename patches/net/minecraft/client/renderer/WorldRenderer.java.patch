@@ -240,7 +240,7 @@
          irendertypebuffer$impl.finish(Atlases.getTranslucentBlockType());
          irendertypebuffer$impl.finish(Atlases.getBannerType());
          irendertypebuffer$impl.finish(Atlases.getShieldType());
-@@ -1661,10 +1730,23 @@
+@@ -1661,10 +1730,22 @@
          this.renderTypeTextures.getCrumblingBufferSource().finish();
          irendertypebuffer$impl.finish(RenderType.getLines());
          irendertypebuffer$impl.finish();
@@ -257,7 +257,6 @@
 +        RenderSystem.color4f(1, 1, 1, 1);
 +        RenderHelper.enableStandardItemLighting();
 +        RenderHelper.disableStandardItemLighting();
-+   //      RenderSystem.loadIdentity();
  
          if (flag1)
          {
@@ -265,7 +264,7 @@
              Shaders.preWater();
          }
  
-@@ -2828,10 +2910,11 @@
+@@ -2828,10 +2909,11 @@
      {
          bufferIn.pos(xIn - camX, (double)yIn - camY, zIn - camZ).tex(texU, texV).endVertex();
      }
@@ -279,7 +278,7 @@
      }
  
      public static void drawVoxelShapeParts(MatrixStack matrixStackIn, IVertexBuilder bufferIn, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
-@@ -3290,6 +3373,8 @@
+@@ -3290,6 +3372,8 @@
      {
          Random random = this.world.rand;
  
@@ -288,7 +287,7 @@
          switch (type)
          {
              case 1000:
-@@ -3345,18 +3430,26 @@
+@@ -3345,18 +3429,26 @@
                  break;
  
              case 1011:
@@ -315,7 +314,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3377,14 +3470,26 @@
+@@ -3377,14 +3469,26 @@
                  break;
  
              case 1019:
@@ -342,7 +341,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3413,10 +3518,17 @@
+@@ -3413,10 +3517,17 @@
                  break;
  
              case 1030:
@@ -360,7 +359,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3437,6 +3549,9 @@
+@@ -3437,6 +3548,9 @@
                  break;
  
              case 1036:

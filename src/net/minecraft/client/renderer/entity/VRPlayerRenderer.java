@@ -45,14 +45,9 @@ import net.minecraft.util.math.Vec3d;
 
 public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity, VRPlayerModel<AbstractClientPlayerEntity>>
 {
-    public VRPlayerRenderer(EntityRendererManager p_i1295_1_)
+    public VRPlayerRenderer(EntityRendererManager p_i1296_1_, boolean p_i1296_2_, boolean seated)
     {
-        this(p_i1295_1_, false);
-    }
-
-    public VRPlayerRenderer(EntityRendererManager p_i1296_1_, boolean p_i1296_2_)
-    {
-        super(p_i1296_1_, new VRPlayerModel<>(0.0F, p_i1296_2_), 0.5F);       
+        super(p_i1296_1_, new VRPlayerModel<>(0.0F, p_i1296_2_, seated), 0.5F);       
         BipedArmorLayer layer = new BipedArmorLayer(this, new VRArmorModel<>(0.5f), new VRArmorModel(1.0f));
         this.addLayer(layer);
         ((VRPlayerModel)this.entityModel).armor = layer;    
@@ -70,7 +65,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
 
     public void render(AbstractClientPlayerEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
     {
-    	
+
     	if (Minecraft.getInstance().currentPass == RenderPass.GUI && entityIn.isUser()) {
     		//smile for the camera. 		
     		matrixStackIn.getLast().getMatrix().setIdentity();
@@ -78,10 +73,17 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
     		matrixStackIn.scale((float)20, (float)20, (float)20);
     		matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180.0F));
     		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180 + Minecraft.getInstance().vrPlayer.vrdata_world_pre.getBodyYaw()));
-    	}
+    	} 
     	
+    	PlayerModelController.RotInfo rotInfo = PlayerModelController.getInstance().getRotationsForPlayer(((PlayerEntity)entityIn).getUniqueID());
+    	if(rotInfo == null) return;
+		matrixStackIn.scale(rotInfo.heightScale, rotInfo.heightScale, rotInfo.heightScale);
+
         this.setModelVisibilities(entityIn);
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        
+		matrixStackIn.scale(1, 1/rotInfo.heightScale, 1); //put back for shadow
+
     }
 
     public Vec3d getRenderOffset(AbstractClientPlayerEntity entityIn, float partialTicks)

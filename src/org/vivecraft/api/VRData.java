@@ -129,7 +129,7 @@ public class VRData{
 		if(Minecraft.getInstance().vrSettings.vrReverseHands)
 			v = v.scale(-1);
 
-		v = Utils.vecLerp(hmd.getDirection(), v, 0.5);
+		v = Utils.vecLerp(hmd.getDirection(), v, 0.7);
 		
 		return (float) Math.toDegrees(Math.atan2(-v.x, v.z)); 		
 	}

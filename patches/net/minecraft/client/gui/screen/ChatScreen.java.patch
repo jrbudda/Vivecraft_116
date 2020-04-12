@@ -9,3 +9,19 @@
      }
  
      public void resize(Minecraft p_resize_1_, int p_resize_2_, int p_resize_3_)
+@@ -120,7 +122,14 @@
+                 this.sendMessage(s);
+             }
+ 
+-            this.minecraft.displayGuiScreen((Screen)null);
++            // VIVECRAFT: don't close the chat in standing mode
++            if (this.minecraft.vrSettings.seated) {
++                this.minecraft.displayGuiScreen((Screen)null);
++            } else {
++                this.inputField.setText(this.defaultInputFieldText);
++                this.sentHistoryCursor = this.minecraft.ingameGUI.getChatGUI().getSentMessages().size();
++            }
++            //
+             return true;
+         }
+     }

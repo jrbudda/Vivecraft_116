@@ -15,6 +15,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ArrowItem;
 import net.minecraft.item.CarrotOnAStickItem;
@@ -146,12 +148,12 @@ public class SwingTracker extends Tracker{
 //            }    
 
             if (sword){
-                 	entityReachAdd = 2.5f;
-            		weaponLength = 0.3f;
+                 	entityReachAdd = 1.8f;
+            		weaponLength = 0.7f;
             		tool = true;
             } else if (tool){
-            	entityReachAdd = 1.8f;
-            	weaponLength = 0.3f;
+            	entityReachAdd = 1.f;
+            	weaponLength = 0.5f;
         		tool = true;
             } else if (item !=null){
             	weaponLength = 0.1f;
@@ -175,58 +177,80 @@ public class SwingTracker extends Tracker{
         		return;
         	}
 
-
         	float speed = (float) MCOpenVR.controllerHistory[c].averageSpeed(0.1);
 
         	weaponEndlast[c] = new Vec3d(weaponEnd[c].x, weaponEnd[c].y, weaponEnd[c].z);
-
-//        	int passes = (int) (tickDist / .1f); //TODO someday....
-
-        	int bx = (int) MathHelper.floor(weaponEnd[c].x);
-        	int by = (int) MathHelper.floor(weaponEnd[c].y);
-        	int bz = (int) MathHelper.floor(weaponEnd[c].z);
 
         	boolean inAnEntity = false;
         	boolean insolidBlock = false;
         	boolean canact = speed > speedthresh && !lastWeaponSolid[c];
 
-        	Vec3d extWeapon = new Vec3d(
-        			handPos.x + handDirection.x * (weaponLength + entityReachAdd),
-        			handPos.y + handDirection.y * (weaponLength + entityReachAdd),
-        			handPos.z + handDirection.z * (weaponLength + entityReachAdd));
-
-        	//Check EntityCollisions first
-        	//experiment.
-        	AxisAlignedBB weaponBB = new AxisAlignedBB(
-        			handPos.x < extWeapon.x ? handPos.x : extWeapon.x  ,
-        					handPos.y < extWeapon.y ? handPos.y : extWeapon.y  ,
-        							handPos.z < extWeapon.z ? handPos.z : extWeapon.z  ,
-        									handPos.x > extWeapon.x ? handPos.x : extWeapon.x  ,
-        											handPos.y > extWeapon.y ? handPos.y : extWeapon.y  ,
-        													handPos.z > extWeapon.z ? handPos.z : extWeapon.z  
-        			);
-
-        	List entities = mc.world.getEntitiesWithinAABBExcludingEntity(
-        			mc.getRenderViewEntity(), weaponBB);
-        	for (int e = 0; e < entities.size(); ++e)
-        	{
-        		Entity hitEntity = (Entity) entities.get(e);
-        		if (hitEntity.canBeCollidedWith() && !(hitEntity == mc.getRenderViewEntity().getRidingEntity()) )
-        		{       			       			
-        			if(!inAnEntity) {
+        	//Check EntityCollisions first    	
+        	{// normal reach check.
+            	AxisAlignedBB weaponBB = new AxisAlignedBB(
+            			Math.min(weaponEnd[c].x, handPos.x),
+            			Math.min(weaponEnd[c].y, handPos.y),
+            			Math.min(weaponEnd[c].z, handPos.z),
+            			Math.max(weaponEnd[c].x, handPos.x),
+            			Math.max(weaponEnd[c].y, handPos.y),
+            			Math.max(weaponEnd[c].z, handPos.z));
+        		List entities = mc.world.getEntitiesWithinAABBExcludingEntity(
+        				mc.player, weaponBB);       	
+        		for (int e = 0; e < entities.size(); ++e)
+        		{
+        			Entity hitEntity = (Entity) entities.get(e);
+        			if (hitEntity.canBeCollidedWith() && !(hitEntity == mc.getRenderViewEntity().getRidingEntity()) )
+        			{       			       			
         				if(canact){
-							Minecraft.getInstance().physicalGuiManager.preClickAction();
+        					Minecraft.getInstance().physicalGuiManager.preClickAction();
         					mc.playerController.attackEntity(player, hitEntity);
         					MCOpenVR.triggerHapticPulse(c, 1000);
         					lastWeaponSolid[c] = true;
         				}
         				inAnEntity = true;
+        				break;
         			}
-        		}
-        		
+        		}     
         	}
-
-        	if(!inAnEntity && !sword){
+        	
+        	if(!inAnEntity) { //extended check vs non players.   
+        		
+        		Vec3d extWeapon = new Vec3d(
+    			handPos.x + handDirection.x * (weaponLength + entityReachAdd),
+    			handPos.y + handDirection.y * (weaponLength + entityReachAdd),
+    			handPos.z + handDirection.z * (weaponLength + entityReachAdd));
+        		
+            	AxisAlignedBB weaponBBEXT = new AxisAlignedBB(
+            			handPos.x < extWeapon.x ? handPos.x : extWeapon.x  ,
+            					handPos.y < extWeapon.y ? handPos.y : extWeapon.y  ,
+            							handPos.z < extWeapon.z ? handPos.z : extWeapon.z  ,
+            									handPos.x > extWeapon.x ? handPos.x : extWeapon.x  ,
+            											handPos.y > extWeapon.y ? handPos.y : extWeapon.y  ,
+            													handPos.z > extWeapon.z ? handPos.z : extWeapon.z  
+            			);
+            	
+        		List entities = mc.world.getEntitiesWithinAABBExcludingEntity(
+        				mc.player, weaponBBEXT);       	
+        		for (int e = 0; e < entities.size(); ++e)
+        		{
+        			Entity hitEntity = (Entity) entities.get(e);
+        			if((hitEntity instanceof PlayerEntity)) continue; 
+        			if (hitEntity.canBeCollidedWith() && !(hitEntity == mc.getRenderViewEntity().getRidingEntity()) )
+        			{       			       			
+        				if(canact){
+        					Minecraft.getInstance().physicalGuiManager.preClickAction();
+        					mc.playerController.attackEntity(player, hitEntity);
+        					MCOpenVR.triggerHapticPulse(c, 1000);
+        					lastWeaponSolid[c] = true;
+        				}
+        				inAnEntity = true;
+        				break;
+        			}    		
+        		}
+        	}
+        	
+        	if(!inAnEntity && !sword){ //block check
+        		            	
         		if(mc.climbTracker.isClimbeyClimb()){
         			if(c == 0 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) || !tool ) continue;
         			if(c == 1 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) || !tool ) continue;

@@ -59,16 +59,16 @@ public class VehicleTracker extends Tracker {
 
 				if (e instanceof AbstractHorseEntity && !mc.horseTracker.isActive(mc.player)) {
 					AbstractHorseEntity el = (AbstractHorseEntity) e;
-					rotationTarget = el.renderYawOffset;
 					if (el.canBeSteered() && el.isHorseSaddled()){
 						return;
 					}
+					rotationTarget = el.renderYawOffset;
 				}else if (e instanceof MobEntity) {
 					MobEntity el = (MobEntity) e; //this is just pigs in vanilla
-					rotationTarget = el.renderYawOffset;
 					if (el.canBeSteered()){
 						return; 
 					}
+					rotationTarget = el.renderYawOffset;
 				}
 
 				boolean smooth = true;

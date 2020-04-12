@@ -291,7 +291,7 @@
      public void renderItemInFirstPerson(float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, ClientPlayerEntity playerEntityIn, int combinedLightIn)
      {
          float f = playerEntityIn.getSwingProgress(partialTicks);
-@@ -305,184 +438,356 @@
+@@ -305,184 +438,365 @@
          bufferIn.finish();
      }
  
@@ -480,11 +480,17 @@
 +        	boolean shouldrenderhand = true;
 +        	if(mc.currentPass == RenderPass.THIRD && mc.vrSettings.mixedRealityRenderHands == false)
 +        		shouldrenderhand = false;
++
++        	if(BowTracker.isBow(stack) && mc.bowTracker.isActive((ClientPlayerEntity) player))
++        		shouldrenderhand = false;
++        	
++     //   	shouldrenderhand = true; //temp
 +        	
 +            if (shouldrenderhand && !player.isInvisible())
 +            {          	
 +            	this.renderArmFirstPerson(matrixStackIn, bufferIn, combinedLightIn, equippedProgress, swingProgress, handside);
-+            }                  
++            }      
++            
 +            if(!stack.isEmpty()) {
 +	    		Item item = stack.getItem();
 +	        	boolean isFilledMap = false;
@@ -540,9 +546,11 @@
 +	    		double translateZ =  0;
 +	    		//
 +	    		
-+	            double gunAngle =  MCOpenVR.getGunAngle();
++	            double gunAngle = MCOpenVR.getGunAngle();
 +
 +	    		Quaternion rotation = Vector3f.YP.rotationDegrees((float) (0));
++	    		Quaternion prerotation = Vector3f.YP.rotationDegrees((float) (0));
++
 +	    		rotation.multiply(Vector3f.XP.rotationDegrees((float) (-110 + gunAngle)));
 +	            matrixStackIn.push();
 +	            	
@@ -555,13 +563,12 @@
 +	            	rotation.multiply(Vector3f.XP.rotationDegrees((float) (90 -gunAngle)));
 +	            	scale = 0.7f;
 +	            	break;
-+	            case Bow_Roomscale:
-+	            	translateY -=0.1f;
-+	            	rotation.multiply(Vector3f.XP.rotationDegrees((float) (90 -gunAngle)));
-+	            	translateY+= 0.25f;
-+	            	translateZ+= 0.225f;
++	            case Bow_Roomscale:            	
++		    		rotation = Vector3f.XP.rotationDegrees((float) (0));    		
++		    		matrixStackIn.rotate((Vector3f.XP.rotationDegrees((float) (-110 + gunAngle))));
++	            	translateY-= 0.25f;
++	            	translateZ+= 0.025f + 0.03*gunAngle/40f;         	
 +	            	translateX+= -0.0225;
-+	            	rotation.multiply(Vector3f.XP.rotationDegrees(-90));  				
 +	            	scale = 1.0f;
 +	            	break;
 +	            case Bow_Roomscale_Drawing:	//here there be dragons
@@ -577,8 +584,8 @@
 +        			Vec3d aim = mc.bowTracker.getAimVector(); 
 +        			Vec3d a = new Vec3d(aim.x, aim.y, aim.z);			
 +
-+        			Vec3d lup = mc.vrPlayer.vrdata_world_render.getController(1).getCustomVector(new Vec3d(0, -1, 0));
-+        			Vec3d lback = mc.vrPlayer.vrdata_world_render.getController(1).getCustomVector(new Vec3d(0, 0, -1));
++        			Vec3d lup = mc.vrPlayer.vrdata_world_render.getHand(1).getCustomVector(new Vec3d(0, -1, 0));
++        			Vec3d lback = mc.vrPlayer.vrdata_world_render.getHand(1).getCustomVector(new Vec3d(0, 0, -1));
 +
 +        			Vec3d v = a.crossProduct(lup);
 +        			double d = 180 / Math.PI * Math.acos(a.dotProduct(lup));
@@ -793,6 +800,7 @@
 +	            	}
 +
 +	            	if (item instanceof ArrowItem) {
++	            		prerotation = ((Vector3f.ZP.rotationDegrees((float) (-180))));
 +	            		rotation.multiply(Vector3f.XP.rotationDegrees((float) (-gunAngle)));
 +	            	}
 +
@@ -803,7 +811,8 @@
 +	            	
 +	    	    	if(player.swingingHand == handIn)
 +	    		    	this.transformFirstPersonVR(matrixStackIn, handside, swingProgress);
-+	
++	    	    	
++	            	matrixStackIn.rotate(prerotation);
 +	            	matrixStackIn.translate(translateX, translateY, translateZ);
 +	            	matrixStackIn.rotate(rotation);
 +	            	matrixStackIn.scale((float)scale, (float)scale,(float)scale);
@@ -820,7 +829,7 @@
              matrixStackIn.pop();
          }
      }
-@@ -556,4 +861,100 @@
+@@ -556,4 +870,100 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }

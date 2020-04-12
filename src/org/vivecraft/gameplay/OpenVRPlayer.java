@@ -377,11 +377,13 @@ public class OpenVRPlayer
 				AbstractHorseEntity el = (AbstractHorseEntity) e;
 				if (el.canBeSteered() && el.isHorseSaddled() && !mc.horseTracker.isActive((ClientPlayerEntity)mc.player)){
 					  el.renderYawOffset = vrdata_world_pre.getBodyYaw();
+					  mc.vehicleTracker.rotationCooldown = 10;
 				}
 			}else if (e instanceof MobEntity) {
 				MobEntity el = (MobEntity) e; //this is just pigs in vanilla
 				if (el.canBeSteered()){
 					el.renderYawOffset = vrdata_world_pre.getBodyYaw();
+				    mc.vehicleTracker.rotationCooldown = 10;
 				}
 			}
 		}

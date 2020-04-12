@@ -12,6 +12,7 @@ import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 import org.vivecraft.utils.math.Quaternion;
 
+import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -81,6 +82,16 @@ public class NetworkHelper {
         serverWantsData = false;
         serverSupportsDirectTeleport = false;
         Minecraft.getInstance().vrSettings.overrides.resetAll();
+	}
+
+	public static void sendVersionInfo() {
+		byte[] version = Minecraft.getInstance().minecriftVerString.getBytes(Charsets.UTF_8);
+		String s = NetworkHelper.channel.toString();
+		PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
+		pb.writeBytes(s.getBytes());
+		Minecraft.getInstance().getConnection().sendPacket(new CCustomPayloadPacket(new ResourceLocation("minecraft:register"), pb));
+		Minecraft.getInstance().getConnection().sendPacket(NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.VERSION, version));
+		Minecraft.getInstance().vrPlayer.teleportWarningTimer = 20 * 10;
 	}
 	
 	public static void sendVRPlayerPositions(OpenVRPlayer player) {
@@ -164,7 +175,7 @@ public class NetworkHelper {
 		}
 		
 		PlayerModelController.getInstance().Update(Minecraft.getInstance().player.getGameProfile().getId(), a, b, c, worldScale, userheight / ServerVivePlayer.defaultHeight, true);
-		
+
 	}
 	
 	

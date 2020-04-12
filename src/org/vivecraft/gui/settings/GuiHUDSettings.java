@@ -27,10 +27,12 @@ public class GuiHUDSettings extends GuiVROptionsBase
                 return false;
             }),
             new VROptionEntry(VRSettings.VrOptions.AUTO_OPEN_KEYBOARD),
+			new VROptionEntry(VRSettings.VrOptions.GUI_APPEAR_OVER_BLOCK),
 			new VROptionEntry(VRSettings.VrOptions.PHYSICAL_KEYBOARD, (button, mousePos) -> {
 				KeyboardHandler.setOverlayShowing(false);
 				return false;
 			}),
+			new VROptionEntry(VRSettings.VrOptions.DUMMY),
 			new VROptionEntry("Menu World Settings...", (button, mousePos) -> {
 				Minecraft.getInstance().displayGuiScreen(new GuiMenuWorldSettings(this));
 				return true;
@@ -64,6 +66,7 @@ public class GuiHUDSettings extends GuiVROptionsBase
         this.settings.menuAlwaysFollowFace = false;
         this.settings.autoOpenKeyboard = false;
         this.settings.physicalKeyboard = true;
+        this.settings.guiAppearOverBlock = true;
         this.minecraft.gameSettings.hideGUI = false;
     }
 }

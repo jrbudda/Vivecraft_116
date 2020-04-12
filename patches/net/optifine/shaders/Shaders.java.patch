@@ -180,10 +180,14 @@
                  setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
                  setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
                  setProgramUniform3f(uniform_upPosition, upPosition[0], upPosition[1], upPosition[2]);
-@@ -3893,6 +3932,7 @@
+@@ -3891,8 +3930,9 @@
+     {
+         renderDisplayWidth = mc.getMainWindow().getFramebufferWidth();
          renderDisplayHeight = mc.getMainWindow().getFramebufferHeight();
-         renderWidth = Math.round((float)renderDisplayWidth * configRenderResMul);
-         renderHeight = Math.round((float)renderDisplayHeight * configRenderResMul);
+-        renderWidth = Math.round((float)renderDisplayWidth * configRenderResMul);
+-        renderHeight = Math.round((float)renderDisplayHeight * configRenderResMul);
++        renderWidth = Math.round((float)renderDisplayWidth);
++        renderHeight = Math.round((float)renderDisplayHeight);
 +        System.out.println("Shaders Render Res: " + renderWidth + " x " + renderHeight);
          setupFrameBuffer();
      }

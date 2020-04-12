@@ -125,7 +125,7 @@ public class HorseTracker extends Tracker {
 			return false;
 		}
 
-		System.out.println("Boost");
+	//	System.out.println("Boost");
 		speedLevel++;
 		lastBoostMillis = System.currentTimeMillis();
 		return true;

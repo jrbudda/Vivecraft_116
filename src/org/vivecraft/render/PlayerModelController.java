@@ -161,6 +161,9 @@ public class PlayerModelController {
 		
 		out.heightScale =heightscale;
 		
+		if(out.seated)
+			out.heightScale = 1;
+		
 		vivePlayersReceived.put(uuid, out);
 
 	}

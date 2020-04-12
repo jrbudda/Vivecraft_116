@@ -9,11 +9,11 @@ import net.minecraft.network.play.client.CPlayerDiggingPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ChatType;
 
 
 public class BackpackTracker extends Tracker {
 	public boolean[] wasIn = new boolean[2];
-	public boolean[] hystersis = new boolean[2];
 
 	public int previousSlot = 0;
 
@@ -50,9 +50,12 @@ public class BackpackTracker extends Tracker {
 			double dotDelta = delta.dotProduct(hmddir);
 			
 			boolean below  = ((Math.abs(hmdPos.y - controllerPos.y)) < 0.25);
-			boolean behind = (dotDelta > 0); 
+			boolean behind = (dotDelta > 0) && delta.length() > 0.05; 
 			boolean aimdown = (dot > .6);
 			
+			boolean infront = (dotDelta < 0) && delta.length() > 0.25; 
+			boolean aimup = (dot < 0);
+						
 			boolean zone = below && behind && aimdown;
 			
 			Minecraft mc = Minecraft.getInstance();
@@ -82,12 +85,10 @@ public class BackpackTracker extends Tracker {
 					}
 					MCOpenVR.triggerHapticPulse(c, 1500);
 					wasIn[c] = true;
-					hystersis[c] = true;
 				}
 			} else {
-				if(hystersis[c]) {
-					wasIn[c] = !behind && !aimdown;
-					hystersis[c] = wasIn[c];
+				if(!infront && !aimup) {
+					//noop
 				} else {
 					wasIn[c] = false;
 				}

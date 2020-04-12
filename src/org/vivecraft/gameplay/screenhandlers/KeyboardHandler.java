@@ -41,6 +41,8 @@ public class KeyboardHandler {
 			Showing = true;
       		orientOverlay(mc.currentScreen!=null);
       		RadialHandler.setOverlayShowing(false, null);
+      		if (mc.vrSettings.physicalKeyboard && mc.currentScreen != null)
+				GuiHandler.onScreenChanged(mc.currentScreen, mc.currentScreen, false);
 		} else {
 			Showing = false;
 		}

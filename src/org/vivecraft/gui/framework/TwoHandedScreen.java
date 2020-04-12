@@ -56,6 +56,7 @@ public abstract class TwoHandedScreen extends Screen
         	Widget butt = (Widget)this.buttons.get(i);
         	boolean buttonhovered1 = mX1 >= butt.x && mY1 >= butt.y && mX1 < butt.x + butt.getWidth() && mY1 < butt.y + 20;
         	boolean buttonhovered2 = mX2 >= butt.x && mY2 >= butt.y && mX2 < butt.x + butt.getWidth() && mY2 < butt.y + 20;
+        
         	if(buttonhovered1)
         		butt.render((int)mX1, (int)mY1, partialTicks);
         	else
@@ -73,9 +74,10 @@ public abstract class TwoHandedScreen extends Screen
 			MCOpenVR.triggerHapticPulse(ControllerType.LEFT, 300);
     		lastHoveredButtonId1 = hoveredButtonId1;
     	}
+        
         if (hoveredButtonId2 == null) {
         	lastHoveredButtonId2 = null;
-        } else if (hoveredButtonId1 instanceof Button && lastHoveredButtonId2 != hoveredButtonId2) {
+        } else if (hoveredButtonId2 instanceof Button && lastHoveredButtonId2 != hoveredButtonId2) {
 			MCOpenVR.triggerHapticPulse(ControllerType.RIGHT, 300);
     		lastHoveredButtonId2 = hoveredButtonId2;
     	}

@@ -331,7 +331,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 		Integer[] rams = {1,2,4,6,8};
 		if(!useForge.isSelected())
-				rams = new Integer[] {1,2}; //no u dont need more.
+				rams = new Integer[] {1,2, 3}; //no u dont need more.
 
 		ramAllocation = new JComboBox(rams);
 		ramAllocation.setSelectedIndex(1);

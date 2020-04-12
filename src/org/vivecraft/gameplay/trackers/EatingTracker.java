@@ -72,10 +72,15 @@ private Random r = new Random();
 			
 			if(mouthPos.distanceTo(controllerPos)<threshold){
 				ItemStack is = c==0?player.getHeldItemMainhand():player.getHeldItemOffhand();
-				if(is == null) continue;
-
+				if(is == ItemStack.EMPTY) continue;
+				
+				int crunchiness = 0;
 				if(is.getUseAction() == UseAction.DRINK){ //thats how liquid works.
 					if(provider.vrdata_room_pre.getController(c).getCustomVector(new Vec3d(0,1,0)).y > 0) continue;
+				} if(is.getUseAction() == UseAction.EAT){ 
+					crunchiness=2;
+				} else {
+					continue;
 				}
 
 				if(!eating[c]){
@@ -86,17 +91,14 @@ private Random r = new Random();
 						eatStart=Util.milliTime();
 					}
 				}
-				int crunchiness;
-				if(is.getUseAction() == UseAction.DRINK){
-					crunchiness=0;
-				}else
-					crunchiness=2;
 
-				long t = player.getItemInUseCount();
-				if(t>0)
-					if(t%5 <= crunchiness)
-						MCOpenVR.triggerHapticPulse(c, 700 );
-
+				if(eating[c]) {
+					long t = player.getItemInUseCount();
+					if(t>0)
+						if(t%5 <= crunchiness)
+							MCOpenVR.triggerHapticPulse(c, 700 );
+				}
+				
 				if(Util.milliTime()-eatStart > eattime)
 					eating[c]=false;
 

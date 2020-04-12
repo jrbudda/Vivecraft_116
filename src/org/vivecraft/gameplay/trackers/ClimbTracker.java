@@ -153,8 +153,8 @@ public class ClimbTracker extends Tracker{
 		else if (mc.player.onGround || mc.player.abilities.isFlying)
 			forceActivate = false;
 
-		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).setEnabled(ControllerType.RIGHT, isClimbeyClimb() && (latched[0] || inblock[0] || forceActivate));
-		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).setEnabled(ControllerType.LEFT, isClimbeyClimb() && (latched[1] || inblock[1] || forceActivate));
+		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).setEnabled(ControllerType.RIGHT, isClimbeyClimb() && (isGrabbingLadder() || inblock[0] || forceActivate));
+		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).setEnabled(ControllerType.LEFT, isClimbeyClimb() && (isGrabbingLadder() || inblock[1] || forceActivate));
 	}
 
 	@Override

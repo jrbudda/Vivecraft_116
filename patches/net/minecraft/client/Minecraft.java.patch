@@ -182,7 +182,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.15.2 jrbudda-1-RC1";
++    public final String minecriftVerString = "Vivecraft 1.15.2 jrbudda-2-b3";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
@@ -669,10 +669,11 @@
  
              if (this.crashReporter == null)
              {
-@@ -1002,140 +1178,306 @@
+@@ -1001,141 +1177,308 @@
+     }
  
      private void runGameLoop(boolean renderWorldIn)
-     {
+-    {
 -        this.mainWindow.setRenderPhase("Pre render");
 -        long i = Util.nanoTime();
 -        this.profiler.startTick();
@@ -807,6 +808,7 @@
 -        }
 -
 -        this.profiler.endTick();
++    { 	
 +    	this.mainWindow.setRenderPhase("Pre render");
 +    	long i = Util.nanoTime();
 +    	this.profiler.startTick();
@@ -961,8 +963,8 @@
 +	
 +	    	checkGLError("post 2d ");
 +	    	VRHotkeys.updateMovingThirdPersonCam();
++
 +	    	//
-+    	
 +    	this.profiler.endStartSection("sound");
 +    		this.currentPass = RenderPass.CENTER;
 +        	this.gameRenderer.getActiveRenderInfo().update(this.world, this.getRenderViewEntity(), false, false, par1);
@@ -999,6 +1001,7 @@
 +    			this.profiler.startSection("setup");
 +    			this.framebuffer.bindFramebuffer(true); // draw to main texture for every pass
 +    			this.profiler.endSection();
++    			RenderSystem.loadIdentity();
 +    			renderSingleView(pass.ordinal(), par1, renderWorldIn);
 +    			this.profiler.endSection(); // eye
 +
@@ -1045,7 +1048,7 @@
 +    		drawNotifyMirror();
 +    		checkGLError("post-mirror ");
 +    		this.profiler.endSection();
-+    		
++    		    		
 +    		//// END MAIN VIVECRAFT RENDERING
 +    	}
 +
@@ -1110,7 +1113,15 @@
      }
  
      public void updateWindowSize()
-@@ -1148,9 +1490,6 @@
+@@ -1143,14 +1486,14 @@
+         int i = this.mainWindow.calcGuiScale(this.gameSettings.guiScale, this.getForceUnicodeFont());
+         this.mainWindow.setGuiScale((double)i);
+ 
++		if (stereoProvider != null)
++			stereoProvider.reinitFrameBuffers("Main Window Changed");
++
+         if (this.currentScreen != null)
+         {
              this.currentScreen.resize(this, this.mainWindow.getScaledWidth(), this.mainWindow.getScaledHeight());
          }
  
@@ -1120,7 +1131,7 @@
          this.mouseHelper.setIgnoreFirstMove();
      }
  
-@@ -1228,7 +1567,7 @@
+@@ -1228,7 +1571,7 @@
          }
      }
  
@@ -1129,7 +1140,26 @@
      {
          if (this.profiler.getFixedProfiler().isEnabled())
          {
-@@ -1395,12 +1734,13 @@
+@@ -1247,14 +1590,15 @@
+             Tessellator tessellator = Tessellator.getInstance();
+             BufferBuilder bufferbuilder = tessellator.getBuffer();
+             int i = 160;
+-            int j = this.mainWindow.getFramebufferWidth() - 160 - 10;
+-            int k = this.mainWindow.getFramebufferHeight() - 320;
++            int j = this.mainWindow.getFramebufferWidth()/3;
++            int k = this.mainWindow.getFramebufferHeight()/9;
+             RenderSystem.enableBlend();
++            RenderSystem.scaled(2.2, 2.7, 1);
+             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+             bufferbuilder.pos((double)((float)j - 176.0F), (double)((float)k - 96.0F - 16.0F), 0.0D).color(200, 0, 0, 0).endVertex();
+             bufferbuilder.pos((double)((float)j - 176.0F), (double)(k + 320), 0.0D).color(200, 0, 0, 0).endVertex();
+             bufferbuilder.pos((double)((float)j + 176.0F), (double)(k + 320), 0.0D).color(200, 0, 0, 0).endVertex();
+-            bufferbuilder.pos((double)((float)j + 176.0F), (double)((float)k - 96.0F - 16.0F), 0.0D).color(200, 0, 0, 0).endVertex();
++            bufferbuilder.pos((double)((float)j + 4*176.0F), (double)((float)k - 96.0F - 16.0F), 0.0D).color(200, 0, 0, 0).endVertex();
+             tessellator.draw();
+             RenderSystem.disableBlend();
+             double d0 = 0.0D;
+@@ -1395,12 +1739,13 @@
                      if (this.playerController.onPlayerDamageBlock(blockpos, direction))
                      {
                          this.particles.addBlockHitEffects(blockpos, direction);
@@ -1147,7 +1177,7 @@
                  this.playerController.resetBlockRemoving();
              }
          }
-@@ -1442,103 +1782,114 @@
+@@ -1442,103 +1787,114 @@
                          {
                              this.leftClickCounter = 10;
                          }
@@ -1352,7 +1382,7 @@
      }
  
      public MusicTicker getMusicTicker()
-@@ -1548,12 +1899,15 @@
+@@ -1548,12 +1904,15 @@
  
      public void runTick()
      {
@@ -1369,7 +1399,7 @@
  
          if (!this.isGamePaused)
          {
-@@ -1561,7 +1915,7 @@
+@@ -1561,7 +1920,7 @@
          }
  
          this.profiler.endSection();
@@ -1378,7 +1408,7 @@
          this.tutorial.onMouseHover(this.world, this.objectMouseOver);
          this.profiler.startSection("gameMode");
  
-@@ -1572,10 +1926,11 @@
+@@ -1572,10 +1931,11 @@
  
          this.profiler.endStartSection("textures");
  
@@ -1393,7 +1423,7 @@
  
          if (this.currentScreen == null && this.player != null)
          {
-@@ -1593,6 +1948,7 @@
+@@ -1593,6 +1953,7 @@
              this.displayGuiScreen((Screen)null);
          }
  
@@ -1401,7 +1431,7 @@
          if (this.currentScreen != null)
          {
              this.leftClickCounter = 10000;
-@@ -1610,6 +1966,11 @@
+@@ -1610,6 +1971,11 @@
          {
              this.ingameGUI.reset();
          }
@@ -1413,7 +1443,7 @@
  
          if (this.loadingGui == null && (this.currentScreen == null || this.currentScreen.passEvents))
          {
-@@ -1622,8 +1983,27 @@
+@@ -1622,8 +1988,27 @@
              }
          }
  
@@ -1443,7 +1473,7 @@
              this.profiler.endStartSection("gameRenderer");
  
              if (!this.isGamePaused)
-@@ -1649,14 +2029,23 @@
+@@ -1649,14 +2034,23 @@
  
                  this.world.tickEntities();
              }
@@ -1469,7 +1499,7 @@
              this.musicTicker.tick();
          }
  
-@@ -1719,25 +2108,27 @@
+@@ -1719,25 +2113,27 @@
          this.profiler.endSection();
      }
  
@@ -1516,7 +1546,7 @@
          }
  
          while (this.gameSettings.keyBindSmoothCamera.isPressed())
-@@ -1797,7 +2188,9 @@
+@@ -1797,7 +2193,9 @@
          {
              if (!this.player.isSpectator() && this.player.func_225609_n_(Screen.hasControlDown()))
              {
@@ -1527,7 +1557,7 @@
              }
          }
  
-@@ -1805,7 +2198,7 @@
+@@ -1805,7 +2203,7 @@
  
          if (flag2)
          {
@@ -1536,7 +1566,7 @@
              {
                  this.displayGuiScreen(new ChatScreen(""));
              }
-@@ -1816,10 +2209,10 @@
+@@ -1816,10 +2214,10 @@
              }
          }
  
@@ -1551,7 +1581,7 @@
                  this.playerController.onStoppedUsingItem(this.player);
              }
  
-@@ -1840,10 +2233,18 @@
+@@ -1840,10 +2238,18 @@
          }
          else
          {
@@ -1573,7 +1603,7 @@
  
              while (this.gameSettings.keyBindUseItem.isPressed())
              {
-@@ -1861,7 +2262,7 @@
+@@ -1861,7 +2267,7 @@
              this.rightClickMouse();
          }
  
@@ -1582,7 +1612,7 @@
      }
  
      public void launchIntegratedServer(String folderName, String worldName, @Nullable WorldSettings worldSettingsIn)
-@@ -1952,6 +2353,9 @@
+@@ -1952,6 +2358,9 @@
  
      public void loadWorld(ClientWorld worldClientIn)
      {
@@ -1592,7 +1622,7 @@
          WorkingScreen workingscreen = new WorkingScreen();
          workingscreen.displaySavingString(new TranslationTextComponent("connect.joining"));
          this.updateScreenTick(workingscreen);
-@@ -2223,6 +2627,8 @@
+@@ -2223,6 +2632,8 @@
                  }
              }
          }
@@ -1601,7 +1631,7 @@
      }
  
      private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
-@@ -2740,4 +3146,629 @@
+@@ -2740,4 +3151,629 @@
      {
          this.modelManager.setMaxMipmapLevel(p_228020_1_);
      }

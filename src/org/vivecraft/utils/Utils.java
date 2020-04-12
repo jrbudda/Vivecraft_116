@@ -27,6 +27,9 @@ import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ILightReader;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.vivecraft.render.VRShaders;
@@ -54,6 +57,8 @@ public class Utils
 {
 	// Magic list from a C# snippet, don't question it
 	private static final char[] illegalChars = {34, 60, 62, 124, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 58, 42, 63, 92, 47};
+	private static final int CONNECT_TIMEOUT = 5000;
+	private static final int READ_TIMEOUT = 20000;
 
 	static {
 		// Needs to be sorted for binary search
@@ -454,7 +459,8 @@ public class Utils
 
 	public static String httpReadLine(String url) throws IOException {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-		conn.setReadTimeout(3000);
+		conn.setConnectTimeout(CONNECT_TIMEOUT);
+		conn.setReadTimeout(READ_TIMEOUT);
 		conn.setUseCaches(false);
 		conn.setDoInput(true);
 		BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -466,7 +472,8 @@ public class Utils
 
 	public static List<String> httpReadAllLines(String url) throws IOException {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-		conn.setReadTimeout(3000);
+		conn.setConnectTimeout(CONNECT_TIMEOUT);
+		conn.setReadTimeout(READ_TIMEOUT);
 		conn.setUseCaches(false);
 		conn.setDoInput(true);
 		BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -482,7 +489,8 @@ public class Utils
 
 	public static byte[] httpReadAll(String url) throws IOException {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-		conn.setReadTimeout(3000);
+		conn.setConnectTimeout(CONNECT_TIMEOUT);
+		conn.setReadTimeout(READ_TIMEOUT);
 		conn.setUseCaches(false);
 		conn.setDoInput(true);
 		InputStream is = conn.getInputStream();
@@ -503,7 +511,8 @@ public class Utils
 
 	public static void httpReadToFile(String url, File file, boolean writeWhenComplete) throws MalformedURLException, IOException {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-		conn.setReadTimeout(3000);
+		conn.setConnectTimeout(CONNECT_TIMEOUT);
+		conn.setReadTimeout(READ_TIMEOUT);
 		conn.setUseCaches(false);
 		conn.setDoInput(true);
 		InputStream is = conn.getInputStream();
@@ -538,7 +547,8 @@ public class Utils
 
 	public static List<String> httpReadList(String url) throws IOException {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-		conn.setReadTimeout(3000);
+		conn.setConnectTimeout(CONNECT_TIMEOUT);
+		conn.setReadTimeout(READ_TIMEOUT);
 		conn.setUseCaches(false);
 		conn.setDoInput(true);
 		BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -658,6 +668,16 @@ public class Utils
 				return;
 			}
 		}
+	}
+
+	public static int getCombinedLightWithMin(ILightReader lightReader, BlockPos pos, int minLight) {
+		int light = WorldRenderer.getCombinedLight(lightReader, pos);
+		int blockLight = (light >> 4) & 0xF;
+		if (blockLight < minLight) {
+			light &= 0xFFFFFF00;
+			light |= minLight << 4;
+		}
+		return light;
 	}
 
 	public static long microTime() {

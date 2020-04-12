@@ -608,14 +608,14 @@ public class MCOpenVR
 		addActionParams(map, mc.gameSettings.keyBindBack, "optional", "vector1", null);
 		addActionParams(map, mc.gameSettings.keyBindLeft, "optional", "vector1", null);
 		addActionParams(map, mc.gameSettings.keyBindRight, "optional", "vector1", null);
-		addActionParams(map, mc.gameSettings.keyBindInventory, "mandatory", "boolean", VRInputActionSet.GLOBAL);
-		addActionParams(map, mc.gameSettings.keyBindAttack, "mandatory", "boolean", null);
-		addActionParams(map, mc.gameSettings.keyBindUseItem, "mandatory", "boolean", null);
+		addActionParams(map, mc.gameSettings.keyBindInventory, "suggested", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, mc.gameSettings.keyBindAttack, "suggested", "boolean", null);
+		addActionParams(map, mc.gameSettings.keyBindUseItem, "suggested", "boolean", null);
 		addActionParams(map, mc.gameSettings.keyBindChat, "optional", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyHotbarScroll, "optional", "vector2", null);
 		addActionParams(map, MCOpenVR.keyHotbarSwipeX, "optional", "vector2", null);
 		addActionParams(map, MCOpenVR.keyHotbarSwipeY, "optional", "vector2", null);
-		addActionParams(map, MCOpenVR.keyMenuButton, "mandatory", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, MCOpenVR.keyMenuButton, "suggested", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyTeleportFallback, "suggested", "vector1", null);
 		addActionParams(map, MCOpenVR.keyFreeMoveRotate, "optional", "vector2", null);
 		addActionParams(map, MCOpenVR.keyFreeMoveStrafe, "optional", "vector2", null);
@@ -630,11 +630,11 @@ public class MCOpenVR
 		addActionParams(map, MCOpenVR.keyVRInteract, "suggested", "boolean", VRInputActionSet.CONTEXTUAL);
 		addActionParams(map, MCOpenVR.keyClimbeyGrab, "suggested", "boolean", null);
 		addActionParams(map, MCOpenVR.keyClimbeyJump, "suggested", "boolean", null);
-		addActionParams(map, GuiHandler.keyLeftClick, "mandatory", "boolean", null);
+		addActionParams(map, GuiHandler.keyLeftClick, "suggested", "boolean", null);
 		addActionParams(map, GuiHandler.keyScrollAxis, "optional", "vector2", null);
 		addActionParams(map, GuiHandler.keyRightClick, "suggested", "boolean", null);
 		addActionParams(map, GuiHandler.keyShift, "suggested", "boolean", null);
-		addActionParams(map, GuiHandler.keyKeyboardClick, "mandatory", "boolean", null);
+		addActionParams(map, GuiHandler.keyKeyboardClick, "suggested", "boolean", null);
 		addActionParams(map, GuiHandler.keyKeyboardShift, "suggested", "boolean", null);
 
 		return map;
@@ -1035,7 +1035,7 @@ public class MCOpenVR
 					try {
 
 						Matrix4f tip = getControllerComponentTransform(0,"tip");
-						Matrix4f hand = getControllerComponentTransform(0,"base");
+						Matrix4f hand = getControllerComponentTransform(0,"handgrip");
 
 						Vector3 tipvec = tip.transform(forward);
 						Vector3 handvec = hand.transform(forward);
@@ -1051,7 +1051,7 @@ public class MCOpenVR
 					//	System.out.println("gun angle " + angledeg + " default angle " + angletestdeg);
 						
 						gunStyle = angledeg > 10;
-						gunAngle = angledeg;
+ 						gunAngle = angledeg;
 					} catch (Exception e) {
 						failed = true;
 					}
@@ -2015,7 +2015,7 @@ public class MCOpenVR
 			TPose_Right.M[1][3] = 0f;
 			TPose_Right.M[2][3] = 0f;
 			OpenVRUtil.Matrix4fCopy(TPose_Right.rotationY(-120), TPose_Right);
-			TPose_Right.M[0][3] = .5f;
+			TPose_Right.M[0][3] = 1.5f;
 			TPose_Right.M[1][3] = 1.65f;
 			TPose_Right.M[2][3] = -.5f;
 
@@ -2028,7 +2028,8 @@ public class MCOpenVR
 			TPose_Left.M[2][3] = -.5f;
 			
 			Neutral_HMD.M[0][3] = 0f;
-			
+			Neutral_HMD.M[1][3] = 1.0f;
+
 			OpenVRUtil.Matrix4fCopy(Neutral_HMD, hmdPose);
 			headIsTracking = true;
 		}
@@ -2116,6 +2117,7 @@ public class MCOpenVR
 				OpenVRUtil.Matrix4fCopy(TPose_Left, controllerPose[controller]);		
 			}
 			controllerTracking[controller] = true;
+			return;
 		}
 		
 		readPoseData(actionHandle);
@@ -2408,35 +2410,45 @@ public class MCOpenVR
 			hmdPivotHistory.add(new Vec3d(v3.getX()+eye.x, v3.getY()+eye.y, v3.getZ()+eye.z));
 
 		}
-
+		
+		if(mc.vrSettings.seated){
+			controllerPose[0] = hmdPose.inverted().inverted();
+			controllerPose[1] = hmdPose.inverted().inverted();
+		}
+		
 		Matrix4f[] controllerPoseTip = new Matrix4f[2];
 		controllerPoseTip[0] = new Matrix4f();
 		controllerPoseTip[1] = new Matrix4f();
+		Matrix4f[] controllerPoseHand = new Matrix4f[2];
+		controllerPoseHand[0] = new Matrix4f();
+		controllerPoseHand[1] = new Matrix4f();
 
 		{//right controller
-			handRotation[0].M[0][0] = controllerPose[0].M[0][0];
-			handRotation[0].M[0][1] = controllerPose[0].M[0][1];
-			handRotation[0].M[0][2] = controllerPose[0].M[0][2];
+			if(mc.vrSettings.seated)
+				controllerPoseHand[0] = controllerPose[0];
+			 else	
+				controllerPoseHand[0] = Matrix4f.multiply(controllerPose[0], getControllerComponentTransform(0,"handgrip"));
+		
+			handRotation[0].M[0][0] = controllerPoseHand[0].M[0][0];
+			handRotation[0].M[0][1] = controllerPoseHand[0].M[0][1];
+			handRotation[0].M[0][2] = controllerPoseHand[0].M[0][2];
 			handRotation[0].M[0][3] = 0.0F;
-			handRotation[0].M[1][0] = controllerPose[0].M[1][0];
-			handRotation[0].M[1][1] = controllerPose[0].M[1][1];
-			handRotation[0].M[1][2] = controllerPose[0].M[1][2];
+			handRotation[0].M[1][0] = controllerPoseHand[0].M[1][0];
+			handRotation[0].M[1][1] = controllerPoseHand[0].M[1][1];
+			handRotation[0].M[1][2] = controllerPoseHand[0].M[1][2];
 			handRotation[0].M[1][3] = 0.0F;
-			handRotation[0].M[2][0] = controllerPose[0].M[2][0];
-			handRotation[0].M[2][1] = controllerPose[0].M[2][1];
-			handRotation[0].M[2][2] = controllerPose[0].M[2][2];
+			handRotation[0].M[2][0] = controllerPoseHand[0].M[2][0];
+			handRotation[0].M[2][1] = controllerPoseHand[0].M[2][1];
+			handRotation[0].M[2][2] = controllerPoseHand[0].M[2][2];
 			handRotation[0].M[2][3] = 0.0F;
 			handRotation[0].M[3][0] = 0.0F;
 			handRotation[0].M[3][1] = 0.0F;
 			handRotation[0].M[3][2] = 0.0F;
 			handRotation[0].M[3][3] = 1.0F;	
 
-			if(mc.vrSettings.seated){
-				controllerPose[0] = hmdPose.inverted().inverted();
-				controllerPose[1] = hmdPose.inverted().inverted();
+			if(mc.vrSettings.seated)
 				controllerPoseTip[0] = controllerPose[0];
-				controllerPoseTip[1] = controllerPose[1];
-			} else	
+			 else	
 				controllerPoseTip[0] = Matrix4f.multiply(controllerPose[0], getControllerComponentTransform(0,"tip"));
 
 			// grab controller position in tracker space, scaled to minecraft units
@@ -2536,17 +2548,23 @@ public class MCOpenVR
 		}
 
 		{//left controller
-			handRotation[1].M[0][0] = controllerPose[1].M[0][0];
-			handRotation[1].M[0][1] = controllerPose[1].M[0][1];
-			handRotation[1].M[0][2] = controllerPose[1].M[0][2];
+			
+			if(mc.vrSettings.seated)
+				controllerPoseHand[1] = controllerPose[1];
+			 else	
+				controllerPoseHand[1] = Matrix4f.multiply(controllerPose[1], getControllerComponentTransform(1,"handgrip"));
+
+			handRotation[1].M[0][0] = controllerPoseHand[1].M[0][0];
+			handRotation[1].M[0][1] = controllerPoseHand[1].M[0][1];
+			handRotation[1].M[0][2] = controllerPoseHand[1].M[0][2];
 			handRotation[1].M[0][3] = 0.0F;
-			handRotation[1].M[1][0] = controllerPose[1].M[1][0];
-			handRotation[1].M[1][1] = controllerPose[1].M[1][1];
-			handRotation[1].M[1][2] = controllerPose[1].M[1][2];
+			handRotation[1].M[1][0] = controllerPoseHand[1].M[1][0];
+			handRotation[1].M[1][1] = controllerPoseHand[1].M[1][1];
+			handRotation[1].M[1][2] = controllerPoseHand[1].M[1][2];
 			handRotation[1].M[1][3] = 0.0F;
-			handRotation[1].M[2][0] = controllerPose[1].M[2][0];
-			handRotation[1].M[2][1] = controllerPose[1].M[2][1];
-			handRotation[1].M[2][2] = controllerPose[1].M[2][2];
+			handRotation[1].M[2][0] = controllerPoseHand[1].M[2][0];
+			handRotation[1].M[2][1] = controllerPoseHand[1].M[2][1];
+			handRotation[1].M[2][2] = controllerPoseHand[1].M[2][2];
 			handRotation[1].M[2][3] = 0.0F;
 			handRotation[1].M[3][0] = 0.0F;
 			handRotation[1].M[3][1] = 0.0F;
@@ -2554,7 +2572,9 @@ public class MCOpenVR
 			handRotation[1].M[3][3] = 1.0F;	
 
 			// update off hand aim
-			if(!mc.vrSettings.seated) 
+			if(mc.vrSettings.seated)
+				controllerPoseTip[1] = controllerPose[1];
+			else
 				controllerPoseTip[1] = Matrix4f.multiply(controllerPose[1], getControllerComponentTransform(1,"tip"));
 
 			Vector3 leftControllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPoseTip[1]);

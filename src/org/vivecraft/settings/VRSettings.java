@@ -232,8 +232,8 @@ public class VRSettings
 	public boolean physicalKeyboard = true;
 	public boolean allowAdvancedBindings = false;
 	public int chatNotifications = CHAT_NOTIFICATIONS_NONE; // 0 = off, 1 = haptic, 2 = sound, 3 = both
-	public String chatNotificationSound = "block.note_block.bell"; 
-
+	public String chatNotificationSound = "block.note_block.bell";
+	public boolean guiAppearOverBlock = true;
     //
 
     // This map is only here to preserve old settings, not intended for general use
@@ -785,6 +785,10 @@ public class VRSettings
                     if(optionTokens[0].equals("rightclickDelay")){
                         this.rightclickDelay = Integer.parseInt(optionTokens[1]);
                     }
+
+                    if(optionTokens[0].equals("guiAppearOverBlock")){
+                        this.guiAppearOverBlock = optionTokens[1].equals("true");
+                    }
                     
                     if(optionTokens[0].equals("firstRun")){
                     	this.firstRun = optionTokens[1].equals("true");
@@ -1025,6 +1029,8 @@ public class VRSettings
 				} catch (Exception e) {
 					return "error";
 				}
+            case GUI_APPEAR_OVER_BLOCK:
+                return this.guiAppearOverBlock ? var4 + "ON" : var4 + "OFF";
 	        case HUD_OCCLUSION:
 	        	return this.hudOcclusion ? var4 + "ON" : var4 + "OFF";
 	        case MENU_ALWAYS_FOLLOW_FACE:
@@ -1413,7 +1419,10 @@ public class VRSettings
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-	            break;   
+	            break;
+            case GUI_APPEAR_OVER_BLOCK:
+                this.guiAppearOverBlock = !this.guiAppearOverBlock;
+                break;
 	        case HUD_OCCLUSION:
 	            this.hudOcclusion = !this.hudOcclusion;
 	            break;
@@ -1834,6 +1843,7 @@ public class VRSettings
             var5.println("autoSprintThreshold:" + this.autoSprintThreshold);
             var5.println("hrtfSelection:" + this.hrtfSelection);
             var5.println("rightclickDelay:" + this.rightclickDelay);
+            var5.println("guiAppearOverBlock:" + this.guiAppearOverBlock);
 
             var5.println("firstRun:" + this.firstRun);
             
@@ -2040,6 +2050,11 @@ public class VRSettings
                 "a real keyboard.",
                 "Pointer: A keyboard which you can use by pointing",
                 "either controller's crosshair at and pressing buttons."
+        }),
+        GUI_APPEAR_OVER_BLOCK("Appear Over Block", false, true, new String[] {
+                "If enabled, the GUI for blocks (such as chests and",
+                "furnaces) will be placed above the block. Otherwise, it",
+                "will be at the usual position."
         }),
         
 

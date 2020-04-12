@@ -11,18 +11,25 @@
  import net.minecraft.block.BlockRenderType;
  import net.minecraft.block.BlockState;
  import net.minecraft.client.GameSettings;
-@@ -58,6 +62,10 @@
+@@ -58,6 +62,12 @@
      private final Map<EntityType, EntityRenderer> renderers = Maps.newHashMap();
      private final Map<String, PlayerRenderer> skinMap = Maps.newHashMap();
      private final PlayerRenderer playerRenderer;
 +	//VIVECRAFT
 +	private final Map<String, VRPlayerRenderer> skinMapVR = Maps.<String, VRPlayerRenderer>newHashMap();
++	private final Map<String, VRPlayerRenderer> skinMapVRSeated = Maps.<String, VRPlayerRenderer>newHashMap();
 +	private VRPlayerRenderer playerRendererVR;
++	private VRPlayerRenderer playerRendererVRSeated;
 +	//
      private final FontRenderer textRenderer;
      public final TextureManager textureManager;
      private World world;
-@@ -219,9 +227,24 @@
+@@ -215,13 +225,38 @@
+         this.mc = Minecraft.getInstance();
+     }
+ 
+-    public <T extends Entity> EntityRenderer <? super T > getRenderer(T entityIn)
++public <T extends Entity> EntityRenderer <? super T > getRenderer(T entityIn)
      {
          if (entityIn instanceof AbstractClientPlayerEntity)
          {
@@ -34,16 +41,26 @@
 +        	//VIVECRAFT
 +
 +        	RotInfo rotinfo = PlayerModelController.getInstance().getRotationsForPlayer(entityIn.getUniqueID());
-+        	if(rotinfo!=null && !rotinfo.seated)
++        	if(rotinfo!=null)
 +        	{
-+        		if (this.playerRendererVR == null) { // Needs to lazy load cause RenderGlobal
-+        			this.playerRendererVR = new VRPlayerRenderer(this);
-+        			this.skinMapVR.put("default", this.playerRendererVR);
-+        			this.skinMapVR.put("slim", new VRPlayerRenderer(this, true));
-+        		}
-+        		VRPlayerRenderer renderplayervr = this.skinMapVR.get(s);
-+
-+        		return (EntityRenderer <? super T >) (renderplayervr != null ? renderplayervr : this.playerRendererVR);            	
++        		if(rotinfo.seated)
++        		{
++            		if (this.playerRendererVRSeated == null) { // Needs to lazy load cause RenderGlobal
++            			this.playerRendererVRSeated = new VRPlayerRenderer(this, false, true);
++            			this.skinMapVRSeated.put("default", this.playerRendererVRSeated);
++            			this.skinMapVRSeated.put("slim", new VRPlayerRenderer(this, true, true));
++            		}
++            		VRPlayerRenderer renderplayervr = this.skinMapVRSeated.get(s);
++            		return (EntityRenderer <? super T >) (renderplayervr != null ? renderplayervr : this.playerRendererVRSeated);            	
++        		} else {
++            		if (this.playerRendererVR == null) { // Needs to lazy load cause RenderGlobal
++            			this.playerRendererVR = new VRPlayerRenderer(this, false, false);
++            			this.skinMapVR.put("default", this.playerRendererVR);
++            			this.skinMapVR.put("slim", new VRPlayerRenderer(this, true, false));
++            		}
++            		VRPlayerRenderer renderplayervr = this.skinMapVR.get(s);
++            		return (EntityRenderer <? super T >) (renderplayervr != null ? renderplayervr : this.playerRendererVR);            	
++        		}    		
 +        	}  else 
 +        		return (EntityRenderer <? super T >) (playerrenderer != null ? playerrenderer : this.playerRenderer);
 +        	//

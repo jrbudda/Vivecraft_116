@@ -48,7 +48,7 @@ public class OpenVRStereoRenderer
 	public Framebuffer fsaaLastPassResultFBO;
 	
 	public net.minecraft.client.renderer.Matrix4f[] eyeproj = new net.minecraft.client.renderer.Matrix4f[2];
-	public net.minecraft.client.renderer.Matrix4f[] cloudeyeproj = new net.minecraft.client.renderer.Matrix4f[2];
+	//public net.minecraft.client.renderer.Matrix4f[] cloudeyeproj = new net.minecraft.client.renderer.Matrix4f[2];
 
 	public int mirrorFBWidth;     /* Actual width of the display buffer */
 	public int mirrorFBHeight;  
@@ -633,10 +633,10 @@ public class OpenVRStereoRenderer
 			
 			mc.gameRenderer.setupClipPlanes();
 
-			eyeproj[0] = getProjectionMatrix(0, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance);
-			eyeproj[1] = getProjectionMatrix(1, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance);
-			cloudeyeproj[0] = getProjectionMatrix(0, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
-			cloudeyeproj[1] = getProjectionMatrix(1, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
+			eyeproj[0] = getProjectionMatrix(0, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
+			eyeproj[1] = getProjectionMatrix(1, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
+			//cloudeyeproj[0] = getProjectionMatrix(0, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
+			//cloudeyeproj[1] = getProjectionMatrix(1, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
 
 			if (mc.vrSettings.useFsaa)
 			{
@@ -679,8 +679,8 @@ public class OpenVRStereoRenderer
 				VRShaders.setupFOVReduction();
 				ShaderHelper.checkGLError("init FOV shader");		
 		        mc.worldRenderer.makeEntityOutlineShader();
-				mc.gameRenderer.updateShaderGroupSize(mc.getMainWindow().getFramebufferWidth(), mc.getMainWindow().getFramebufferHeight());
-			} catch (Exception e) {
+		        mc.gameRenderer.loadEntityShader(mc.getRenderViewEntity());
+		       } catch (Exception e) {
 				System.out.println(e.getMessage());
 				System.exit(-1);
 			}

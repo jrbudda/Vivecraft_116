@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.VRPlayerModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.LivingEntity;
 
 public class VRHMDLayer<T extends LivingEntity, M extends EntityModel<T>> extends LayerRenderer<T, M>
@@ -22,12 +23,13 @@ public class VRHMDLayer<T extends LivingEntity, M extends EntityModel<T>> extend
 			float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw,
 			float headPitch) {
 
-		VRPlayerModel m = (VRPlayerModel) this.getEntityModel();
-
-		if (m.vrHMD.showModel) {
-			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(RenderType.getEntitySolid(m.vrHMD.getTextureLocation()));
+		ModelRenderer hmd = ((VRPlayerModel)this.getEntityModel()).vrHMD;
+			
+		if (hmd.showModel) {
+			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(RenderType.getEntitySolid(hmd.getTextureLocation()));
 			int i = LivingRenderer.getPackedOverlay(entitylivingbaseIn, 0.0F);
-			m.vrHMD.render(matrixStackIn, ivertexbuilder, packedLightIn, i);
+			hmd.render(matrixStackIn, ivertexbuilder, packedLightIn, i);
 		}
+		
 	}
 }

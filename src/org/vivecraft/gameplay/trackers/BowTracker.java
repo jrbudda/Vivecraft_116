@@ -20,9 +20,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.UseAction;
 import net.minecraft.network.play.client.CCustomPayloadPacket;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ChatType;
+import net.minecraft.util.text.StringTextComponent;
 
 public class BowTracker extends Tracker {
 	private double lastcontrollersDist;
@@ -36,10 +39,7 @@ public class BowTracker extends Tracker {
 	
 	private boolean canDraw, lastcanDraw;
 	public long startDrawTime;
-	
-	
-	private Vec3d leftHandAim;
-	
+		
 	private final double notchDotThreshold = 20;
 	private double maxDraw ;
 	private long maxDrawMillis=1100;
@@ -111,9 +111,7 @@ public class BowTracker extends Tracker {
 	}
 
 	@Override
-	public void doProcess(ClientPlayerEntity player){
-		
-		
+	public void doProcess(ClientPlayerEntity player){	
 		VRData vrData = mc.vrPlayer.vrdata_world_render;
 		if (vrData==null)
 			vrData=mc.vrPlayer.vrdata_world_pre;
@@ -125,7 +123,6 @@ public class BowTracker extends Tracker {
 			return;
 		}
 		
-
 		lastcontrollersDist = controllersDist;
 		lastcontrollersDot = controllersDot;
 		lastpressed = pressed;
@@ -140,52 +137,50 @@ public class BowTracker extends Tracker {
 			
 		controllersDist = leftPos.distanceTo(rightPos);
 
-		Vec3d forward = new Vec3d(0,1,0);
+		Vec3d up = new Vec3d(0,1,0);
 
-		Vec3d stringPos=vrData.getHand(1).getCustomVector(forward).scale(maxDraw*0.5).add(leftPos);
+		Vec3d stringPos=vrData.getHand(1).getCustomVector(up).scale(maxDraw*0.5).add(leftPos);
 		double notchDist=rightPos.distanceTo(stringPos);
 
 		aim = rightPos.subtract(leftPos).normalize();
 
-		Vec3d rightaim3 = vrData.getHand(0).getCustomVector(new Vec3d(0,0,-1));
-		
+		Vec3d rightaim3 = vrData.getController(0).getCustomVector(new Vec3d(0,0,-1));
+
 		Vector3 rightAim = new Vector3((float)rightaim3.x, (float) rightaim3.y, (float) rightaim3.z);
-		leftHandAim = vrData.getHand(1).getCustomVector(new Vec3d(0, 0, -1));
-	 	Vec3d l4v3 = vrData.getHand(1).getCustomVector(new Vec3d(0, -1, 0));
+
+		Vec3d leftGripDown = vrData.getHand(1).getCustomVector(new Vec3d(0, -1, 0));
 		 
-		Vector3 leftforeward = new Vector3((float)l4v3.x, (float) l4v3.y, (float) l4v3.z);
-
-		controllersDot = 180 / Math.PI * Math.acos(leftforeward.dot(rightAim));
-
+		Vector3 leftAim = new Vector3((float)leftGripDown.x, (float) leftGripDown.y, (float) leftGripDown.z);
+		
+		controllersDot = 180 / Math.PI * Math.acos(leftAim.dot(rightAim));
+		
 		pressed = mc.gameSettings.keyBindAttack.isKeyDown();
 
-		float notchDistThreshold = (float) (0.3 *vrData.worldScale);
+		float notchDistThreshold = (float) (0.15 *vrData.worldScale);
 		
 		boolean main = this.isHoldingBow(player, Hand.MAIN_HAND);
 		
 		Hand hand = main ? Hand.MAIN_HAND : Hand.OFF_HAND;
 		
-		ItemStack ammo;
-		ItemStack bow;
+		ItemStack ammo = ItemStack.EMPTY;
+		ItemStack bow = ItemStack.EMPTY;
 
 		if(main){ //autofind ammo.
-			ammo = findAmmoItemStack(player);
 			bow = player.getHeldItemMainhand();
+			ammo = player.findAmmo(bow);
 		}
 		else { //BYOA
-			ammo = this.isArrow(player.getHeldItemMainhand()) ?  player.getHeldItemMainhand() : null;
+			if (player.getHeldItemMainhand().getItem().isIn(ItemTags.ARROWS)) {
+				ammo = player.getHeldItemMainhand();			
+			}
 			bow = player.getHeldItemOffhand();
 		}
-		
-		player.setItemInUseClient(bow, hand);
-		player.setItemInUseCountClient(10000000);
-		
-		
+				
 		int stage0=bow.getUseDuration();
 		int stage1=bow.getUseDuration()-15;
 		int stage2=0;
 		
-		if(ammo !=null && notchDist <= notchDistThreshold && controllersDot <= notchDotThreshold)
+		if(ammo != ItemStack.EMPTY && notchDist <= notchDistThreshold && controllersDot <= notchDotThreshold)
 		{
 			//can draw
 			if(!canDraw) {
@@ -280,54 +275,5 @@ public class BowTracker extends Tracker {
 		}
 	}
 	
-    public ItemStack findAmmoItemStack(PlayerEntity player){
-        boolean flag = player.abilities.isCreativeMode || 
-        		EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, player.getHeldItemMainhand()) > 0;
-        		
-        ItemStack itemstack = this.findAmmo(player);
-
-        if (flag && itemstack.isEmpty())
-        	{
-                return new ItemStack(Items.ARROW);
-            }
-        return itemstack;
-    }
-    
-    //The 2 methods below are from ItemBow.
-    private ItemStack findAmmo(PlayerEntity player)
-    {
-        if (this.isArrow(player.getHeldItem(Hand.OFF_HAND)))
-        {
-            return player.getHeldItem(Hand.OFF_HAND);
-        }
-        else if (this.isArrow(player.getHeldItem(Hand.MAIN_HAND)))
-        {
-            return player.getHeldItem(Hand.MAIN_HAND);
-        }
-        else
-        {
-            for (int i = 0; i < player.inventory.getSizeInventory(); ++i)
-            {
-                ItemStack itemstack = player.inventory.getStackInSlot(i);
-
-                if (this.isArrow(itemstack))
-                {
-                    return itemstack;
-                }
-            }
-
-            return ItemStack.EMPTY;
-        }
-    }
-
-    protected boolean isArrow(ItemStack stack)
-    {
-//        if(Reflector.forgeExists()){
-//        	return stack.getItem() instanceof ItemArrow || stack.getItem().getClass().getName().toLowerCase().contains("arrow");
-//        }else {
-        	return stack.getItem() instanceof ArrowItem;
-//        }
-    }
-
 }
 

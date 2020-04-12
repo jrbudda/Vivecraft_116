@@ -2,6 +2,7 @@ package org.vivecraft.gameplay.screenhandlers;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+import org.vivecraft.api.ServerVivePlayer;
 import org.vivecraft.api.VRData.VRDevicePose;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.control.HandedKeyBinding;
@@ -9,6 +10,7 @@ import org.vivecraft.control.InputSimulator;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.provider.OpenVRUtil;
 import org.vivecraft.render.RenderPass;
+import org.vivecraft.settings.AutoCalibration;
 import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.math.Matrix4f;
 import org.vivecraft.utils.math.Quaternion;
@@ -409,7 +411,7 @@ public class GuiHandler {
 			guiPos_room = new Vec3d(
 					(float) (0),
 					(float) (1.3f),
-					(float) (playArea != null ? -playArea[1] / 2f : -1.5f));			
+					(float) -Math.max(playArea != null ? playArea[1] / 2f : 0, 1.5f));
 
 			guiRotation_room = new Matrix4f();
 			guiRotation_room.M[0][0] = guiRotation_room.M[1][1] = guiRotation_room.M[2][2] = guiRotation_room.M[3][3] = 1.0F;
@@ -435,7 +437,7 @@ public class GuiHandler {
 					|| (newScreen instanceof AnvilScreen)
 					;
 
-			if(appearOverBlock && mc.objectMouseOver != null && mc.objectMouseOver.getType() == RayTraceResult.Type.BLOCK){	
+			if(appearOverBlock && mc.vrSettings.guiAppearOverBlock && mc.objectMouseOver != null && mc.objectMouseOver.getType() == RayTraceResult.Type.BLOCK){
 				//appear over block.
 				BlockRayTraceResult hit = (BlockRayTraceResult) mc.objectMouseOver;
 				Vec3d temp =new Vec3d(hit.getPos().getX() + 0.5f,
@@ -480,6 +482,8 @@ public class GuiHandler {
 						(e.x  / 2 + v.x),
 						(e.y / 2 + v.y),
 						(e.z / 2 + v.z));
+				if (mc.vrSettings.physicalKeyboard && KeyboardHandler.Showing && guiPos_room.y < v.y + 0.2)
+					guiPos_room = new Vec3d(guiPos_room.x, v.y + 0.2, guiPos_room.z);
 
 				Vec3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
 				Vector3 look = new Vector3();
@@ -637,6 +641,7 @@ public class GuiHandler {
 
   		float thescale = scale * mc.vrPlayer.vrdata_world_render.worldScale; // * this.mc.vroptions.hudscale
   		GlStateManager.scalef(thescale, thescale, thescale);
+  		 		
   		GuiHandler.guiScaleApplied = thescale;
 
   		mc.getProfiler().endSection();
