@@ -2024,11 +2024,11 @@ public class MCOpenVR
 			TPose_Left.M[2][3] = 0f;
 			OpenVRUtil.Matrix4fCopy(TPose_Left.rotationY(120), TPose_Left);
 			TPose_Left.M[0][3] = -.5f;
-			TPose_Left.M[1][3] = 1.65f;
+			TPose_Left.M[1][3] = 1.0f;
 			TPose_Left.M[2][3] = -.5f;
 			
 			Neutral_HMD.M[0][3] = 0f;
-			Neutral_HMD.M[1][3] = 1.0f;
+			Neutral_HMD.M[1][3] = 1.8f;
 
 			OpenVRUtil.Matrix4fCopy(Neutral_HMD, hmdPose);
 			headIsTracking = true;

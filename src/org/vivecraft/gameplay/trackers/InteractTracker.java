@@ -89,9 +89,9 @@ public class InteractTracker extends Tracker{
 				} catch (Exception e) {
 				}
 			}
+			rightClickable.remove(Block.class);
 		}
 		
-		rightClickable.remove(Block.class);
 		Vec3d forward = new Vec3d(0,0,-1);
 
 		reset(player);

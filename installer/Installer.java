@@ -1375,6 +1375,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				prof.put("type", "custom");
 				prof.put("lastUsed", dateFormat.format(new java.util.Date()));
 				if(chkCustomGameDir.isSelected() && txtCustomGameDir.getText().trim() != ""){
+					String dir = txtCustomGameDir.getText();
+					if (dir.endsWith("\\mods")) dir = dir.substring(0, dir.length()-5);
+					if (dir.endsWith("\\mods\\")) dir = dir.substring(0, dir.length()-6);
 					prof.put("gameDir", txtCustomGameDir.getText());
 				} else {
 					prof.remove("gameDir");

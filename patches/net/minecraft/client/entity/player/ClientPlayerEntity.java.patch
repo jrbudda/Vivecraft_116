@@ -308,14 +308,19 @@
  
          if (this.onGround && this.abilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
-@@ -1010,10 +1181,76 @@
+@@ -1008,12 +1179,81 @@
+         return super.removeActivePotionEffect(potioneffectin);
+     }
  
++    private Vec3d  moveMulIn;
++    
      public void move(MoverType typeIn, Vec3d pos)
      {
 -        double d0 = this.getPosX();
 -        double d1 = this.getPosZ();
 -        super.move(typeIn, pos);
 -        this.updateAutoJump((float)(this.getPosX() - d0), (float)(this.getPosZ() - d1));
++    	moveMulIn = this.motionMultiplier; 	 //motionMultiplier gets zeroed in the super call.
 +    	if(pos.length() == 0) return;
 +    	if(this.isPassenger())return;
 +    	boolean freemove = OpenVRPlayer.get().getFreeMove();
@@ -333,7 +338,7 @@
 +    		double d1 = this.getPosZ();
 +    		super.move(typeIn, pos);
 +    		if(mc.vrSettings.walkUpBlocks)
-+    			this.stepHeight = 1.0f;
++    			this.stepHeight = this.getMuhJumpFactor() == 1 ? 1 : 0.6f;
 +    		else {
 +    			this.stepHeight = 0.6f;
 +    			this.updateAutoJump((float)(this.getPosX() - d0), (float)(this.getPosZ() - d1));
@@ -389,7 +394,7 @@
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1031,13 +1268,17 @@
+@@ -1031,13 +1271,17 @@
              float f = this.getAIMoveSpeed();
              float f1 = (float)vec3d2.lengthSquared();
  
@@ -409,7 +414,7 @@
                  vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vec3d2.lengthSquared();
  
-@@ -1220,4 +1461,385 @@
+@@ -1220,4 +1464,400 @@
              return this.eyesInWaterPlayer;
          }
      }
@@ -793,5 +798,20 @@
 +        }
 +        return super.onFoodEaten(p_213357_1_, p_213357_2_);  	
 +    }
-+
++    
++    public float getMuhJumpFactor()
++    {
++    	if(moveMulIn.lengthSquared() > 0) {
++    		return (float) (this.getJumpFactor() * moveMulIn.y);
++    	} else
++    		return this.getJumpFactor();
++    }
++    
++    public float getMuhSpeedFactor()
++    {
++    	if(moveMulIn.lengthSquared() > 0) {
++    		return (float) (this.getSpeedFactor() * (moveMulIn.x + moveMulIn.z) / 2);
++    	} else
++    		return this.getSpeedFactor();
++    }
  }

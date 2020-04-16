@@ -271,7 +271,7 @@ public class TeleportTracker extends Tracker{
   
 	}
 	
-    public void updateTeleportDestinations(GameRenderer renderer, Minecraft mc, Entity player)
+    public void updateTeleportDestinations(GameRenderer renderer, Minecraft mc, ClientPlayerEntity player)
     { //called every frame
         mc.getProfiler().startSection("updateTeleportDestinations");
 
@@ -313,7 +313,7 @@ public class TeleportTracker extends Tracker{
         mc.getProfiler().endSection();
     }
 
-    private void updateTeleportArc(Minecraft mc, Entity player)
+    private void updateTeleportArc(Minecraft mc, ClientPlayerEntity player)
     {
         Vec3d start = mc.vrPlayer.vrdata_world_render.getController(1).getPosition(); //and here i was just thinking there was never a need to use the render positions for logic.
         Vec3d tiltedAim = mc.vrPlayer.vrdata_world_render.getController(1).getDirection(); 
@@ -423,9 +423,9 @@ public class TeleportTracker extends Tracker{
             	if (!mc.player.abilities.allowFlying && NetworkHelper.isLimitedSurvivalTeleport()) { //survival mode mode
         			if(NetworkHelper.getTeleportDownLimit() > 0 && yDiff > NetworkHelper.getTeleportDownLimit() + 0.2)
         	    		ok = false;
-        			else if(NetworkHelper.getTeleportUpLimit() > 0 && -yDiff > NetworkHelper.getTeleportUpLimit() + 0.2)
+        			else if(NetworkHelper.getTeleportUpLimit() > 0 && -yDiff > ((double)NetworkHelper.getTeleportUpLimit()) * player.getMuhJumpFactor() + 0.2)
         	    		ok = false;  			
-        			else if(NetworkHelper.getTeleportHorizLimit() > 0 && xzdiff > NetworkHelper.getTeleportHorizLimit() + 0.2)
+        			else if(NetworkHelper.getTeleportHorizLimit() > 0 && xzdiff > ((double)NetworkHelper.getTeleportHorizLimit()) * player.getMuhSpeedFactor() + 0.2)
         	    		ok = false;
             	}
                 
@@ -473,7 +473,7 @@ public class TeleportTracker extends Tracker{
     }
 	
     // look for a valid place to stand on the block that the trace collided with
-    private boolean checkAndSetTeleportDestination(Minecraft mc, Entity player, Vec3d start, BlockRayTraceResult collision, Vec3d reverseEpsilon)
+    private boolean checkAndSetTeleportDestination(Minecraft mc, ClientPlayerEntity player, Vec3d start, BlockRayTraceResult collision, Vec3d reverseEpsilon)
     {
 
     	BlockPos bp = ((BlockRayTraceResult)collision).getPos();
@@ -538,7 +538,7 @@ public class TeleportTracker extends Tracker{
     		Vec3d offset = hitVec.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     		AxisAlignedBB bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     		double ex = 0;
-    		if (testClimb.getBlock() == Blocks.SOUL_SAND) ex = 0.05;
+    		if (testClimb.getBlock() == Blocks.SOUL_SAND || testClimb.getBlock() == Blocks.HONEY_BLOCK) ex = 0.05;
 
     		boolean emptySpotReq = mc.world.hasNoCollisions(player,bb) &&
     				!mc.world.hasNoCollisions(player,bb.grow(0, .125 + ex, 0));     
@@ -558,7 +558,7 @@ public class TeleportTracker extends Tracker{
     			
     			return true;
     		}
-
+    		
     		hitBlock = hitBlock.up();
     	}
 

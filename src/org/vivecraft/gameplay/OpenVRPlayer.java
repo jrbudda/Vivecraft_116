@@ -457,7 +457,7 @@ public class OpenVRPlayer
 		}
 
 		//test for climbing up a block
-		else if ((mc.vrSettings.walkUpBlocks || (mc.climbTracker.isGrabbingLadder() && mc.vrSettings.realisticClimbEnabled)) && player.fallDistance == 0)
+		else if (((mc.vrSettings.walkUpBlocks && player.getMuhJumpFactor() == 1) || (mc.climbTracker.isGrabbingLadder() && mc.vrSettings.realisticClimbEnabled)) && player.fallDistance == 0)
 		{
 			if (torso == null)
 			{

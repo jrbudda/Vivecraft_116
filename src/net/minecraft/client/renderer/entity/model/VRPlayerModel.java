@@ -126,7 +126,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
         	leftShoulder.showModel = true;
         	      	
     		//switcheroo and animateoo
-    		if(rotInfo.reverse){
+    		if(!rotInfo.reverse){
     			this.rightShoulder.setRotationPoint(-MathHelper.cos(this.bipedBody.rotateAngleY) * 5.0F, smallArms ? 2.5F : 2.0F, MathHelper.sin(this.bipedBody.rotateAngleY) * 5.0F);
     			this.leftShoulder.setRotationPoint(MathHelper.cos(this.bipedBody.rotateAngleY) * 5.0F, smallArms ? 2.5F : 2.0F, -MathHelper.sin(this.bipedBody.rotateAngleY) * 5.0F);   							
     		} else {

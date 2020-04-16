@@ -494,7 +494,7 @@
 -                    throw new ReportedException(crashreport1);
 -                }
 -            }
- 
+-
 -            this.lightmapTexture.setAllowed(true);
 -        }
 -
@@ -502,7 +502,7 @@
 -        this.waitForServerThread();
 -        MemoryMonitor.update();
 -        Lagometer.updateLagometer();
--
+ 
 -        if (this.mc.gameSettings.ofProfiler)
 -        {
 -            this.mc.gameSettings.showDebugProfilerChart = true;
@@ -521,7 +521,7 @@
          {
              return false;
          }
-@@ -860,16 +902,32 @@
+@@ -860,17 +902,36 @@
          }
      }
  
@@ -537,27 +537,33 @@
          {
              this.mc.setRenderViewEntity(this.mc.player);
          }
- 
+-
 -        this.getMouseOver(partialTicks);
+-
++    	
++     	if(mc.currentPass == RenderPass.LEFT) {
++	    	//
++	        this.getMouseOver(partialTicks);
++	  		if (this.mc.objectMouseOver != null && mc.objectMouseOver.getType() != Type.MISS)
++	  			crossVec = this.mc.objectMouseOver.getHitVec();
++	        
++	    		if(mc.currentScreen == null ){
++	    			// VIVE START - teleport movement
++	    			mc.teleportTracker.updateTeleportDestinations(this, mc, mc.player);
++	    			// VIVE END - teleport movement
++	    		}	
++     	}
++     	
 +    	//Vivecraft
 +    	cacheRVEPos((LivingEntity) mc.getRenderViewEntity());	
 +    	setupRVE();
 +    	
 +    	setupOverlayStatus(partialTicks); 
 +    	
-+     	if(mc.currentPass == RenderPass.LEFT) {
-+	    	//
-+	        this.getMouseOver(partialTicks);
-+	    		if(mc.currentScreen == null ){
-+	    			// VIVE START - teleport movement
-+	    			mc.teleportTracker.updateTeleportDestinations(this, mc, mc.getRenderViewEntity());
-+	    			// VIVE END - teleport movement
-+	    		}	
-+     	}
- 
          if (Config.isShaders())
          {
-@@ -883,36 +941,17 @@
+             Shaders.beginRender(this.mc, this.activeRender, partialTicks, finishTimeNano);
+@@ -883,36 +944,17 @@
          {
              Shaders.beginRenderPass(partialTicks, finishTimeNano);
          }
@@ -599,7 +605,7 @@
          }
  
          float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
-@@ -928,51 +967,46 @@
+@@ -928,51 +970,46 @@
  
              float f1 = 5.0F / (f * f + 5.0F) - f * 0.04F;
              f1 = f1 * f1;
@@ -678,7 +684,7 @@
          }
  
          if (flag)
-@@ -980,6 +1014,8 @@
+@@ -980,6 +1017,8 @@
              Shaders.endRender();
          }
  
@@ -687,7 +693,7 @@
          this.mc.getProfiler().endSection();
      }
  
-@@ -1264,8 +1300,11 @@
+@@ -1264,8 +1303,11 @@
              RenderSystem.disableCull();
              MatrixStack matrixstack = new MatrixStack();
              matrixstack.push();
@@ -701,7 +707,7 @@
              matrixstack.scale(f7, -f7, f7);
              matrixstack.rotate(Vector3f.YP.rotationDegrees(900.0F * MathHelper.abs(MathHelper.sin(f4))));
              matrixstack.rotate(Vector3f.XP.rotationDegrees(6.0F * MathHelper.cos(f * 8.0F)));
-@@ -1305,4 +1344,2307 @@
+@@ -1305,4 +1347,2304 @@
      {
          return this.overlayTexture;
      }
@@ -1902,10 +1908,7 @@
 +  		RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f); //white crosshair, with blending
 +
 +  		Vec3d crosshairRenderPos = crossVec;
-+  		
-+  		if (this.mc.objectMouseOver != null && mc.objectMouseOver.getType() != Type.MISS)
-+  			crosshairRenderPos = this.mc.objectMouseOver.getHitVec();
-+  		
++  		  		
 +  		Vec3d aim = crosshairRenderPos.subtract(mc.vrPlayer.vrdata_world_render.getController(0).getPosition());
 +  		
 +  		float crossDepth =(float)aim.length();
