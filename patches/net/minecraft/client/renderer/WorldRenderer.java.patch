@@ -219,9 +219,9 @@
 +        	selR = selG = selB = 0f;
              BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).getPos();
              BlockState blockstate = this.world.getBlockState(blockpos);
- 
-@@ -1643,6 +1708,8 @@
-                 }
+             boolean flag6;
+@@ -1649,6 +1714,8 @@
+                 this.drawSelectionBox(matrixStackIn, ivertexbuilder2, activeRenderInfoIn.getRenderViewEntity(), d0, d1, d2, blockpos, blockstate);
              }
          }
 +   
@@ -229,7 +229,7 @@
  
          RenderSystem.pushMatrix();
          RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
-@@ -1651,7 +1718,9 @@
+@@ -1657,7 +1724,9 @@
          this.mc.debugRenderer.render(matrixStackIn, irendertypebuffer$impl, d0, d1, d2);
          GlStateManager.setFogEnabled(flag5);
          this.renderWorldBorder(activeRenderInfoIn);
@@ -240,7 +240,7 @@
          irendertypebuffer$impl.finish(Atlases.getTranslucentBlockType());
          irendertypebuffer$impl.finish(Atlases.getBannerType());
          irendertypebuffer$impl.finish(Atlases.getShieldType());
-@@ -1661,10 +1730,22 @@
+@@ -1667,10 +1736,22 @@
          this.renderTypeTextures.getCrumblingBufferSource().finish();
          irendertypebuffer$impl.finish(RenderType.getLines());
          irendertypebuffer$impl.finish();
@@ -264,7 +264,7 @@
              Shaders.preWater();
          }
  
-@@ -2828,10 +2909,11 @@
+@@ -2834,10 +2915,11 @@
      {
          bufferIn.pos(xIn - camX, (double)yIn - camY, zIn - camZ).tex(texU, texV).endVertex();
      }
@@ -278,7 +278,7 @@
      }
  
      public static void drawVoxelShapeParts(MatrixStack matrixStackIn, IVertexBuilder bufferIn, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
-@@ -3290,6 +3372,8 @@
+@@ -3296,6 +3378,8 @@
      {
          Random random = this.world.rand;
  
@@ -287,7 +287,7 @@
          switch (type)
          {
              case 1000:
-@@ -3345,18 +3429,26 @@
+@@ -3351,18 +3435,26 @@
                  break;
  
              case 1011:
@@ -314,7 +314,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3377,14 +3469,26 @@
+@@ -3383,14 +3475,26 @@
                  break;
  
              case 1019:
@@ -341,7 +341,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3413,10 +3517,17 @@
+@@ -3419,10 +3523,17 @@
                  break;
  
              case 1030:
@@ -359,7 +359,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3437,6 +3548,9 @@
+@@ -3443,6 +3554,9 @@
                  break;
  
              case 1036:

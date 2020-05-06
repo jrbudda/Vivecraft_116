@@ -34,3 +34,18 @@
          }
      });
      public static final SliderPercentageOption MIPMAP_LEVELS = new SliderPercentageOption("options.mipmapLevels", 0.0D, 4.0D, 1.0F, (p_lambda$static$27_0_) ->
+@@ -277,11 +286,11 @@
+         return p_lambda$static$51_0_.fancyGraphics ? p_lambda$static$51_1_.getDisplayString() + I18n.format("options.graphics.fancy") : p_lambda$static$51_1_.getDisplayString() + I18n.format("options.graphics.fast");
+     });
+     public static final IteratableOption GUI_SCALE = new IteratableOption("options.guiScale", (p_lambda$static$52_0_, p_lambda$static$52_1_) ->
+-    {
+-        p_lambda$static$52_0_.guiScale = MathHelper.normalizeAngle(p_lambda$static$52_0_.guiScale + p_lambda$static$52_1_, Minecraft.getInstance().getMainWindow().calcGuiScale(0, Minecraft.getInstance().getForceUnicodeFont()) + 1);
++    { // VIVECRAFT: ignore gui scale
++        p_lambda$static$52_0_.guiScaleUser = MathHelper.normalizeAngle(p_lambda$static$52_0_.guiScaleUser + p_lambda$static$52_1_, Minecraft.getInstance().getMainWindow().calcGuiScale(0, Minecraft.getInstance().getForceUnicodeFont()) + 1);
+     }, (p_lambda$static$53_0_, p_lambda$static$53_1_) ->
+     {
+-        return p_lambda$static$53_1_.getDisplayString() + (p_lambda$static$53_0_.guiScale == 0 ? I18n.format("options.guiScale.auto") : p_lambda$static$53_0_.guiScale);
++        return p_lambda$static$53_1_.getDisplayString() + (p_lambda$static$53_0_.guiScaleUser == 0 ? I18n.format("options.guiScale.auto") : p_lambda$static$53_0_.guiScaleUser);
+     });
+     public static final IteratableOption MAIN_HAND = new IteratableOption("options.mainHand", (p_lambda$static$54_0_, p_lambda$static$54_1_) ->
+     {

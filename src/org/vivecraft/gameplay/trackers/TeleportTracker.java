@@ -233,40 +233,18 @@ public class TeleportTracker extends Tracker{
             boolean playCustomTeleportSound = movementTeleportDistance > 0.0f && vrMovementStyle.endTeleportingSound != null;
             Block block = null;
 
-//            if (playCustomTeleportSound)
-//            {
-//                String sound = vrMovementStyle.endTeleportingSound;
-//                if (sound != null)
-//                {
-//                    player.playSound(SoundEvents.getRegisteredSoundEvent(sound), vrMovementStyle.endTeleportingSoundVolume, 1.0F);
-//                }
-//            }
-
      	   //execute teleport               
             if(!mc.vrPlayer.isTeleportSupported()){
             	String tp = "/tp " + dest.x + " " +dest.y + " " + dest.z;      
             	mc.player.sendChatMessage(tp);
             } else {          
             	if(NetworkHelper.serverSupportsDirectTeleport)	player.teleported = true;
-            	player.setLocationAndAngles(dest.x, dest.y, dest.z, player.rotationYaw, player.rotationPitch);
+            	player.moveForced(dest.x, dest.y, dest.z);
             }
 
-            doTeleportCallback();
-            
-          //  System.out.println("teleport " + dest.toString());
+            doTeleportCallback();           
+            mc.player.stepSound(new BlockPos(dest), dest);
 
-//            if (playCustomTeleportSound)
-//            {
-//                String sound = vrMovementStyle.endTeleportingSound;
-//                if (sound != null)
-//                {
-//                    player.playSound(SoundEvents.getRegisteredSoundEvent(sound), vrMovementStyle.endTeleportingSoundVolume, 1.0F);
-//                }
-//            }
-//            else
-//            {
-                mc.player.stepSound(new BlockPos(dest), dest);
-//            }
         }
   
 	}

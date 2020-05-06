@@ -8,6 +8,15 @@
  import com.mojang.blaze3d.matrix.MatrixStack;
  import com.mojang.blaze3d.vertex.IVertexBuilder;
  import net.minecraft.client.Minecraft;
+@@ -51,7 +53,7 @@
+             int i = playerentity.getPrimaryHand() == HandSide.RIGHT ? 1 : -1;
+             ItemStack itemstack = playerentity.getHeldItemMainhand();
+ 
+-            if (itemstack.getItem() != Items.FISHING_ROD)
++            if (!(itemstack.getItem() instanceof net.minecraft.item.FishingRodItem))
+             {
+                 i = -i;
+             }
 @@ -81,6 +83,18 @@
                  d5 = MathHelper.lerp((double)partialTicks, playerentity.prevPosY, playerentity.getPosY()) + vec3d.y;
                  d6 = MathHelper.lerp((double)partialTicks, playerentity.prevPosZ, playerentity.getPosZ()) + vec3d.z;
@@ -15,7 +24,7 @@
 +                
 +                // VIVE START - use controller for fishing rod start point
 +            	int c = 1;
-+            	if (playerentity.getHeldItemMainhand().getItem() == Items.FISHING_ROD) c = 0;
++            	if (playerentity.getHeldItemMainhand().getItem() instanceof net.minecraft.item.FishingRodItem) c = 0;
 +            	Vec3d aimSource = Minecraft.getInstance().gameRenderer.getControllerRenderPos(c); 
 +            	Vec3d aimRotation = Minecraft.getInstance().vrPlayer.vrdata_world_render.getHand(c).getDirection();
 +            	d4= aimSource.x + aimRotation.x * 0.47f;

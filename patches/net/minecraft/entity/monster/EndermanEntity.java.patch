@@ -11,7 +11,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
-@@ -46,6 +50,7 @@
+@@ -46,11 +50,13 @@
  import net.minecraft.util.math.BlockRayTraceResult;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.RayTraceContext;
@@ -19,7 +19,31 @@
  import net.minecraft.util.math.Vec3d;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.IWorld;
-@@ -191,15 +196,33 @@
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.World;
++import net.optifine.reflect.Reflector;
+ 
+ public class EndermanEntity extends MonsterEntity
+ {
+@@ -99,7 +105,6 @@
+ 
+     public void setAttackTarget(@Nullable LivingEntity entitylivingbaseIn)
+     {
+-        super.setAttackTarget(entitylivingbaseIn);
+         IAttributeInstance iattributeinstance = this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+ 
+         if (entitylivingbaseIn == null)
+@@ -119,6 +124,9 @@
+                 iattributeinstance.applyModifier(ATTACKING_SPEED_BOOST);
+             }
+         }
++        //Forge move down here
++        super.setAttackTarget(entitylivingbaseIn);
++        //
+     }
+ 
+     protected void registerData()
+@@ -191,15 +199,33 @@
          }
          else
          {
@@ -58,3 +82,81 @@
      protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
      {
          return 2.55F;
+@@ -281,6 +307,16 @@
+ 
+         if (flag && !flag1)
+         {
++        	//Forge
++            Object event = Reflector.newInstance(Reflector.EnderTeleportEvent_Constructor, this, x, y, z, 0);
++            if(Reflector.postForgeBusEvent(event)) return false;
++            if(event != null) {
++            	x= Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetX);
++            	y= Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetY);
++            	z= Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetZ);           	
++            }
++            //
++            
+             boolean flag2 = this.attemptTeleport(x, y, z, true);
+ 
+             if (flag2)
+@@ -484,11 +520,16 @@
+ 
+         public boolean shouldExecute()
+         {
++        	boolean flag = !this.enderman.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
++        	//Forge
++        	if(Reflector.ForgeEventFactory_getMobGriefingEvent.exists())
++        		flag = !Reflector.callBoolean(Reflector.ForgeEventFactory_getMobGriefingEvent, this.enderman.world, this.enderman);
++        	//
+             if (this.enderman.getHeldBlockState() == null)
+             {
+                 return false;
+             }
+-            else if (!this.enderman.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING))
++            else if (flag)
+             {
+                 return false;
+             }
+@@ -510,8 +551,11 @@
+             BlockPos blockpos1 = blockpos.down();
+             BlockState blockstate1 = iworld.getBlockState(blockpos1);
+             BlockState blockstate2 = this.enderman.getHeldBlockState();
+-
+-            if (blockstate2 != null && this.func_220836_a(iworld, blockpos, blockstate2, blockstate, blockstate1, blockpos1))
++            //Forge
++            Object snapshot = Reflector.newInstance(Reflector.BlockSnapshot_Constructor, iworld, blockpos, blockstate1);
++            boolean flag = Reflector.callBoolean(Reflector.ForgeEventFactory_onBlockPlace, enderman, snapshot, net.minecraft.util.Direction.UP);
++            //
++            if (blockstate2 != null && this.func_220836_a(iworld, blockpos, blockstate2, blockstate, blockstate1, blockpos1)  && !flag) 
+             {
+                 iworld.setBlockState(blockpos, blockstate2, 3);
+                 this.enderman.setHeldBlockState((BlockState)null);
+@@ -520,6 +564,10 @@
+ 
+         private boolean func_220836_a(IWorldReader p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_)
+         {
++        	if(Reflector.IForgeBlockState_isAir2.exists()) {
++        		boolean flag = Reflector.callBoolean(p_220836_4_, Reflector.IForgeBlockState_isAir2, p_220836_1_, p_220836_2_);
++        		return !flag && p_220836_5_.isCollisionShapeOpaque(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
++        	}else
+             return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.isCollisionShapeOpaque(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
+         }
+     }
+@@ -572,11 +620,16 @@
+ 
+         public boolean shouldExecute()
+         {
++        	boolean flag = !this.enderman.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
++        	//Forge
++        	if(Reflector.ForgeEventFactory_getMobGriefingEvent.exists())
++        		flag = !Reflector.callBoolean(Reflector.ForgeEventFactory_getMobGriefingEvent, this.enderman.world, this.enderman);
++        	//
+             if (this.enderman.getHeldBlockState() != null)
+             {
+                 return false;
+             }
+-            else if (!this.enderman.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING))
++            else if (!flag)
+             {
+                 return false;
+             }

@@ -414,7 +414,7 @@ public class VRInputAction {
 	public void pressKey() {
 		InputMappings.Input input = (InputMappings.Input)MCReflection.KeyBinding_keyCode.get(keyBinding);
 
-		if (input.getKeyCode() != GLFW.GLFW_KEY_UNKNOWN && !MCOpenVR.isSafeBinding(keyBinding) && (!Reflector.forgeExists() || Reflector.call(keyBinding, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
+		if (input.getKeyCode() != GLFW.GLFW_KEY_UNKNOWN && !MCOpenVR.isSafeBinding(keyBinding) && (!Reflector.ForgeKeyBinding_getKeyModifier.exists() || Reflector.call(keyBinding, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
 			if (input.getType() == InputMappings.Type.KEYSYM) {
 				//System.out.println("InputSimulator pressKey: " + kb.getKeyDescription() + ", input type: " + input.getType().name() + ", key code: " + input.getKeyCode());
 				InputSimulator.pressKey(input.getKeyCode());
@@ -434,7 +434,7 @@ public class VRInputAction {
 	public void unpressKey() {
 		InputMappings.Input input = (InputMappings.Input)MCReflection.KeyBinding_keyCode.get(keyBinding);
 
-		if (input.getKeyCode() != GLFW.GLFW_KEY_UNKNOWN && !MCOpenVR.isSafeBinding(keyBinding) && (!Reflector.forgeExists() || Reflector.call(keyBinding, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
+		if (input.getKeyCode() != GLFW.GLFW_KEY_UNKNOWN && !MCOpenVR.isSafeBinding(keyBinding) && (!Reflector.ForgeKeyBinding_getKeyModifier.exists() || Reflector.call(keyBinding, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
 			if (input.getType() == InputMappings.Type.KEYSYM) {
 				//System.out.println("InputSimulator releaseKey: " + kb.getKeyDescription() + ", input type: " + input.getType().name() + ", key code: " + input.getKeyCode());
 				InputSimulator.releaseKey(input.getKeyCode());

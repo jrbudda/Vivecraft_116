@@ -29,6 +29,10 @@ public class ASMDelegator {
 			ItemStack climbClaws = new ItemStack(Items.SHEARS).setDisplayName(new StringTextComponent("Climb Claws"));
 			climbClaws.getTag().putBoolean("Unbreakable", true);
 			climbClaws.getTag().putInt("HideFlags", 4);
+			ItemStack telescope = new ItemStack(Items.ENDER_EYE).setDisplayName(new StringTextComponent("Eye of the Farseer"));
+			telescope.getTag().putBoolean("Unbreakable", true);
+			telescope.getTag().putInt("HideFlags", 4);
+			list.add(telescope);
 			list.add(jumpBoots);
 			list.add(climbClaws);
 		}

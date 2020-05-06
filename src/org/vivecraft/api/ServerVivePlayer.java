@@ -20,6 +20,7 @@ public class ServerVivePlayer {
 	public byte[] draw;
 	public float worldScale = 1.0f;
 	public float height =defaultHeight;
+	public byte activeHand = 0;
 	public static final float defaultHeight =1.65f;
 
 	boolean isTeleportMode;
@@ -51,8 +52,9 @@ public class ServerVivePlayer {
 		return 0;
 	}
 
+	final Vector3 forward = new Vector3(0,0,-1);
 	
-	public Vec3d getControllerDir(int controller){
+	public Vec3d getControllerVectorCustom(int controller, Vector3 direction){
 		byte[] data = controller0data;
 		if(controller == 1) data = controller1data;
 		if(this.isSeated()) controller = 0;
@@ -73,9 +75,8 @@ public class ServerVivePlayer {
 				float x = da.readFloat();
 				float y = da.readFloat();
 				float z = da.readFloat();
-				Vector3 forward = new Vector3(0,0,-1);
 				Quaternion q = new Quaternion(w, x, y, z);
-				Vector3 out = q.multiply(forward);
+				Vector3 out = q.multiply(direction);
 
 				da.close(); //needed?
 				return new Vec3d(out.getX(), out.getY(), out.getZ());
@@ -84,8 +85,11 @@ public class ServerVivePlayer {
 			}
 		}else{
 		}
-
 		return player.getLookVec();
+	}
+	
+	public Vec3d getControllerDir(int controller){
+		return getControllerVectorCustom(controller, forward);
 	}
 	
 	public Vec3d getHMDDir(){
@@ -104,7 +108,6 @@ public class ServerVivePlayer {
 				float x = da.readFloat();
 				float y = da.readFloat();
 				float z = da.readFloat();
-				Vector3 forward = new Vector3(0,0,-1);
 				Quaternion q = new Quaternion(w, x, y, z);
 				Vector3 out = q.multiply(forward);
 

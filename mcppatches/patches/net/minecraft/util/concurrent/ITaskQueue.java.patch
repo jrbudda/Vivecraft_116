@@ -15,7 +15,7 @@
 -        private final List<Queue<Runnable>> queues;
 +        private final List<ConcurrentLinkedQueue<Object>> queues;
  
-         public Priority(int p_i447_1_)
+         public Priority(int p_i448_1_)
          {
 @@ -32,9 +33,9 @@
          @Nullable

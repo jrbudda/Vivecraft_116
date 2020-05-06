@@ -6,12 +6,12 @@ import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.reflection.MCReflection.ReflectionMethod;
+import org.vivecraft.render.VRFirstPersonArmSwing;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.renderer.FirstPersonRenderer.VRFirstPersonArmSwing;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -70,6 +70,7 @@ public class InteractTracker extends Tracker{
 
 	private HashSet<Class> rightClickable = null;
 
+	@SuppressWarnings("unused")
 	public void doProcess(ClientPlayerEntity player){ //on tick
 		
 		if(rightClickable == null) {
@@ -77,7 +78,7 @@ public class InteractTracker extends Tracker{
 			rightClickable = new HashSet<Class>();
 			for (Object b : Registry.BLOCK) {
 				Class c = b.getClass();
-				try {
+				try { // constructor throws an exception if method doesn't exist
 					ReflectionMethod r = new MCReflection.ReflectionMethod(c, MCReflection.BlockState_OnBlockActivated, BlockState.class, World.class, BlockPos.class, PlayerEntity.class, Hand.class, BlockRayTraceResult.class);
 					rightClickable.add(c);
 				} catch (Exception e) {
@@ -182,7 +183,7 @@ public class InteractTracker extends Tracker{
 					MCOpenVR.triggerHapticPulse(c, 750);
 				}
 				else if (inBlockHit[c]!=null) {
-					if(	mc.playerController.processRightClickBlock(mc.player, (ClientWorld) mc.player.world, hand, inBlockHit[c]).isSuccessOrConsume())
+					if(	mc.playerController.func_217292_a(mc.player, (ClientWorld) mc.player.world, hand, inBlockHit[c]).isSuccessOrConsume())
 					{
 						mc.player.swingArm(hand, VRFirstPersonArmSwing.Interact);
 						MCOpenVR.triggerHapticPulse(c, 750);	

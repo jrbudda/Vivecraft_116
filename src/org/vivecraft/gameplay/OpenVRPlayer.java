@@ -171,7 +171,7 @@ public class OpenVRPlayer
 		float start = (float) Math.toDegrees(vrdata_world_pre.rotation_radians);			
 		rotateOriginAround(-end+start, temp.getHeadPivot());
 		//
-		
+
 		this.vrdata_room_post = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
 		this.vrdata_world_post = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
@@ -209,6 +209,7 @@ public class OpenVRPlayer
 				vrdata_world_pre.origin.z + (vrdata_world_post.origin.z - vrdata_world_pre.origin.z) * (double)par1
 				);
 		
+	
 //		System.out.println(vrdata_world_post.origin.x + " " + vrdata_world_pre.origin.x + " = " + interPolatedRoomOrigin.x);
 
 		this.vrdata_world_render = new VRData(interPolatedRoomOrigin, mc.vrSettings.walkMultiplier, interpolatedWorldScale, interpolatedWorldRotation_Radians);
@@ -274,26 +275,8 @@ public class OpenVRPlayer
 
 		x = player.getPosX() - campos.x;
 		z = player.getPosZ() - campos.z;
-		y = player.getPosY();
-		
-		switch (player.getPose())
-		{
-		case SWIMMING:
-		case FALL_FLYING:
-		case SPIN_ATTACK:
-			y -= 1.62 - 0.4f;
-		case CROUCHING:
-			break;
-		case DYING:
-			break;
-		case SLEEPING:
-			break;
-		case STANDING:
-			break;
-		default:
-			break;
-		}
-		
+		y = player.getPosY() + player.getRoomYOffsetFromPos();
+				
 		setRoomOrigin(x, y, z, reset);
 	}
 

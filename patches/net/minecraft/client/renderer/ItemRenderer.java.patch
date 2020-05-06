@@ -1,17 +1,19 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -11,6 +11,10 @@
+@@ -11,6 +11,12 @@
  import java.util.Random;
  import java.util.Set;
  import javax.annotation.Nullable;
 +
 +import org.lwjgl.opengl.GL14;
 +import org.vivecraft.gameplay.trackers.SwingTracker;
++import org.vivecraft.gameplay.trackers.TelescopeTracker;
++import org.vivecraft.render.SpecialItemRenderer;
 +
  import net.minecraft.block.BlockState;
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.entity.player.ClientPlayerEntity;
-@@ -48,6 +52,7 @@
+@@ -48,6 +54,7 @@
  import net.optifine.CustomItems;
  import net.optifine.reflect.Reflector;
  import net.optifine.reflect.ReflectorForge;
@@ -19,7 +21,7 @@
  import net.optifine.render.RenderTypes;
  
  public class ItemRenderer implements IResourceManagerReloadListener
-@@ -62,6 +67,13 @@
+@@ -62,6 +69,13 @@
      private boolean renderModelHasEmissive = false;
      private boolean renderModelEmissive = false;
      private static boolean renderItemGui = false;
@@ -33,75 +35,66 @@
  
      public ItemRenderer(TextureManager p_i49_1_, ModelManager p_i49_2_, ItemColors p_i49_3_)
      {
-@@ -141,10 +153,27 @@
-             {
-                 modelIn = this.itemModelMesher.getModelManager().getModel(new ModelResourceLocation("minecraft:trident#inventory"));
-             }
--
-             modelIn.getItemCameraTransforms().getTransform(transformTypeIn).apply(leftHand, matrixStackIn);
+@@ -146,6 +160,14 @@
+ 
              matrixStackIn.translate(-0.5D, -0.5D, -0.5D);
  
 +            //VIVECRAFT support held item transparency overrides.
 +            ClientPlayerEntity p = Minecraft.getInstance().player;
 +            if(p!=null && isfphand){
-+            	fade =	SwingTracker.getItemFade(p, itemStackIn);          	
-+                GlStateManager.enableBlend();
-+                if (fade < 1) {
-+                    GL14.glBlendColor(1.0F, 1.0F, 1.0F, fade);
-+                    // Breaks translucent items, but there's no other way to do this as long as Minecraft uses fixed pipeline rendering.
-+                    RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-+                } else {
-+                	RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-+                }
++            	fade =	SwingTracker.getItemFade(p, itemStackIn);         
 +            } else {
 +            	fade = manualFade;
 +            }
 +            //
-+            
-+            
              if (!modelIn.isBuiltInRenderer() && (itemStackIn.getItem() != Items.TRIDENT || flag1))
              {
                  RenderType rendertype1 = RenderTypeLookup.getRenderType(itemStackIn);
-@@ -183,11 +212,17 @@
-             }
-             else if (Reflector.IForgeItem_getTileEntityItemStackRenderer.exists())
-             {
-+            	//VIVECRAFT - item partial transparency
-+            	GlStateManager.color4f(1.0F, 1.0F, 1.0F, fade );
-+            	//
-                 ItemStackTileEntityRenderer itemstacktileentityrenderer = (ItemStackTileEntityRenderer)Reflector.call(itemStackIn.getItem(), Reflector.IForgeItem_getTileEntityItemStackRenderer);
-                 itemstacktileentityrenderer.render(itemStackIn, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-             }
-             else
-             {
-+            	//VIVECRAFT - item partial transparency
-+            	GlStateManager.color4f(1.0F, 1.0F, 1.0F, fade );
-+            	//
-                 ItemStackTileEntityRenderer.instance.render(itemStackIn, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-             }
+@@ -159,7 +181,12 @@
+                 {
+                     rendertype = rendertype1;
+                 }
+-
++                
++                //Vivecraft ¯\_(ツ)_/¯ pick one? make a better one?
++                if(isfphand && fade < 1)
++                	rendertype = Atlases.getTranslucentBlockType();
++                //
++                
+                 IVertexBuilder ivertexbuilder = getBuffer(bufferIn, rendertype, true, itemStackIn.hasEffect());
  
-@@ -216,6 +251,20 @@
+                 if (Config.isCustomItems())
+@@ -216,7 +243,19 @@
+             {
                  k = this.itemColors.getColor(itemStackIn, bakedquad.getTintIndex());
              }
- 
-+                //Vivecraft color overrides for custom items
-+    			int b = Math.round(fade * 255);
-+    			int rev = (255 - b) << 24;
-+                k = (k & 0xFFFFFF) | rev; //apply fade to tinted color (doesn't work as renderQuad can't pass alpha values, but left here as an academic exercise)
-+		
-+		    	if (Minecraft.getInstance().jumpTracker.isBoots(itemStackIn))
-+		    	{
-+		    		k = makeColor(b, 0, 255, 0);
-+		    	} else if (Minecraft.getInstance().climbTracker.isClaws(itemStackIn))
-+		    	{
-+		    		k = makeColor(b, 130, 0, 75);
-+		    	}
-+		    	//
+-
++            //Vivecraft color overrides for custom items
++            if (Minecraft.getInstance().jumpTracker.isBoots(itemStackIn))
++            {
++            	k = makeColor(1, 0, 255, 0);
++            } else if (Minecraft.getInstance().climbTracker.isClaws(itemStackIn))
++            {
++            	k = makeColor(1, 130, 0, 75);
++            } else if (TelescopeTracker.isTelescope(itemStackIn))
++            {
++            	k = makeColor(1, 40, 20, 175);
++            }
++            //
 +		    	
              float f = (float)(k >> 16 & 255) / 255.0F;
              float f1 = (float)(k >> 8 & 255) / 255.0F;
              float f2 = (float)(k & 255) / 255.0F;
-@@ -283,10 +332,15 @@
+@@ -227,7 +266,7 @@
+             }
+             else
+             {
+-                bufferIn.addQuad(matrixstack$entry, bakedquad, f, f1, f2, combinedLightIn, combinedOverlayIn);
++       		     SpecialItemRenderer.addQuad(bufferIn, matrixstack$entry, bakedquad, f, f1, f2, fade, combinedLightIn, combinedOverlayIn);
+             }
+         }
+     }
+@@ -292,10 +331,15 @@
          this.textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
          this.textureManager.getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
          RenderSystem.enableRescaleNormal();
@@ -118,7 +111,7 @@
          RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
  
          if (Config.isCustomItems())
-@@ -306,7 +360,6 @@
+@@ -315,7 +359,6 @@
          {
              RenderHelper.setupGuiFlatDiffuseLighting();
          }
@@ -126,7 +119,7 @@
          this.renderItem(stack, ItemCameraTransforms.TransformType.GUI, false, matrixstack, irendertypebuffer$impl, 15728880, OverlayTexture.NO_OVERLAY, bakedmodel);
          irendertypebuffer$impl.finish();
          RenderSystem.enableDepthTest();
-@@ -460,4 +513,21 @@
+@@ -469,4 +512,21 @@
      {
          return VanillaResourceType.MODELS;
      }
@@ -135,16 +128,16 @@
 +    private int makeColor(int a, int r, int g, int b) {
 +    	return  a << 24 | r << 16 | g << 8 | b;
 +    }
-+    	public float getCurrentFade() {
-+		return fade;
-+	}
++    public float getCurrentFade() {
++    	return fade;
++    }
 +
 +    public float getFade() {
-+        return manualFade;
++    	return manualFade;
 +    }
-+	
++
 +    //used for physical inventory.
-+	public void setFade(float fade) {
-+		this.manualFade = fade;
-+	}
++    public void setFade(float fade) {
++    	this.manualFade = fade;
++    }
  }

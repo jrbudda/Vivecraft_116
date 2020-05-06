@@ -229,7 +229,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 	public boolean requestOpen() {
 		boolean success;
 		if (isBlock) {
-			success = (mc.playerController.processRightClickBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockRayTraceResult(Vec3d.ZERO, Direction.UP, blockPos, false))
+			success = (mc.playerController.func_217292_a(mc.player, mc.world, Hand.MAIN_HAND, new BlockRayTraceResult(Vec3d.ZERO, Direction.UP, blockPos, false))
 					== ActionResultType.SUCCESS);
 		} else {
 			success = mc.playerController.interactWithEntity(mc.player, entity, Hand.MAIN_HAND) == ActionResultType.SUCCESS;

@@ -24,8 +24,8 @@
      private final FontRenderer textRenderer;
      public final TextureManager textureManager;
      private World world;
-@@ -215,13 +225,38 @@
-         this.mc = Minecraft.getInstance();
+@@ -215,13 +225,49 @@
+         }
      }
  
 -    public <T extends Entity> EntityRenderer <? super T > getRenderer(T entityIn)
@@ -43,6 +43,7 @@
 +        	RotInfo rotinfo = PlayerModelController.getInstance().getRotationsForPlayer(entityIn.getUniqueID());
 +        	if(rotinfo!=null)
 +        	{
++				Object out = null;
 +        		if(rotinfo.seated)
 +        		{
 +            		if (this.playerRendererVRSeated == null) { // Needs to lazy load cause RenderGlobal
@@ -51,7 +52,12 @@
 +            			this.skinMapVRSeated.put("slim", new VRPlayerRenderer(this, true, true));
 +            		}
 +            		VRPlayerRenderer renderplayervr = this.skinMapVRSeated.get(s);
-+            		return (EntityRenderer <? super T >) (renderplayervr != null ? renderplayervr : this.playerRendererVRSeated);            	
++
++    				if(renderplayervr != null) 
++    					out = renderplayervr;
++    				else
++    					out = this.playerRendererVRSeated;
++
 +        		} else {
 +            		if (this.playerRendererVR == null) { // Needs to lazy load cause RenderGlobal
 +            			this.playerRendererVR = new VRPlayerRenderer(this, false, false);
@@ -59,8 +65,13 @@
 +            			this.skinMapVR.put("slim", new VRPlayerRenderer(this, true, false));
 +            		}
 +            		VRPlayerRenderer renderplayervr = this.skinMapVR.get(s);
-+            		return (EntityRenderer <? super T >) (renderplayervr != null ? renderplayervr : this.playerRendererVR);            	
++    				
++    				if(renderplayervr != null) 
++    					out = renderplayervr;
++    				else
++    					out = this.playerRendererVR;
 +        		}    		
++    			return (EntityRenderer<? super T>) out;
 +        	}  else 
 +        		return (EntityRenderer <? super T >) (playerrenderer != null ? playerrenderer : this.playerRenderer);
 +        	//

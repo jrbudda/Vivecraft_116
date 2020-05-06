@@ -1,11 +1,11 @@
 --- a/net/optifine/reflect/ReflectorForge.java
 +++ b/net/optifine/reflect/ReflectorForge.java
-@@ -177,7 +177,7 @@
+@@ -171,7 +171,7 @@
          }
          else
          {
 -            Button button = new Button(guiMainMenu.width / 2 - 100, yIn + rowHeightIn * 2, 98, 20, I18n.format("fml.menu.mods"), (button) ->
 +            Button button = new Button(guiMainMenu.width / 2 - 100, yIn + rowHeightIn * 2, 98, 20, I18n.format("fml.menu.mods"), (buttonq) ->
              {
-                 Screen screen = (Screen)Reflector.newInstance(Reflector.GuiModList_Constructor, guiMainMenu);
+                 Screen screen = (Screen)Reflector.ModListScreen_Constructor.newInstance(guiMainMenu);
                  Minecraft.getInstance().displayGuiScreen(screen);

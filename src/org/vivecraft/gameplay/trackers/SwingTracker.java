@@ -297,7 +297,7 @@ public class SwingTracker extends Tracker{
         							int p = 3;
         							if(item instanceof HoeItem){
         								mc.physicalGuiManager.preClickAction();
-        								mc.playerController.processRightClickBlock(player, (ClientWorld) player.world, c==0 ? Hand.MAIN_HAND:Hand.OFF_HAND, blockHit);
+        								mc.playerController.func_217292_a(player, (ClientWorld) player.world, c==0 ? Hand.MAIN_HAND:Hand.OFF_HAND, blockHit);
         								
         							} else if(block.getBlock() instanceof NoteBlock) {
     									mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace());       								
@@ -371,21 +371,22 @@ public class SwingTracker extends Tracker{
 	
 	//Get the transparency for held items to indicate attack power or sneaking.
 	public static float getItemFade(ClientPlayerEntity p, ItemStack is) {
-       float fade = p.getCooledAttackStrength(0)*.75f + .25f;
+		float fade = p.getCooledAttackStrength(0)*.75f + .25f;
     	
       	if(p.isShiftKeyDown()) 
           	fade =0.75f;
           
-          if(p.isActiveItemStackBlocking() && p.getActiveItemStack() != is) 
-          	fade =0.75f;
-
-          if(is.getItem() == Items.SHIELD) {
-              if (p.isActiveItemStackBlocking())
-                  fade = 1;
-              else
-                  fade = 0.75f;
-          }
-
+	      	if(is != ItemStack.EMPTY) {
+	      		
+		      	if(p.isActiveItemStackBlocking() && p.getActiveItemStack() != is) 
+		      		fade -= 0.25f;
+		      	
+		          if(is.getItem() == Items.SHIELD) {
+		              if (!p.isActiveItemStackBlocking())
+		                  fade -= 0.25f;
+		          }
+	      	}
+      	
           if(fade < 0.1) fade = 0.1f;
           if(fade > 1) fade = 1f;
           return fade;

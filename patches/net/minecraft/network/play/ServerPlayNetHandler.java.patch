@@ -21,17 +21,39 @@
  import net.minecraft.command.CommandSource;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -131,6 +138,9 @@
+@@ -23,6 +30,7 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.IJumpingMount;
+ import net.minecraft.entity.MoverType;
++import net.minecraft.entity.ai.attributes.IAttribute;
+ import net.minecraft.entity.item.BoatEntity;
+ import net.minecraft.entity.item.ExperienceOrbEntity;
+ import net.minecraft.entity.item.ItemEntity;
+@@ -45,6 +53,7 @@
+ import net.minecraft.nbt.StringNBT;
+ import net.minecraft.network.IPacket;
+ import net.minecraft.network.NetworkManager;
++import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.PacketThreadUtil;
+ import net.minecraft.network.play.client.CAnimateHandPacket;
+ import net.minecraft.network.play.client.CChatMessagePacket;
+@@ -129,8 +138,15 @@
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.dimension.DimensionType;
  import net.minecraft.world.server.ServerWorld;
++import net.optifine.reflect.Reflector;
++import net.optifine.reflect.ReflectorField;
++
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.vivecraft.api.NetworkHelper;
 +import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
 +import org.vivecraft.api.ServerVivePlayer;
++import org.vivecraft.reflection.MCReflection;
  
  public class ServerPlayNetHandler implements IServerPlayNetHandler
  {
-@@ -270,6 +280,8 @@
+@@ -270,6 +286,8 @@
          {
              this.disconnect(new TranslationTextComponent("multiplayer.disconnect.idling"));
          }
@@ -40,21 +62,104 @@
      }
  
      public void captureCurrentPosition()
-@@ -1612,6 +1624,95 @@
+@@ -385,11 +403,17 @@
+                 }
+ 
+                 entity.setPositionAndRotation(d3, d4, d5, f, f1);
++                //Forge
++                this.player.setPositionAndRotation(d3, d4, d5, this.player.rotationYaw, this.player.rotationPitch); // Forge - Resync player position on vehicle moving
++                //
+                 boolean flag2 = serverworld.hasNoCollisions(entity, entity.getBoundingBox().shrink(0.0625D));
+ 
+                 if (flag && (flag1 || !flag2))
+                 {
+                     entity.setPositionAndRotation(d0, d1, d2, f, f1);
++                    //Forge
++                    this.player.setPositionAndRotation(d3, d4, d5, this.player.rotationYaw, this.player.rotationPitch); // Forge - Resync player position on vehicle moving
++                    //
+                     this.netManager.sendPacket(new SMoveVehiclePacket(entity));
+                     return;
+                 }
+@@ -1051,7 +1075,15 @@
+ 
+         if (blockpos.getY() < this.server.getBuildLimit() - 1 || direction != Direction.UP && blockpos.getY() < this.server.getBuildLimit())
+         {
+-            if (this.targetPos == null && this.player.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < 64.0D && serverworld.isBlockModifiable(this.player, blockpos))
++        	double dist = 8D;
++        	
++        	//Forge
++        	if(Reflector.ForgePlayer_REACH_DISTANCE.exists())
++        		dist = player.getAttribute((IAttribute) Reflector.getFieldValue(Reflector.ForgePlayer_REACH_DISTANCE)).getValue() + 3;
++        	//
++        	
++            dist *= dist;
++            if (this.targetPos == null && this.player.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < dist && serverworld.isBlockModifiable(this.player, blockpos))
+             {
+                 ActionResultType actionresulttype = this.player.interactionManager.func_219441_a(this.player, serverworld, itemstack, hand, blockraytraceresult);
+ 
+@@ -1217,9 +1249,17 @@
+             }
+             else
+             {
++            	//Forge
++            	if(Reflector.ForgeHooks_newChatWithLinks.exists()) {
++            		ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), Reflector.call(Reflector.ForgeHooks_newChatWithLinks, s));
++                	itextcomponent = (ITextComponent) Reflector.call(Reflector.ForgeHooks_onServerChatEvent, this, s, itextcomponent);
++                	if (itextcomponent == null) return;
++            	} else {
++            		//
+                 ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), s);
+                 this.server.getPlayerList().sendMessage(itextcomponent, false);
+             }
++            }
+ 
+             this.chatSpamThresholdCount += 20;
+ 
+@@ -1345,6 +1385,11 @@
+                 else if (packetIn.getAction() == CUseEntityPacket.Action.INTERACT_AT)
+                 {
+                     Hand hand1 = packetIn.getHand();
++                                       
++                    //Forge
++                    if (Reflector.call(Reflector.ForgeHooks_onInteractEntityAt, player, entity, packetIn.getHitVec(), hand1) != null) return;
++                    //
++                    
+                     ActionResultType actionresulttype = entity.applyPlayerInteraction(this.player, packetIn.getHitVec(), hand1);
+ 
+                     if (actionresulttype.isSuccess())
+@@ -1389,7 +1434,9 @@
+                         return;
+                     }
+ 
+-                    this.player = this.server.getPlayerList().recreatePlayerEntity(this.player, DimensionType.OVERWORLD, false);
++                    //Forge - use player.dimension - ok for vanilla?
++                    this.player = this.server.getPlayerList().recreatePlayerEntity(this.player, this.player.dimension, false);
++                    //
+ 
+                     if (this.server.isHardcore())
+                     {
+@@ -1612,6 +1659,109 @@
  
      public void processCustomPayload(CCustomPayloadPacket packetIn)
      {
 +        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
-+        String s = packetIn.channel.getNamespace();
-+        String d = packetIn.channel.getPath();
++        //Forge
++        Reflector.call(Reflector.NetworkHooks_onCustomPayload, packetIn, this.netManager);
++        //
++        
++        PacketBuffer rawdata = (PacketBuffer) MCReflection.CCustomPayloadPacket_data.get(packetIn);
++        ResourceLocation channel = (ResourceLocation) MCReflection.CCustomPayloadPacket_channel.get(packetIn);
++
++        String s = channel.getNamespace();
++        String d = channel.getPath();
 +        
 +        // VIVE START - client querying if server is running this mod too      		
 +        if (s.equalsIgnoreCase("vivecraft") && d.equalsIgnoreCase("data"))
 +        {
-+        	int len = packetIn.data.readableBytes();
-+        	PacketDiscriminators dis = PacketDiscriminators.values()[packetIn.data.readByte()];
++        	int len = rawdata.readableBytes();
++        	PacketDiscriminators dis = PacketDiscriminators.values()[rawdata.readByte()];
 +    		byte[] data = new byte[len-1];
-+        	packetIn.data.readBytes(data);
++    		rawdata.readBytes(data);
 +    		ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.player.getUniqueID());
 +    		if(vp == null && dis != PacketDiscriminators.VERSION) {
 +    			//how?
@@ -109,25 +214,32 @@
 +    			//only we can use that word.
 +    			break;
 +    		case WORLDSCALE:
-+            	packetIn.data.resetReaderIndex();
-+            	packetIn.data.readByte();
-+    			vp.worldScale = packetIn.data.readFloat();
++            	rawdata.resetReaderIndex();
++            	rawdata.readByte();
++    			vp.worldScale = rawdata.readFloat();
 +    			break;
 +    		case HEIGHT:
-+            	packetIn.data.resetReaderIndex();
-+            	packetIn.data.readByte();
-+    			vp.height = packetIn.data.readFloat();
++            	rawdata.resetReaderIndex();
++            	rawdata.readByte();
++    			vp.height = rawdata.readFloat();
 +    			break;			
 +    		case TELEPORT:
-+            	packetIn.data.resetReaderIndex();
-+            	packetIn.data.readByte();
-+    			float x = packetIn.data.readFloat();
-+				float y = packetIn.data.readFloat();
-+				float z = packetIn.data.readFloat();
++            	rawdata.resetReaderIndex();
++            	rawdata.readByte();
++    			float x = rawdata.readFloat();
++				float y = rawdata.readFloat();
++				float z = rawdata.readFloat();
 +				this.player.setPositionAndRotation(x, y, z, this.player.rotationYaw, this.player.rotationPitch);
 +    			break;
 +    		case CLIMBING:
 +    			this.player.fallDistance = 0;
++    		case ACTIVEHAND:
++    			rawdata.resetReaderIndex();
++    			rawdata.readByte();
++    			vp.activeHand = rawdata.readByte();
++    			if (vp.isSeated())
++    				vp.activeHand = 0;
++    			break;	
 +        	default:
 +        		break;
 +        	}

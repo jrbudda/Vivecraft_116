@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,8 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
     private static final Logger LOGGER = LogManager.getLogger();
     private ZipFile ZipFile;
 
+    private List<String> exclusions = Arrays.asList(new String[]{"net/minecraft/item/Item", "net/minecraft/item/Item$Properties"});
+    
     public VivecraftTransformer(ZipFile ZipFile)
     {
         this.ZipFile = ZipFile;
@@ -48,6 +51,8 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
             s = Utils.removePrefix(s, new String[] {"srg/"});
             s = Utils.removeSuffix(s, new String[] {".clsrg"});
             Target target = Target.targetClass(s);
+            if(exclusions.contains(s))
+        		continue;
             set.add(target);
         }
 
@@ -59,6 +64,8 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
     {
         ClassNode classnode = input;
         String s = context.getClassName();
+    	System.out.println("Vivecraft Transform " + s);
+
         String s1 = s.replace('.', '/');
         byte[] abyte = this.getResourceBytes("srg/" + s1 + ".clsrg");
 
@@ -66,6 +73,7 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
         {
             InputStream inputstream = new ByteArrayInputStream(abyte);
             ClassNode classnode1 = this.loadClass(inputstream);
+        	System.out.println("Vivecraft Replacing " + s);
 
             if (classnode1 != null)
             {

@@ -1,0 +1,39 @@
+--- a/net/minecraft/client/multiplayer/ClientChunkProvider.java
++++ b/net/minecraft/client/multiplayer/ClientChunkProvider.java
+@@ -112,7 +112,7 @@
+         else
+         {
+             int i = this.array.getIndex(chunkX, chunkZ);
+-            Chunk chunk = this.array.chunks.get(i);
++            Chunk chunk = (Chunk) this.array.chunks.get(i);
+ 
+             if (!isValid(chunk, chunkX, chunkZ))
+             {
+@@ -122,7 +122,8 @@
+                     return null;
+                 }
+ 
+-                chunk = new ChunkOF(this.world, new ChunkPos(chunkX, chunkZ), biomeContainerIn);
++                Object temp = new ChunkOF(this.world, new ChunkPos(chunkX, chunkZ), biomeContainerIn);
++                chunk = (Chunk) temp;
+                 chunk.read(biomeContainerIn, packetIn, nbtTagIn, sizeIn);
+                 this.array.replace(i, chunk);
+             }
+@@ -152,7 +153,7 @@
+                 }
+             }
+ 
+-            ChunkSection[] achunksection = chunk.getSections();
++            ChunkSection[] achunksection = ((Chunk)chunk).getSections();
+             WorldLightManager worldlightmanager = this.getLightManager();
+             worldlightmanager.enableLightSources(new ChunkPos(chunkX, chunkZ), true);
+ 
+@@ -169,7 +170,7 @@
+                 Reflector.postForgeBusEvent(Reflector.ChunkEvent_Load_Constructor, chunk);
+             }
+ 
+-            return chunk;
++            return (Chunk)chunk;
+         }
+     }
+ 

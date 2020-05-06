@@ -15,6 +15,8 @@ import net.minecraft.client.multiplayer.PlayerController;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.play.client.CCustomPayloadPacket;
 
 public class MCReflection {
 
@@ -50,6 +52,10 @@ public class MCReflection {
 //	public static final ReflectionField ModelManager_texmap = new ReflectionField(ModelManager.class, "field_174956_b");
 //	public static final ReflectionField ModelManager_modelRegistry = new ReflectionField(ModelManager.class, "field_174958_a");
 //	public static final ReflectionField ModelManager_defaultModel = new ReflectionField(ModelManager.class, "field_174955_d");
+	public static final ReflectionField CCustomPayloadPacket_channel = new ReflectionField(CCustomPayloadPacket.class, "field_149562_a");
+	public static final ReflectionField CCustomPayloadPacket_data = new ReflectionField(CCustomPayloadPacket.class, "field_149561_c");
+	public static final ReflectionField PlayerEntity_spawnPos = new ReflectionField(PlayerEntity.class, "field_71077_c");
+	public static final ReflectionField PlayerEntity_spawnForced = new ReflectionField(PlayerEntity.class, "field_82248_d");
 
 	
 	public static class ReflectionField {

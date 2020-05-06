@@ -19,25 +19,31 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockRayTraceResult;
  import net.minecraft.util.math.MathHelper;
-@@ -49,6 +54,17 @@
-         this(p_i405_1_, p_i405_2_.getPosX(), p_i405_2_.getPosYEye() - (double)0.1F, p_i405_2_.getPosZ(), p_i405_3_);
-         this.owner = p_i405_2_;
-         this.ownerId = p_i405_2_.getUniqueID();
+@@ -20,6 +25,7 @@
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
++import net.optifine.reflect.Reflector;
+ 
+ public abstract class ThrowableEntity extends Entity implements IProjectile
+ {
+@@ -49,6 +55,15 @@
+         this(p_i406_1_, p_i406_2_.getPosX(), p_i406_2_.getPosYEye() - (double)0.1F, p_i406_2_.getPosZ(), p_i406_3_);
+         this.owner = p_i406_2_;
+         this.ownerId = p_i406_2_.getUniqueID();
 +        //VIVE SET SPAWNPOS
 +        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(owner.getUniqueID());
 +        if (vp !=null && vp.isVR())
 +        {
-+			int c = 0;
-+			if (p_i405_2_.getActiveHand() == Hand.OFF_HAND) c = 1;
-+        	Vec3d aimSource = vp.getControllerPos(c);
-+        	Vec3d aimDir = vp.getControllerDir(vp.isSeated() ? 0 : c).scale(0.6f);
++        	Vec3d aimSource = vp.getControllerPos(vp.activeHand);
++        	Vec3d aimDir = vp.getControllerDir(vp.activeHand).scale(0.6f);
 +        	this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        } 
 +        ///
      }
  
      public boolean isInRangeToRenderDist(double distance)
-@@ -66,6 +82,17 @@
+@@ -66,6 +81,15 @@
  
      public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
      {
@@ -45,9 +51,7 @@
 +        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(owner.getUniqueID());
 +        if (vp !=null && vp.isVR())
 +        {
-+			int c = 0;
-+			if (((LivingEntity) entityThrower).getActiveHand() == Hand.OFF_HAND) c = 1;
-+        	Vec3d aim = vp.getControllerDir(vp.isSeated() ? 0 : c);
++        	Vec3d aim = vp.getControllerDir(vp.activeHand);
 +        	rotationPitchIn = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 +			rotationYawIn = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		
 +        	}
@@ -55,3 +59,16 @@
          float f = -MathHelper.sin(rotationYawIn * ((float)Math.PI / 180F)) * MathHelper.cos(rotationPitchIn * ((float)Math.PI / 180F));
          float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * ((float)Math.PI / 180F));
          float f2 = MathHelper.cos(rotationYawIn * ((float)Math.PI / 180F)) * MathHelper.cos(rotationPitchIn * ((float)Math.PI / 180F));
+@@ -152,6 +176,12 @@
+             }
+             else
+             {
++                //Forge
++                boolean flag = false;
++                if(Reflector.ForgeEventFactory_onProjectileImpactT.exists())
++                	flag = Reflector.callBoolean(Reflector.ForgeEventFactory_onProjectileImpactT, this, raytraceresult);
++                if(!flag)
++                //
+                 this.onImpact(raytraceresult);
+             }
+         }

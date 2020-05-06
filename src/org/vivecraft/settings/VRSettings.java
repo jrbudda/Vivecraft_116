@@ -339,7 +339,6 @@ public class VRSettings
                     if (optionTokens[0].equals("displayMirrorMode"))
                     {
                         this.displayMirrorMode = Integer.parseInt(optionTokens[1]);
-                        if (this.displayMirrorMode == 15) this.displayMirrorMode = 16;
                     }
 
                     if (optionTokens[0].equals("displayMirrorLeftEye"))
@@ -1320,7 +1319,7 @@ public class VRSettings
                         this.displayMirrorMode = MIRROR_THIRD_PERSON;
                         break;
                     case MIRROR_THIRD_PERSON:
-                        this.displayMirrorMode = MIRROR_OFF;
+                        this.displayMirrorMode = MIRROR_MIXED_REALITY;
                         break;
                     case MIRROR_MIXED_REALITY:
                         this.displayMirrorMode = MIRROR_OFF;

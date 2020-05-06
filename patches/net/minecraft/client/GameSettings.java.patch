@@ -8,7 +8,15 @@
  
  public class GameSettings
  {
-@@ -234,7 +235,7 @@
+@@ -185,6 +186,7 @@
+     public double fov = 70.0D;
+     public double gamma;
+     public int guiScale;
++    public int guiScaleUser; // to store the user's setting, do not actually use
+     public ParticleStatus particles = ParticleStatus.ALL;
+     public NarratorStatus narrator = NarratorStatus.OFF;
+     public String language = "en_us";
+@@ -234,7 +236,7 @@
      public int ofTranslucentBlocks = 0;
      public boolean ofDynamicFov = true;
      public boolean ofAlternateBlocks = true;
@@ -17,7 +25,7 @@
      public boolean ofCustomEntityModels = true;
      public boolean ofCustomGuis = true;
      public boolean ofShowGlErrors = true;
-@@ -309,6 +310,9 @@
+@@ -309,6 +311,9 @@
          this.ofKeyBindZoom = new KeyBinding("of.key.zoom", 67, "key.categories.misc");
          this.keyBindings = ArrayUtils.add(this.keyBindings, this.ofKeyBindZoom);
          KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
@@ -27,7 +35,25 @@
          this.renderDistanceChunks = 8;
          this.loadOptions();
          Config.initGameSettings(this);
-@@ -1032,7 +1036,7 @@
+@@ -494,7 +499,7 @@
+ 
+                     if ("guiScale".equals(s))
+                     {
+-                        this.guiScale = Integer.parseInt(s1);
++                        this.guiScaleUser = Integer.parseInt(s1); // VIVECRAFT: ignore gui scale
+                     }
+ 
+                     if ("particles".equals(s))
+@@ -841,7 +846,7 @@
+                 printwriter.println("fov:" + (this.fov - 70.0D) / 40.0D);
+                 printwriter.println("gamma:" + this.gamma);
+                 printwriter.println("renderDistance:" + this.renderDistanceChunks);
+-                printwriter.println("guiScale:" + this.guiScale);
++                printwriter.println("guiScale:" + this.guiScaleUser); // VIVECRAFT: ignore gui scale
+                 printwriter.println("particles:" + this.particles.getId());
+                 printwriter.println("maxFps:" + this.framerateLimit);
+                 printwriter.println("difficulty:" + this.difficulty.getId());
+@@ -1032,7 +1037,7 @@
              {
                  if (i >= aint[j])
                  {
@@ -36,7 +62,7 @@
                  }
              }
  
-@@ -1480,7 +1484,7 @@
+@@ -1480,7 +1485,7 @@
                  return;
              }
  
@@ -45,7 +71,7 @@
  
              if (this.ofFastRender)
              {
-@@ -2590,6 +2594,15 @@
+@@ -2590,6 +2595,15 @@
              KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
              KeyBinding.resetKeyBindingArrayAndHash();
              bufferedreader.close();
@@ -61,8 +87,17 @@
          }
          catch (Exception exception11)
          {
-@@ -2964,3 +2977,4 @@
-         }
+@@ -2725,7 +2739,7 @@
+         this.cloudOption = CloudOption.FANCY;
+         this.fov = 70.0D;
+         this.gamma = 0.0D;
+-        this.guiScale = 0;
++        this.guiScaleUser = 0; // VIVECRAFT: ignore gui scale
+         this.particles = ParticleStatus.ALL;
+         this.heldItemTooltips = true;
+         this.ofUseVbo = true;
+@@ -2961,3 +2975,4 @@
+         resourcePackListIn.setEnabledPacks(set);
      }
  }
 +

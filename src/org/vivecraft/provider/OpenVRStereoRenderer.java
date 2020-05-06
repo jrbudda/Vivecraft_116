@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL13;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.gameplay.screenhandlers.RadialHandler;
+import org.vivecraft.gameplay.trackers.TelescopeTracker;
 import org.vivecraft.render.RenderConfigException;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.render.ShaderHelper;
@@ -27,8 +28,11 @@ import jopenvr.HmdMatrix44_t;
 import jopenvr.JOpenVRLibrary;
 import jopenvr.JOpenVRLibrary.EVRCompositorError;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.dimension.DimensionType;
 import net.optifine.Config;
 import net.optifine.shaders.Shaders;
@@ -46,6 +50,8 @@ public class OpenVRStereoRenderer
 	public Framebuffer mirrorFB = null;
 	public Framebuffer fsaaFirstPassResultFBO;
 	public Framebuffer fsaaLastPassResultFBO;
+	public Framebuffer telescopeFramebufferR;
+	public Framebuffer telescopeFramebufferL;
 	
 	public net.minecraft.client.renderer.Matrix4f[] eyeproj = new net.minecraft.client.renderer.Matrix4f[2];
 	//public net.minecraft.client.renderer.Matrix4f[] cloudeyeproj = new net.minecraft.client.renderer.Matrix4f[2];
@@ -441,11 +447,11 @@ public class OpenVRStereoRenderer
 			reinitFrameBuffers("Clip Planes Changed");
 		}
 	
-		if (lastGuiScale != mc.gameSettings.guiScale)
-		{
-			lastGuiScale = mc.gameSettings.guiScale;
-			reinitFrameBuffers("GUI Scale Changed");
-		}
+//		if (lastGuiScale != mc.gameSettings.guiScale)
+//		{
+//			lastGuiScale = mc.gameSettings.guiScale;
+//			reinitFrameBuffers("GUI Scale Changed");
+//		}
 
 		// Check for changes in window handle
 		if (mc.getMainWindow().getHandle() != lastWindow)
@@ -527,7 +533,14 @@ public class OpenVRStereoRenderer
 				KeyboardHandler.Framebuffer.deleteFramebuffer();
 				KeyboardHandler.Framebuffer = null;
 			}
-
+			if (telescopeFramebufferL != null) {
+				telescopeFramebufferL.deleteFramebuffer();
+				telescopeFramebufferL = null;
+			}
+			if (telescopeFramebufferR != null) {
+				telescopeFramebufferR.deleteFramebuffer();
+				telescopeFramebufferR = null;
+			}
 			//if (loadingScreen != null) {
 			//	loadingScreen.deleteFramebuffer();
 			//}
@@ -606,7 +619,7 @@ public class OpenVRStereoRenderer
 			}
 			
 			if (renderPasses.contains(RenderPass.THIRD)) {
-				framebufferMR = new Framebuffer("Mixed Reality Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false, false);
+				framebufferMR = new Framebuffer("Mixed Reality Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, true, false);
 				mc.print(framebufferMR.toString());
 				checkGLError("Mixed reality framebuffer setup");
 			}
@@ -629,6 +642,22 @@ public class OpenVRStereoRenderer
 			mc.print(RadialHandler.Framebuffer.toString());
 			checkGLError("Radial framebuffer setup");
 
+			int scopeW = 720;
+			int scopeH = 720;
+			
+			if(Config.isShaders()) {
+				scopeW = displayFBWidth;
+				scopeH = displayFBHeight;
+			}
+			
+			telescopeFramebufferR  = new Framebuffer("TelescopeR", scopeW,scopeH, true, false, Framebuffer.NO_TEXTURE_ID, true, false);
+			mc.print(telescopeFramebufferR.toString());
+			checkGLError("TelescopeR framebuffer setup");
+
+			telescopeFramebufferL  = new Framebuffer("TelescopeL", scopeW,scopeH, true, false, Framebuffer.NO_TEXTURE_ID, true, false);
+			mc.print(telescopeFramebufferL.toString());
+			checkGLError("TelescopeL framebuffer setup");
+			
 			checkGLError("post color");
 			
 			mc.gameRenderer.setupClipPlanes();
@@ -693,11 +722,18 @@ public class OpenVRStereoRenderer
 				mc.currentScreen.init(mc, k, l);
 			}
 
+			long mainWindowPixels = mc.getMainWindow().getWidth() * mc.getMainWindow().getHeight();
+			long pixelsPerFrame = displayFBWidth * displayFBHeight * 2;
+			if (renderPasses.contains(RenderPass.CENTER))
+				pixelsPerFrame += mainWindowPixels;
+			if (renderPasses.contains(RenderPass.THIRD))
+				pixelsPerFrame += mainWindowPixels;
 			System.out.println("[Minecrift] New render config:" +
-					"\nRender target width:  " + (true ? eyew + eyew: mc.getMainWindow().getWidth()) +
-					", height: " + (true ? Math.max(eyeh, eyeh) : mc.getMainWindow().getHeight()) +
-					(true ? " [Render scale: " + mc.vrSettings.getButtonDisplayString(VrOptions.RENDER_SCALEFACTOR) + "]" : "")+
-					"\nDisplay target width: " + displayFBWidth + ", height: " + displayFBHeight);
+					"\nOpenVR target width: " + eyew + ", height: " + eyeh + " [" + String.format("%.1f", (eyew * eyeh) / 1000000F) + " MP]" +
+					"\nRender target width: " + displayFBWidth + ", height: " + displayFBHeight + " [Render scale: " + Math.round(mc.vrSettings.renderScaleFactor * 100) + "%, " + String.format("%.1f", (displayFBWidth * displayFBHeight) / 1000000F) + " MP]" +
+					"\nMain window width: " + mc.getMainWindow().getWidth() + ", height: " + mc.getMainWindow().getHeight() + " [" + String.format("%.1f", mainWindowPixels / 1000000F) + " MP]" +
+					"\nTotal shaded pixels per frame: " + String.format("%.1f", pixelsPerFrame / 1000000F) + " MP (eye stencil not accounted for)"
+			);
 
 
 			//loadingScreen = new LoadingScreenRenderer(this);
@@ -726,7 +762,18 @@ public class OpenVRStereoRenderer
 		} else if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON) {
 			passes.add(RenderPass.THIRD);
 		}
-
+	
+		if(mc.player != null) {
+			if (TelescopeTracker.isTelescope(mc.player.getHeldItemMainhand())) {
+				if(TelescopeTracker.isViewing(mc.player, 0))
+					passes.add(RenderPass.SCOPER);
+			}		
+			if (TelescopeTracker.isTelescope(mc.player.getHeldItemOffhand())) {
+				if(TelescopeTracker.isViewing(mc.player, 1))
+					passes.add(RenderPass.SCOPEL);
+			}	
+		}
+		
 		return passes;
 	}
 	
@@ -784,7 +831,68 @@ public class OpenVRStereoRenderer
 		GL11.glStencilMask(0x0); // Dont Write to stencil buffer
 		/// END STENCIL TESTING
 	}
+	
+	public void doCircleStencil(Framebuffer fb) {
+		Minecraft mc = Minecraft.getInstance();
 
+		GL11.glEnable(GL11.GL_STENCIL_TEST);
+
+		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+		GL11.glStencilMask(0xFF); // Write to stencil buffer
+		GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
+		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 1); // Set any stencil to 1
+		RenderSystem.colorMask(false, false, false, true); //do write to alpha.
+		RenderSystem.depthMask(false); // Don't write to depth buffer
+		
+		RenderSystem.disableAlphaTest();
+		RenderSystem.disableDepthTest();
+		RenderSystem.disableTexture();
+		RenderSystem.disableCull();
+
+		RenderSystem.color4f(0, 0, 0, 1);
+
+		RenderSystem.matrixMode(GL11.GL_PROJECTION);
+		RenderSystem.pushMatrix();
+		RenderSystem.loadIdentity();
+		RenderSystem.matrixMode(GL11.GL_MODELVIEW);
+		RenderSystem.pushMatrix();
+		RenderSystem.loadIdentity();
+		RenderSystem.ortho(0.0D, fb.framebufferWidth, 0.0D, fb.framebufferHeight, -10, 20.0D);
+		RenderSystem.viewport(0, 0, fb.framebufferWidth, fb.framebufferHeight);
+
+		GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+  		int edges = 32;
+  		float radius = fb.framebufferWidth/2;
+  		GL11.glVertex2f(fb.framebufferWidth/2,fb.framebufferWidth/2);
+  		for (int i=0;i<edges + 1;i++)
+  		{
+  			float startAngle;
+			startAngle = ( (float) (i) / (float) edges ) * (float) Math.PI * 2.0f;
+			float x =  (float) (fb.framebufferWidth/2 + Math.cos(startAngle) * radius);
+			float z =  (float) (fb.framebufferWidth/2 + Math.sin(startAngle) * radius);
+			GL11.glVertex2f(x,z);
+  		}	
+		GL11.glEnd();
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		RenderSystem.popMatrix();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		RenderSystem.popMatrix();
+
+		RenderSystem.depthMask(true); // Do write to depth buffer
+		RenderSystem.colorMask(true, true, true, true);
+		
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableAlphaTest();
+		RenderSystem.enableTexture();
+		RenderSystem.enableCull();
+
+		GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 1);
+		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+		GL11.glStencilMask(0x0); // Dont Write to stencil buffer
+
+		/// END STENCIL TESTING
+	}
+	
 	public void drawQuad()
 	{
 		// this func just draws a perfectly normal box with some texture coordinates

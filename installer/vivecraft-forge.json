@@ -2,6 +2,9 @@
 	"inheritsFrom": "$MCVERSION",
 	"jar": "$MCVERSION",
 	"id": "$MCVERSION-Vivecraft-$VERSION",
+																													 
+	  
+								 
 	"time": "1979-06-01T00:00:00-05:00", 
 	"releaseTime": "1979-06-02T00:00:00-05:00",
 	"fileId": "$FILE",
@@ -9,6 +12,7 @@
 	"version": "$VERSION",
 	"mcVersion": "$MCVERSION",
     "mainClass": "cpw.mods.modlauncher.Launcher",
+							 
     "logging": {
         
     },
@@ -17,26 +21,26 @@
             "--launchTarget",
             "fmlclient",
             "--fml.forgeVersion",
-            "31.1.39",
+            "$FORGEVERSION",
             "--fml.mcVersion",
             "1.15.2",
             "--fml.forgeGroup",
             "net.minecraftforge",
             "--fml.mcpVersion",
-            "20200307.202953"
+            "20200414.225201"
         ]
     },
     "libraries": [
         {
-            "name": "net.minecraftforge:forge:1.15.2-31.1.39",
-            "downloads": {
-                "artifact": {
-                    "path": "net/minecraftforge/forge/1.15.2-31.1.39/forge-1.15.2-31.1.39.jar",
-                    "url": "",
-                    "sha1": "4f241a2285748332a59eb944a49092d0c198a28b",
-                    "size": 183617
-                }
-            }
+		"name": "net.minecraftforge:forge:$MCVERSION-$FORGEVERSION",
+						  
+							 
+		"url": "http://files.minecraftforge.net/maven/"
+							  
+																	   
+								  
+						  
+							 
         },
         {
             "name": "org.ow2.asm:asm:7.2",
@@ -72,68 +76,68 @@
             }
         },
         {
-            "name": "cpw.mods:modlauncher:5.0.0-milestone.4",
+            "name": "cpw.mods:modlauncher:5.1.0",
             "downloads": {
                 "artifact": {
-                    "path": "cpw/mods/modlauncher/5.0.0-milestone.4/modlauncher-5.0.0-milestone.4.jar",
-                    "url": "https://files.minecraftforge.net/maven/cpw/mods/modlauncher/5.0.0-milestone.4/modlauncher-5.0.0-milestone.4.jar",
-                    "sha1": "b44442aef3243d9929e3290a1838195ad505c6c3",
-                    "size": 115810
+                    "path": "cpw/mods/modlauncher/5.1.0/modlauncher-5.1.0.jar",
+                    "url": "https://files.minecraftforge.net/maven/cpw/mods/modlauncher/5.1.0/modlauncher-5.1.0.jar",
+                    "sha1": "b9caea28c3fd15fd2c971cb41c44855767f7dbc8",
+                    "size": 115795
                 }
             }
         },
         {
-            "name": "cpw.mods:grossjava9hacks:1.1.0",
+            "name": "cpw.mods:grossjava9hacks:1.3.0",
             "downloads": {
                 "artifact": {
-                    "path": "cpw/mods/grossjava9hacks/1.1.0/grossjava9hacks-1.1.0.jar",
-                    "url": "https://files.minecraftforge.net/maven/cpw/mods/grossjava9hacks/1.1.0/grossjava9hacks-1.1.0.jar",
-                    "sha1": "ba432ff9b3477370a2317eff223ad3b6a82d37b1",
-                    "size": 1759
+                    "path": "cpw/mods/grossjava9hacks/1.3.0/grossjava9hacks-1.3.0.jar",
+                    "url": "https://files.minecraftforge.net/maven/cpw/mods/grossjava9hacks/1.3.0/grossjava9hacks-1.3.0.jar",
+                    "sha1": "1a922de964d0c19d864fbcba2678c1a1c4602c35",
+                    "size": 1921
                 }
             }
         },
         {
-            "name": "net.minecraftforge:accesstransformers:2.0.4-shadowed",
+            "name": "net.minecraftforge:accesstransformers:2.1.1-shadowed",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/accesstransformers/2.0.4-shadowed/accesstransformers-2.0.4-shadowed.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/accesstransformers/2.0.4/accesstransformers-2.0.4-shadowed.jar",
-                    "sha1": "7e484d734393278c318af389f7a5435192ae6d5e",
-                    "size": 444913
+                    "path": "net/minecraftforge/accesstransformers/2.1.1-shadowed/accesstransformers-2.1.1-shadowed.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/accesstransformers/2.1.1/accesstransformers-2.1.1-shadowed.jar",
+                    "sha1": "1d1e439ef345ab5fd76df679de70a0c35f03bf4a",
+                    "size": 444938
                 }
             }
         },
         {
-            "name": "net.minecraftforge:eventbus:2.0.0-milestone.1-service",
+            "name": "net.minecraftforge:eventbus:2.1.0-service",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/eventbus/2.0.0-milestone.1-service/eventbus-2.0.0-milestone.1-service.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/eventbus/2.0.0-milestone.1/eventbus-2.0.0-milestone.1-service.jar",
-                    "sha1": "ef0e4a7c15c8eadb7e94233ee7b1d7b98841c752",
-                    "size": 39764
+                    "path": "net/minecraftforge/eventbus/2.1.0-service/eventbus-2.1.0-service.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/eventbus/2.1.0/eventbus-2.1.0-service.jar",
+                    "sha1": "3bd19d594d0b193b84795fab50ae3c991d3799fa",
+                    "size": 39777
                 }
             }
         },
         {
-            "name": "net.minecraftforge:forgespi:2.0.0-milestone.1",
+          "name": "net.minecraftforge:forgespi:2.1.2",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/forgespi/2.0.0-milestone.1/forgespi-2.0.0-milestone.1.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forgespi/2.0.0-milestone.1/forgespi-2.0.0-milestone.1.jar",
-                    "sha1": "0fbfcafacae7a5adaf23c34a0ed08ac5b54d4c79",
-                    "size": 19454
+                    "path": "net/minecraftforge/forgespi/2.1.2/forgespi-2.1.2.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forgespi/2.1.2/forgespi-2.1.2.jar",
+                    "sha1": "867d339ca81f375c560da6d37084066e7f537f15",
+                    "size": 19445
                 }
             }
         },
         {
-            "name": "net.minecraftforge:coremods:2.0.0-milestone.1",
+            "name": "net.minecraftforge:coremods:2.0.3",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/coremods/2.0.0-milestone.1/coremods-2.0.0-milestone.1.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/coremods/2.0.0-milestone.1/coremods-2.0.0-milestone.1.jar",
-                    "sha1": "610df322bd810fff462b9fed9d3faa8a4ab4b37f",
-                    "size": 21780
+                    "path": "net/minecraftforge/coremods/2.0.3/coremods-2.0.3.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/coremods/2.0.3/coremods-2.0.3.jar",
+                    "sha1": "9e3f5323f6a2c3ac04fa27481cbeeb48f89757bd",
+                    "size": 21802
                 }
             }
         },

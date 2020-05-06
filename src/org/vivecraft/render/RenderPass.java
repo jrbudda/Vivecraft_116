@@ -5,5 +5,7 @@ public enum RenderPass {
 	RIGHT,
 	CENTER,
 	THIRD,
-	GUI
+	GUI,
+	SCOPER,
+	SCOPEL
 }

@@ -1,7 +1,15 @@
 --- a/net/minecraft/client/MouseHelper.java
 +++ b/net/minecraft/client/MouseHelper.java
-@@ -34,7 +34,7 @@
-         this.minecraft = p_i1782_1_;
+@@ -7,6 +7,7 @@
+ import net.minecraft.client.util.MouseSmoother;
+ import net.minecraft.client.util.NativeUtil;
+ import net.minecraft.util.math.MathHelper;
++import net.optifine.reflect.Reflector;
+ 
+ public class MouseHelper
+ {
+@@ -34,7 +35,7 @@
+         this.minecraft = worldIn;
      }
  
 -    private void mouseButtonCallback(long handle, int button, int action, int mods)
@@ -9,7 +17,45 @@
      {
          if (handle == this.minecraft.getMainWindow().getHandle())
          {
-@@ -131,7 +131,7 @@
+@@ -78,7 +79,9 @@
+ 
+                 this.activeButton = -1;
+             }
+-
++            //Forge
++            if (Reflector.callBoolean(Reflector.ForgeHooksClient_onRawMouseClicked, button, action, mods)) return;
++            //
+             boolean[] aboolean = new boolean[] {false};
+ 
+             if (this.minecraft.loadingGui == null)
+@@ -99,14 +102,24 @@
+                     {
+                         Screen.wrapScreenError(() ->
+                         {
+-                            aboolean[0] = this.minecraft.currentScreen.mouseClicked(d0, d1, i);
++                        	if(Reflector.ForgeHooksClient_onGuiMouseClickedPre.exists()) {
++	                            aboolean[0] = Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseClickedPre,this.minecraft.currentScreen, d0, d1, i);
++	                            if (!aboolean[0]) aboolean[0] = this.minecraft.currentScreen.mouseClicked(d0, d1, i);
++	                            if (!aboolean[0]) aboolean[0] = Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseClickedPost, this.minecraft.currentScreen, d0, d1, i);
++                        	} else                        	
++                        		aboolean[0] = this.minecraft.currentScreen.mouseClicked(d0, d1, i);
+                         }, "mouseClicked event handler", this.minecraft.currentScreen.getClass().getCanonicalName());
+                     }
+                     else
+                     {
+                         Screen.wrapScreenError(() ->
+                         {
+-                            aboolean[0] = this.minecraft.currentScreen.mouseReleased(d0, d1, i);
++                        	if(Reflector.ForgeHooksClient_onGuiMouseReleasedPre.exists()) {
++	                            aboolean[0] = Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseReleasedPre,this.minecraft.currentScreen, d0, d1, i);
++	                            if (!aboolean[0]) aboolean[0] = this.minecraft.currentScreen.mouseReleased(d0, d1, i);
++	                            if (!aboolean[0]) aboolean[0] = Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseReleasedPost, this.minecraft.currentScreen, d0, d1, i);
++                        	} else   
++                        		aboolean[0] = this.minecraft.currentScreen.mouseReleased(d0, d1, i);
+                         }, "mouseReleased event handler", this.minecraft.currentScreen.getClass().getCanonicalName());
+                     }
+                 }
+@@ -131,7 +144,7 @@
  
                  if (flag)
                  {
@@ -18,7 +64,13 @@
                      {
                          this.minecraft.ingameGUI.getSpectatorGui().onMiddleClick();
                      }
-@@ -144,7 +144,7 @@
+@@ -141,10 +154,13 @@
+                     }
+                 }
+             }
++            //Forge
++            Reflector.call(Reflector.ForgeHooksClient_fireMouseInput,button, action, mods);
++            //
          }
      }
  
@@ -27,7 +79,32 @@
      {
          if (handle == Minecraft.getInstance().getMainWindow().getHandle())
          {
-@@ -216,7 +216,7 @@
+@@ -156,7 +172,10 @@
+                 {
+                     double d1 = this.mouseX * (double)this.minecraft.getMainWindow().getScaledWidth() / (double)this.minecraft.getMainWindow().getWidth();
+                     double d2 = this.mouseY * (double)this.minecraft.getMainWindow().getScaledHeight() / (double)this.minecraft.getMainWindow().getHeight();
+-                    this.minecraft.currentScreen.mouseScrolled(d1, d2, d0);
++                
++                    if (Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseScrollPre, this.minecraft.currentScreen, d0)) return;
++                    if (this.minecraft.currentScreen.mouseScrolled(d1, d2, d0)) return;
++                    Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseScrollPost, this.minecraft.currentScreen, d0); 
+                 }
+                 else if (this.minecraft.player != null)
+                 {
+@@ -174,7 +193,11 @@
+                     }
+ 
+                     this.accumulatedScrollDelta -= (double)f1;
+-
++ 
++                    //Forge
++                    if (Reflector.callBoolean(Reflector.ForgeHooksClient_onMouseScroll, this, d0)) return;
++                    //
++                    
+                     if (this.minecraft.player.isSpectator())
+                     {
+                         if (this.minecraft.ingameGUI.getSpectatorGui().isMenuActive())
+@@ -216,7 +239,7 @@
          });
      }
  
@@ -36,7 +113,18 @@
      {
          if (handle == Minecraft.getInstance().getMainWindow().getHandle())
          {
-@@ -266,6 +266,11 @@
+@@ -244,7 +267,9 @@
+                     double d3 = (ypos - this.mouseY) * (double)this.minecraft.getMainWindow().getScaledHeight() / (double)this.minecraft.getMainWindow().getHeight();
+                     Screen.wrapScreenError(() ->
+                     {
+-                        iguieventlistener.mouseDragged(d0, d1, this.activeButton, d2, d3);
++                        if (Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseDragPre, this.minecraft.currentScreen, d0, d1, this.activeButton, d2, d3)) return;
++                        if (iguieventlistener.mouseDragged(d0, d1, this.activeButton, d2, d3)) return;
++                        Reflector.call(Reflector.ForgeHooksClient_onGuiMouseDragPost, this.minecraft.currentScreen, d0, d1, this.activeButton, d2, d3);
+                     }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
+                 }
+             }
+@@ -266,6 +291,11 @@
  
      public void updatePlayerLook()
      {
@@ -48,7 +136,26 @@
          double d0 = NativeUtil.getTime();
          double d1 = d0 - this.lastLookTime;
          this.lastLookTime = d0;
-@@ -347,7 +352,11 @@
+@@ -334,7 +364,18 @@
+     {
+         return this.mouseY;
+     }
++    //Forge
++    public boolean isMiddleDown() {
++        return this.middleDown;
++    }
++    public double getXVelocity() {
++    	return this.xVelocity;
++    }
+ 
++    public double getYVelocity() {
++    	return this.yVelocity;
++    }
++    //
+     public void setIgnoreFirstMove()
+     {
+         this.ignoreFirstMove = true;
+@@ -347,7 +388,11 @@
  
      public void grabMouse()
      {
@@ -61,7 +168,7 @@
          {
              if (!this.mouseGrabbed)
              {
-@@ -369,6 +378,10 @@
+@@ -369,6 +414,10 @@
  
      public void ungrabMouse()
      {

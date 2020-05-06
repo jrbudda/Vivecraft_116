@@ -1,6 +1,6 @@
 --- a/net/optifine/reflect/ReflectorMethod.java
 +++ b/net/optifine/reflect/ReflectorMethod.java
-@@ -200,7 +200,7 @@
+@@ -191,7 +191,7 @@
              }
          }
  
@@ -8,4 +8,4 @@
 +        Method[] amethod1 = (Method[]) list.toArray(new Method[list.size()]);
          return amethod1;
      }
- }
+ 

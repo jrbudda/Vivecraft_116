@@ -19,18 +19,16 @@
  import net.minecraft.client.renderer.texture.TextureUtil;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  
-@@ -20,11 +26,42 @@
+@@ -20,7 +26,36 @@
      public int depthBuffer;
      public final float[] framebufferColor;
      public int framebufferFilter;
 -
--    public Framebuffer(int p_i1731_1_, int p_i1731_2_, boolean p_i1731_3_, boolean p_i1731_4_)
 +    //Vivecraft
 +    public static final int NO_TEXTURE_ID = -1;
 + 	private boolean depthisTex;
 + 	private int texid = NO_TEXTURE_ID;
 + 	private String name = "Default";
-+ 	private boolean useTextureInsteadofRenderBuffer = false;
 + 	private boolean linearFilter;
 + 	//
 +
@@ -56,25 +54,10 @@
 +        this.resize(width, height, onMac);
 +    }
 + 	//
-+    
-+    public Framebuffer(int width, int height, boolean usedepth, boolean onMac)
+     public Framebuffer(int p_i1732_1_, int p_i1732_2_, boolean p_i1732_3_, boolean p_i1732_4_)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
--        this.useDepth = p_i1731_3_;
-+        this.useDepth = usedepth;
-         this.framebufferObject = -1;
-         this.framebufferTexture = -1;
-         this.depthBuffer = -1;
-@@ -33,7 +70,7 @@
-         this.framebufferColor[1] = 1.0F;
-         this.framebufferColor[2] = 1.0F;
-         this.framebufferColor[3] = 0.0F;
--        this.resize(p_i1731_1_, p_i1731_2_, p_i1731_4_);
-+        this.resize(width, height, onMac);
-     }
- 
-     public void resize(int p_216491_1_, int p_216491_2_, boolean p_216491_3_)
-@@ -90,7 +127,8 @@
+@@ -90,7 +125,8 @@
              this.framebufferObject = -1;
          }
      }
@@ -84,7 +67,7 @@
      public void createBuffers(int p_216492_1_, int p_216492_2_, boolean p_216492_3_)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
-@@ -99,24 +137,50 @@
+@@ -99,24 +135,50 @@
          this.framebufferTextureWidth = p_216492_1_;
          this.framebufferTextureHeight = p_216492_2_;
          this.framebufferObject = GlStateManager.genFramebuffers();
@@ -142,7 +125,7 @@
          }
  
          this.checkFramebufferComplete();
-@@ -179,17 +243,17 @@
+@@ -179,17 +241,17 @@
      }
  
      public void bindFramebuffer(boolean setViewportIn)
@@ -163,7 +146,7 @@
          }
      }
  
-@@ -232,7 +296,8 @@
+@@ -232,7 +294,8 @@
          this.framebufferRenderExt(width, height, true);
      }
  
@@ -173,7 +156,7 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnGameThreadOrInit);
  
-@@ -240,55 +305,84 @@
+@@ -240,55 +303,84 @@
          {
              RenderSystem.recordRenderCall(() ->
              {
@@ -190,7 +173,7 @@
  
 -    private void framebufferRenderExtRaw(int width, int height, boolean p_227588_3_)
 +    //Vivecraft extended framebuffer drawing.
-+    public void framebufferRenderExtRaw(int left, int width, int height, int top, boolean p_227588_3_, float xCropFactor, float yCropFactor, boolean keepAspect)
++    private void framebufferRenderExtRaw(int left, int width, int height, int top, boolean p_227588_3_, float xCropFactor, float yCropFactor, boolean keepAspect)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThread);
 -        GlStateManager.colorMask(true, true, true, false);
@@ -288,7 +271,7 @@
      }
  
      public void framebufferClear(boolean onMac)
-@@ -307,4 +401,26 @@
+@@ -307,4 +399,26 @@
          GlStateManager.clear(i, onMac);
          this.unbindFramebuffer();
      }

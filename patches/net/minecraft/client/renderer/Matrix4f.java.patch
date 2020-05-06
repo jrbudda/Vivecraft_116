@@ -57,9 +57,9 @@
  
      public Matrix4f copy()
      {
-@@ -566,4 +575,50 @@
-         p_write_1_[14] = this.m32;
-         p_write_1_[15] = this.m33;
+@@ -624,4 +633,50 @@
+         this.m13 = p_setTranslation_2_;
+         this.m23 = p_setTranslation_3_;
      }
 +
 +    //Vivecraft - just for now

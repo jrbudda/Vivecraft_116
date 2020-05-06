@@ -1,4 +1,4 @@
-package net.minecraft.client.renderer;
+package org.vivecraft.render;
 
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.Hash.Strategy;
@@ -12,6 +12,10 @@ import java.util.OptionalDouble;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.renderer.RenderState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderState.TextureState;
+import net.minecraft.client.renderer.RenderType.State;
 import net.minecraft.client.renderer.tileentity.EndPortalTileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;

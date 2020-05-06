@@ -17,25 +17,40 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.BlockRayTraceResult;
  import net.minecraft.util.math.MathHelper;
-@@ -48,7 +52,20 @@
-     {
-         this(p_i3769_1_, p_i3769_9_);
-         this.shootingEntity = p_i3769_2_;
--        this.setLocationAndAngles(p_i3769_2_.getPosX(), p_i3769_2_.getPosY(), p_i3769_2_.getPosZ(), p_i3769_2_.rotationYaw, p_i3769_2_.rotationPitch);
-+    	//VIVE USE CONTROLLER
-+    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i3769_2_.getUniqueID());
-+    	if (vp !=null && vp.isVR())
-+    	{
-+			int c = 0;
-+			if (p_i3769_2_.getActiveHand() == Hand.OFF_HAND) c = 1;
-+    		Vec3d aim = vp.getControllerDir(c);
-+    		Vec3d aimSource = vp.getControllerPos(vp.isSeated() ? 0 : c);
-+    		float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.length()));
-+    		float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   
-+    		this.setLocationAndAngles(aimSource.x + aim.x*0.6f, aimSource.y+aim.y*0.6f, aimSource.z+aim.z*0.6f, yaw, pitch);
-+    	} else {
-+            this.setLocationAndAngles(p_i3769_2_.getPosX(), p_i3769_2_.getPosY(), p_i3769_2_.getPosZ(), p_i3769_2_.rotationYaw, p_i3769_2_.rotationPitch);
-+    	}
-         this.recenterBoundingBox();
-         this.setMotion(Vec3d.ZERO);
-         p_i3769_3_ = p_i3769_3_ + this.rand.nextGaussian() * 0.4D;
+@@ -18,6 +22,7 @@
+ import net.minecraft.util.math.RayTraceResult;
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
++import net.optifine.reflect.Reflector;
+ 
+ public abstract class DamagingProjectileEntity extends Entity
+ {
+@@ -91,7 +96,13 @@
+             ++this.ticksInAir;
+             RayTraceResult raytraceresult = ProjectileHelper.rayTrace(this, true, this.ticksInAir >= 25, this.shootingEntity, RayTraceContext.BlockMode.COLLIDER);
+ 
+-            if (raytraceresult.getType() != RayTraceResult.Type.MISS)
++            //Forge
++            boolean flag = false;
++            if(Reflector.ForgeEventFactory_onProjectileImpactD.exists())
++            	flag = Reflector.callBoolean(Reflector.ForgeEventFactory_onProjectileImpactD, this, raytraceresult);
++            //
++            
++			if (raytraceresult.getType() != RayTraceResult.Type.MISS && !flag)
+             {
+                 this.onImpact(raytraceresult);
+             }
+@@ -209,6 +220,13 @@
+             if (source.getTrueSource() != null)
+             {
+                 Vec3d vec3d = source.getTrueSource().getLookVec();
++                //Vivecraft.
++            	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(source.getTrueSource().getUniqueID());
++            	if (vp !=null && vp.isVR())
++            	{ 
++            		vec3d = vp.getHMDDir();
++            	}               
++            	//
+                 this.setMotion(vec3d);
+                 this.accelerationX = vec3d.x * 0.1D;
+                 this.accelerationY = vec3d.y * 0.1D;

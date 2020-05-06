@@ -13,15 +13,44 @@
  import net.minecraft.profiler.IProfiler;
  import net.minecraft.resources.IResourceManager;
  import net.minecraft.util.JSONUtils;
-@@ -28,6 +31,7 @@
+@@ -28,7 +31,10 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.Util;
  import net.minecraft.util.registry.Registry;
 +import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.world.World;
++import net.optifine.reflect.Reflector;
++
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-@@ -67,6 +71,24 @@
+ 
+@@ -52,10 +58,25 @@
+         for (Entry<ResourceLocation, JsonObject> entry : objectIn.entrySet())
+         {
+             ResourceLocation resourcelocation = entry.getKey();
++            if (resourcelocation.getPath().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
+ 
+             try
+             {
++            	//Forge
++            	if(Reflector.CraftingHelper_processConditions.exists()) {
++            		if(!Reflector.callBoolean(Reflector.CraftingHelper_processConditions, entry.getValue(), "conditions")) {
++                        LOGGER.info("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
++                        continue;
++                     }
++            	}
++            	//
+                 IRecipe<?> irecipe = deserializeRecipe(resourcelocation, entry.getValue());
++                //Forge
++                if (irecipe == null) {
++                    LOGGER.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
++                    continue;
++                 }
++                //
+                 map.computeIfAbsent(irecipe.getType(), (p_223391_0_) ->
+                 {
+                     return ImmutableMap.builder();
+@@ -67,6 +88,30 @@
              }
          }
  
@@ -36,13 +65,19 @@
 +    	is2.getTag().putBoolean("Unbreakable", true);
 +    	is2.getTag().putInt("HideFlags",4);
 +    	
++    	ItemStack is3 = new ItemStack(Items.ENDER_EYE);
++    	is3.setDisplayName(new StringTextComponent("Eye of the Farseer"));
++    	is3.getTag().putBoolean("Unbreakable", true);
++    	is3.getTag().putInt("HideFlags",4);
 +    	
 +    	ShapedRecipe boot = new ShapedRecipe(new ResourceLocation("jumpboots"),"Vivecraft", 1, 2, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItems(Items.LEATHER_BOOTS), Ingredient.fromStacks(new ItemStack(Blocks.SLIME_BLOCK))), is);
 +    	ShapedRecipe claw = new ShapedRecipe(new ResourceLocation("climbclaws"),"Vivecraft", 3, 2, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItems(Items.SPIDER_EYE),Ingredient.EMPTY,Ingredient.fromItems(Items.SPIDER_EYE),Ingredient.fromItems(Items.SHEARS),Ingredient.EMPTY,Ingredient.fromItems(Items.SHEARS)), is2);
-+    
++    	ShapedRecipe scope = new ShapedRecipe(new ResourceLocation("telescope"),"Vivecraft", 3, 1, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItems(Items.DIAMOND), Ingredient.fromItems(Items.ENDER_EYE), Ingredient.fromItems(Items.DIAMOND)), is3);
++
 +    	map.get(boot.getType()).put(boot.getId(), boot);
 +    	map.get(claw.getType()).put(claw.getId(), claw);	
-+    	
++     	map.get(scope.getType()).put(scope.getId(), scope);
++     	
          this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (p_223400_0_) ->
          {
              return p_223400_0_.getValue().build();

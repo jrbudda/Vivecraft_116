@@ -168,6 +168,10 @@ public class VRData{
 			return eye1;
 		case THIRD:
 			return c2;
+		case SCOPER:
+			return c0;
+		case SCOPEL:
+			return c1;
 		}
 		return hmd;
 

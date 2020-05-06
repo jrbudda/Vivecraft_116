@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
 import org.vivecraft.gameplay.OpenVRPlayer;
+import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.render.PlayerModelController;
 import org.vivecraft.settings.AutoCalibration;
 import org.vivecraft.settings.VRSettings;
@@ -40,7 +42,8 @@ public class NetworkHelper {
 		TELEPORT,
 		CLIMBING,
 		SETTING_OVERRIDE,
-		HEIGHT
+		HEIGHT,
+		ACTIVEHAND
 	}
 	public final static ResourceLocation channel = new ResourceLocation("vivecraft:data");
 	
@@ -224,6 +227,13 @@ public class NetworkHelper {
 
 	public static int getTeleportHorizLimit() {
 		return Minecraft.getInstance().vrSettings.overrides.getSetting(VRSettings.VrOptions.TELEPORT_HORIZ_LIMIT).getInt();
+	}
+	
+	public static void sendActiveHand(byte c) {
+		if(!serverWantsData) return;
+		CCustomPayloadPacket pack =	NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.ACTIVEHAND, new byte[]{c});
+		if(Minecraft.getInstance().getConnection() !=null)
+			Minecraft.getInstance().getConnection().sendPacket(pack);
 	}
 	
 }

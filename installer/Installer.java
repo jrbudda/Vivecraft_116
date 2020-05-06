@@ -35,7 +35,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private static final long serialVersionUID = -562178983462626162L;
 	private String tempDir = System.getProperty("java.io.tmpdir");
 
-	private static final boolean ALLOW_FORGE_INSTALL = false; 
+	private static final boolean ALLOW_FORGE_INSTALL = true; 
 	private static final boolean DEFAULT_FORGE_INSTALL = false; 
 	private static final boolean ALLOW_HYDRA_INSTALL = false; 
 	private static final boolean ALLOW_KATVR_INSTALL = true; 
@@ -59,10 +59,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MC_VERSION        = "1.15.2";
     private static final String MC_MD5            = "1d87e7d75a99172f0cffc4f96cdc44da";
 	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.15.2_HD_U_G1_pre12";
-    private static final String OF_MD5            = "98876510489112687AAE62DF84225172";
+    private static final String OF_FILE_NAME      = "1.15.2_HD_U_G1_pre15";
+    private static final String OF_MD5            = "0127f841a34f112b20889ccf81063adf";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "14.25.0.110";
+    private static String FORGE_VERSION     = "31.1.63";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "Vivecraft " + MINECRAFT_VERSION;
@@ -330,8 +330,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		ramPanel.setAlignmentY(TOP_ALIGNMENT);
 
 		Integer[] rams = {1,2,4,6,8};
-		if(!useForge.isSelected())
-				rams = new Integer[] {1,2, 3}; //no u dont need more.
 
 		ramAllocation = new JComboBox(rams);
 		ramAllocation.setSelectedIndex(1);
@@ -1574,6 +1572,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
+			updateInstructions();
 			if (useForge.isSelected()) ramAllocation.setSelectedIndex(2);
 			else ramAllocation.setSelectedIndex(1);
 			updateInstructions();
@@ -1628,7 +1627,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		ramAllocation.setEnabled(createProfile.isSelected());
 		txtCustomForgeVersion.setEnabled(optCustomForgeVersion.isSelected());
 		txtCustomForgeVersion.setVisible(useForge.isSelected());
-		optCustomForgeVersion.setVisible(useForge.isSelected());
+		optCustomForgeVersion.setVisible(false);
 	}
 
 	private void updateFilePath()

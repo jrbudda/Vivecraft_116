@@ -50,7 +50,7 @@
 +    // Vivecraft
 +    public boolean showPlayerList;
  
-     public IngameGui(Minecraft p_i231_1_)
+     public IngameGui(Minecraft p_i232_1_)
      {
 @@ -146,32 +158,41 @@
          FontRenderer fontrenderer = this.getFontRenderer();
@@ -261,7 +261,7 @@
      private void renderPortal(float timeInPortal)
      {
          if (timeInPortal < 1.0F)
-@@ -1504,4 +1569,80 @@
+@@ -1512,4 +1577,80 @@
      {
          this.overlayDebug.resetChunk();
      }

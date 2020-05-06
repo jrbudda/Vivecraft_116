@@ -1,6 +1,18 @@
 --- a/net/minecraft/item/CrossbowItem.java
 +++ b/net/minecraft/item/CrossbowItem.java
-@@ -59,7 +59,11 @@
+@@ -5,6 +5,11 @@
+ import java.util.Random;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.ServerVivePlayer;
++import org.vivecraft.utils.math.Vector3;
++
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.client.renderer.Quaternion;
+ import net.minecraft.client.renderer.Vector3f;
+@@ -59,7 +64,11 @@
          });
          this.addPropertyOverride(new ResourceLocation("charged"), (p_220030_0_, p_220030_1_, p_220030_2_) ->
          {
@@ -13,3 +25,21 @@
          });
          this.addPropertyOverride(new ResourceLocation("firework"), (p_220020_0_, p_220020_1_, p_220020_2_) ->
          {
+@@ -280,8 +289,16 @@
+             else
+             {
+                 Vec3d vec3d1 = shooter.getUpVector(1.0F);
+-                Quaternion quaternion = new Quaternion(new Vector3f(vec3d1), projectileAngle, true);
+                 Vec3d vec3d = shooter.getLook(1.0F);
++            	//VIVE SET AIM AND SPEED
++            	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
++            	if (vp !=null && vp.isVR())
++            	{ 
++            		vec3d = vp.getControllerDir(vp.activeHand);	
++            		vec3d1 = vp.getControllerVectorCustom(vp.activeHand, new Vector3(0, 1, 0));
++            	}
++            	///
++                Quaternion quaternion = new Quaternion(new Vector3f(vec3d1), projectileAngle, true);
+                 Vector3f vector3f = new Vector3f(vec3d);
+                 vector3f.transform(quaternion);
+                 iprojectile.shoot((double)vector3f.getX(), (double)vector3f.getY(), (double)vector3f.getZ(), velocity, inaccuracy);

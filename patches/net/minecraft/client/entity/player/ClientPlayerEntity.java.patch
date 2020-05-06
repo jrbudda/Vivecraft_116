@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/entity/player/ClientPlayerEntity.java
 +++ b/net/minecraft/client/entity/player/ClientPlayerEntity.java
-@@ -1,11 +1,32 @@
+@@ -1,11 +1,33 @@
  package net.minecraft.client.entity.player;
  
  import com.google.common.collect.Lists;
@@ -22,6 +22,7 @@
 +import org.vivecraft.gameplay.OpenVRPlayer;
 +import org.vivecraft.physicalinventory.TransactionMutex;
 +import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.render.VRFirstPersonArmSwing;
 +import org.vivecraft.settings.VRSettings;
 +import org.vivecraft.utils.external.jinfinadeck;
 +import org.vivecraft.utils.external.jkatvr;
@@ -33,16 +34,14 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.audio.BubbleColumnAmbientSoundHandler;
  import net.minecraft.client.audio.ElytraSound;
-@@ -22,7 +43,9 @@
+@@ -22,6 +44,7 @@
  import net.minecraft.client.gui.screen.JigsawScreen;
  import net.minecraft.client.gui.screen.Screen;
  import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 +import net.minecraft.client.main.Main;
  import net.minecraft.client.network.play.ClientPlayNetHandler;
-+import net.minecraft.client.renderer.FirstPersonRenderer.VRFirstPersonArmSwing;
  import net.minecraft.client.util.ClientRecipeBook;
  import net.minecraft.client.world.ClientWorld;
- import net.minecraft.entity.Entity;
 @@ -31,24 +54,18 @@
  import net.minecraft.entity.Pose;
  import net.minecraft.entity.item.BoatEntity;
@@ -73,7 +72,7 @@
  import net.minecraft.particles.ParticleTypes;
  import net.minecraft.potion.Effect;
  import net.minecraft.potion.EffectInstance;
-@@ -70,11 +87,13 @@
+@@ -70,12 +87,15 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
@@ -85,9 +84,11 @@
  import net.minecraft.util.text.ITextComponent;
 +import net.minecraft.world.World;
  import net.minecraft.world.dimension.DimensionType;
++import net.optifine.reflect.Reflector;
  
  public class ClientPlayerEntity extends AbstractClientPlayerEntity
-@@ -98,6 +117,23 @@
+ {
+@@ -98,6 +118,23 @@
      public MovementInput movementInput;
      protected final Minecraft mc;
      protected int sprintToggleTimer;
@@ -111,8 +112,8 @@
      public int sprintingTicksLeft;
      public float renderArmYaw;
      public float renderArmPitch;
-@@ -127,6 +163,86 @@
-         this.ambientSoundHandlers.add(new UnderwaterAmbientSoundHandler(this, p_i744_1_.getSoundHandler()));
+@@ -127,6 +164,86 @@
+         this.ambientSoundHandlers.add(new UnderwaterAmbientSoundHandler(this, p_i745_1_.getSoundHandler()));
          this.ambientSoundHandlers.add(new BubbleColumnAmbientSoundHandler(this));
      }
 +    //VIVE
@@ -198,7 +199,7 @@
  
      public boolean isGlowing()
      {
-@@ -135,6 +251,21 @@
+@@ -135,6 +252,21 @@
  
      public boolean attackEntityFrom(DamageSource source, float amount)
      {
@@ -220,7 +221,7 @@
          return false;
      }
  
-@@ -142,6 +273,8 @@
+@@ -142,6 +274,8 @@
      {
      }
  
@@ -229,7 +230,7 @@
      public boolean startRiding(Entity entityIn, boolean force)
      {
          if (!super.startRiding(entityIn, force))
-@@ -161,7 +294,10 @@
+@@ -161,7 +295,10 @@
                  this.rotationYaw = entityIn.rotationYaw;
                  this.setRotationYawHead(entityIn.rotationYaw);
              }
@@ -241,7 +242,7 @@
              return true;
          }
      }
-@@ -170,6 +306,10 @@
+@@ -170,6 +307,10 @@
      {
          super.stopRiding();
          this.rowingBoat = false;
@@ -252,7 +253,7 @@
      }
  
      public float getPitch(float partialTicks)
-@@ -280,6 +420,13 @@
+@@ -280,6 +421,13 @@
              }
  
              this.prevOnGround = this.onGround;
@@ -266,7 +267,7 @@
              this.autoJumpEnabled = this.mc.gameSettings.autoJump;
          }
      }
-@@ -294,10 +441,31 @@
+@@ -294,10 +442,31 @@
      public void sendChatMessage(String message)
      {
          this.connection.sendPacket(new CChatMessagePacket(message));
@@ -298,7 +299,67 @@
          super.swingArm(hand);
          this.connection.sendPacket(new CAnimateHandPacket(hand));
      }
-@@ -915,6 +1083,9 @@
+@@ -551,7 +720,24 @@
+ 
+     public void playSound(SoundEvent soundIn, float volume, float pitch)
+     {
+-        this.world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(), soundIn, this.getSoundCategory(), volume, pitch, false);
++        SoundCategory category = this.getSoundCategory();
++        //Forge
++        if (Reflector.ForgeEventFactory_onPlaySoundAtEntity.exists())
++        {
++            Object object = Reflector.ForgeEventFactory_onPlaySoundAtEntity.call(this, soundIn, this.getSoundCategory(), volume, pitch);
++
++            if (Reflector.callBoolean(object, Reflector.Event_isCanceled) || Reflector.call(object, Reflector.PlaySoundAtEntityEvent_getSound) == null)
++            {
++                return;
++            }
++
++            soundIn = (SoundEvent)Reflector.call(object, Reflector.PlaySoundAtEntityEvent_getSound);
++            category = (SoundCategory)Reflector.call(object, Reflector.PlaySoundAtEntityEvent_getCategory);
++            volume = Reflector.callFloat(object, Reflector.PlaySoundAtEntityEvent_getVolume);
++        }
++        //
++        this.world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(), soundIn, category, volume, pitch, false);
++
+     }
+ 
+     public void playSound(SoundEvent p_213823_1_, SoundCategory p_213823_2_, float p_213823_3_, float p_213823_4_)
+@@ -730,6 +916,9 @@
+         boolean flag1 = this.movementInput.field_228350_h_;
+         boolean flag2 = this.func_223110_ee();
+         this.movementInput.func_225607_a_(this.func_228354_I_());
++        //Forge
++        Reflector.call(Reflector.ForgeHooksClient_onInputUpdate, this, this.movementInput);
++        //
+         this.mc.getTutorial().handleMovement(this.movementInput);
+ 
+         if (this.isHandActive() && !this.isPassenger())
+@@ -748,12 +937,17 @@
+             this.movementInput.jump = true;
+         }
+ 
+-        if (!this.noClip)
+-        {
+-            this.pushOutOfBlocks(this.getPosX() - (double)this.getWidth() * 0.35D, this.getPosY() + 0.5D, this.getPosZ() + (double)this.getWidth() * 0.35D);
+-            this.pushOutOfBlocks(this.getPosX() - (double)this.getWidth() * 0.35D, this.getPosY() + 0.5D, this.getPosZ() - (double)this.getWidth() * 0.35D);
+-            this.pushOutOfBlocks(this.getPosX() + (double)this.getWidth() * 0.35D, this.getPosY() + 0.5D, this.getPosZ() - (double)this.getWidth() * 0.35D);
+-            this.pushOutOfBlocks(this.getPosX() + (double)this.getWidth() * 0.35D, this.getPosY() + 0.5D, this.getPosZ() + (double)this.getWidth() * 0.35D);
++        //Forge
++        Object event = Reflector.newInstance(Reflector.PlayerSPPushOutOfBlocksEvent_Constructor, this); 
++        // 
++        if (!this.noClip || event == null || !Reflector.postForgeBusEvent(event)) {
++        	double y= this.getPosY() + 0.5f;
++        	if(event!=null)
++        		y = Reflector.callDouble(event, Reflector.PlayerSPPushOutOfBlocksEvent_getMinY);
++	        this.pushOutOfBlocks(this.getPosX() - (double)this.getWidth() * 0.35D, y, this.getPosZ() + (double)this.getWidth() * 0.35D);
++	        this.pushOutOfBlocks(this.getPosX() - (double)this.getWidth() * 0.35D, y, this.getPosZ() - (double)this.getWidth() * 0.35D);
++	        this.pushOutOfBlocks(this.getPosX() + (double)this.getWidth() * 0.35D, y, this.getPosZ() - (double)this.getWidth() * 0.35D);
++	        this.pushOutOfBlocks(this.getPosX() + (double)this.getWidth() * 0.35D, y, this.getPosZ() + (double)this.getWidth() * 0.35D);
+         }
+ 
+         boolean flag4 = (float)this.getFoodStats().getFoodLevel() > 6.0F || this.abilities.allowFlying;
+@@ -915,6 +1109,9 @@
          }
  
          super.livingTick();
@@ -308,7 +369,7 @@
  
          if (this.onGround && this.abilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
-@@ -1008,12 +1179,81 @@
+@@ -1008,12 +1205,73 @@
          return super.removeActivePotionEffect(potioneffectin);
      }
  
@@ -343,38 +404,7 @@
 +    			this.stepHeight = 0.6f;
 +    			this.updateAutoJump((float)(this.getPosX() - d0), (float)(this.getPosZ() - d1));
 +    		}
-+    		double oy = this.getPosY();
-+
-+    		switch (this.getPose())
-+    		{
-+    		case SWIMMING:
-+    		case FALL_FLYING:
-+    		case SPIN_ATTACK:
-+    			oy -= 1.62 - 0.4f;
-+			case CROUCHING:
-+				break;
-+			case DYING:
-+				break;
-+			case SLEEPING:
-+				break;
-+			case STANDING:
-+				break;
-+			default:
-+				break;
-+
-+    			//              return 0.4F;
-+    			//                case SWIMMING:
-+    			//                case FALL_FLYING:
-+    			//                case SPIN_ATTACK:
-+    			//                    return 0.4F;
-+    			//
-+    			//                case SNEAKING:
-+    			//                    return 1.27F;
-+    			//
-+    			//                default:
-+    			//                    return 1.62F;
-+    		}
-+
++    		double oy = this.getPosY() + this.getRoomYOffsetFromPos();
 +    		OpenVRPlayer.get().setRoomOrigin(
 +    				getPosX() + ox, 
 +    				oy, 
@@ -384,17 +414,40 @@
 +    			super.move(typeIn,new Vec3d(0,pos.y,0));
 +    			OpenVRPlayer.get().setRoomOrigin(
 +    					OpenVRPlayer.get().roomOrigin.x, 
-+    					this.getPosY(),
++    					this.getPosY() + this.getRoomYOffsetFromPos(),
 +    					OpenVRPlayer.get().roomOrigin.z, false);
 +    		} else {
 +    			this.onGround = true; //
 +    			//do not move player, VRPlayer.moveplayerinroom will move him around.
 +    		}
 +    	}   		
++    }
++    
++    public double getRoomYOffsetFromPos() {
++		double oy = 0;
++		//Adjust room origin to account for pose.
++		switch (this.getPose())
++		{
++		case SWIMMING:
++		case FALL_FLYING:
++		case SPIN_ATTACK:
++			oy = 1.62 - 0.4;
++		case CROUCHING:
++			break;
++		case DYING:
++			break;
++		case SLEEPING:
++			break;
++		case STANDING:
++			break;
++		default:
++			break;
++		}	
++		return -oy;
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1031,13 +1271,17 @@
+@@ -1031,13 +1289,17 @@
              float f = this.getAIMoveSpeed();
              float f1 = (float)vec3d2.lengthSquared();
  
@@ -414,7 +467,7 @@
                  vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vec3d2.lengthSquared();
  
-@@ -1220,4 +1464,400 @@
+@@ -1220,4 +1482,406 @@
              return this.eyesInWaterPlayer;
          }
      }
@@ -781,7 +834,7 @@
 +        this.lastReportedYaw = old.lastReportedYaw;
 +        this.lastReportedPitch = old.lastReportedPitch;
 +        this.prevOnGround = old.prevOnGround;
-+ //       this.serverSneakState = old.serverSneakState;
++        this.field_228351_cj_ = old.field_228351_cj_;
 +        this.serverSprintState = old.serverSprintState;
 +        this.positionUpdateTicks = old.positionUpdateTicks;
 +    }
@@ -813,5 +866,11 @@
 +    		return (float) (this.getSpeedFactor() * (moveMulIn.x + moveMulIn.z) / 2);
 +    	} else
 +    		return this.getSpeedFactor();
++    }
++    
++    @Override
++    public void stopActiveHand() {
++    	NetworkHelper.sendActiveHand((byte) this.getActiveHand().ordinal());
++    	super.stopActiveHand();
 +    }
  }

@@ -19,19 +19,25 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.SoundEvent;
  import net.minecraft.util.SoundEvents;
-@@ -84,7 +89,22 @@
+@@ -45,6 +50,7 @@
+ import net.minecraft.util.registry.Registry;
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
++import net.optifine.reflect.Reflector;
  
-         if (p_i995_2_ instanceof PlayerEntity)
+ public abstract class AbstractArrowEntity extends Entity implements IProjectile
+ {
+@@ -84,7 +90,20 @@
+ 
+         if (p_i996_2_ instanceof PlayerEntity)
          {
 -            this.pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
-+        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i995_2_.getUniqueID());
++        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i996_2_.getUniqueID());
 +        	if (vp !=null && vp.isVR())
 +        	{
 +         		//VIVE SET SPAWNPOS
-+        		int c = 0;
-+        		if (p_i995_2_.getActiveHand() == Hand.OFF_HAND) c = 1;
-+        		Vec3d aimSource = vp.getControllerPos(c);
-+        		Vec3d aimDir = vp.getControllerDir(vp.isSeated() ? 0 : c);     
++        		Vec3d aimSource = vp.getControllerPos(vp.activeHand);
++        		Vec3d aimDir = vp.getControllerDir(vp.activeHand);     
 +        		if (!vp.isSeated() && vp.getDraw() > 0) {
 +        			aimDir = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
 +        			aimSource = vp.getControllerPos(0);
@@ -43,7 +49,7 @@
          }
      }
  
-@@ -112,14 +132,35 @@
+@@ -112,14 +131,29 @@
          this.dataManager.register(field_212362_a, Optional.empty());
          this.dataManager.register(PIERCE_LEVEL, (byte)0);
      }
@@ -57,24 +63,18 @@
 -        this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
 -        this.setMotion(this.getMotion().add(shooter.getMotion().x, shooter.onGround ? 0.0D : shooter.getMotion().y, shooter.getMotion().z));
 +    	//VIVE SET AIM AND SPEED
-+    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
++    	//Crossbow aim is not done here. See crossbowitem.
++    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.shootingEntity);
 +    	if (vp !=null && vp.isVR())
 +    	{ 
-+    		int c = 0;
-+    		if (((LivingEntity) shooter).getActiveHand() == Hand.OFF_HAND) c = 1;
-+    		Vec3d aim = vp.getControllerDir(vp.isSeated() ? 0 :c);
-+    		if(this instanceof TridentEntity) {
-+    			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
-+    			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		       		
-+    		} else {
-+    			if(!vp.isSeated() && vp.getDraw() > 0){
-+    				aim = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
-+    				velocity = velocity * vp.getDraw();  
-+    				this.damage *= 2;
-+    			}
-+    			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
-+    			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
-+    		}
++    		Vec3d aim = vp.getControllerDir(vp.activeHand);	
++			if( !vp.isSeated() && vp.getDraw() > 0){ //roomscale bow.
++				aim = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
++				velocity = velocity * vp.getDraw();  
++				this.damage *= 2;
++			}   		
++			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
++			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
 +    	}
 +    	///
 +    	float f = -MathHelper.sin(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
@@ -85,3 +85,34 @@
      }
  
      public void shoot(double x, double y, double z, float velocity, float inaccuracy)
+@@ -174,7 +208,15 @@
+         BlockPos blockpos = new BlockPos(this);
+         BlockState blockstate = this.world.getBlockState(blockpos);
+ 
+-        if (!blockstate.isAir() && !flag)
++        //Forge
++        boolean isair;
++        if(Reflector.IForgeBlockState_isAir2.exists())
++        	isair = Reflector.callBoolean(blockstate, Reflector.IForgeBlockState_isAir2, this.world, blockpos);
++        else
++        	isair = blockstate.isAir();
++        //
++        
++        if (!isair && !flag)
+         {
+             VoxelShape voxelshape = blockstate.getCollisionShape(this.world, blockpos);
+ 
+@@ -253,7 +295,12 @@
+                     }
+                 }
+ 
+-                if (raytraceresult != null && !flag)
++                //Forge
++                boolean f = true;
++                if(Reflector.ForgeEventFactory_onProjectileImpactA.exists())
++                	f = raytraceresult.getType() != RayTraceResult.Type.MISS && !Reflector.callBoolean(Reflector.ForgeEventFactory_onProjectileImpactA, this, raytraceresult);
++
++                if (raytraceresult != null && !flag && f)
+                 {
+                     this.onHit(raytraceresult);
+                     this.isAirBorne = true;

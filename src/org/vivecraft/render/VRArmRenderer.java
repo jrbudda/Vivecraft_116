@@ -4,6 +4,7 @@ import org.lwjgl.opengl.ARBTextureEnvCombine;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.vivecraft.control.ControllerType;
+import org.vivecraft.gameplay.trackers.SwingTracker;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 
@@ -12,6 +13,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -19,6 +21,7 @@ import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.item.ItemStack;
 
 public class VRArmRenderer extends PlayerRenderer
 {
@@ -68,9 +71,12 @@ public class VRArmRenderer extends PlayerRenderer
         playermodel.bipedLeftArmwear.copyModelAngles(playermodel.bipedLeftArm);
         playermodel.bipedRightArmwear.copyModelAngles(playermodel.bipedRightArm);
 
-        rendererArmIn.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntitySolid(playerIn.getLocationSkin())), combinedLightIn, OverlayTexture.NO_OVERLAY);
+        float a = SwingTracker.getItemFade((ClientPlayerEntity) playerIn, ItemStack.EMPTY);
+        
+        rendererArmIn.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntityTranslucent(playerIn.getLocationSkin())), combinedLightIn, OverlayTexture.NO_OVERLAY, 1,1,1,a);
+
         rendererArmwearIn.rotateAngleX = 0.0F;
-        rendererArmwearIn.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntityTranslucent(playerIn.getLocationSkin())), combinedLightIn, OverlayTexture.NO_OVERLAY);
+        rendererArmwearIn.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntityTranslucent(playerIn.getLocationSkin())), combinedLightIn, OverlayTexture.NO_OVERLAY, 1,1,1,a);
         
     	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_MODULATE);
     	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_RGB_SCALE_ARB, 1);      

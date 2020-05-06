@@ -86,7 +86,7 @@ def create_install(mcp_dir):
             for cur_file in fnmatch.filter(filelist, '*.class'):
                 #print arc_path + cur_file
                 flg = False
-                if not '$' in cur_file and not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
+                if not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
                     flg = True
                     ok = False
                     v = (arc_path + cur_file).replace('/','\\').split('$')[0].replace('.class', '')
@@ -116,7 +116,7 @@ def create_install(mcp_dir):
             for cur_file in fnmatch.filter(filelist, '*.class'):
                 #print arc_path + cur_file
                 flg = False
-                if not '$' in cur_file and not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
+                if not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
                     flg = True
                     ok = False
                     v = (arc_path + cur_file).replace('/','\\').split('$')[0].replace('.class', '')
@@ -151,6 +151,8 @@ def create_install(mcp_dir):
                 zipout.write(in_file, arcname)
         print "Packaging mappings..."
         zipout.write(os.path.join(mcp_dir, "conf", "joined.srg"), "mappings/vivecraft/joined.srg")
+        zipout.write(os.path.join(base_dir, "installer", "cpw.mods.modlauncher.api.ITransformationService"), "META-INF/services/cpw.mods.modlauncher.api.ITransformationService")
+
     os.chdir( base_dir )
 
     
