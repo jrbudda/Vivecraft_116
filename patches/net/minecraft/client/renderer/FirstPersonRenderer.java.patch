@@ -272,13 +272,13 @@
      public void renderItemInFirstPerson(float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, ClientPlayerEntity playerEntityIn, int combinedLightIn)
      {
          float f = playerEntityIn.getSwingProgress(partialTicks);
-@@ -304,184 +418,379 @@
+@@ -304,184 +418,382 @@
          bufferIn.finish();
      }
  
 -    private void renderItemInFirstPerson(AbstractClientPlayerEntity player, float partialTicks, float pitch, Hand handIn, float swingProgress, ItemStack stack, float equippedProgress, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn)
 +    //swimming in empirical dickery
-+    void renderItemInFirstPerson(AbstractClientPlayerEntity player, float partialTicks, float pitch, Hand handIn, float swingProgress, ItemStack stack, float equippedProgress, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn)
++    public void renderItemInFirstPerson(AbstractClientPlayerEntity player, float partialTicks, float pitch, Hand handIn, float swingProgress, ItemStack stack, float equippedProgress, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn)
      {
          if (!Config.isShaders() || !Shaders.isSkipRenderHand(handIn))
          {
@@ -310,129 +310,17 @@
 -                {
 -                    this.renderMapFirstPerson(matrixStackIn, bufferIn, combinedLightIn, pitch, equippedProgress, swingProgress);
 -                }
-+            
-+            if(!stack.isEmpty()) {
-+	    		Item item = stack.getItem();
-+	        	boolean isFilledMap = false;
-+
-+	    		VivecraftItemRendering rendertype = VivecraftItemRendering.Item;
-+	    		
-+	    		if(stack.getUseAction() == UseAction.EAT || stack.getUseAction() == UseAction.DRINK)
-+	    			rendertype = VivecraftItemRendering.Noms;
-+	    		else if(item instanceof BlockItem) {
-+	    			Block b = ((BlockItem) item).getBlock(); 
-+					if(b instanceof TorchBlock) 
-+						rendertype = VivecraftItemRendering.Block_Stick;
-+					else {
-+						IBakedModel mod = itemRenderer.getItemModelWithOverrides(stack, mc.world, mc.player);
-+						if(mod.isGui3d())
-+							rendertype = VivecraftItemRendering.Block_3D;
-+						else
-+							rendertype = VivecraftItemRendering.Block_Item;
-+            }
-+                }
-+	    		else if(item instanceof FilledMapItem) 
-+	    			rendertype = VivecraftItemRendering.Map;
-+	    		else if (stack.getUseAction() == UseAction.BOW) {
-+					rendertype = VivecraftItemRendering.Bow_Seated;
-+	    			if(mc.bowTracker.isActive((ClientPlayerEntity) player)) {
-+	    				if(mc.bowTracker.isDrawing)
-+	    						rendertype = VivecraftItemRendering.Bow_Roomscale_Drawing;
-                 else
+-                else
 -                {
 -                    this.renderMapFirstPersonSide(matrixStackIn, bufferIn, combinedLightIn, equippedProgress, handside, swingProgress, stack);
-+		    					rendertype = VivecraftItemRendering.Bow_Roomscale;
-                 }
-             }
+-                }
+-            }
 -            else if (stack.getItem() instanceof CrossbowItem)
 -            {
 -                boolean flag1 = CrossbowItem.isCharged(stack);
 -                boolean flag2 = handside == HandSide.RIGHT;
 -                int i = flag2 ? 1 : -1;
-+	    		else if(item instanceof SwordItem)
-+	    			rendertype = VivecraftItemRendering.Sword;
-+	    		else if(item instanceof ShieldItem)
-+	    			rendertype = VivecraftItemRendering.Shield;
-+	    		else if(item instanceof TridentItem)
-+	    			rendertype = VivecraftItemRendering.Spear;
-+	    		else if(item instanceof CrossbowItem)
-+	    			rendertype = VivecraftItemRendering.Crossbow;
-+	    		else if(SwingTracker.isTool(item)) {
-+	    			rendertype = VivecraftItemRendering.Tool;       		
-+	    			if(item instanceof CarrotOnAStickItem || item instanceof FishingRodItem) {
-+	    				rendertype = VivecraftItemRendering.Tool_Rod;
-+	    			}
-+	    		}
-+	    		else if(TelescopeTracker.isTelescope(stack)) {
-+	    			rendertype = VivecraftItemRendering.Telescope;
-+	    		}
-+	    		
-+	    		int h = (flag ? 1 : -1);
-+	    		
-+	    		//defaults
-+	    		double scale = 0.7;
-+	    		double translateX = -.05;
-+	    		double translateY =  0.005;
-+	    		double translateZ =  0;
-+	    		//
-+
-+	            double gunAngle = MCOpenVR.getGunAngle();
-+
-+	    		Quaternion rotation = Vector3f.YP.rotationDegrees((float) (0));
-+	    		Quaternion prerotation = Vector3f.YP.rotationDegrees((float) (0));
-+
-+	    		rotation.multiply(Vector3f.XP.rotationDegrees((float) (-110 + gunAngle)));
-+	            matrixStackIn.push();
-+
-+	            boolean mirror = false;
-+	            
-+	            switch (rendertype) {
-+	            case Bow_Seated:
-+	            	translateY += -0.1;
-+	            	translateZ += 0.1;
-+	            	rotation.multiply(Vector3f.XP.rotationDegrees((float) (90 -gunAngle)));
-+	            	scale = 0.7f;
-+	            	break;
-+	            case Bow_Roomscale:            	
-+		    		rotation = Vector3f.XP.rotationDegrees((float) (0));    		
-+		    		matrixStackIn.rotate((Vector3f.XP.rotationDegrees((float) (-110 + gunAngle))));
-+	            	translateY-= 0.25f;
-+	            	translateZ+= 0.025f + 0.03*gunAngle/40f;         	
-+	            	translateX+= -0.0225;
-+	            	scale = 1.0f;
-+	            	break;
-+	            case Bow_Roomscale_Drawing:	//here there be dragons
-+	            
-+        			//
-+        			rotation = Vector3f.YP.rotationDegrees(0);
-+        			scale = 1f;
-+        			//
-+
-+        			int c = 0;
-+        			if (mc.vrSettings.vrReverseShootingEye) c = 1;
-+
-+        			Vec3d aim = mc.bowTracker.getAimVector(); 
-+        			Vec3d a = new Vec3d(aim.x, aim.y, aim.z);			
-+
-+        			Vec3d lup = mc.vrPlayer.vrdata_world_render.getHand(1).getCustomVector(new Vec3d(0, -1, 0));
-+        			Vec3d lback = mc.vrPlayer.vrdata_world_render.getHand(1).getCustomVector(new Vec3d(0, 0, -1));
-+
-+        			Vec3d v = a.crossProduct(lup);
-+        			double d = 180 / Math.PI * Math.acos(a.dotProduct(lup));
-+
-+        			float aimpitch = (float)Math.toDegrees(Math.asin(a.y/a.length()));
-+        			float yaw = (float)Math.toDegrees(Math.atan2(a.x, a.z));     
-+
-+        			Vec3d up = new Vec3d(0,1,0);
-+
-+        			Vec3d ahz = new Vec3d(a.x, 0, a.z); // we want the normal to a aiming plane, but vertical.
-+        			Vec3d pAim2 = Vec3d.ZERO;
-+
-+        			double porjaim = lback.dotProduct(ahz); //angle between controller up and aim, just for ortho check			    		        		
-+        			if(porjaim !=0) { //check to make sure 	we arent holding the bow perfectly straight up.					
-+        				pAim2 = ahz.scale(porjaim);	 //projection of l_controller_up onto aim vector ... why is there no multiply?		        	 
-+                    }
- 
+-
 -                if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == handIn)
 -                {
 -                    this.transformSideFirstPerson(matrixStackIn, handside, equippedProgress);
@@ -442,14 +330,12 @@
 -                    matrixStackIn.rotate(Vector3f.ZP.rotationDegrees((float)i * -9.785F));
 -                    float f9 = (float)stack.getUseDuration() - ((float)this.mc.player.getItemInUseCount() - partialTicks + 1.0F);
 -                    float f12 = f9 / (float)CrossbowItem.getChargeTime(stack);
-+        			double dot =0;
- 
+-
 -                    if (f12 > 1.0F)
 -                    {
 -                        f12 = 1.0F;
 -                    }
-+        			Vec3d proj = lback.subtract(pAim2).normalize();
- 
+-
 -                    if (f12 > 0.1F)
 -                    {
 -                        float f15 = MathHelper.sin((f9 - 0.1F) * 1.3F);
@@ -457,98 +343,12 @@
 -                        float f4 = f15 * f3;
 -                        matrixStackIn.translate((double)(f4 * 0.0F), (double)(f4 * 0.004F), (double)(f4 * 0.0F));
 -                    }
-+        			dot = proj.dotProduct(up);		//angle between our projection and straight up (the default bow render pos.)
- 
+-
 -                    matrixStackIn.translate((double)(f12 * 0.0F), (double)(f12 * 0.0F), (double)(f12 * 0.04F));
 -                    matrixStackIn.scale(1.0F, 1.0F, 1.0F + f12 * 0.2F);
 -                    matrixStackIn.rotate(Vector3f.YN.rotationDegrees((float)i * 45.0F));
 -                }
-+        			double dot2 = ahz.dotProduct(proj.crossProduct(up)); //angle sign test, negative is left roll
-+
-+        			float angle;
-+
-+        			if (dot2 < 0) 
-+        				angle = -(float) Math.acos(dot);  	
-+        			else angle = (float) Math.acos(dot); 
-+
-+        			float roll = (float) (180 / Math.PI * angle);     //calculate bow model roll.
-+
-+        			if(mc.bowTracker.isCharged()){
-+        				long t = Util.milliTime() - mc.bowTracker.startDrawTime;
-+        				translateX += (0.003*Math.sin(t));
-+                }
-+
-+        			matrixStackIn.translate(0, 0, .1);
-+        			//un-do controller tracking
-+        			matrixStackIn.getLast().getMatrix().mul(mc.vrPlayer.vrdata_world_render.getController(1).getMatrix().transposed().toMCMatrix());
-+        			//
-+
-+        			//rotate in world coords
-+        			rotation.multiply(Vector3f.YP.rotationDegrees(yaw));
-+        			rotation.multiply(Vector3f.XP.rotationDegrees(-aimpitch));
-+        			rotation.multiply(Vector3f.ZP.rotationDegrees(-roll));
-+        			rotation.multiply(Vector3f.ZP.rotationDegrees(180));
-+        			//		    			
-+
-+        			matrixStackIn.getLast().getMatrix().mul(rotation);
-+        			
-+        			rotation = Vector3f.YP.rotationDegrees(0);
-+        			
-+        			rotation.multiply(Vector3f.YP.rotationDegrees(180));
-+        			rotation.multiply(Vector3f.XP.rotationDegrees(160));
-+
-+        			translateY += .1225;
-+        			translateX += 0.125;
-+        			translateZ += 0.16;
-+
-+        			break;
-+	            case Crossbow:
-+	            	translateX +=.01f;
-+	            	translateZ +=-0.02f;
-+	            	translateY+=-0.02f;
-+	            	scale = 0.5f;
-+	            	rotation = Vector3f.XP.rotationDegrees(0);
-+	            	rotation.multiply(Vector3f.YP.rotationDegrees((float) (10)));
-+	            	break;
-+	            case Map:
-+	            	isFilledMap = true;
-+	            	rotation = Vector3f.XP.rotationDegrees(-45);
-+	            	translateX = 0;
-+	            	translateY = .14;
-+	            	translateZ = -.05;
-+	            	scale = 0.5;
-+	            	break;
-+	            case Noms:				
-+	            	long t = this.mc.player.getItemInUseCount();
-+	            	translateZ += 0.006D*Math.sin(t);
-+	            	translateZ +=0.02f;
-+	            case Item:
-+	            case Block_Item:
-+	            	rotation = Vector3f.ZP.rotationDegrees(180);
-+	            	rotation.multiply(Vector3f.XP.rotationDegrees(-135));
-+	            	scale = 0.4f;
-+	            	translateX +=.08f;
-+	            	translateZ +=-0.08f;
-+	            	break;					
-+	            case Block_3D:		
-+	            	scale = 0.3f;	
-+	            	translateZ +=-0.1f;
-+	            	translateX +=.05f;
-+	            	break;	
-+	            case Block_Stick:
-+	            	rotation = Vector3f.XP.rotationDegrees(0);
-+	            	translateY+=-.105+.06*gunAngle/40;
-+	            	translateZ +=-0.1f;
-+	            	rotation.multiply(Vector3f.XP.rotationDegrees(-45));
-+	            	rotation.multiply(Vector3f.XP.rotationDegrees((float) (gunAngle)));
-+	            	break;
-+	            case Shield:
-+	            	mirror = !flag;
-+	            	scale = 0.4f;	
-+	            	translateY += 0.21f;
-+	            	if (flag)
-+	            		translateX += 0.11f;
-                 else
+-                else
 -                {
 -                    float f = -0.4F * MathHelper.sin(MathHelper.sqrt(swingProgress) * (float)Math.PI);
 -                    float f1 = 0.2F * MathHelper.sin(MathHelper.sqrt(swingProgress) * ((float)Math.PI * 2F));
@@ -556,71 +356,40 @@
 -                    matrixStackIn.translate((double)((float)i * f), (double)f1, (double)f2);
 -                    this.transformSideFirstPerson(matrixStackIn, handside, equippedProgress);
 -                    this.transformFirstPerson(matrixStackIn, handside, swingProgress);
-+	            		translateX += -0.015;
-+
-+	            	translateZ += -0.01f;
-+
-+	            	rotation.multiply(Vector3f.XP.rotationDegrees((float) (105 - gunAngle)));
- 
+-
 -                    if (flag1 && swingProgress < 0.001F)
-+	            	if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == handIn)
-                     {
+-                    {
 -                        matrixStackIn.translate((double)((float)i * -0.641864F), 0.0D, 0.0D);
 -                        matrixStackIn.rotate(Vector3f.YP.rotationDegrees((float)i * 10.0F));
-+	            		rotation.multiply(Vector3f.ZP.rotationDegrees(h*-5));
-+	            		translateY += -0.13f;
-+	            		translateX +=  h*0.05f;
-+	            		translateZ += -0.1f;
-+
-+
-+	            		if(player.isActiveItemStackBlocking()){		
-+	            			rotation.multiply(Vector3f.YP.rotationDegrees((h*90.0F)));  
-+	            		} else{
-+	            			rotation.multiply(Vector3f.YP.rotationDegrees(((1-equippedProgress)*h*90.0F)));  
-                     }
-                 }
- 
+-                    }
+-                }
+-
 -                this.renderItemSide(player, stack, flag2 ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag2, matrixStackIn, bufferIn, combinedLightIn);
 -            }
 -            else
 -            {
 -                boolean flag3 = handside == HandSide.RIGHT;
-+	            	rotation.multiply(Vector3f.YP.rotationDegrees((h*-90.0F)));  
- 
+-
 -                if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == handIn)
 -                {
 -                    int k = flag3 ? 1 : -1;
-+	            	break;
-+	            case Spear:
-+	            	rotation = Vector3f.XP.rotationDegrees((0));
- 
+-
 -                    switch (stack.getUseAction())
 -                    {
 -                        case NONE:
 -                            this.transformSideFirstPerson(matrixStackIn, handside, equippedProgress);
 -                            break;
-+	            	translateX +=-.135f;
-+	            	translateZ += .575f;
- 
+-
 -                        case EAT:
 -                        case DRINK:
 -                            this.transformEatFirstPerson(matrixStackIn, partialTicks, handside, stack);
 -                            this.transformSideFirstPerson(matrixStackIn, handside, equippedProgress);
 -                            break;
-+	            	scale = 0.6f;
- 
+-
 -                        case BLOCK:
 -                            this.transformSideFirstPerson(matrixStackIn, handside, equippedProgress);
 -                            break;
-+	            	float prog = 0;
-+	            	boolean charging = false;
-+	            	int j = 0;
-+
-+                if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == handIn)
-+                {
-+	            		charging = true;
-+	            		j = EnchantmentHelper.getRiptideModifier(stack);
- 
+-
 -                        case BOW:
 -                            this.transformSideFirstPerson(matrixStackIn, handside, equippedProgress);
 -                            matrixStackIn.translate((double)((float)k * -0.2785682F), (double)0.18344387F, (double)0.15731531F);
@@ -634,51 +403,21 @@
 -                            if (f11 > 1.0F)
 -                            {
 -                                f11 = 1.0F;
-+	            		if(j<=0 || (j>0 &&player.isWet())){
-+	            			prog = (float)stack.getUseDuration() - ((float)this.mc.player.getItemInUseCount() - partialTicks + 1.0F);
-+	            			if (prog > 10) { //charged    
-+	            				prog = 10;
-+
-+	            				if (j>0 && player.isWet()) {      
-+	            					matrixStackIn.rotate(Vector3f.ZP.rotationDegrees((-mc.tickCounter*10*j) % 360 - partialTicks*10*j));
-+	            			//		rotation.multiply(Vector3f.ZP.rotationDegrees((-mc.tickCounter*10*j) % 360 - partialTicks*10*j));
-+	            				}
-+
-+	            				if(mc.frameIndex % 4 == 0) {
-+	            					MCOpenVR.triggerHapticPulse(flag ? 0 : 1, 200);
-+	            				}
-+
-+	            				long ti = Util.milliTime() - mc.bowTracker.startDrawTime;
-+	            				translateX+=0.003*Math.sin(ti);
-+	            			}
-+	            		}
-+	            	}
-+
-+	            	if(player.isSpinAttacking()) {
-+	            		j = 5;
-+	            		translateZ += -0.15f;
-+    					matrixStackIn.rotate(Vector3f.ZP.rotationDegrees((-mc.tickCounter*10*j) % 360 - partialTicks*10*j));
-+	           // 		rotation.multiply(Vector3f.ZP.rotationDegrees((-mc.tickCounter*10*j) % 360 - partialTicks*10*j));
-+	            		charging = true;
-                             }
- 
+-                            }
+-
 -                            if (f11 > 0.1F)
 -                            {
 -                                float f14 = MathHelper.sin((f8 - 0.1F) * 1.3F);
 -                                float f17 = f11 - 0.1F;
 -                                float f19 = f14 * f17;
 -                                matrixStackIn.translate((double)(f19 * 0.0F), (double)(f19 * 0.004F), (double)(f19 * 0.0F));
-+	            	if(!charging) {	
-+	            		translateY += 0 + 0.2*gunAngle/40;
-+	            		rotation.multiply(Vector3f.XP.rotationDegrees((float) (gunAngle)));
-                             }
- 
+-                            }
+-
 -                            matrixStackIn.translate((double)(f11 * 0.0F), (double)(f11 * 0.0F), (double)(f11 * 0.04F));
 -                            matrixStackIn.scale(1.0F, 1.0F, 1.0F + f11 * 0.2F);
 -                            matrixStackIn.rotate(Vector3f.YN.rotationDegrees((float)k * 45.0F));
 -                            break;
-+	            	rotation.multiply(Vector3f.XP.rotationDegrees((float) (-65)));
- 
+-
 -                        case SPEAR:
 -                            this.transformSideFirstPerson(matrixStackIn, handside, equippedProgress);
 -                            matrixStackIn.translate((double)((float)k * -0.5F), (double)0.7F, (double)0.1F);
@@ -692,8 +431,7 @@
 -                            {
 -                                f16 = 1.0F;
 -                            }
-+	            	translateZ +=-0.75f + prog /10 * (0.25f);
- 
+-
 -                            if (f16 > 0.1F)
 -                            {
 -                                float f18 = MathHelper.sin((f13 - 0.1F) * 1.3F);
@@ -701,34 +439,12 @@
 -                                float f5 = f18 * f20;
 -                                matrixStackIn.translate((double)(f5 * 0.0F), (double)(f5 * 0.004F), (double)(f5 * 0.0F));
 -                            }
-+                            break;
-+	            case Sword:
-+	            	break;
-+	            case Tool_Rod:
-+	            	translateZ += -0.15f;
-+	            	translateY += -0.02 + gunAngle / 40 * .1;
-+	            	translateX += 0.05f;
-+	            	rotation.multiply(Vector3f.XP.rotationDegrees((float) (40)));
-+	            	scale = 0.8f;
-+	            case Tool:
-+	            	boolean climbClaws = mc.climbTracker.isClaws(stack) && mc.climbTracker.isClimbeyClimb();
-+
-+	            	if(climbClaws){
-+	            		rotation.multiply(Vector3f.XP.rotationDegrees((float) ( - gunAngle)));
-+
-+	            		scale = 0.3f;
-+
-+	            		translateZ += 0.075f;
-+	            		translateY += 0.02f;
-+	            		translateX += 0.03f;
- 
+-
 -                            matrixStackIn.translate(0.0D, 0.0D, (double)(f16 * 0.2F));
 -                            matrixStackIn.scale(1.0F, 1.0F, 1.0F + f16 * 0.2F);
 -                            matrixStackIn.rotate(Vector3f.YN.rotationDegrees((float)k * 45.0F));
-+	            		if((MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) && flag) || (MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) && !flag)) {
-+	            			translateZ += -0.2f;
-                     }
-                 }
+-                    }
+-                }
 -                else if (player.isSpinAttacking())
 -                {
 -                    this.transformSideFirstPerson(matrixStackIn, handside, equippedProgress);
@@ -750,49 +466,364 @@
 -
 -                this.renderItemSide(player, stack, flag3 ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag3, matrixStackIn, bufferIn, combinedLightIn);
 -            }
- 
-+	            	if (item instanceof ArrowItem) {
-+	            		prerotation = ((Vector3f.ZP.rotationDegrees((float) (-180))));
-+	            		rotation.multiply(Vector3f.XP.rotationDegrees((float) (-gunAngle)));
-+                }
+-
++            
++            if(!stack.isEmpty()) {
++            	Item item = stack.getItem();
++            	boolean isFilledMap = false;
 +
-+	            	break;
-+	            case Telescope:
-+	            	prerotation = Vector3f.XP.rotationDegrees(-90);
-+	            	rotation = Vector3f.XP.rotationDegrees(0);
-+	        		translateZ =0.1;
++            	VivecraftItemRendering rendertype = VivecraftItemRendering.Item;
++
++            	if(stack.getUseAction() == UseAction.EAT || stack.getUseAction() == UseAction.DRINK)
++            		rendertype = VivecraftItemRendering.Noms;
++            	else if(item instanceof BlockItem) {
++            		Block b = ((BlockItem) item).getBlock(); 
++            		if(b instanceof TorchBlock) 
++            			rendertype = VivecraftItemRendering.Block_Stick;
++            		else {
++            			IBakedModel mod = itemRenderer.getItemModelWithOverrides(stack, mc.world, mc.player);
++            			if(mod.isGui3d())
++            				rendertype = VivecraftItemRendering.Block_3D;
++            			else
++            				rendertype = VivecraftItemRendering.Block_Item;
++            		}
++            	}
++            	else if(item instanceof FilledMapItem) 
++            		rendertype = VivecraftItemRendering.Map;
++            	else if (stack.getUseAction() == UseAction.BOW) {
++            		rendertype = VivecraftItemRendering.Bow_Seated;
++            		if(mc.bowTracker.isActive((ClientPlayerEntity) player)) {
++            			if(mc.bowTracker.isDrawing)
++            				rendertype = VivecraftItemRendering.Bow_Roomscale_Drawing;
++            			else
++            				rendertype = VivecraftItemRendering.Bow_Roomscale;
++            		}
++            	}
++            	else if(item instanceof SwordItem)
++            		rendertype = VivecraftItemRendering.Sword;
++            	else if(item instanceof ShieldItem)
++            		rendertype = VivecraftItemRendering.Shield;
++            	else if(item instanceof TridentItem)
++            		rendertype = VivecraftItemRendering.Spear;
++            	else if(item instanceof CrossbowItem)
++            		rendertype = VivecraftItemRendering.Crossbow;
++            	else if(SwingTracker.isTool(item)) {
++            		rendertype = VivecraftItemRendering.Tool;       		
++            		if(item instanceof CarrotOnAStickItem || item instanceof FishingRodItem) {
++            			rendertype = VivecraftItemRendering.Tool_Rod;
++            		}
++            	}
++            	else if(TelescopeTracker.isTelescope(stack)) {
++            		rendertype = VivecraftItemRendering.Telescope;
++            	}
++
++            	int h = (flag ? 1 : -1);
++
++            	//defaults
++            	double scale = 0.7;
++            	double translateX = -.05;
++            	double translateY =  0.005;
++            	double translateZ =  0;
++            	//
++
++            	double gunAngle = MCOpenVR.getGunAngle();
++
++            	Quaternion rotation = Vector3f.YP.rotationDegrees((float) (0));
++            	Quaternion prerotation = Vector3f.YP.rotationDegrees((float) (0));
++
++            	rotation.multiply(Vector3f.XP.rotationDegrees((float) (-110 + gunAngle)));
++            	matrixStackIn.push();
++
++            	boolean mirror = false;
++
++            	if(rendertype == VivecraftItemRendering.Bow_Seated) {
++            		translateY += -0.1;
++            		translateZ += 0.1;
++            		rotation.multiply(Vector3f.XP.rotationDegrees((float) (90 -gunAngle)));
++            		scale = 0.7f;
++            	}
++            	else if(rendertype == VivecraftItemRendering.Bow_Roomscale) {
++            		rotation = Vector3f.XP.rotationDegrees((float) (0));    		
++            		matrixStackIn.rotate((Vector3f.XP.rotationDegrees((float) (-110 + gunAngle))));
++            		translateY-= 0.25f;
++            		translateZ+= 0.025f + 0.03*gunAngle/40f;         	
++            		translateX+= -0.0225;
++            		scale = 1.0f;
++            	}
++            	else if(rendertype == VivecraftItemRendering.Bow_Roomscale) {
++            		//here there be dragons
++
++            		//
++            		rotation = Vector3f.YP.rotationDegrees(0);
++            		scale = 1f;
++            		//
++
++            		int c = 0;
++            		if (mc.vrSettings.vrReverseShootingEye) c = 1;
++
++            		Vec3d aim = mc.bowTracker.getAimVector(); 
++            		Vec3d a = new Vec3d(aim.x, aim.y, aim.z);			
++
++            		Vec3d lup = mc.vrPlayer.vrdata_world_render.getHand(1).getCustomVector(new Vec3d(0, -1, 0));
++            		Vec3d lback = mc.vrPlayer.vrdata_world_render.getHand(1).getCustomVector(new Vec3d(0, 0, -1));
++
++            		Vec3d v = a.crossProduct(lup);
++            		double d = 180 / Math.PI * Math.acos(a.dotProduct(lup));
++
++            		float aimpitch = (float)Math.toDegrees(Math.asin(a.y/a.length()));
++            		float yaw = (float)Math.toDegrees(Math.atan2(a.x, a.z));     
++
++            		Vec3d up = new Vec3d(0,1,0);
++
++            		Vec3d ahz = new Vec3d(a.x, 0, a.z); // we want the normal to a aiming plane, but vertical.
++            		Vec3d pAim2 = Vec3d.ZERO;
++
++            		double porjaim = lback.dotProduct(ahz); //angle between controller up and aim, just for ortho check			    		        		
++            		if(porjaim !=0) { //check to make sure 	we arent holding the bow perfectly straight up.					
++            			pAim2 = ahz.scale(porjaim);	 //projection of l_controller_up onto aim vector ... why is there no multiply?		        	 
++            		}
++
++            		double dot =0;
++
++            		Vec3d proj = lback.subtract(pAim2).normalize();
++
++            		dot = proj.dotProduct(up);		//angle between our projection and straight up (the default bow render pos.)
++
++            		double dot2 = ahz.dotProduct(proj.crossProduct(up)); //angle sign test, negative is left roll
++
++            		float angle;
++
++            		if (dot2 < 0) 
++            			angle = -(float) Math.acos(dot);  	
++            		else angle = (float) Math.acos(dot); 
++
++            		float roll = (float) (180 / Math.PI * angle);     //calculate bow model roll.
++
++            		if(mc.bowTracker.isCharged()){
++            			long t = Util.milliTime() - mc.bowTracker.startDrawTime;
++            			translateX += (0.003*Math.sin(t));
++            		}
++
++            		matrixStackIn.translate(0, 0, .1);
++            		//un-do controller tracking
++            		matrixStackIn.getLast().getMatrix().mul(mc.vrPlayer.vrdata_world_render.getController(1).getMatrix().transposed().toMCMatrix());
++            		//
++
++            		//rotate in world coords
++            		rotation.multiply(Vector3f.YP.rotationDegrees(yaw));
++            		rotation.multiply(Vector3f.XP.rotationDegrees(-aimpitch));
++            		rotation.multiply(Vector3f.ZP.rotationDegrees(-roll));
++            		rotation.multiply(Vector3f.ZP.rotationDegrees(180));
++            		//		    			
++
++            		matrixStackIn.getLast().getMatrix().mul(rotation);
++
++            		rotation = Vector3f.YP.rotationDegrees(0);
++
++            		rotation.multiply(Vector3f.YP.rotationDegrees(180));
++            		rotation.multiply(Vector3f.XP.rotationDegrees(160));
++
++            		translateY += .1225;
++            		translateX += 0.125;
++            		translateZ += 0.16;
++
++            	}
++            	else if(rendertype == VivecraftItemRendering.Crossbow) {
++
++            		translateX +=.01f;
++            		translateZ +=-0.02f;
++            		translateY+=-0.02f;
++            		scale = 0.5f;
++            		rotation = Vector3f.XP.rotationDegrees(0);
++            		rotation.multiply(Vector3f.YP.rotationDegrees((float) (10)));
++            	}
++            	else if(rendertype == VivecraftItemRendering.Map) {
++
++            		isFilledMap = true;
++            		rotation = Vector3f.XP.rotationDegrees(-45);
++            		translateX = 0;
++            		translateY = .14;
++            		translateZ = -.05;
++            		scale = 0.5;
++            	}
++            	else if(rendertype == VivecraftItemRendering.Noms) {
++
++            		long t = this.mc.player.getItemInUseCount();
++            		translateZ += 0.006D*Math.sin(t);
++            		translateZ +=0.02f;
++            	}
++            	else if(rendertype == VivecraftItemRendering.Item || rendertype == VivecraftItemRendering.Block_Item) {
++
++            		rotation = Vector3f.ZP.rotationDegrees(180);
++            		rotation.multiply(Vector3f.XP.rotationDegrees(-135));
++            		scale = 0.4f;
++            		translateX +=.08f;
++            		translateZ +=-0.08f;
++            	}			
++            	else if(rendertype == VivecraftItemRendering.Block_3D) {
++            		scale = 0.3f;	
++            		translateZ +=-0.1f;
++            		translateX +=.05f;
++            	}	
++            	else if(rendertype == VivecraftItemRendering.Block_Stick) {
++            		rotation = Vector3f.XP.rotationDegrees(0);
++            		translateY+=-.105+.06*gunAngle/40;
++            		translateZ +=-0.1f;
++            		rotation.multiply(Vector3f.XP.rotationDegrees(-45));
++            		rotation.multiply(Vector3f.XP.rotationDegrees((float) (gunAngle)));
++            	}
++            	else if(rendertype == VivecraftItemRendering.Shield) {
++            		mirror = !flag;
++            		scale = 0.4f;	
++            		translateY += 0.21f;
++            		if (flag)
++            			translateX += 0.11f;
++            		else
++            			translateX += -0.015;
++
++            		translateZ += -0.01f;
++
++            		rotation.multiply(Vector3f.XP.rotationDegrees((float) (105 - gunAngle)));
++
++            		if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == handIn)
++            		{
++            			rotation.multiply(Vector3f.ZP.rotationDegrees(h*-5));
++            			translateY += -0.13f;
++            			translateX +=  h*0.05f;
++            			translateZ += -0.1f;
++
++
++            			if(player.isActiveItemStackBlocking()){		
++            				rotation.multiply(Vector3f.YP.rotationDegrees((h*90.0F)));  
++            			} else{
++            				rotation.multiply(Vector3f.YP.rotationDegrees(((1-equippedProgress)*h*90.0F)));  
++            			}
++            		}
++
++            		rotation.multiply(Vector3f.YP.rotationDegrees((h*-90.0F)));  
++
++            	}
++            	else if(rendertype == VivecraftItemRendering.Spear) {
++            		rotation = Vector3f.XP.rotationDegrees((0));
++
++            		translateX +=-.135f;
++            		translateZ += .575f;
++
++            		scale = 0.6f;
++
++            		float prog = 0;
++            		boolean charging = false;
++            		int j = 0;
++
++            		if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == handIn)
++            		{
++            			charging = true;
++            			j = EnchantmentHelper.getRiptideModifier(stack);
++
++            			if(j<=0 || (j>0 &&player.isWet())){
++            				prog = (float)stack.getUseDuration() - ((float)this.mc.player.getItemInUseCount() - partialTicks + 1.0F);
++            				if (prog > 10) { //charged    
++            					prog = 10;
++
++            					if (j>0 && player.isWet()) {      
++            						matrixStackIn.rotate(Vector3f.ZP.rotationDegrees((-mc.tickCounter*10*j) % 360 - partialTicks*10*j));
++            						//		rotation.multiply(Vector3f.ZP.rotationDegrees((-mc.tickCounter*10*j) % 360 - partialTicks*10*j));
++            					}
++
++            					if(mc.frameIndex % 4 == 0) {
++            						MCOpenVR.triggerHapticPulse(flag ? 0 : 1, 200);
++            					}
++
++            					long ti = Util.milliTime() - mc.bowTracker.startDrawTime;
++            					translateX+=0.003*Math.sin(ti);
++            				}
++            			}
++            		}
++
++            		if(player.isSpinAttacking()) {
++            			j = 5;
++            			translateZ += -0.15f;
++            			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees((-mc.tickCounter*10*j) % 360 - partialTicks*10*j));
++            			// 		rotation.multiply(Vector3f.ZP.rotationDegrees((-mc.tickCounter*10*j) % 360 - partialTicks*10*j));
++            			charging = true;
++            		}
++
++            		if(!charging) {	
++            			translateY += 0 + 0.2*gunAngle/40;
++            			rotation.multiply(Vector3f.XP.rotationDegrees((float) (gunAngle)));
++            		}
++
++            		rotation.multiply(Vector3f.XP.rotationDegrees((float) (-65)));
++
++            		translateZ +=-0.75f + prog /10 * (0.25f);
++
++            	}
++            	else if(rendertype == VivecraftItemRendering.Sword) {
++            	}
++            	else if(rendertype == VivecraftItemRendering.Tool_Rod) {
++            		translateZ += -0.15f;
++            		translateY += -0.02 + gunAngle / 40 * .1;
++            		translateX += 0.05f;
++            		rotation.multiply(Vector3f.XP.rotationDegrees((float) (40)));
++            		scale = 0.8f;
++            	}
++            	else if(rendertype == VivecraftItemRendering.Tool) {
++            		boolean climbClaws = mc.climbTracker.isClaws(stack) && mc.climbTracker.isClimbeyClimb();
++
++            		if(climbClaws){
++            			rotation.multiply(Vector3f.XP.rotationDegrees((float) ( - gunAngle)));
++
++            			scale = 0.3f;
++
++            			translateZ += 0.075f;
++            			translateY += 0.02f;
++            			translateX += 0.03f;
++
++            			if((MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) && flag) || (MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) && !flag)) {
++            				translateZ += -0.2f;
++            			}
++            		}
++
++            		if (item instanceof ArrowItem) {
++            			prerotation = ((Vector3f.ZP.rotationDegrees((float) (-180))));
++            			rotation.multiply(Vector3f.XP.rotationDegrees((float) (-gunAngle)));
++            		}
++
++            	}
++            	else if(rendertype == VivecraftItemRendering.Telescope) {
++            		prerotation = Vector3f.XP.rotationDegrees(-90);
++            		rotation = Vector3f.XP.rotationDegrees(0);
++            		translateZ =0.1;
 +            		translateY =0.05f;
 +            		translateX =0;
-+	            default:
-+	            	break;
-+            }
++            	}
 +
-+	    	    	if(player.swingingHand == handIn)
-+	    		    	this.transformFirstPersonVR(matrixStackIn, handside, swingProgress);
-+	    	    	
-+	        		this.itemRenderer.isfphand = true;
-+	        		
-+	            	matrixStackIn.rotate(prerotation);
-+	            	matrixStackIn.translate(translateX, translateY, translateZ);
-+	            	matrixStackIn.rotate(rotation);
-+	            	matrixStackIn.scale((float)scale, (float)scale,(float)scale);
-+	            	
-+	            	if(isFilledMap)  {
-+	            		RenderSystem.disableCull(); //dont. get. me. started.
-+	            		this.renderMapFirstPerson(matrixStackIn, bufferIn, combinedLightIn, stack);            		
-+	            	} else if (rendertype == VivecraftItemRendering.Telescope)
-+	            		mc.gameRenderer.DrawScopeFB(matrixStackIn, handIn == Hand.MAIN_HAND ? 0 :1);
-+	            	else
-+	            		this.renderItemSide(player, stack, flag ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : mirror ? ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, mirror, matrixStackIn, bufferIn, combinedLightIn);
-+	            	
-+	        		this.itemRenderer.isfphand = false;
++    	    	if(player.swingingHand == handIn)
++    		    	this.transformFirstPersonVR(matrixStackIn, handside, swingProgress);
++    	    	
++        		this.itemRenderer.isfphand = true;
++        		
++            	matrixStackIn.rotate(prerotation);
++            	matrixStackIn.translate(translateX, translateY, translateZ);
++            	matrixStackIn.rotate(rotation);
++            	matrixStackIn.scale((float)scale, (float)scale,(float)scale);
++            	
++            	if(isFilledMap)  {
++            		RenderSystem.disableCull(); //dont. get. me. started.
++            		this.renderMapFirstPerson(matrixStackIn, bufferIn, combinedLightIn, stack);            		
++            	} else if (rendertype == VivecraftItemRendering.Telescope)
++            		mc.gameRenderer.DrawScopeFB(matrixStackIn, handIn == Hand.MAIN_HAND ? 0 :1);
++            	else
++            		this.renderItemSide(player, stack, flag ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : mirror ? ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, mirror, matrixStackIn, bufferIn, combinedLightIn);
++            	
++        		this.itemRenderer.isfphand = false;
 +	        		
 +	            matrixStackIn.pop();
 +            } //end itemstack render.
              matrixStackIn.pop();
          }
      }
-@@ -555,4 +864,100 @@
+@@ -555,4 +867,100 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }

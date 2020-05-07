@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -30,6 +31,8 @@ import java.util.zip.ZipFile;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILightReader;
+import optifine.OptiFineTransformer;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.vivecraft.render.VRShaders;
@@ -427,7 +430,18 @@ public class Utils
 			
 			//Live
 			System.out.println("Unpacking " + directory + " natives...");
-			ZipFile zip = MinecriftClassTransformer.findMinecriftZipFile();
+			ZipFile zip = null;
+			try {
+				URI uri = Utils.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+				File f = new File(uri);
+				zip = new ZipFile(f);
+			} catch (Exception e) {
+				zip = MinecriftClassTransformer.findMinecriftZipFile();
+			}
+			
+			if(zip == null)
+				throw new Exception("Could not find Zip");
+			
 			Enumeration<? extends ZipEntry> entries = zip.entries();
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();

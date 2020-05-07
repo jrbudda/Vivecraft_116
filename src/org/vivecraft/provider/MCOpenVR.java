@@ -316,18 +316,7 @@ public class MCOpenVR
 
 	private static boolean tried;
 
-	public static boolean init()  throws Exception
-	{
-		if ( initialized )
-			return true;
-
-		if ( tried )
-			return initialized;
-
-		tried = true;
-
-		mc = Minecraft.getInstance();
-
+	public static void unpackOpenvr() {
 		String osname = System.getProperty("os.name").toLowerCase();
 		String osarch= System.getProperty("os.arch").toLowerCase();
 
@@ -346,13 +335,32 @@ public class MCOpenVR
 		} else {
 			osFolder += "32";
 		}
-
-		Utils.unpackNatives(osFolder);
-
+		try {
+			Utils.unpackNatives(osFolder);
+		} catch (Exception e) {
+			System.out.println("Native path not found");
+			return;
+		}
+		
 		String openVRPath = new File("openvr/" + osFolder).getAbsolutePath();
 		System.out.println("Adding OpenVR search path: " + openVRPath);
 		NativeLibrary.addSearchPath("openvr_api", openVRPath);
+	}
+	
+	public static boolean init()  throws Exception
+	{
+		if ( initialized )
+			return true;
 
+		if ( tried )
+			return initialized;
+
+		tried = true;
+
+		mc = Minecraft.getInstance();
+
+		unpackOpenvr();
+		
 		if(jopenvr.JOpenVRLibrary.VR_IsHmdPresent() == 0){
 			initStatus =  "VR Headset not detected.";
 			return false;

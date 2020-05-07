@@ -1628,6 +1628,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		txtCustomForgeVersion.setEnabled(optCustomForgeVersion.isSelected());
 		txtCustomForgeVersion.setVisible(useForge.isSelected());
 		optCustomForgeVersion.setVisible(false);
+		this.revalidate();		
 	}
 
 	private void updateFilePath()

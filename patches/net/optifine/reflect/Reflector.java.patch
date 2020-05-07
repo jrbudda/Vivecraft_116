@@ -32,7 +32,7 @@
  import net.minecraft.client.resources.I18n;
  import net.minecraft.client.resources.LegacyResourcePackWrapper;
  import net.minecraft.client.resources.LegacyResourcePackWrapperV4;
-@@ -107,15 +114,35 @@
+@@ -107,15 +114,36 @@
  import net.minecraft.entity.LivingEntity;
  import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.entity.item.ItemFrameEntity;
@@ -47,6 +47,7 @@
  import net.minecraft.fluid.IFluidState;
 +import net.minecraft.inventory.container.Container;
 +import net.minecraft.item.Item;
++import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.CompoundNBT;
 +import net.minecraft.network.NetworkManager;
  import net.minecraft.network.datasync.DataParameter;
@@ -68,15 +69,16 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.ILightReader;
-@@ -123,6 +150,7 @@
+@@ -123,6 +151,8 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.chunk.IChunk;
 +import net.minecraft.world.dimension.Dimension;
++import net.minecraft.world.dimension.EndDimension;
  import net.minecraft.world.server.ServerWorld;
  import net.optifine.Log;
  import net.optifine.util.ArrayUtils;
-@@ -1350,4 +1378,139 @@
+@@ -1350,4 +1380,159 @@
          ReflectorResolver.register(iresolvable);
          return true;
      }
@@ -198,6 +200,8 @@
 +    public static ReflectorMethod ForgeEventFactory_onBlockPlace = new ReflectorMethod(ForgeEventFactory,"onBlockPlace");
 +    public static ReflectorClass BlockSnapshot = new ReflectorClass("net.minecraftforge.common.util.BlockSnapshot");
 +    public static ReflectorConstructor BlockSnapshot_Constructor = new ReflectorConstructor(BlockSnapshot, new Class[] {IWorld.class, BlockPos.class, BlockState.class});
++    public static ReflectorClass DragonFightManager = new ReflectorClass(net.minecraft.world.end.DragonFightManager.class);
++    public static ReflectorConstructor DragonFightManager_Constructor = new ReflectorConstructor(DragonFightManager, new Class[] {ServerWorld.class, CompoundNBT.class, EndDimension.class});
 +
 +    //butts
 +    public static ReflectorMethod IForgeBlockState_getSlipperiness = new ReflectorMethod(IForgeBlockState, "getSlipperiness");
@@ -214,5 +218,23 @@
 +    public static ReflectorMethod ForgeHooksClient_onMouseScroll= new ReflectorMethod(ForgeHooksClient, "onMouseScroll");
 +    public static ReflectorMethod ForgeHooksClient_onGuiMouseDragPre = new ReflectorMethod(ForgeHooksClient, "onGuiMouseDragPre");
 +    public static ReflectorMethod ForgeHooksClient_onGuiMouseDragPost = new ReflectorMethod(ForgeHooksClient, "onGuiMouseDragPost");
++
++    //Screen
++    public static ReflectorClass GuiUtils = new ReflectorClass("net.minecraftforge.fml.client.gui.GuiUtils");
++    public static ReflectorMethod GuiUtils_preItemToolTip = new ReflectorMethod(GuiUtils, "preItemToolTip");
++    public static ReflectorMethod GuiUtils_postItemToolTip = new ReflectorMethod(GuiUtils, "postItemToolTip");
++    public static ReflectorMethod GuiUtils_drawHoveringText = new ReflectorMethod(GuiUtils, "drawHoveringText");
++    public static ReflectorClass BackgroundDrawnEvent = new ReflectorClass("net.minecraftforge.client.event.GuiScreenEvent$BackgroundDrawnEvent");
++    public static ReflectorConstructor BackgroundDrawnEvent_Constructor = new ReflectorConstructor(BackgroundDrawnEvent, new Class[] {Screen.class});
++    public static ReflectorMethod ForgeEventFactory_onClientSendMessage = new ReflectorMethod(ForgeEventFactory, "onClientSendMessage");
++    public static ReflectorClass InitGuiEvent_Pre = new ReflectorClass("net.minecraftforge.client.event.GuiScreenEvent$InitGuiEvent$Pre");
++    public static ReflectorConstructor InitGuiEvent_Pre_Constructor = new ReflectorConstructor(InitGuiEvent_Pre, new Class[] {Screen.class, List.class, java.util.function.Consumer.class, java.util.function.Consumer.class});
++    public static ReflectorClass InitGuiEvent_Post = new ReflectorClass("net.minecraftforge.client.event.GuiScreenEvent$InitGuiEvent$Post");
++    public static ReflectorConstructor InitGuiEvent_Post_Constructor = new ReflectorConstructor(InitGuiEvent_Post, new Class[] {Screen.class, List.class, java.util.function.Consumer.class, java.util.function.Consumer.class});
++    
++//    //Hax
++//    public static ReflectorClass TransformingClassLoader = new ReflectorClass("cpw.mods.modlauncher.TransformingClassLoader");
++//    public static ReflectorField TransformingClassLoader_delegatedClassLoader = new ReflectorField(TransformingClassLoader, "delegatedClassLoader");
++
 +
  }

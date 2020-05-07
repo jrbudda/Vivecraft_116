@@ -673,7 +673,13 @@ public class MenuWorldRenderer {
 			double d0 = this.mc.tickCounter + mc.getRenderPartialTicks();
 			double d1 = (x + d0 * 0.029999999329447746D) / 12.0D;
 			double d2 = z / 12.0D + 0.33000001311302185D;
-			float f2 = this.dimension.getCloudHeight() - (float)y + 0.33F;
+			float f2 = 128 - (float)y + 0.33F;
+			
+			try { //fails under Forge due to missing World.
+				 f2 = this.dimension.getCloudHeight() - (float)y + 0.33F;
+			} catch (Exception e) {
+			}
+			
 			f2 = f2 + (float)mc.gameSettings.ofCloudsHeight * 128.0F;
 			int i = MathHelper.floor(d1 / 2048.0D);
 			int j = MathHelper.floor(d2 / 2048.0D);

@@ -1,17 +1,18 @@
 --- a/net/minecraft/client/renderer/entity/EntityRendererManager.java
 +++ b/net/minecraft/client/renderer/entity/EntityRendererManager.java
-@@ -7,6 +7,10 @@
+@@ -7,6 +7,11 @@
  import java.util.Collections;
  import java.util.Map;
  import javax.annotation.Nullable;
 +
 +import org.vivecraft.render.PlayerModelController;
++import org.vivecraft.render.VRPlayerRenderer;
 +import org.vivecraft.render.PlayerModelController.RotInfo;
 +
  import net.minecraft.block.BlockRenderType;
  import net.minecraft.block.BlockState;
  import net.minecraft.client.GameSettings;
-@@ -58,6 +62,12 @@
+@@ -58,6 +63,12 @@
      private final Map<EntityType, EntityRenderer> renderers = Maps.newHashMap();
      private final Map<String, PlayerRenderer> skinMap = Maps.newHashMap();
      private final PlayerRenderer playerRenderer;
@@ -24,7 +25,7 @@
      private final FontRenderer textRenderer;
      public final TextureManager textureManager;
      private World world;
-@@ -215,13 +225,49 @@
+@@ -215,13 +226,49 @@
          }
      }
  

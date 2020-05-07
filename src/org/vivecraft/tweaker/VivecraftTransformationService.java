@@ -18,6 +18,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.vivecraft.provider.MCOpenVR;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformationService;
@@ -27,7 +28,7 @@ import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 public class VivecraftTransformationService implements ITransformationService
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static URL ZipFileUrl;
+    public static URL ZipFileUrl;
     private static ZipFile ZipFile;
     private static VivecraftTransformer transformer;
 
@@ -49,7 +50,13 @@ public class VivecraftTransformationService implements ITransformationService
     {
         LOGGER.info("VivecraftTransformationService.onLoad");
         ZipFileUrl = VivecraftTransformer.class.getProtectionDomain().getCodeSource().getLocation();
-
+      
+        try {
+            MCOpenVR.unpackOpenvr();
+		} catch (Exception e) {
+	        LOGGER.info("Failed to unpack OpenVR Natives: " + e.toString());
+		}
+        
         try
         {
             URI uri = ZipFileUrl.toURI();

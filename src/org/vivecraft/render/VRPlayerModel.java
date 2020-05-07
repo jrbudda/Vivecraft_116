@@ -1,7 +1,4 @@
-package net.minecraft.client.renderer.entity.model;
-
-import org.vivecraft.render.PlayerModelController;
-import org.vivecraft.render.RenderPass;
+package org.vivecraft.render;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -9,6 +6,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
+import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

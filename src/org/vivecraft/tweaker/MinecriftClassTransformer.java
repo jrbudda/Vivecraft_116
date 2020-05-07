@@ -15,7 +15,10 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.vivecraft.provider.MCOpenVR;
+
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.optifine.reflect.Reflector;
 
 // With apologies to Optifine. Copyright sp614x, this is built on his work.
 // The existing classes are overwritten by all of the classes in the minecrift library. The
@@ -27,7 +30,7 @@ public class MinecriftClassTransformer implements IClassTransformer
 	private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("legacy.debugClassLoading", "false"));
 	
     private ZipFile mcZipFile = null;
-    private static URL mcZipURL = null;
+    public static URL mcZipURL = null;
     private final Stage stage;
     
     private final Map<String, byte[]> cache;
@@ -37,6 +40,7 @@ public class MinecriftClassTransformer implements IClassTransformer
     	this(Stage.MAIN, null);
     }
 
+    //unused
     public MinecriftClassTransformer(Stage stage, Map<String, byte[]> cache)
     {
     	this.stage = stage;
@@ -85,7 +89,7 @@ public class MinecriftClassTransformer implements IClassTransformer
         }
     }
     
-    public static ZipFile findMinecriftZipFile() {
+    public static ZipFile findMinecriftZipFile() {  	
     	if (mcZipURL != null) {
     		try {
     			return new ZipFile(new File(mcZipURL.toURI()));
@@ -95,7 +99,11 @@ public class MinecriftClassTransformer implements IClassTransformer
     		}
     	}
     	
-    	URLClassLoader e = (URLClassLoader)MinecriftClassTransformer.class.getClassLoader();
+    	URLClassLoader e = null;
+    	
+    	if(MinecriftClassTransformer.class.getClassLoader() instanceof URLClassLoader)
+    		e =(URLClassLoader)MinecriftClassTransformer.class.getClassLoader();
+
         URL[] urls = e.getURLs();
 
         for (int i = 0; i < urls.length; ++i)

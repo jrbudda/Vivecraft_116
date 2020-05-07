@@ -442,7 +442,7 @@
 -                        resourceloadprogressgui.update();
 -                    }
 -                }
--
+ 
 -                this.guiLoadingVisible = this.mc.loadingGui != null;
 -            }
 -
@@ -503,7 +503,7 @@
 -        this.waitForServerThread();
 -        MemoryMonitor.update();
 -        Lagometer.updateLagometer();
- 
+-
 -        if (this.mc.gameSettings.ofProfiler)
 -        {
 -            this.mc.gameSettings.showDebugProfilerChart = true;
@@ -662,13 +662,14 @@
          {
              this.mc.getProfiler().endStartSection("forge_render_last");
 -            Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, this.mc.worldRenderer, matrixStackIn, partialTicks, matrix4f, finishTimeNano);
-+            Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, this.mc.worldRenderer, viewModel, finishTimeNano);
++            Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, this.mc.worldRenderer, viewModel, partialTicks, projection, finishTimeNano);
          }
- 
--        this.mc.getProfiler().endStartSection("hand");
++        
 +    	boolean forgeHands = false;
 +    	GL11.glDisable(GL11.GL_STENCIL_TEST);
  
+-        this.mc.getProfiler().endStartSection("hand");
+-
 -        if (this.renderHand && !Shaders.isShadowPass)
 +        this.mc.getProfiler().endStartSection("ShadersEnd");
 +        if ( flag && !forgeHands && this.renderHand && !Shaders.isShadowPass)
@@ -724,7 +725,7 @@
              matrixstack.scale(f7, -f7, f7);
              matrixstack.rotate(Vector3f.YP.rotationDegrees(900.0F * MathHelper.abs(MathHelper.sin(f4))));
              matrixstack.rotate(Vector3f.XP.rotationDegrees(6.0F * MathHelper.cos(f * 8.0F)));
-@@ -1317,4 +1347,2331 @@
+@@ -1317,4 +1347,2326 @@
      {
          return this.overlayTexture;
      }
@@ -1949,34 +1950,29 @@
 +	  			GL11.glRotatef(-mc.vrPlayer.vrdata_world_render.getController(0).getPitch(), 1.0F, 0.0F, 0.0F);
 +	  		} else {
 +	  			BlockRayTraceResult hit = (BlockRayTraceResult) mc.objectMouseOver;
-+	  			switch (hit.getFace()) {
-+	  			case DOWN:
++	  			if(hit.getFace() == Direction.DOWN) {
 +	  				GL11.glRotatef(-mc.vrPlayer.vrdata_world_render.getController(0).getYaw(), 0.0F, 1.0F, 0.0F);
 +	  				GL11.glRotatef(-90, 1.0F, 0.0F, 0.0F);
-+	  				break;
-+	  			case EAST:
++	  			}
++	  			else if(hit.getFace() == Direction.EAST){
 +	  				GL11.glRotatef(90, 0.0F, 1.0F, 0.0F);
 +	  				//		GL11.glRotatef(0, 1.0F, 0.0F, 0.0F);
-+	  				break;
-+	  			case NORTH:
++	  			}
++	  			else if(hit.getFace() == Direction.NORTH){
 +	  				//	GL11.glRotatef(-mc.vrPlayer.vrdata_world_render.getController(0).getYaw(), 0.0F, 1.0F, 0.0F);
 +	  				//		GL11.glRotatef(0, 1.0F, 0.0F, 0.0F);
-+	  				break;
-+	  			case SOUTH:
++	  			}
++	  			else if(hit.getFace() == Direction.SOUTH){
 +	  				//		GL11.glRotatef(-mc.vrPlayer.vrdata_world_render.getController(0).getYaw(), 0.0F, 1.0F, 0.0F);
 +	  				//		GL11.glRotatef(0, 1.0F, 0.0F, 0.0F);
-+	  				break;
-+	  			case UP:
++	  			}
++	  			else if(hit.getFace() == Direction.UP){
 +	  				GL11.glRotatef(-mc.vrPlayer.vrdata_world_render.getController(0).getYaw(), 0.0F, 1.0F, 0.0F);
 +	  				GL11.glRotatef(-90, 1.0F, 0.0F, 0.0F);
-+	  				break;
-+	  			case WEST:
++	  			}
++	  			else if(hit.getFace() == Direction.WEST){
 +	  				GL11.glRotatef(90, 0.0F, 1.0F, 0.0F);
 +	  				//GL11.glRotatef(0, 1.0F, 0.0F, 0.0F);
-+	  				break;
-+	  			default:
-+	  				break;
-+	
 +	  			}
 +	  		}
 +	

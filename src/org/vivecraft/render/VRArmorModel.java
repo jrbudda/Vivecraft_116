@@ -1,7 +1,8 @@
-package net.minecraft.client.renderer.entity.model;
+package org.vivecraft.render;
 
-import org.vivecraft.render.PlayerModelController;
-
+import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.entity.model.IHasArm;
+import net.minecraft.client.renderer.entity.model.IHasHead;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
