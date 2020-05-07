@@ -17,7 +17,8 @@
 		"name": "io.github.classgraph:classgraph:4.8.78"
 	},
 	{
-		"name": "net.minecraft:launchwrapper:1.12"
+		"name": "net.minecraft:launchwrapper:2.1",
+		"url": "http://vivecraft.org/jar/"
 	},
 	{
 		"name": "optifine:OptiFine:$OFVERSION",
