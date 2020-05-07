@@ -35,7 +35,6 @@ JavaVM* g_pJavaVM = NULL;
 JNIEnv* g_pJNIEnv = NULL;
 JavaVMInitArgs g_sJavaVMInitArgs;
 char    g_rgcMnClsArgs[MAX_ARGS]  = {0};
-char 	g_rgcClsPth[MAX_ARGS]  = {0};
 char	g_rgcMnCls[_MAX_PATH] = {0};
 char	g_rgcCurrJrePth[_MAX_PATH]  = {0};
 HINSTANCE  g_hInstance;
@@ -67,6 +66,8 @@ void saveJvmOptions(const char *jrePath, const char *mainClass, const char *pcOp
 	char 				*pcCurrOpt;
 	char 				**prgcVmArgs = NULL;
 	strncpy(rgcOptCpy, pcOpts, MAX_ARGS - 1);
+	
+
 	iArgCnt = getArgCount(rgcOptCpy);
 	if (iArgCnt > 0)
 	{
@@ -80,6 +81,7 @@ void saveJvmOptions(const char *jrePath, const char *mainClass, const char *pcOp
 		/* Allocat iArgCnt JavaVMOptions for the g_sJavaVMInitArgs struct */
 		g_sJavaVMInitArgs.options = malloc(iArgCnt * sizeof(JavaVMOption));
 		memset(g_sJavaVMInitArgs.options, 0, iArgCnt * sizeof(JavaVMOption));
+		char* rgcClsPth = 0;
 		/* Copy the tokenized array into the allocated JavaVMOption array,
 		 * with some special handling for classpath related arguments */
 		for (iCurrArg = 0; iCurrArg < iArgCnt; iCurrArg++)
@@ -100,16 +102,18 @@ void saveJvmOptions(const char *jrePath, const char *mainClass, const char *pcOp
 						rgcTmp[strlen(rgcTmp)-1] = '\0';
 					/* If we haven't defined a classpath yet start one, otherwise
 					 * we just append the this classpath to it */
-					if (g_rgcClsPth[0] == '\0')
+					if (!rgcClsPth)
 					{
-						sprintf(g_rgcClsPth,"-Djava.class.path=%s", rgcTmp);
-						g_sJavaVMInitArgs.options[iCurrArg - iSkipArgCnt].optionString = g_rgcClsPth;
+						rgcClsPth = malloc(MAX_ARGS * sizeof(char));
+						memset(rgcClsPth, 0, MAX_ARGS * sizeof(char));
+						sprintf(rgcClsPth,"-Djava.class.path=%s", rgcTmp);
+						g_sJavaVMInitArgs.options[iCurrArg - iSkipArgCnt].optionString = rgcClsPth;
 					}
 					else
 					{
 						iSkipArgCnt++;
-						strcat(g_rgcClsPth,";");
-						strcat(g_rgcClsPth,rgcTmp);
+						strcat(rgcClsPth,";");
+						strcat(rgcClsPth,rgcTmp);
 					}
 					
 				}

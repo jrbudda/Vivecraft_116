@@ -455,7 +455,6 @@ public class Utils
 			//
 		} catch (Exception e) {
 			System.out.println("Failed to unpack natives");
-			e.printStackTrace();
 		}
 	}
 	

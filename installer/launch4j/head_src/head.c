@@ -207,6 +207,7 @@ BOOL loadString(const int resID, char* buffer)
 	HRSRC hResource;
 	HGLOBAL hResourceLoaded;
 	LPBYTE lpBuffer;
+	debugAll("Resource %d:\t", resID);
 
 	hResource = FindResourceEx(hModule, RT_RCDATA, MAKEINTRESOURCE(resID),
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT));
@@ -224,10 +225,7 @@ BOOL loadString(const int resID, char* buffer)
 					buffer[x] = (char) lpBuffer[x];
 				} while (buffer[x++] != 0);
 				
-				if (debugAll)
-				{
-					debug("Resource %d:\t%s\n", resID, buffer);
-				}
+				debugAll("%s\n", buffer);
 				return TRUE;
 			}
 		}    
@@ -237,6 +235,8 @@ BOOL loadString(const int resID, char* buffer)
 		SetLastError(0);
 		buffer[0] = 0;
 	}
+	
+	debugAll("<NULL>\n");
 	return FALSE;
 }
 
@@ -312,27 +312,118 @@ BOOL regQueryValue(const char* regPath, unsigned char* buffer,
 	return result;
 }
 
+int findNextVersionPart(const char* startAt)
+{
+	if (startAt == NULL || strlen(startAt) == 0)
+    {
+		return 0;
+	}
+
+	char* firstSeparatorA = strchr(startAt, '.');
+	char* firstSeparatorB = strchr(startAt, '_');
+	char* firstSeparator;
+	if (firstSeparatorA == NULL)
+    {
+		firstSeparator = firstSeparatorB;
+	}
+    else if (firstSeparatorB == NULL)
+    {
+		firstSeparator = firstSeparatorA;
+	}
+    else
+    {
+		firstSeparator = min(firstSeparatorA, firstSeparatorB);
+	}
+
+	if (firstSeparator == NULL)
+    {
+		return strlen(startAt);
+	}
+
+	return firstSeparator - startAt;
+}
+
+/**
+ * This method will take java version from `originalVersion` string and convert/format it
+ * into `version` string that can be used for string comparison with other versions.
+ *
+ * Due to different version schemas <=8 vs. >=9 it will "normalize" versions to 1 format
+ * so we can directly compare old and new versions.
+ */
 void formatJavaVersion(char* version, const char* originalVersion)
 {
-    char* updatePart = strchr(originalVersion, '_');
-
-    if (updatePart != NULL)
+	strcpy(version, "");
+	if (originalVersion == NULL || strlen(originalVersion) == 0)
     {
-        // skip underscore
-        updatePart++;
+		return;
+	}
 
-        if (strlen(updatePart) < 3)
+	int partsAdded = 0;
+	int i;
+	char* pos = (char*) originalVersion;
+	int curPartLen;
+
+	while ((curPartLen = findNextVersionPart(pos)) > 0)
+    {
+		char number[curPartLen + 1];
+		memset(number, 0, curPartLen + 1);
+		strncpy(number, pos, curPartLen);
+
+		if (partsAdded == 0 && (curPartLen != 1 || number[0] != '1'))
         {
-            const int majorVersionLength = updatePart - originalVersion;
-            strncpy(version, originalVersion, majorVersionLength);
-            *(version + majorVersionLength) = 0;
-            strcat(version, "0");
-            strcat(version, updatePart);
-            return;
-        }
-    }
-    
-    strcpy(version, originalVersion);
+			// NOTE: When it's java 9+ we'll add "1" as the first part of the version
+			strcpy(version, "1");
+			partsAdded++;
+		}
+
+		if (partsAdded < 3)
+        {
+			if (partsAdded > 0)
+            {
+				strcat(version, ".");
+			}
+			for (i = 0;
+					(partsAdded > 0)
+							&& (i < JRE_VER_MAX_DIGITS_PER_PART - strlen(number));
+					i++)
+            {
+				strcat(version, "0");
+			}
+			strcat(version, number);
+		}
+        else if (partsAdded == 3)
+        {
+			// add as an update
+			strcat(version, "_");
+			for (i = 0; i < JRE_VER_MAX_DIGITS_PER_PART - strlen(number); i++)
+            {
+				strcat(version, "0");
+			}
+			strcat(version, number);
+		}
+        else if (partsAdded >= 4)
+        {
+			debug("Warning:\tformatJavaVersion() too many parts added.\n");
+			break;
+		}
+		partsAdded++;
+
+		pos += curPartLen + 1;
+		if (pos >= originalVersion + strlen(originalVersion))
+        {
+			break;
+		}
+	}
+
+	for (i = partsAdded; i < 3; i++)
+    {
+		strcat(version, ".");
+		int j;
+		for (j = 0; j < JRE_VER_MAX_DIGITS_PER_PART; j++)
+        {
+			strcat(version, "0");
+		}
+	}
 }
 
 void regSearch(const char* keyName, const int searchType)
@@ -419,10 +510,6 @@ BOOL isJavaHomeValid(const char* keyName, const int searchType)
 				path[i] = buffer[i];
 			} while (path[i++] != 0);
 			
-			if (searchType & FOUND_SDK)
-			{
-				appendPath(path, "jre");
-			}
 			valid = isLauncherPathValid(path);
 		}
 		RegCloseKey(hKey);
@@ -511,6 +598,10 @@ void regSearchWow(const char* keyName, const int searchType)
 		case USE_32_BIT_RUNTIME:
 			regSearch(keyName, searchType);
 			break;
+			
+		default:
+            debug("Runtime bits:\tFailed to load.\n");
+            break;
 	}
 }
 
@@ -538,10 +629,25 @@ void regSearchJreSdk(const char* jreKeyName, const char* sdkKeyName,
 
 BOOL findJavaHome(char* path, const int jdkPreference)
 {
+    debugAll("findJavaHome()\n");
 	regSearchJreSdk("SOFTWARE\\JavaSoft\\Java Runtime Environment",
 					"SOFTWARE\\JavaSoft\\Java Development Kit",
 					jdkPreference);
 
+    // Java 9 support
+	regSearchJreSdk("SOFTWARE\\JavaSoft\\JRE",
+					"SOFTWARE\\JavaSoft\\JDK",
+					jdkPreference);
+
+    // IBM Java 1.8
+	if (search.foundJava == NO_JAVA_FOUND)
+	{
+		regSearchJreSdk("SOFTWARE\\IBM\\Java Runtime Environment",
+						"SOFTWARE\\IBM\\Java Development Kit",
+						jdkPreference);
+	}
+	
+	// IBM Java 1.7 and earlier
 	if (search.foundJava == NO_JAVA_FOUND)
 	{
 		regSearchJreSdk("SOFTWARE\\IBM\\Java2 Runtime Environment",
@@ -648,6 +754,10 @@ BOOL expandVars(char *dst, const char *src, const char *exePath, const int pathL
 			else if (strstr(varName, HKEY_STR) == varName)
 			{
 				regQueryValue(varName, dst + strlen(dst), BIG_STR);
+            }
+			else if (strcmp(varName, "") == 0)
+			{
+                strcat(dst, "%");
             }
 			else if (GetEnvironmentVariable(varName, varValue, MAX_VAR_SIZE) > 0)
 			{
@@ -768,6 +878,7 @@ BOOL createMutex()
 
 	if (*mutexName)
 	{
+        debug("Create mutex:\t%s\n", mutexName);
 		SECURITY_ATTRIBUTES security;
 		security.nLength = sizeof(SECURITY_ATTRIBUTES);
 		security.bInheritHandle = TRUE;
@@ -802,8 +913,16 @@ void setWorkingDirectory(const char *exePath, const int pathLen)
 
 BOOL bundledJreSearch(const char *exePath, const int pathLen)
 {
+    debugAll("bundledJreSearch()\n");
 	char tmpPath[_MAX_PATH] = {0};
+    BOOL is64BitJre = loadBool(BUNDLED_JRE_64_BIT);
 
+    if (!wow64 && is64BitJre)
+    {
+        debug("Bundled JRE:\tCannot use 64-bit runtime on 32-bit OS.\n");
+        return FALSE;
+    }
+    
 	if (loadString(JRE_PATH, tmpPath))
 	{
 		char jrePath[MAX_ARGS] = {0};
@@ -824,9 +943,7 @@ BOOL bundledJreSearch(const char *exePath, const int pathLen)
 
 		if (isLauncherPathValid(launcher.cmd))
 		{
-			search.foundJava = (wow64 && loadBool(BUNDLED_JRE_64_BIT))
-				? FOUND_BUNDLED | KEY_WOW64_64KEY
-				: FOUND_BUNDLED;
+            search.foundJava = is64BitJre ? FOUND_BUNDLED | KEY_WOW64_64KEY : FOUND_BUNDLED;
 			strcpy(search.foundJavaHome, launcher.cmd);
 			return TRUE;
 		}
@@ -837,6 +954,7 @@ BOOL bundledJreSearch(const char *exePath, const int pathLen)
 
 BOOL installedJreSearch()
 {
+    debugAll("installedJreSearch()\n");
 	return *search.javaMinVer && findJavaHome(launcher.cmd, loadInt(JDK_PREFERENCE));
 }
 
@@ -883,13 +1001,16 @@ void createJreSearchError()
 
 BOOL jreSearch(const char *exePath, const int pathLen)
 {
+    debugAll("jreSearch()\n");
 	BOOL result = TRUE;
 
 	search.bundledJreAsFallback = loadBool(BUNDLED_JRE_AS_FALLBACK);
 	loadString(JAVA_MIN_VER, search.originalJavaMinVer);
 	formatJavaVersion(search.javaMinVer, search.originalJavaMinVer);
+	debug("Java min ver:\t%s\n", search.javaMinVer);
 	loadString(JAVA_MAX_VER, search.originalJavaMaxVer);
     formatJavaVersion(search.javaMaxVer, search.originalJavaMaxVer);
+    debug("Java max ver:\t%s\n", search.javaMaxVer);
 
 	if (search.bundledJreAsFallback)
 	{
@@ -978,6 +1099,8 @@ void setMainClassAndClassPath(const char *exePath, const int pathLen)
 
 	if (loadString(MAIN_CLASS, launcher.mainClass))
 	{
+        debug("Main class:\t%s\n", launcher.mainClass);
+
 		if (!loadString(CLASSPATH, classPath))
 		{
 			debug("Info:\t\tClasspath not defined.\n");

@@ -112,7 +112,7 @@ public class RcBuilder {
 	public static final int INSTANCE_ALREADY_EXISTS_MSG = 105;
 
 	private final StringBuffer _sb = new StringBuffer();
-
+	
 	public String getContent() {
 		return _sb.toString();
 	}

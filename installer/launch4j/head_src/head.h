@@ -54,7 +54,9 @@
 #include <process.h>
 
 #define LAUNCH4j "Launch4j"
-#define VERSION "3.9"
+#define VERSION "3.12"
+
+#define JRE_VER_MAX_DIGITS_PER_PART 3
 
 #define NO_JAVA_FOUND 0
 #define FOUND_JRE 1
@@ -91,6 +93,7 @@
 
 #define ERROR_FORMAT "Error:\t\t%s\n"
 #define debug(args...) if (hLog != NULL) fprintf(hLog, ## args);
+#define debugAll(args...) if (debugAll && hLog != NULL) fprintf(hLog, ## args);
 
 typedef void (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 

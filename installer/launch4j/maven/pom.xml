@@ -236,9 +236,9 @@
 						<configuration>
 							<descriptors>
 								<descriptor>assembly/assemble-linux.xml</descriptor>
+								<descriptor>assembly/assemble-linux64.xml</descriptor>
 								<descriptor>assembly/assemble-win32.xml</descriptor>
 								<descriptor>assembly/assemble-mac.xml</descriptor>
-								<descriptor>assembly/assemble-osx.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -360,13 +360,6 @@
 				</plugins>
 			</build>
 		</profile>
-		<!-- Macosx-x86 10.8 Profile -->
-		<profile>
-			<id>macosx-x86-10.8</id>
-			<properties>
-				<bin.dir>bin-macosx-x86-10.8</bin.dir>
-			</properties>
-		</profile>
 		<!-- Macosx-x86 Profile -->
 		<profile>
 			<id>macosx-x86</id>
@@ -419,7 +412,7 @@
 										<productVersion>${versionNumber}</productVersion>
 										<txtProductVersion>${version}</txtProductVersion>
 										<fileDescription>Cross-platform Java application wrapper</fileDescription>
-										<copyright>Copyright (C) 2004, 2014 Grzegorz Kowal</copyright>
+										<copyright>Copyright (C) 2004, 2017 Grzegorz Kowal</copyright>
 										<productName>launch4j</productName>
 										<companyName>http://launch4j.sourceforge.net/</companyName>
 										<internalName>GUI launcher</internalName>

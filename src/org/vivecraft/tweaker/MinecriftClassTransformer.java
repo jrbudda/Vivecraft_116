@@ -18,7 +18,6 @@ import java.util.zip.ZipFile;
 import org.vivecraft.provider.MCOpenVR;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.optifine.reflect.Reflector;
 
 // With apologies to Optifine. Copyright sp614x, this is built on his work.
 // The existing classes are overwritten by all of the classes in the minecrift library. The
@@ -94,7 +93,6 @@ public class MinecriftClassTransformer implements IClassTransformer
     		try {
     			return new ZipFile(new File(mcZipURL.toURI()));
     		} catch (Exception e) {
-    			e.printStackTrace();
     			return null;
     		}
     	}

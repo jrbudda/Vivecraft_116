@@ -78,7 +78,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.optifine.Log;
  import net.optifine.util.ArrayUtils;
-@@ -1350,4 +1380,159 @@
+@@ -1350,4 +1380,154 @@
          ReflectorResolver.register(iresolvable);
          return true;
      }
@@ -231,10 +231,5 @@
 +    public static ReflectorConstructor InitGuiEvent_Pre_Constructor = new ReflectorConstructor(InitGuiEvent_Pre, new Class[] {Screen.class, List.class, java.util.function.Consumer.class, java.util.function.Consumer.class});
 +    public static ReflectorClass InitGuiEvent_Post = new ReflectorClass("net.minecraftforge.client.event.GuiScreenEvent$InitGuiEvent$Post");
 +    public static ReflectorConstructor InitGuiEvent_Post_Constructor = new ReflectorConstructor(InitGuiEvent_Post, new Class[] {Screen.class, List.class, java.util.function.Consumer.class, java.util.function.Consumer.class});
-+    
-+//    //Hax
-+//    public static ReflectorClass TransformingClassLoader = new ReflectorClass("cpw.mods.modlauncher.TransformingClassLoader");
-+//    public static ReflectorField TransformingClassLoader_delegatedClassLoader = new ReflectorField(TransformingClassLoader, "delegatedClassLoader");
-+
 +
  }
