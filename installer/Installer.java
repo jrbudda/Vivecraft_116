@@ -1125,6 +1125,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				InputStream version_json;
 				if(isMultiMC) {
 					String filename = "version-multimc.json";
+					if (useForge.isSelected())
+						filename = "version-multimc-forge.json";
 					version_json = Installer.class.getResourceAsStream(filename);
 				}
 				else if(useForge.isSelected() /*&& forgeVersion.getSelectedItem() != forgeNotFound*/ ) 
@@ -1206,14 +1208,14 @@ public class Installer extends JPanel  implements PropertyChangeListener
 							if(isMultiMC)
 								root.remove("id");
 							
-							if(isMultiMC && useForge.isSelected()) {
+							/*if(isMultiMC && useForge.isSelected()) {
 								JSONArray tw = (JSONArray) root.get("+tweakers");
 								tw = new JSONArray();
 								tw.put("org.vivecraft.tweaker.MinecriftForgeTweaker");
 								tw.put("net.minecraftforge.fml.common.launcher.FMLTweaker");
 								tw.put("optifine.OptiFineForgeTweaker");
 								root.put("+tweakers", tw);
-							}
+							}*/
 							
 							FileWriter fwJson = new FileWriter(fileJson);
 							fwJson.write(root.toString(jsonIndentSpaces));

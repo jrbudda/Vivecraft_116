@@ -202,6 +202,7 @@ def create_install(mcp_dir):
         install_out.writestr("version.json", process_json("", version,minecrift_version_num,"",of_file_name + "_LIB"))
         install_out.writestr("version-forge.json", process_json("-forge", version,minecrift_version_num,forge_version,of_file_name + "_LIB"))
         install_out.writestr("version-multimc.json", process_json("-multimc", version,minecrift_version_num,"",of_file_name + "_LIB"))
+        install_out.writestr("version-multimc-forge.json", process_json("-multimc-forge", version,minecrift_version_num,"",of_file_name + "_LIB"))
               
         # Add version jar - this contains all the changed files (effectively minecrift.jar). A mix
         # of obfuscated and non-obfuscated files.
