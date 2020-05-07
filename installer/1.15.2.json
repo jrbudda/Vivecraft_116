@@ -1542,6 +1542,10 @@
 		{
 			"name": "org.ow2.asm:asm-all:5.2",
 			"url": "http://files.minecraftforge.net/maven/"
+		},
+		{
+			"url": "https://repo1.maven.org/maven2/",
+			"name": "io.github.classgraph:classgraph:4.8.78"
 		}
 	],
 	"logging": {

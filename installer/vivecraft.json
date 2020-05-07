@@ -36,6 +36,10 @@
 	{
 		"url": "http://vivecraft.org/jar/", 
 		"name": "com.sun:jna:4.2.1"
+	},
+	{
+		"url": "https://repo1.maven.org/maven2/",
+		"name": "io.github.classgraph:classgraph:4.8.78"
 	}
 	]
 }
