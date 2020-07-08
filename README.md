@@ -1,4 +1,4 @@
-Vivecraft for Minecraft 1.15
+Vivecraft for Minecraft 1.16
 =========
 
 This readme is intended for developers. For downloads and gameplay instructions please see the [official website](http://www.vivecraft.org/)
@@ -45,4 +45,3 @@ To update changes from github
 ========
   - After pulling changes from github run applychanges.bat. This backs up mcp9xx\src\minecraft to mcp9xx\src\minecraft_bak, and starts over by applying all patches in \patches\ to mcp9xx\src\minecraft_orig, and copies the result o mcp9xx\src\minecraft
   
-There is no Forge.
