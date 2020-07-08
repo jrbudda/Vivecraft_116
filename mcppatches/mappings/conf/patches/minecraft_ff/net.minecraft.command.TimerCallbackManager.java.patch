@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\command\TimerCallbackManager.java minecraft_patched\net\minecraft\command\TimerCallbackManager.java
 --- minecraft\net\minecraft\command\TimerCallbackManager.java
 +++ minecraft_patched\net\minecraft\command\TimerCallbackManager.java
-@@ -23,7 +23,7 @@
+@@ -25,7 +25,7 @@
     private final Table<String, Long, TimerCallbackManager.Entry<T>> field_216337_e = HashBasedTable.create();
  
     private static <T> Comparator<TimerCallbackManager.Entry<T>> func_216330_c() {

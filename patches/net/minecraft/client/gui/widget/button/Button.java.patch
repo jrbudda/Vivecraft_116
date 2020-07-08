@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/gui/widget/button/Button.java
++++ b/net/minecraft/client/gui/widget/button/Button.java
+@@ -2,6 +2,7 @@
+ 
+ import com.mojang.blaze3d.matrix.MatrixStack;
+ import net.minecraft.util.text.ITextComponent;
++import net.minecraft.util.text.StringTextComponent;
+ 
+ public class Button extends AbstractButton
+ {
+@@ -15,7 +16,14 @@
+     {
+         this(p_i1309_1_, p_i1309_2_, p_i1309_3_, p_i1309_4_, p_i1309_5_, p_i1309_6_, field_238486_s_);
+     }
+-
++    
++    //Vivecraft if i have to remove this I will, but only under protest
++    public Button(int p_i1309_1_, int p_i1309_2_, int p_i1309_3_, int p_i1309_4_, String p_i1309_5_, Button.IPressable p_i1309_6_)
++    {
++        this(p_i1309_1_, p_i1309_2_, p_i1309_3_, p_i1309_4_, new StringTextComponent(p_i1309_5_), p_i1309_6_, field_238486_s_);
++    }
++    //
++    
+     public Button(int p_i1310_1_, int p_i1310_2_, int p_i1310_3_, int p_i1310_4_, ITextComponent p_i1310_5_, Button.IPressable p_i1310_6_, Button.ITooltip p_i1310_7_)
+     {
+         super(p_i1310_1_, p_i1310_2_, p_i1310_3_, p_i1310_4_, p_i1310_5_);

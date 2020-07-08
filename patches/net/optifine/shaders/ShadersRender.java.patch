@@ -8,15 +8,15 @@
  import com.mojang.blaze3d.vertex.IVertexBuilder;
  import java.nio.IntBuffer;
  import java.util.Iterator;
-@@ -16,6 +17,7 @@
+@@ -15,6 +16,7 @@
+ import net.minecraft.client.renderer.FirstPersonRenderer;
+ import net.minecraft.client.renderer.GameRenderer;
  import net.minecraft.client.renderer.IRenderTypeBuffer;
- import net.minecraft.client.renderer.Matrix3f;
- import net.minecraft.client.renderer.Matrix4f;
 +import net.minecraft.client.renderer.RenderHelper;
  import net.minecraft.client.renderer.RenderType;
  import net.minecraft.client.renderer.WorldRenderer;
- import net.minecraft.client.renderer.culling.ClippingHelperImpl;
-@@ -28,6 +30,7 @@
+ import net.minecraft.client.renderer.culling.ClippingHelper;
+@@ -27,6 +29,7 @@
  import net.minecraft.tileentity.EndPortalTileEntity;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Direction;
@@ -24,16 +24,7 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
-@@ -88,7 +91,7 @@
-     {
-         if (Shaders.isRenderingWorld)
-         {
--            if (Shaders.usedDepthBuffers >= 2)
-+            if (Shaders.usedDepthBuffers >= 2 & !Shaders.isShadowPass)
-             {
-                 GlStateManager.activeTexture(33995);
-                 Shaders.checkGLError("pre copy depth");
-@@ -201,7 +204,7 @@
+@@ -194,7 +197,7 @@
          }
      }
  
@@ -42,7 +33,7 @@
      {
          if (Shaders.usedShadowDepthBuffers > 0 && --Shaders.shadowPassCounter <= 0)
          {
-@@ -267,6 +270,9 @@
+@@ -260,6 +263,9 @@
              worldrenderer.renderBlockLayer(RenderTypes.SOLID, matrixstack, d0, d1, d2);
              Shaders.checkGLError("shadow terrain solid");
              GlStateManager.enableAlphaTest();
@@ -52,22 +43,19 @@
              worldrenderer.renderBlockLayer(RenderTypes.CUTOUT_MIPPED, matrixstack, d0, d1, d2);
              Shaders.checkGLError("shadow terrain cutoutmipped");
              minecraft.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
-@@ -282,15 +288,32 @@
-             WorldRenderer worldrenderer1 = minecraft.worldRenderer;
+@@ -276,15 +282,29 @@
              EntityRendererManager entityrenderermanager = minecraft.getRenderManager();
              IRenderTypeBuffer.Impl irendertypebuffer$impl = worldrenderer1.getRenderTypeTextures().getBufferSource();
-+         
+             boolean flag = Shaders.isShadowPass && !minecraft.player.isSpectator();
 +            Matrix4f light = new Matrix4f();
 +            light.setIdentity();
 +            RenderHelper.setupLevelDiffuseLighting(light);
  
              for (Entity entity : minecraft.world.getAllEntities())
 -            {
--                if ((entityrenderermanager.shouldRender(entity, clippinghelperimpl, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && (entity != activeRenderInfo.getRenderViewEntity() || Shaders.isShadowPass || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && (!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
-+            { //always render self shadow.
-+                if ((entityrenderermanager.shouldRender(entity, clippinghelperimpl, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && 
-+                		(true || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && 
-+                		(!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
+-                if ((entityrenderermanager.shouldRender(entity, clippinghelper, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && (entity != activeRenderInfo.getRenderViewEntity() || flag || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && (!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
++            {//always render self shadow.
++                if ((entityrenderermanager.shouldRender(entity, clippinghelper, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && (true || entity != activeRenderInfo.getRenderViewEntity() || flag || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && (!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
                  {
 +                    //Vivecraft shadow location.
 +                    if(entity == activeRenderInfo.getRenderViewEntity()) { 
@@ -87,7 +75,7 @@
                  }
              }
  
-@@ -398,7 +421,8 @@
+@@ -390,7 +410,8 @@
              GlStateManager.depthMask(true);
              GlStateManager.enableCull();
              GlStateManager.disableBlend();

@@ -1,15 +1,16 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
-@@ -7,20 +7,34 @@
- import com.mojang.authlib.minecraft.MinecraftSessionService;
+@@ -10,6 +10,9 @@
  import com.mojang.authlib.properties.PropertyMap;
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+ import com.mojang.blaze3d.matrix.MatrixStack;
 +import com.mojang.blaze3d.platform.GLX;
 +import com.mojang.blaze3d.platform.GlStateManager;
 +import com.mojang.blaze3d.platform.GlStateManager.FogMode;
  import com.mojang.blaze3d.platform.PlatformDescriptors;
  import com.mojang.blaze3d.systems.RenderSystem;
  import com.mojang.datafixers.DataFixer;
+@@ -20,14 +23,25 @@
  import java.io.File;
  import java.io.IOException;
  import java.io.InputStream;
@@ -35,11 +36,15 @@
  import java.util.List;
  import java.util.Locale;
  import java.util.Queue;
-@@ -32,10 +46,52 @@
- import java.util.stream.Collectors;
+@@ -37,14 +51,57 @@
+ import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Function;
+ import java.util.function.Supplier;
++import java.util.stream.Collectors;
  import java.util.stream.Stream;
  import javax.annotation.Nullable;
 +
++import net.minecraft.block.Blocks;
 +import net.minecraft.state.EnumProperty;
 +import net.minecraft.state.StateContainer;
 +import net.minecraft.util.*;
@@ -64,7 +69,6 @@
 +import org.vivecraft.gameplay.screenhandlers.RadialHandler;
 +import org.vivecraft.gameplay.trackers.*;
 +import org.vivecraft.gui.physical.PhysicalGuiManager;
-+import org.vivecraft.menuworlds.MenuWorldRenderer;
 +import org.vivecraft.provider.MCOpenVR;
 +import org.vivecraft.provider.OpenVRStereoRenderer;
 +import org.vivecraft.render.PlayerModelController;
@@ -83,16 +87,19 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockRenderType;
  import net.minecraft.block.BlockState;
+ import net.minecraft.client.audio.BackgroundMusicSelector;
+ import net.minecraft.client.audio.BackgroundMusicTracks;
  import net.minecraft.client.audio.MusicTicker;
 +import net.minecraft.client.audio.SoundEngine;
  import net.minecraft.client.audio.SoundHandler;
  import net.minecraft.client.entity.player.ClientPlayerEntity;
- import net.minecraft.client.gui.FontRenderer;
-@@ -74,12 +130,15 @@
+ import net.minecraft.client.gui.DialogTexts;
+@@ -88,10 +145,12 @@
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.FirstPersonRenderer;
  import net.minecraft.client.renderer.FogRenderer;
 +import net.minecraft.client.renderer.GLAllocation;
+ import net.minecraft.client.renderer.GPUWarning;
  import net.minecraft.client.renderer.GameRenderer;
  import net.minecraft.client.renderer.IWindowEventListener;
  import net.minecraft.client.renderer.ItemRenderer;
@@ -100,33 +107,28 @@
  import net.minecraft.client.renderer.RenderTypeBuffers;
  import net.minecraft.client.renderer.ScreenSize;
  import net.minecraft.client.renderer.Tessellator;
-+import net.minecraft.client.renderer.Vector3f;
- import net.minecraft.client.renderer.VirtualScreen;
- import net.minecraft.client.renderer.WorldRenderer;
- import net.minecraft.client.renderer.color.BlockColors;
-@@ -109,6 +168,7 @@
- import net.minecraft.client.settings.CreativeSettings;
+@@ -124,6 +183,7 @@
+ import net.minecraft.client.settings.GraphicsFanciness;
  import net.minecraft.client.settings.KeyBinding;
  import net.minecraft.client.shader.Framebuffer;
 +import net.minecraft.client.shader.FramebufferConstants;
  import net.minecraft.client.tutorial.Tutorial;
  import net.minecraft.client.util.IMutableSearchTree;
  import net.minecraft.client.util.ITooltipFlag;
-@@ -185,6 +245,7 @@
+@@ -210,6 +270,7 @@
  import net.minecraft.util.math.EntityRayTraceResult;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.RayTraceResult;
-+import net.minecraft.util.math.Vec3d;
++import net.minecraft.util.math.vector.Vec3d;
  import net.minecraft.util.registry.Bootstrap;
  import net.minecraft.util.registry.Registry;
- import net.minecraft.util.text.ITextComponent;
-@@ -202,12 +263,83 @@
+ import net.minecraft.util.registry.SimpleRegistry;
+@@ -230,12 +291,82 @@
+ import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
- import net.minecraft.world.storage.SaveHandler;
- import net.minecraft.world.storage.WorldInfo;
+ import net.minecraft.world.storage.ServerWorldInfo;
 +import net.optifine.reflect.Reflector;
 +import net.optifine.reflect.ReflectorConstructor;
-+
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -174,7 +176,7 @@
 +	public boolean lastShowMouseNative = true;
 +	public boolean enableWorldExport = false;
 +	public SoundEngine sndManager = null;
-+	public MenuWorldRenderer menuWorldRenderer;
++	//public MenuWorldRenderer menuWorldRenderer;
 +
 +	private FloatBuffer matrixBuffer = GLAllocation.createDirectFloatBuffer(16);
 +	private FloatBuffer matrixBuffer2 = GLAllocation.createDirectFloatBuffer(16);
@@ -198,13 +200,13 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.15.2 jrbudda-3-a2";
++    public final String minecriftVerString = "Vivecraft 1.16.1 jrbudda-1-a0";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
      public static final boolean IS_RUNNING_ON_MAC = Util.getOSType() == Util.OS.OSX;
      public static final ResourceLocation DEFAULT_FONT_RENDERER_NAME = new ResourceLocation("default");
-@@ -234,7 +366,7 @@
+@@ -263,7 +394,7 @@
      public final DebugRenderer debugRenderer;
      private final AtomicReference<TrackingChunkStatusListener> refChunkStatusListener = new AtomicReference<>();
      public final IngameGui ingameGUI;
@@ -213,7 +215,7 @@
      private final CreativeSettings creativeSettings;
      public final MouseHelper mouseHelper;
      public final KeyboardListener keyboardListener;
-@@ -256,7 +388,7 @@
+@@ -283,7 +414,7 @@
      private final LanguageManager languageManager;
      private final BlockColors blockColors;
      private final ItemColors itemColors;
@@ -222,237 +224,31 @@
      private final SoundHandler soundHandler;
      private final MusicTicker musicTicker;
      private final FontResourceManager fontResourceMananger;
-@@ -267,7 +399,7 @@
-     private final BlockRendererDispatcher blockRenderDispatcher;
-     private final PaintingSpriteUploader paintingSprites;
-     private final PotionSpriteUploader potionSprites;
--    private final ToastGui toastGui;
-+    public final ToastGui toastGui;
-     private final MinecraftGame game = new MinecraftGame(this);
-     private final Tutorial tutorial;
-     public static byte[] memoryReserve = new byte[10485760];
-@@ -320,194 +452,271 @@
- 
-     public Minecraft(GameConfiguration p_i801_1_)
+@@ -358,6 +489,9 @@
      {
--        super("Client");
--        instance = this;
--        this.gameDir = p_i801_1_.folderInfo.gameDir;
--        File file1 = p_i801_1_.folderInfo.assetsDir;
--        this.fileResourcepacks = p_i801_1_.folderInfo.resourcePacksDir;
--        this.launchedVersion = p_i801_1_.gameInfo.version;
--        this.versionType = p_i801_1_.gameInfo.versionType;
--        this.profileProperties = p_i801_1_.userInfo.profileProperties;
--        this.packFinder = new DownloadingPackFinder(new File(this.gameDir, "server-resource-packs"), p_i801_1_.folderInfo.getAssetsIndex());
--        this.resourcePackRepository = new ResourcePackList<>(Minecraft::makePackInfo);
--        this.resourcePackRepository.addPackFinder(this.packFinder);
--        this.resourcePackRepository.addPackFinder(new FolderPackFinder(this.fileResourcepacks));
--        this.proxy = p_i801_1_.userInfo.proxy;
--        this.sessionService = (new YggdrasilAuthenticationService(this.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
--        this.session = p_i801_1_.userInfo.session;
--        LOGGER.info("Setting user: {}", (Object)this.session.getUsername());
--        LOGGER.debug("(Session ID is {})", (Object)this.session.getSessionID());
--        this.isDemo = p_i801_1_.gameInfo.isDemo;
--        this.jvm64bit = isJvm64bit();
--        this.integratedServer = null;
--        String s;
--        int i;
--
--        if (p_i801_1_.serverInfo.serverName != null)
--        {
--            s = p_i801_1_.serverInfo.serverName;
--            i = p_i801_1_.serverInfo.serverPort;
--        }
--        else
--        {
--            s = null;
--            i = 0;
--        }
--
--        Bootstrap.register();
--        Bootstrap.checkTranslations();
--        KeybindTextComponent.displaySupplierFunction = KeyBinding::getDisplayString;
--        this.dataFixer = DataFixesManager.getDataFixer();
--        this.toastGui = new ToastGui(this);
--        this.tutorial = new Tutorial(this);
--        this.thread = Thread.currentThread();
--        this.gameSettings = new GameSettings(this, this.gameDir);
--        this.creativeSettings = new CreativeSettings(this.gameDir, this.dataFixer);
--        this.startTimerHackThread();
--        LOGGER.info("Backend library: {}", (Object)RenderSystem.getBackendDescription());
--        ScreenSize screensize;
--
--        if (this.gameSettings.overrideHeight > 0 && this.gameSettings.overrideWidth > 0)
--        {
--            screensize = new ScreenSize(this.gameSettings.overrideWidth, this.gameSettings.overrideHeight, p_i801_1_.displayInfo.fullscreenWidth, p_i801_1_.displayInfo.fullscreenHeight, p_i801_1_.displayInfo.fullscreen);
--        }
--        else
--        {
--            screensize = p_i801_1_.displayInfo;
--        }
--
--        Util.nanoTimeSupplier = RenderSystem.initBackendSystem();
--        this.virtualScreen = new VirtualScreen(this);
--        this.mainWindow = this.virtualScreen.create(screensize, this.gameSettings.fullscreenResolution, this.func_230149_ax_());
--        this.setGameFocused(true);
--
--        try
--        {
--            InputStream inputstream = this.getPackFinder().getVanillaPack().getResourceStream(ResourcePackType.CLIENT_RESOURCES, new ResourceLocation("icons/icon_16x16.png"));
--            InputStream inputstream1 = this.getPackFinder().getVanillaPack().getResourceStream(ResourcePackType.CLIENT_RESOURCES, new ResourceLocation("icons/icon_32x32.png"));
--            this.mainWindow.setWindowIcon(inputstream, inputstream1);
--        }
--        catch (IOException ioexception)
--        {
--            LOGGER.error("Couldn't set icon", (Throwable)ioexception);
--        }
--
--        this.mainWindow.setFramerateLimit(this.gameSettings.framerateLimit);
--        this.mouseHelper = new MouseHelper(this);
--        this.mouseHelper.registerCallbacks(this.mainWindow.getHandle());
--        this.keyboardListener = new KeyboardListener(this);
--        this.keyboardListener.setupCallbacks(this.mainWindow.getHandle());
--        RenderSystem.initRenderer(this.gameSettings.glDebugVerbosity, false);
--        this.framebuffer = new Framebuffer(this.mainWindow.getFramebufferWidth(), this.mainWindow.getFramebufferHeight(), true, IS_RUNNING_ON_MAC);
--        this.framebuffer.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
--        this.resourceManager = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES, this.thread);
--        this.gameSettings.fillResourcePackList(this.resourcePackRepository);
--        this.resourcePackRepository.reloadPacksFromFinders();
--        this.languageManager = new LanguageManager(this.gameSettings.language);
--        this.resourceManager.addReloadListener(this.languageManager);
--        this.textureManager = new TextureManager(this.resourceManager);
--        this.resourceManager.addReloadListener(this.textureManager);
--        this.skinManager = new SkinManager(this.textureManager, new File(file1, "skins"), this.sessionService);
--        this.saveFormat = new SaveFormat(this.gameDir.toPath().resolve("saves"), this.gameDir.toPath().resolve("backups"), this.dataFixer);
--        this.soundHandler = new SoundHandler(this.resourceManager, this.gameSettings);
--        this.resourceManager.addReloadListener(this.soundHandler);
--        this.splashes = new Splashes(this.session);
--        this.resourceManager.addReloadListener(this.splashes);
--        this.musicTicker = new MusicTicker(this);
--        this.fontResourceMananger = new FontResourceManager(this.textureManager, this.getForceUnicodeFont());
--        this.resourceManager.addReloadListener(this.fontResourceMananger.getReloadListener());
--        FontRenderer fontrenderer = this.fontResourceMananger.getFontRenderer(DEFAULT_FONT_RENDERER_NAME);
--
--        if (fontrenderer == null)
--        {
--            throw new IllegalStateException("Default font is null");
--        }
--        else
--        {
--            this.fontRenderer = fontrenderer;
--            this.fontRenderer.setBidiFlag(this.languageManager.isCurrentLanguageBidirectional());
--            this.resourceManager.addReloadListener(new GrassColorReloadListener());
--            this.resourceManager.addReloadListener(new FoliageColorReloadListener());
--            this.mainWindow.setRenderPhase("Startup");
--            RenderSystem.setupDefaultState(0, 0, this.mainWindow.getFramebufferWidth(), this.mainWindow.getFramebufferHeight());
--            this.mainWindow.setRenderPhase("Post startup");
--            this.blockColors = BlockColors.init();
--            this.itemColors = ItemColors.init(this.blockColors);
--            this.modelManager = new ModelManager(this.textureManager, this.blockColors, this.gameSettings.mipmapLevels);
--            this.resourceManager.addReloadListener(this.modelManager);
--            this.itemRenderer = new ItemRenderer(this.textureManager, this.modelManager, this.itemColors);
--            this.renderManager = new EntityRendererManager(this.textureManager, this.itemRenderer, this.resourceManager, this.fontRenderer, this.gameSettings);
--            this.firstPersonRenderer = new FirstPersonRenderer(this);
--            this.resourceManager.addReloadListener(this.itemRenderer);
--            this.renderTypeBuffers = new RenderTypeBuffers();
--            this.gameRenderer = new GameRenderer(this, this.resourceManager, this.renderTypeBuffers);
--            this.resourceManager.addReloadListener(this.gameRenderer);
--            this.blockRenderDispatcher = new BlockRendererDispatcher(this.modelManager.getBlockModelShapes(), this.blockColors);
--            this.resourceManager.addReloadListener(this.blockRenderDispatcher);
--            this.worldRenderer = new WorldRenderer(this, this.renderTypeBuffers);
--            this.resourceManager.addReloadListener(this.worldRenderer);
--            this.populateSearchTreeManager();
--            this.resourceManager.addReloadListener(this.searchTreeManager);
--            this.particles = new ParticleManager(this.world, this.textureManager);
--            this.resourceManager.addReloadListener(this.particles);
--            this.paintingSprites = new PaintingSpriteUploader(this.textureManager);
--            this.resourceManager.addReloadListener(this.paintingSprites);
--            this.potionSprites = new PotionSpriteUploader(this.textureManager);
--            this.resourceManager.addReloadListener(this.potionSprites);
--            this.ingameGUI = new IngameGui(this);
--            this.debugRenderer = new DebugRenderer(this);
--            RenderSystem.setErrorCallback(this::disableVSyncAfterGlError);
--
--            if (this.gameSettings.fullscreen && !this.mainWindow.isFullscreen())
--            {
--                this.mainWindow.toggleFullscreen();
--                this.gameSettings.fullscreen = this.mainWindow.isFullscreen();
--            }
--
--            this.mainWindow.setVsync(this.gameSettings.vsync);
--            this.mainWindow.setRawMouseInput(this.gameSettings.rawMouseInput);
--            this.mainWindow.setLogOnGlError();
--            this.updateWindowSize();
--
--            if (s != null)
--            {
--                this.displayGuiScreen(new ConnectingScreen(new MainMenuScreen(), this, s, i));
--            }
--            else
--            {
--                this.displayGuiScreen(new MainMenuScreen(true));
--            }
--
--            ResourceLoadProgressGui.loadLogoTexture(this);
--            List<IResourcePack> list = this.resourcePackRepository.getEnabledPacks().stream().map(ResourcePackInfo::getResourcePack).collect(Collectors.toList());
--            this.setLoadingGui(new ResourceLoadProgressGui(this, this.resourceManager.reloadResources(Util.getServerExecutor(), this, RESOURCE_RELOAD_INIT_TASK, list), (p_229990_2_) ->
--            {
--                Util.acceptOrElse(p_229990_2_, this::restoreResourcePacks, () -> {
--                    this.languageManager.parseLanguageMetadata(list);
--
--                    if (SharedConstants.developmentMode)
--                    {
--                        this.checkMissingData();
--                    }
--                });
--            }, false));
--        }
-+    	super("Client");
-+    	instance = this;
+         super("Client");
+         instance = this;
 +    	//Forge
 +    	Reflector.call(Reflector.ForgeHooksClient_invalidateLog4jThreadCache);
 +    	//
-+    	this.gameDir = p_i801_1_.folderInfo.gameDir;
-+    	File file1 = p_i801_1_.folderInfo.assetsDir;
-+    	this.fileResourcepacks = p_i801_1_.folderInfo.resourcePacksDir;
-+    	this.launchedVersion = p_i801_1_.gameInfo.version;
-+    	this.versionType = p_i801_1_.gameInfo.versionType;
-+    	this.profileProperties = p_i801_1_.userInfo.profileProperties;
-+    	this.packFinder = new DownloadingPackFinder(new File(this.gameDir, "server-resource-packs"), p_i801_1_.folderInfo.getAssetsIndex());
-+    	this.resourcePackRepository = new ResourcePackList<>(Minecraft::makePackInfo);
-+    	this.resourcePackRepository.addPackFinder(this.packFinder);
-+    	this.resourcePackRepository.addPackFinder(new FolderPackFinder(this.fileResourcepacks));
-+    	this.proxy = p_i801_1_.userInfo.proxy;
-+    	this.sessionService = (new YggdrasilAuthenticationService(this.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
-+    	this.session = p_i801_1_.userInfo.session;
-+    	LOGGER.info("Setting user: {}", (Object)this.session.getUsername());
+         this.gameDir = p_i379_1_.folderInfo.gameDir;
+         File file1 = p_i379_1_.folderInfo.assetsDir;
+         this.fileResourcepacks = p_i379_1_.folderInfo.resourcePacksDir;
+@@ -370,7 +504,9 @@
+         this.sessionService = (new YggdrasilAuthenticationService(this.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
+         this.session = p_i379_1_.userInfo.session;
+         LOGGER.info("Setting user: {}", (Object)this.session.getUsername());
+-        LOGGER.debug("(Session ID is {})", (Object)this.session.getSessionID());
 +    	//Forge
 +    	//LOGGER.debug("(Session ID is {})", (Object)this.session.getSessionID());
 +    	//
-+    	this.isDemo = p_i801_1_.gameInfo.isDemo;
-+    	this.jvm64bit = isJvm64bit();
-+    	this.integratedServer = null;
-+    	String s;
-+    	int i;
-+
-+    	if (p_i801_1_.serverInfo.serverName != null)
-+    	{
-+    		s = p_i801_1_.serverInfo.serverName;
-+    		i = p_i801_1_.serverInfo.serverPort;
-+    	}
-+    	else
-+    	{
-+    		s = null;
-+    		i = 0;
-+    	}
-+
-+    	Bootstrap.register();
-+    	Bootstrap.checkTranslations();
-+    	KeybindTextComponent.displaySupplierFunction = KeyBinding::getDisplayString;
-+    	this.dataFixer = DataFixesManager.getDataFixer();
-+    	this.toastGui = new ToastGui(this);
-+    	this.tutorial = new Tutorial(this);
-+
+         this.isDemo = p_i379_1_.gameInfo.isDemo;
+         this.field_238175_ae_ = !p_i379_1_.gameInfo.field_239099_d_;
+         this.field_238176_af_ = !p_i379_1_.gameInfo.field_239100_e_;
+@@ -394,6 +530,14 @@
+         this.dataFixer = DataFixesManager.getDataFixer();
+         this.toastGui = new ToastGui(this);
+         this.tutorial = new Tutorial(this);
 +    	/** MINECRIFT **/
 +    	VRSettings.initSettings(this, gameDir);
 +    	if (!vrSettings.badStereoProviderPluginID.isEmpty()) {
@@ -461,85 +257,43 @@
 +    		vrSettings.saveOptions();
 +    	}
 +    	/** END MINECRIFT **/
-+
-+    	this.thread = Thread.currentThread();
-+    	this.gameSettings = new GameSettings(this, this.gameDir);
-+    	this.creativeSettings = new CreativeSettings(this.gameDir, this.dataFixer);
-+    	this.startTimerHackThread();
-+    	LOGGER.info("Backend library: {}", (Object)RenderSystem.getBackendDescription());
-+    	ScreenSize screensize;
-+
-+    	if (this.gameSettings.overrideHeight > 0 && this.gameSettings.overrideWidth > 0)
-+    	{
-+    		screensize = new ScreenSize(this.gameSettings.overrideWidth, this.gameSettings.overrideHeight, p_i801_1_.displayInfo.fullscreenWidth, p_i801_1_.displayInfo.fullscreenHeight, p_i801_1_.displayInfo.fullscreen);
-+    	}
-+    	else
-+    	{
-+    		screensize = p_i801_1_.displayInfo;
-+    	}
-+
-+    	//Forge - uh what?
+         this.thread = Thread.currentThread();
+         this.gameSettings = new GameSettings(this, this.gameDir);
+         this.creativeSettings = new CreativeSettings(this.gameDir, this.dataFixer);
+@@ -409,6 +553,9 @@
+             screensize = p_i379_1_.displayInfo;
+         }
+ 
++   	//Forge - uh what?
 +    	Reflector.call(Reflector.getFieldValue(Reflector.EarlyProgressVisualization_INSTANCE), Reflector.EarlyProgressVisualization_join);
 +    	//
-+
-+    	Util.nanoTimeSupplier = RenderSystem.initBackendSystem();
-+    	this.virtualScreen = new VirtualScreen(this);
-+    	this.mainWindow = this.virtualScreen.create(screensize, this.gameSettings.fullscreenResolution, this.func_230149_ax_());
-+    	this.setGameFocused(true);
-+
-+    	try
-+    	{
-+    		InputStream inputstream = this.getPackFinder().getVanillaPack().getResourceStream(ResourcePackType.CLIENT_RESOURCES, new ResourceLocation("icons/icon_16x16.png"));
-+    		InputStream inputstream1 = this.getPackFinder().getVanillaPack().getResourceStream(ResourcePackType.CLIENT_RESOURCES, new ResourceLocation("icons/icon_32x32.png"));
-+    		this.mainWindow.setWindowIcon(inputstream, inputstream1);
-+    	}
-+    	catch (IOException ioexception)
-+    	{
-+    		LOGGER.error("Couldn't set icon", (Throwable)ioexception);
-+    	}
-+
-+    	this.mainWindow.setFramerateLimit(this.gameSettings.framerateLimit);
-+    	this.mouseHelper = new MouseHelper(this);
-+    	this.mouseHelper.registerCallbacks(this.mainWindow.getHandle());
-+    	//this.mouseHelper.registerCallbacks(this.mainWindow.getHandle());
-+    	//
-+    	this.keyboardListener = new KeyboardListener(this);
-+    	this.keyboardListener.setupCallbacks(this.mainWindow.getHandle());
-+    	RenderSystem.initRenderer(this.gameSettings.glDebugVerbosity, false);
+         Util.nanoTimeSupplier = RenderSystem.initBackendSystem();
+         this.virtualScreen = new VirtualScreen(this);
+         this.mainWindow = this.virtualScreen.create(screensize, this.gameSettings.fullscreenResolution, this.func_230149_ax_());
+@@ -427,13 +574,17 @@
+ 
+         this.mainWindow.setFramerateLimit(this.gameSettings.framerateLimit);
+         this.mouseHelper = new MouseHelper(this);
+-        this.mouseHelper.registerCallbacks(this.mainWindow.getHandle());
++ //       this.mouseHelper.registerCallbacks(this.mainWindow.getHandle());
+         this.keyboardListener = new KeyboardListener(this);
+         this.keyboardListener.setupCallbacks(this.mainWindow.getHandle());
+         RenderSystem.initRenderer(this.gameSettings.glDebugVerbosity, false);
+-        this.framebuffer = new Framebuffer(this.mainWindow.getFramebufferWidth(), this.mainWindow.getFramebufferHeight(), true, IS_RUNNING_ON_MAC);
 +    	//I would prefer to comment this out to ensure it isnt used, but Forge needs it or whatever.
 +    	this.framebuffer = new Framebuffer(this.mainWindow.getWidth(), this.mainWindow.getHeight(), true, IS_RUNNING_ON_MAC);
-+    	this.framebuffer.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
-+    	
-+    	this.resourceManager = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES, this.thread);
+         this.framebuffer.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
+         this.resourceManager = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
 +    	//Forge
 +    	Reflector.call(Reflector.ClientModLoader_begin, this, this.resourcePackRepository, this.resourceManager, this.packFinder);
 +    	//
-+    	this.gameSettings.fillResourcePackList(this.resourcePackRepository);
-+    	this.resourcePackRepository.reloadPacksFromFinders();
-+    	this.languageManager = new LanguageManager(this.gameSettings.language);
-+    	this.resourceManager.addReloadListener(this.languageManager);
-+    	this.textureManager = new TextureManager(this.resourceManager);
-+    	this.resourceManager.addReloadListener(this.textureManager);
-+    	this.skinManager = new SkinManager(this.textureManager, new File(file1, "skins"), this.sessionService);
-+    	this.saveFormat = new SaveFormat(this.gameDir.toPath().resolve("saves"), this.gameDir.toPath().resolve("backups"), this.dataFixer);
-+    	this.soundHandler = new SoundHandler(this.resourceManager, this.gameSettings);
-+    	this.resourceManager.addReloadListener(this.soundHandler);
-+    	this.splashes = new Splashes(this.session);
-+    	this.resourceManager.addReloadListener(this.splashes);
-+    	this.musicTicker = new MusicTicker(this);
-+    	this.fontResourceMananger = new FontResourceManager(this.textureManager, this.getForceUnicodeFont());
-+    	this.resourceManager.addReloadListener(this.fontResourceMananger.getReloadListener());
-+    	FontRenderer fontrenderer = this.fontResourceMananger.getFontRenderer(DEFAULT_FONT_RENDERER_NAME);
-+
-+    	if (fontrenderer == null)
-+    	{
-+    		throw new IllegalStateException("Default font is null");
-+    	}
-+    	else
-+    	{
-+    		this.fontRenderer = fontrenderer;
-+    		this.fontRenderer.setBidiFlag(this.languageManager.isCurrentLanguageBidirectional());
-+
+         this.resourcePackRepository.reloadPacksFromFinders();
+         this.gameSettings.fillResourcePackList(this.resourcePackRepository);
+         this.languageManager = new LanguageManager(this.gameSettings.language);
+@@ -451,10 +602,17 @@
+         this.fontRenderer = this.fontResourceMananger.func_238548_a_();
+         this.resourceManager.addReloadListener(this.fontResourceMananger.getReloadListener());
+         this.func_238209_b_(this.getForceUnicodeFont());
 +    		/** MINECRIFT */
 +    		try {
 +    			initMinecrift();
@@ -547,39 +301,29 @@
 +    			e.printStackTrace();
 +    		}
 +    		/** END MINECRIFT */
-+
-+    		this.resourceManager.addReloadListener(new GrassColorReloadListener());
-+    		this.resourceManager.addReloadListener(new FoliageColorReloadListener());
-+    		this.mainWindow.setRenderPhase("Startup");
+         this.resourceManager.addReloadListener(new GrassColorReloadListener());
+         this.resourceManager.addReloadListener(new FoliageColorReloadListener());
+         this.mainWindow.setRenderPhase("Startup");
+-        RenderSystem.setupDefaultState(0, 0, this.mainWindow.getFramebufferWidth(), this.mainWindow.getFramebufferHeight());
 +    		RenderSystem.setupDefaultState(0, 0, this.mainWindow.getWidth(), this.mainWindow.getHeight());
-+    		this.mainWindow.setRenderPhase("Post startup");
-+    		this.blockColors = BlockColors.init();
-+    		this.itemColors = ItemColors.init(this.blockColors);
-+    		this.modelManager = new ModelManager(this.textureManager, this.blockColors, this.gameSettings.mipmapLevels);
-+    		this.resourceManager.addReloadListener(this.modelManager);
-+    		this.itemRenderer = new ItemRenderer(this.textureManager, this.modelManager, this.itemColors);
-+    		this.renderManager = new EntityRendererManager(this.textureManager, this.itemRenderer, this.resourceManager, this.fontRenderer, this.gameSettings);
-+    		this.firstPersonRenderer = new FirstPersonRenderer(this);
-+    		this.resourceManager.addReloadListener(this.itemRenderer);
-+    		this.renderTypeBuffers = new RenderTypeBuffers();
-+    		this.gameRenderer = new GameRenderer(this, this.resourceManager, this.renderTypeBuffers);
-+    		this.resourceManager.addReloadListener(this.gameRenderer);
-+    		this.blockRenderDispatcher = new BlockRendererDispatcher(this.modelManager.getBlockModelShapes(), this.blockColors);
-+    		this.resourceManager.addReloadListener(this.blockRenderDispatcher);
-+    		this.worldRenderer = new WorldRenderer(this, this.renderTypeBuffers);
-+    		this.resourceManager.addReloadListener(this.worldRenderer);
-+    		this.populateSearchTreeManager();
-+    		this.resourceManager.addReloadListener(this.searchTreeManager);
-+    		this.particles = new ParticleManager(this.world, this.textureManager);
+         this.mainWindow.setRenderPhase("Post startup");
+         this.blockColors = BlockColors.init();
+         this.itemColors = ItemColors.init(this.blockColors);
+@@ -474,6 +632,9 @@
+         this.populateSearchTreeManager();
+         this.resourceManager.addReloadListener(this.searchTreeManager);
+         this.particles = new ParticleManager(this.world, this.textureManager);
 +    		//Forge
 +    		Reflector.call(Reflector.call(Reflector.fml_ModLoader_get), Reflector.fml_ModLoader_postEvent, Reflector.newInstance(Reflector.ParticleFactoryRegisterEvent_Constructor));
 +    		//
-+    		this.resourceManager.addReloadListener(this.particles);
-+    		this.paintingSprites = new PaintingSpriteUploader(this.textureManager);
-+    		this.resourceManager.addReloadListener(this.paintingSprites);
-+    		this.potionSprites = new PotionSpriteUploader(this.textureManager);
-+    		this.resourceManager.addReloadListener(this.potionSprites);
-+
+         this.resourceManager.addReloadListener(this.particles);
+         this.paintingSprites = new PaintingSpriteUploader(this.textureManager);
+         this.resourceManager.addReloadListener(this.paintingSprites);
+@@ -481,7 +642,16 @@
+         this.resourceManager.addReloadListener(this.potionSprites);
+         this.field_241557_ar_ = new GPUWarning();
+         this.resourceManager.addReloadListener(this.field_241557_ar_);
+-        this.ingameGUI = new IngameGui(this);
 +    		//Forge
 +    		if(Reflector.ForgeIngameGui_Constructor.exists())
 +    			this.ingameGUI = (IngameGui) Reflector.newInstance(Reflector.ForgeIngameGui_Constructor, this);
@@ -590,21 +334,21 @@
 +    		//Forge
 +    		this.mouseHelper.registerCallbacks(this.mainWindow.getHandle()); //Forge: Moved below ingameGUI setting to prevent NPEs in handeler.
 +    		//
-+
-+    		this.debugRenderer = new DebugRenderer(this);
-+    		RenderSystem.setErrorCallback(this::disableVSyncAfterGlError);
-+
-+    		if (this.gameSettings.fullscreen && !this.mainWindow.isFullscreen())
-+    		{
-+    			this.mainWindow.toggleFullscreen();
-+    			this.gameSettings.fullscreen = this.mainWindow.isFullscreen();
-+    		}
-+
-+    		this.mainWindow.setVsync(this.gameSettings.vsync);
-+    		this.mainWindow.setRawMouseInput(this.gameSettings.rawMouseInput);
-+    		this.mainWindow.setLogOnGlError();
-+    		this.updateWindowSize();
-+
+         this.debugRenderer = new DebugRenderer(this);
+         RenderSystem.setErrorCallback(this::disableVSyncAfterGlError);
+ 
+@@ -496,42 +666,73 @@
+         this.mainWindow.setLogOnGlError();
+         this.updateWindowSize();
+ 
+-        if (s != null)
+-        {
+-            this.displayGuiScreen(new ConnectingScreen(new MainMenuScreen(), this, s, i));
+-        }
+-        else
+-        {
+-            this.displayGuiScreen(new MainMenuScreen(true));
+-        }
 +    		//forge - fix vanilla bug
 +    		//            if (s != null)
 +    		//            {
@@ -613,33 +357,33 @@
 +    		//            else
 +    		//            {
 +    		//                this.displayGuiScreen(new MainMenuScreen(true));
-+    	}
++        
 +    	final String autoServerName = s;
 +    	final int autoServerPort = i;
 +    	//
 +    	// VIVE
 +    	LangHelper.registerResourceListener();
-+    	menuWorldRenderer = new MenuWorldRenderer();
++    	//menuWorldRenderer = new MenuWorldRenderer();
 +    	vrSettings.firstRun = false;
 +    	vrSettings.saveOptions();
 +    	// END VIVE
-+
-+    	ResourceLoadProgressGui.loadLogoTexture(this);
-+    	List<IResourcePack> list = this.resourcePackRepository.getEnabledPacks().stream().map(ResourcePackInfo::getResourcePack).collect(Collectors.toList());
-+    	this.setLoadingGui(new ResourceLoadProgressGui(this, this.resourceManager.reloadResources(Util.getServerExecutor(), this, RESOURCE_RELOAD_INIT_TASK, list), (p_229990_2_) ->
-+    	{
++        
+ 
+         ResourceLoadProgressGui.loadLogoTexture(this);
+         List<IResourcePack> list = this.resourcePackRepository.func_232623_f_();
+         this.setLoadingGui(new ResourceLoadProgressGui(this, this.resourceManager.reloadResources(Util.getServerExecutor(), this, RESOURCE_RELOAD_INIT_TASK, list), (p_238197_1_) ->
+         {
 +    		// Vivecraft - post load
-+    		if (stereoProvider.isInitialized())
-+    			menuWorldRenderer.init();
++//    		if (stereoProvider.isInitialized())
++//    			menuWorldRenderer.init();
++    		
 +    		MCOpenVR.initInputAndApplication();
 +    		//
-+    		Util.acceptOrElse(p_229990_2_, this::restoreResourcePacks, () -> {
-+    			this.languageManager.parseLanguageMetadata(list);
-+
-+    			if (SharedConstants.developmentMode)
-+    			{
-+    				this.checkMissingData();
-+    			}
+             Util.acceptOrElse(p_238197_1_, this::restoreResourcePacks, () -> {
+                 if (SharedConstants.developmentMode)
+                 {
+                     this.checkMissingData();
+                 }
 +    			//Forge
 +
 +    			if (Reflector.callBoolean(Reflector.ClientModLoader_completeModLoading)) return; // Do not overwrite the error screen
@@ -651,8 +395,8 @@
 +    				this.displayGuiScreen(new MainMenuScreen(true));
 +    			}
 +    			//
-+    		});
-+    	}, false));
+             });
+         }, false));
      }
  
 +    //updatewindowtitle
@@ -682,7 +426,7 @@
          stringbuilder.append(" ");
          stringbuilder.append(SharedConstants.getVersion().getName());
          ClientPlayNetHandler clientplaynethandler = this.getConnection();
-@@ -537,6 +746,7 @@
+@@ -561,6 +762,7 @@
          return stringbuilder.toString();
      }
  
@@ -690,7 +434,7 @@
      public boolean func_230151_c_()
      {
          return !"vanilla".equals(ClientBrandRetriever.getClientModName()) || Minecraft.class.getSigners() == null;
-@@ -640,7 +850,12 @@
+@@ -675,7 +877,12 @@
          });
          SearchTreeReloadable<ItemStack> searchtreereloadable = new SearchTreeReloadable<>((p_213235_0_) ->
          {
@@ -703,7 +447,7 @@
          });
          NonNullList<ItemStack> nonnulllist = NonNullList.create();
  
-@@ -750,16 +965,25 @@
+@@ -761,16 +968,25 @@
          if (report.getFile() != null)
          {
              Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + report.getFile());
@@ -729,21 +473,25 @@
              System.exit(-2);
          }
      }
-@@ -790,6 +1014,13 @@
-                 List<IResourcePack> list = this.resourcePackRepository.getEnabledPacks().stream().map(ResourcePackInfo::getResourcePack).collect(Collectors.toList());
-                 this.setLoadingGui(new ResourceLoadProgressGui(this, this.resourceManager.reloadResources(Util.getServerExecutor(), this, RESOURCE_RELOAD_INIT_TASK, list), (p_229992_3_) ->
+@@ -801,6 +1017,17 @@
+                 List<IResourcePack> list = this.resourcePackRepository.func_232623_f_();
+                 this.setLoadingGui(new ResourceLoadProgressGui(this, this.resourceManager.reloadResources(Util.getServerExecutor(), this, RESOURCE_RELOAD_INIT_TASK, list), (p_238200_2_) ->
                  {
 +                	//VIVECRAFT
-+        			if (menuWorldRenderer.isReady() && resourcePacksChanged) {
-+						menuWorldRenderer.destroy();
-+						menuWorldRenderer.prepare();
-+					}
++//        			if (menuWorldRenderer.isReady() && resourcePacksChanged) {
++//        				try {
++//							menuWorldRenderer.destroy();
++//							menuWorldRenderer.prepare();
++//						} catch (Exception e) {
++//        					e.printStackTrace();
++//						}
++//					}
 +					resourcePacksChanged = false;
 +					//
-                     Util.acceptOrElse(p_229992_3_, this::restoreResourcePacks, () -> {
-                         this.languageManager.parseLanguageMetadata(list);
+                     Util.acceptOrElse(p_238200_2_, this::restoreResourcePacks, () -> {
                          this.worldRenderer.loadRenderers();
-@@ -874,10 +1105,12 @@
+                         completablefuture.complete((Void)null);
+@@ -899,10 +1126,12 @@
  
      public void displayGuiScreen(@Nullable Screen guiScreenIn)
      {
@@ -760,7 +508,7 @@
  
          if (guiScreenIn == null && this.world == null)
          {
-@@ -894,13 +1127,26 @@
+@@ -919,13 +1148,26 @@
                  this.player.respawnPlayer();
              }
          }
@@ -788,7 +536,7 @@
          this.currentScreen = guiScreenIn;
  
          if (guiScreenIn != null)
-@@ -964,6 +1210,12 @@
+@@ -987,6 +1229,12 @@
          finally
          {
              Util.nanoTimeSupplier = System::nanoTime;
@@ -801,103 +549,338 @@
  
              if (this.crashReporter == null)
              {
-@@ -1001,141 +1253,314 @@
-     }
+@@ -1053,110 +1301,281 @@
  
-     private void runGameLoop(boolean renderWorldIn)
--    {
--        this.mainWindow.setRenderPhase("Pre render");
--        long i = Util.nanoTime();
--        this.profiler.startTick();
--
--        if (this.mainWindow.shouldClose())
--        {
--            this.shutdown();
--        }
--
--        if (this.futureRefreshResources != null && !(this.loadingGui instanceof ResourceLoadProgressGui))
--        {
--            CompletableFuture<Void> completablefuture = this.futureRefreshResources;
--            this.futureRefreshResources = null;
--            this.reloadResources().thenRun(() ->
--            {
--                completablefuture.complete((Void)null);
--            });
--        }
--
--        Runnable runnable;
--
--        while ((runnable = this.queueChunkTracking.poll()) != null)
--        {
--            runnable.run();
--        }
--
--        if (renderWorldIn)
--        {
--            this.timer.updateTimer(Util.milliTime());
+         if (renderWorldIn)
+         {
+-            int j = this.timer.func_238400_a_(Util.milliTime());
 -            this.profiler.startSection("scheduledExecutables");
 -            this.drainTasks();
 -            this.profiler.endSection();
--        }
+-            this.profiler.startSection("tick");
 -
--        this.profiler.startSection("tick");
--
--        if (renderWorldIn)
--        {
--            for (int j = 0; j < Math.min(10, this.timer.elapsedTicks); ++j)
+-            for (int k = 0; k < Math.min(10, j); ++k)
 -            {
+-                this.profiler.func_230035_c_("clientTick");
 -                this.runTick();
 -            }
+-
+-            this.profiler.endSection();
 -        }
 -
 -        this.mouseHelper.updatePlayerLook();
 -        this.mainWindow.setRenderPhase("Render");
--        this.profiler.endStartSection("sound");
+-        this.profiler.startSection("sound");
 -        this.soundHandler.updateListener(this.gameRenderer.getActiveRenderInfo());
 -        this.profiler.endSection();
 -        this.profiler.startSection("render");
--        RenderSystem.pushMatrix();
--        RenderSystem.clear(16640, IS_RUNNING_ON_MAC);
--        this.framebuffer.bindFramebuffer(true);
++        	int j = this.timer.func_238400_a_(Util.milliTime());
++        	this.profiler.startSection("scheduledExecutables");
++        	this.drainTasks();
++        	this.profiler.endSection();
++
++        	{// Vivecraft
++        		this.frameDelta = (i - this.prevFrameTime) / 1000000000F;
++        		this.prevFrameTime = i;
++        		// avoid having to change GLX
++        		gameSettings.ofFastRender = false;
++        	}
++
++        	/** MINECRIFT */ // setup the display, render buffers, shaders etc.
++        	this.frameIndex++;
++
++        	try {
++        		stereoProvider.setupRenderConfiguration();
++        	} catch (RenderConfigException e) {
++        		this.currentScreen = null;		
++        		GlStateManager.viewport(0, 0, mainWindow.getWidth(), mainWindow.getHeight());
++        		if (loadingGui != null) {
++        			RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
++        			RenderSystem.matrixMode(5889);
++        			RenderSystem.loadIdentity();
++        			RenderSystem.ortho(0.0D, (double)mainWindow.getWidth() / mainWindow.getGuiScaleFactor(), (double)mainWindow.getHeight() / mainWindow.getGuiScaleFactor(), 0.0D, 1000.0D, 3000.0D);
++        			RenderSystem.matrixMode(5888);
++        			RenderSystem.loadIdentity();
++        			RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
++        			RenderHelper.setupGui3DDiffuseLighting();
++        			loadingGui.render(new MatrixStack(), 0, 0, 0);
++        		} else {
++        			notifyMirror("Render Setup Failed " + e.error, true, 10000);
++        			drawNotifyMirror();
++        			if (this.frameIndex % 300 == 0)
++        				System.out.println(e.title + " " + e.error);
++        			try {
++        				Thread.sleep(10);
++        			} catch (InterruptedException e1) {
++        			}
++        		}		
++        		mainWindow.flipFrame();
++        		return;
++        	} catch (Exception e) {
++        		e.printStackTrace();
++        	}
++        	/** END MINECRIFT */
++
++        	// VIVECRAFT
++        	this.profiler.startSection("VR Poll/VSync");
++        	// Poll sensors
++        	MCOpenVR.poll(frameIndex);
++        	this.profiler.endSection();
++
++        	vrPlayer.postPoll();
++        	this.profiler.startSection("tick");
++
++        	for (int k = 0; k < Math.min(10, j); ++k)
++        	{
++        		this.profiler.func_230035_c_("clientTick");
++        		// VIVECRAFT
++        		vrPlayer.preTick();
++        		//
++        		this.runTick();
++        		// VIVECRAFT
++        		vrPlayer.postTick();
++        		//
++        		this.profiler.endSection();
++        	}
++        }
++
++        	this.profiler.endStartSection("setupRenderConfiguration");
++        	this.mouseHelper.updatePlayerLook();
++        	this.mainWindow.setRenderPhase("Render");
++
++        	// VIVECRAFT - Check again in case something changed during Tick.
++        	try {
++        		checkGLError("pre render setup ");
++        		stereoProvider.setupRenderConfiguration();
++        		checkGLError("post render setup ");
++        	} catch (Exception e) {
++        		e.printStackTrace();
++        	}
++        	//
++
++        	// Vivecraft
++        	float par1 = this.isGamePaused ? this.renderPartialTicksPaused : this.timer.renderPartialTicks;
++
++        	this.profiler.endStartSection("preRender"); 	
++        	vrPlayer.preRender(par1);
++        	/* Vivecraft
+         RenderSystem.pushMatrix();
+         RenderSystem.clear(16640, IS_RUNNING_ON_MAC);
+         this.framebuffer.bindFramebuffer(true);
 -        FogRenderer.resetFog();
 -        this.profiler.startSection("display");
 -        RenderSystem.enableTexture();
+-        RenderSystem.enableCull();
 -        this.profiler.endSection();
--
++	        this.profiler.startSection("display");
++	        this.profiler.endSection();
++        	 */   	
++        	FogRenderer.resetFog();
++        	RenderSystem.enableTexture();
++        	this.profiler.endSection();
++
++        	this.profiler.startSection("Gui");
++        	this.currentPass = RenderPass.GUI;
++        	GlStateManager.depthMask(true);
++        	GlStateManager.colorMask(true, true, true, true);
++
++        	// Render GUI to FBO if necessary
++        	this.framebuffer = GuiHandler.guiFramebuffer; // draw to 2d gui.
++        	this.framebuffer.bindFramebuffer(true);
++
++        	this.gameRenderer.drawFramebufferNEW(par1, renderWorldIn, new MatrixStack());
++
++        	if (KeyboardHandler.Showing && !this.vrSettings.physicalKeyboard) {
++        		this.framebuffer = KeyboardHandler.Framebuffer;
++        		this.framebuffer.bindFramebuffer(true);
++        		this.gameRenderer.drawScreen(par1, KeyboardHandler.UI,new MatrixStack());
++        	}
++
++        	if (RadialHandler.isShowing()) {
++        		this.framebuffer = RadialHandler.Framebuffer;
++        		this.framebuffer.bindFramebuffer(true);
++        		this.gameRenderer.drawScreen(par1, RadialHandler.UI,new MatrixStack());
++        	}
++
++        	checkGLError("post 2d ");
++        	VRHotkeys.updateMovingThirdPersonCam();
++
++        	//
++        	this.profiler.endStartSection("sound");
++        	this.currentPass = RenderPass.CENTER;
++        	this.gameRenderer.getActiveRenderInfo().update(this.world, this.getRenderViewEntity(), false, false, par1);
++        	this.soundHandler.updateListener(gameRenderer.getActiveRenderInfo());
++        	this.profiler.endSection();
++
++        	this.profiler.startSection("render");
++
++        	if (!this.skipRenderWorld)
++        	{
++        		// VIVECRAFT RENDERING MAIN
++        		if (minecriftDebug)
++        			print("FrameIndex: " + frameIndex);
++
++        		List<RenderPass> passes = this.stereoProvider.getRenderPasses();
++
++        		/** Minecrift - main stereo render loop **/
++        		for (RenderPass pass : passes) {
++        			this.currentPass = pass;
++        			switch (pass) {
++        			case LEFT:
++        			case RIGHT:
++        				this.framebuffer = stereoProvider.framebufferVrRender;
++        				break;
++        			case CENTER:
++        				this.framebuffer = stereoProvider.framebufferUndistorted;
++        				break;
++        			case THIRD:
++        				this.framebuffer = stereoProvider.framebufferMR;
++        				break;
++        			case SCOPEL:
++        				this.framebuffer = stereoProvider.telescopeFramebufferL;
++        				break;
++        			case SCOPER:
++        				this.framebuffer = stereoProvider.telescopeFramebufferR;
++        				break;
++        			}
++
++        			this.profiler.startSection("Eye:" + currentPass.ordinal());
++        			this.profiler.startSection("setup");
++        			this.framebuffer.bindFramebuffer(true); // draw to main texture for every pass
++        			this.profiler.endSection();
++        			RenderSystem.loadIdentity();
++        			renderSingleView(pass.ordinal(), par1, renderWorldIn);
++        			this.profiler.endSection(); // eye
++
++        			if (grabScreenShot) {
++        				boolean inPass;
++        				if (passes.contains(RenderPass.CENTER)) {
++        					inPass = (pass == RenderPass.CENTER);
++        				} else {
++        					inPass = vrSettings.displayMirrorLeftEye ? (pass == RenderPass.LEFT) : (pass == RenderPass.RIGHT);
++        				}
++
++        				if (inPass) {
++        					this.framebuffer.unbindFramebuffer();
++        					// GLX.fbo = false; // huh?
++        					ScreenShotHelper.saveScreenshot(this.gameDir, this.framebuffer.framebufferWidth,
++        							this.framebuffer.framebufferHeight, this.framebuffer, (text) -> {
++        								// this.addScheduledTask(() -> {
++        								// this.ingameGUI.getChatGUI().printChatMessage(text);
++        								// });
++        							});
++        					// GLX.fbo = true; // what is this?
++        					grabScreenShot = false;
++        				}
++        			}
++        		} // end per eye rendering.
++
++        		// VIVECRAFT
++        		vrPlayer.postRender(par1);
++        		//
++
++        		profiler.startSection("Display/Reproject");
++        		try {
++        			this.stereoProvider.endFrame();
++        		} catch (Exception e) {
++        			LOGGER.error(e.toString());
++        		}
++        		profiler.endSection();
++
++        		checkGLError("post submit ");
++
++        		this.profiler.startSection("mirror");
++        		this.framebuffer.unbindFramebuffer(); // draw directly to window
++        		copyToMirror();
++        		drawNotifyMirror();
++        		checkGLError("post-mirror ");
++        		this.profiler.endSection();
++
++        		//// END MAIN VIVECRAFT RENDERING
++        	}
++
++        	/*
++        	 * /Vivecraft this.framebuffer.unbindFramebuffer(); GlStateManager.popMatrix();
++        	 * GlStateManager.pushMatrix();
++        	 * this.framebuffer.framebufferRender(this.mainWindow.getFramebufferWidth(),
++        	 * this.mainWindow.getFramebufferHeight()); GlStateManager.popMatrix();
++        	 * GlStateManager.pushMatrix();
++        	 * this.entityRenderer.renderStreamIndicator(this.timer.renderPartialTicks);
++        	 * GlStateManager.popMatrix(); this.mainWindow.update(true); Thread.yield();
++        	 * 
++        	 */
++
++        	this.getProfiler().endSection(); //render
++
++        	this.mainWindow.setRenderPhase("Post render");
++        	this.mainWindow.flipFrame();
++
++        	++this.fpsCounter;
++        	boolean flag = this.isSingleplayer() && (this.currentScreen != null && this.currentScreen.isPauseScreen() || this.loadingGui != null && this.loadingGui.isPauseScreen()) && !this.integratedServer.getPublic();
++
++        	if (this.isGamePaused != flag)
++        	{
++        		if (this.isGamePaused)
++        		{
++        			this.renderPartialTicksPaused = this.timer.renderPartialTicks;
++        		}
++        		else
++        		{
++        			this.timer.renderPartialTicks = this.renderPartialTicksPaused;
++        		}
++
++        		this.isGamePaused = flag;
++        	}
++
++        	long l = Util.nanoTime();
++        	this.frameTimer.addFrame(l - this.startNanoTime);
++        	this.startNanoTime = l;
++        	this.profiler.startSection("fpsUpdate");
++
++        	while (Util.milliTime() >= this.debugUpdateTime + 1000L)
++        	{
++        		debugFPS = this.fpsCounter;
++        		this.debug = String.format("%d fps T: %s%s%s%s B: %d", debugFPS, (double)this.gameSettings.framerateLimit == AbstractOption.FRAMERATE_LIMIT.getMaxValue() ? "inf" : this.gameSettings.framerateLimit, this.gameSettings.vsync ? " vsync" : "", this.gameSettings.field_238330_f_.toString(), this.gameSettings.cloudOption == CloudOption.OFF ? "" : (this.gameSettings.cloudOption == CloudOption.FAST ? " fast-clouds" : " fancy-clouds"), this.gameSettings.biomeBlendRadius);
++        		this.debugUpdateTime += 1000L;
++        		this.fpsCounter = 0;
++        		this.snooper.addMemoryStatsToSnooper();
++
++        		if (!this.snooper.isSnooperRunning())
++        		{
++        			this.snooper.start();
++        		}
++        	}
+ 
 -        if (!this.skipRenderWorld)
 -        {
 -            this.profiler.endStartSection("gameRenderer");
 -            this.gameRenderer.updateCameraAndRender(this.isGamePaused ? this.renderPartialTicksPaused : this.timer.renderPartialTicks, i, renderWorldIn);
 -            this.profiler.endStartSection("toasts");
--            this.toastGui.render();
+-            this.toastGui.func_238541_a_(new MatrixStack());
+-            this.profiler.endSection();
++        	this.profiler.endSection();
+         }
+ 
+-        if (this.field_238174_aV_ != null)
+-        {
+-            this.profiler.startSection("fpsPie");
+-            this.func_238183_a_(new MatrixStack(), this.field_238174_aV_);
 -            this.profiler.endSection();
 -        }
 -
--        this.profiler.endTick();
--
--        if (this.gameSettings.showDebugInfo && this.gameSettings.showDebugProfilerChart && !this.gameSettings.hideGUI)
--        {
--            this.profiler.getFixedProfiler().enable();
--            this.drawProfiler();
--        }
--        else
--        {
--            this.profiler.getFixedProfiler().disable();
--        }
--
+-        this.profiler.startSection("blit");
 -        this.framebuffer.unbindFramebuffer();
 -        RenderSystem.popMatrix();
 -        RenderSystem.pushMatrix();
 -        this.framebuffer.framebufferRender(this.mainWindow.getFramebufferWidth(), this.mainWindow.getFramebufferHeight());
 -        RenderSystem.popMatrix();
--        this.profiler.startTick();
--        this.profiler.startSection("updateDisplay");
+-        this.profiler.endStartSection("updateDisplay");
 -        this.mainWindow.flipFrame();
--        int l = this.getFramerateLimit();
+-        int i1 = this.getFramerateLimit();
 -
--        if ((double)l < AbstractOption.FRAMERATE_LIMIT.getMaxValue())
+-        if ((double)i1 < AbstractOption.FRAMERATE_LIMIT.getMaxValue())
 -        {
--            RenderSystem.limitDisplayFPS(l);
+-            RenderSystem.limitDisplayFPS(i1);
 -        }
 -
 -        this.profiler.endStartSection("yield");
@@ -921,14 +904,15 @@
 -            this.isGamePaused = flag;
 -        }
 -
--        long k = Util.nanoTime();
--        this.frameTimer.addFrame(k - this.startNanoTime);
--        this.startNanoTime = k;
+-        long l = Util.nanoTime();
+-        this.frameTimer.addFrame(l - this.startNanoTime);
+-        this.startNanoTime = l;
+-        this.profiler.startSection("fpsUpdate");
 -
 -        while (Util.milliTime() >= this.debugUpdateTime + 1000L)
 -        {
 -            debugFPS = this.fpsCounter;
--            this.debug = String.format("%d fps T: %s%s%s%s B: %d", debugFPS, (double)this.gameSettings.framerateLimit == AbstractOption.FRAMERATE_LIMIT.getMaxValue() ? "inf" : this.gameSettings.framerateLimit, this.gameSettings.vsync ? " vsync" : "", this.gameSettings.fancyGraphics ? "" : " fast", this.gameSettings.cloudOption == CloudOption.OFF ? "" : (this.gameSettings.cloudOption == CloudOption.FAST ? " fast-clouds" : " fancy-clouds"), this.gameSettings.biomeBlendRadius);
+-            this.debug = String.format("%d fps T: %s%s%s%s B: %d", debugFPS, (double)this.gameSettings.framerateLimit == AbstractOption.FRAMERATE_LIMIT.getMaxValue() ? "inf" : this.gameSettings.framerateLimit, this.gameSettings.vsync ? " vsync" : "", this.gameSettings.field_238330_f_.toString(), this.gameSettings.cloudOption == CloudOption.OFF ? "" : (this.gameSettings.cloudOption == CloudOption.FAST ? " fast-clouds" : " fancy-clouds"), this.gameSettings.biomeBlendRadius);
 -            this.debugUpdateTime += 1000L;
 -            this.fpsCounter = 0;
 -            this.snooper.addMemoryStatsToSnooper();
@@ -939,319 +923,13 @@
 -            }
 -        }
 -
--        this.profiler.endTick();
-+    { 	
-+    	this.mainWindow.setRenderPhase("Pre render");
-+    	long i = Util.nanoTime();
-+    	this.profiler.startTick();
-+
-+    	if (this.mainWindow.shouldClose())
-+    	{
-+    		this.shutdown();
-+    	}
-+
-+    	if (this.futureRefreshResources != null && !(this.loadingGui instanceof ResourceLoadProgressGui))
-+    	{
-+    		CompletableFuture<Void> completablefuture = this.futureRefreshResources;
-+    		this.futureRefreshResources = null;
-+    		this.reloadResources().thenRun(() ->
-+    		{
-+    			completablefuture.complete((Void)null);
-+    		});
-+    	}
-+
-+    	Runnable runnable;
-+
-+    	while ((runnable = this.queueChunkTracking.poll()) != null)
-+    	{
-+    		runnable.run();
-+    	}
-+
-+    	if (renderWorldIn)
-+    	{
-+    		this.timer.updateTimer(Util.milliTime());
-+    		this.profiler.startSection("scheduledExecutables");
-+    		this.drainTasks();
-+    		this.profiler.endSection();
-+    	}
-+
-+    	{// Vivecraft
-+    		this.frameDelta = (i - this.prevFrameTime) / 1000000000F;
-+    		this.prevFrameTime = i;
-+    		// avoid having to change GLX
-+    		gameSettings.ofFastRender = false;
-+    	}
-+    	
-+    	/** MINECRIFT */ // setup the display, render buffers, shaders etc.
-+    	this.frameIndex++;
-+
-+    	try {
-+    		stereoProvider.setupRenderConfiguration();
-+    	} catch (RenderConfigException e) {
-+    		this.currentScreen = null;		
-+    		GlStateManager.viewport(0, 0, mainWindow.getWidth(), mainWindow.getHeight());
-+    		if (loadingGui != null) {
-+        		RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
-+        		RenderSystem.matrixMode(5889);
-+        		RenderSystem.loadIdentity();
-+        		RenderSystem.ortho(0.0D, (double)mainWindow.getWidth() / mainWindow.getGuiScaleFactor(), (double)mainWindow.getHeight() / mainWindow.getGuiScaleFactor(), 0.0D, 1000.0D, 3000.0D);
-+        		RenderSystem.matrixMode(5888);
-+        		RenderSystem.loadIdentity();
-+        		RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
-+        		RenderHelper.setupGui3DDiffuseLighting();
-+    			loadingGui.render(0, 0, 0);
-+    		} else {
-+    			notifyMirror("Render Setup Failed " + e.error, true, 10000);
-+    			drawNotifyMirror();
-+    			if (this.frameIndex % 300 == 0)
-+    				System.out.println(e.title + " " + e.error);
-+    			try {
-+    				Thread.sleep(10);
-+    			} catch (InterruptedException e1) {
-+    			}
-+    		}		
-+    		mainWindow.flipFrame();
-+    		return;
-+    	} catch (Exception e) {
-+    		e.printStackTrace();
-+    	}
-+    	/** END MINECRIFT */
-+
-+    	// VIVECRAFT
-+    	this.profiler.startSection("VR Poll/VSync");
-+    	// Poll sensors
-+    	MCOpenVR.poll(frameIndex);
-+    	this.profiler.endSection();
-+
-+    	vrPlayer.postPoll();
-+    	this.profiler.startSection("tick");
-+
-+    	if (renderWorldIn)
-+    	{
-+    		for (int j = 0; j < Math.min(10, this.timer.elapsedTicks); ++j)
-+    		{
-+    			// VIVECRAFT
-+    			vrPlayer.preTick();
-+    			//
-+    			this.runTick();
-+    			// VIVECRAFT
-+    			vrPlayer.postTick();
-+    			//
-+    		}
-+    	}
-+
-+    	this.profiler.endStartSection("setupRenderConfiguration");
-+	    	this.mouseHelper.updatePlayerLook();
-+	    	this.mainWindow.setRenderPhase("Render");
-+	   
-+	    	// VIVECRAFT - Check again in case something changed during Tick.
-+	    	try {
-+	    		checkGLError("pre render setup ");
-+	    		stereoProvider.setupRenderConfiguration();
-+	    		checkGLError("post render setup ");
-+	    	} catch (Exception e) {
-+	    		e.printStackTrace();
-+	    	}
-+	    	//
-+	    	
-+	    	// Vivecraft
-+	    	float par1 = this.isGamePaused ? this.renderPartialTicksPaused : this.timer.renderPartialTicks;
-+
-+    	this.profiler.endStartSection("preRender"); 	
-+	    	vrPlayer.preRender(par1);
-+	       	/* Vivecraft
-+	        RenderSystem.pushMatrix();
-+	        RenderSystem.clear(16640, IS_RUNNING_ON_MAC);
-+	        this.framebuffer.bindFramebuffer(true);
-+	        this.profiler.startSection("display");
-+	        this.profiler.endSection();
-+	    	 */   	
-+	        FogRenderer.resetFog();
-+	        RenderSystem.enableTexture();     
-+    	this.profiler.endSection();
-+
-+    	this.profiler.startSection("Gui");
-+    		this.currentPass = RenderPass.GUI;
-+	    	GlStateManager.depthMask(true);
-+	    	GlStateManager.colorMask(true, true, true, true);
-+	
-+	    	// Render GUI to FBO if necessary
-+	    	this.framebuffer = GuiHandler.guiFramebuffer; // draw to 2d gui.
-+	    	this.framebuffer.bindFramebuffer(true);
-+	
-+	    	this.gameRenderer.drawFramebufferNEW(par1, renderWorldIn); // VIVE - added param for debug info
-+	
-+	    	if (KeyboardHandler.Showing && !this.vrSettings.physicalKeyboard) {
-+	    		this.framebuffer = KeyboardHandler.Framebuffer;
-+	    		this.framebuffer.bindFramebuffer(true);
-+	    		this.gameRenderer.drawScreen(par1, KeyboardHandler.UI);
-+	    	}
-+	
-+	    	if (RadialHandler.isShowing()) {
-+	    		this.framebuffer = RadialHandler.Framebuffer;
-+	    		this.framebuffer.bindFramebuffer(true);
-+	    		this.gameRenderer.drawScreen(par1, RadialHandler.UI);
-+	    	}
-+	
-+	    	checkGLError("post 2d ");
-+	    	VRHotkeys.updateMovingThirdPersonCam();
-+
-+	    	//
-+    	this.profiler.endStartSection("sound");
-+    		this.currentPass = RenderPass.CENTER;
-+        	this.gameRenderer.getActiveRenderInfo().update(this.world, this.getRenderViewEntity(), false, false, par1);
-+    		this.soundHandler.updateListener(gameRenderer.getActiveRenderInfo());
-+    	this.profiler.endSection();
-+    	
-+       	this.profiler.startSection("render");
-+          
-+    	if (!this.skipRenderWorld)
-+    	{
-+    		// VIVECRAFT RENDERING MAIN
-+    		if (minecriftDebug)
-+    			print("FrameIndex: " + frameIndex);
-+
-+    		List<RenderPass> passes = this.stereoProvider.getRenderPasses();
-+  		   		
-+    		/** Minecrift - main stereo render loop **/
-+    		for (RenderPass pass : passes) {
-+    			this.currentPass = pass;
-+    			switch (pass) {
-+    			case LEFT:
-+    			case RIGHT:
-+    				this.framebuffer = stereoProvider.framebufferVrRender;
-+    				break;
-+    			case CENTER:
-+    				this.framebuffer = stereoProvider.framebufferUndistorted;
-+    				break;
-+    			case THIRD:
-+    				this.framebuffer = stereoProvider.framebufferMR;
-+    				break;
-+    			case SCOPEL:
-+    				this.framebuffer = stereoProvider.telescopeFramebufferL;
-+    				break;
-+    			case SCOPER:
-+					this.framebuffer = stereoProvider.telescopeFramebufferR;
-+    				break;
-+    			}
-+
-+    			this.profiler.startSection("Eye:" + currentPass.ordinal());
-+    			this.profiler.startSection("setup");
-+    			this.framebuffer.bindFramebuffer(true); // draw to main texture for every pass
-+    			this.profiler.endSection();
-+    			RenderSystem.loadIdentity();
-+    			renderSingleView(pass.ordinal(), par1, renderWorldIn);
-+    			this.profiler.endSection(); // eye
-+
-+    			if (grabScreenShot) {
-+    				boolean inPass;
-+    				if (passes.contains(RenderPass.CENTER)) {
-+    					inPass = (pass == RenderPass.CENTER);
-+    				} else {
-+    					inPass = vrSettings.displayMirrorLeftEye ? (pass == RenderPass.LEFT) : (pass == RenderPass.RIGHT);
-+    				}
-+
-+    				if (inPass) {
-+    					this.framebuffer.unbindFramebuffer();
-+    					// GLX.fbo = false; // huh?
-+    					ScreenShotHelper.saveScreenshot(this.gameDir, this.framebuffer.framebufferWidth,
-+    							this.framebuffer.framebufferHeight, this.framebuffer, (text) -> {
-+    								// this.addScheduledTask(() -> {
-+    								// this.ingameGUI.getChatGUI().printChatMessage(text);
-+    								// });
-+    							});
-+    					// GLX.fbo = true; // what is this?
-+    					grabScreenShot = false;
-+    				}
-+    			}
-+    		} // end per eye rendering.
-+   		
-+    		// VIVECRAFT
-+    		vrPlayer.postRender(par1);
-+    		//
-+
-+    		profiler.startSection("Display/Reproject");
-+    		try {
-+    			this.stereoProvider.endFrame();
-+    		} catch (Exception e) {
-+    			LOGGER.error(e.toString());
-+    		}
-+    		profiler.endSection();
-+
-+    		checkGLError("post submit ");
-+
-+    		this.profiler.startSection("mirror");
-+    		this.framebuffer.unbindFramebuffer(); // draw directly to window
-+    		copyToMirror();
-+    		drawNotifyMirror();
-+    		checkGLError("post-mirror ");
-+    		this.profiler.endSection();
-+    		    		
-+    		//// END MAIN VIVECRAFT RENDERING
-+    	}
-+
-+    	/*
-+    	 * /Vivecraft this.framebuffer.unbindFramebuffer(); GlStateManager.popMatrix();
-+    	 * GlStateManager.pushMatrix();
-+    	 * this.framebuffer.framebufferRender(this.mainWindow.getFramebufferWidth(),
-+    	 * this.mainWindow.getFramebufferHeight()); GlStateManager.popMatrix();
-+    	 * GlStateManager.pushMatrix();
-+    	 * this.entityRenderer.renderStreamIndicator(this.timer.renderPartialTicks);
-+    	 * GlStateManager.popMatrix(); this.mainWindow.update(true); Thread.yield();
-+    	 * 
-+    	 */
-+    	
-+    	this.getProfiler().endSection(); //render
-+    	
-+    	this.mainWindow.setRenderPhase("Post render");
-+    	this.mainWindow.flipFrame();
-+
-+    	++this.fpsCounter;
-+    	boolean flag = this.isSingleplayer() && (this.currentScreen != null && this.currentScreen.isPauseScreen() || this.loadingGui != null && this.loadingGui.isPauseScreen()) && !this.integratedServer.getPublic();
-+
-+    	if (this.isGamePaused != flag)
-+    	{
-+    		if (this.isGamePaused)
-+    		{
-+    			this.renderPartialTicksPaused = this.timer.renderPartialTicks;
-+    		}
-+    		else
-+    		{
-+    			this.timer.renderPartialTicks = this.renderPartialTicksPaused;
-+    		}
-+
-+    		this.isGamePaused = flag;
-+    	}
-+
-+    	long k = Util.nanoTime();
-+    	this.frameTimer.addFrame(k - this.startNanoTime);
-+    	this.startNanoTime = k;
-+
-+    	while (Util.milliTime() >= this.debugUpdateTime + 1000L)
-+    	{
-+    		debugFPS = this.fpsCounter;
-+    		this.debug = String.format("%d fps T: %s%s%s%s B: %d", debugFPS, (double)this.gameSettings.framerateLimit == AbstractOption.FRAMERATE_LIMIT.getMaxValue() ? "inf" : this.gameSettings.framerateLimit, this.gameSettings.vsync ? " vsync" : "", this.gameSettings.fancyGraphics ? "" : " fast", this.gameSettings.cloudOption == CloudOption.OFF ? "" : (this.gameSettings.cloudOption == CloudOption.FAST ? " fast-clouds" : " fancy-clouds"), this.gameSettings.biomeBlendRadius);
-+    		this.debugUpdateTime += 1000L;
-+    		this.fpsCounter = 0;
-+    		this.snooper.addMemoryStatsToSnooper();
-+
-+    		if (!this.snooper.isSnooperRunning())
-+    		{
-+    			this.snooper.start();
-+    		}
-+    	}
-+
-+    	this.profiler.endTick();
-+
-+    	if (this.gameSettings.showDebugProfilerChart && !this.gameSettings.hideGUI) {
-+    		this.profiler.getFixedProfiler().enable();
-+    	} else {
-+    		this.profiler.getFixedProfiler().disable();
-+    	}
-     }
- 
-     public void updateWindowSize()
-@@ -1143,14 +1568,14 @@
+-        this.profiler.endSection();
+-    }
+-
+     private boolean func_238202_aF_()
+     {
+         return this.gameSettings.showDebugInfo && this.gameSettings.showDebugProfilerChart && !this.gameSettings.hideGUI;
+@@ -1206,14 +1625,14 @@
          int i = this.mainWindow.calcGuiScale(this.gameSettings.guiScale, this.getForceUnicodeFont());
          this.mainWindow.setGuiScale((double)i);
  
@@ -1269,40 +947,100 @@
          this.mouseHelper.setIgnoreFirstMove();
      }
  
-@@ -1228,7 +1653,7 @@
+@@ -1295,8 +1714,17 @@
+             }
          }
      }
++    
++    public void drawProfiler(){
++      if (this.field_238174_aV_ != null)
++        {
++            this.profiler.startSection("fpsPie");
++            this.drawProfiler(new MatrixStack(), this.field_238174_aV_);
++            this.profiler.endSection();
++        }
++    }
  
--    private void drawProfiler()
-+    public void drawProfiler()
+-    private void func_238183_a_(MatrixStack p_238183_1_, IProfileResult p_238183_2_)
++    public void drawProfiler(MatrixStack p_238183_1_, IProfileResult p_238183_2_)
      {
-         if (this.profiler.getFixedProfiler().isEnabled())
-         {
-@@ -1247,14 +1672,15 @@
-             Tessellator tessellator = Tessellator.getInstance();
-             BufferBuilder bufferbuilder = tessellator.getBuffer();
-             int i = 160;
--            int j = this.mainWindow.getFramebufferWidth() - 160 - 10;
--            int k = this.mainWindow.getFramebufferHeight() - 320;
+         List<DataPoint> list = p_238183_2_.getDataPoints(this.debugProfilerName);
+         DataPoint datapoint = list.remove(0);
+@@ -1312,14 +1740,15 @@
+         Tessellator tessellator = Tessellator.getInstance();
+         BufferBuilder bufferbuilder = tessellator.getBuffer();
+         int i = 160;
+-        int j = this.mainWindow.getFramebufferWidth() - 160 - 10;
+-        int k = this.mainWindow.getFramebufferHeight() - 320;
 +            int j = this.mainWindow.getFramebufferWidth()/3;
 +            int k = this.mainWindow.getFramebufferHeight()/9;
-             RenderSystem.enableBlend();
+         RenderSystem.enableBlend();
 +            RenderSystem.scaled(2.2, 2.7, 1);
-             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
-             bufferbuilder.pos((double)((float)j - 176.0F), (double)((float)k - 96.0F - 16.0F), 0.0D).color(200, 0, 0, 0).endVertex();
-             bufferbuilder.pos((double)((float)j - 176.0F), (double)(k + 320), 0.0D).color(200, 0, 0, 0).endVertex();
-             bufferbuilder.pos((double)((float)j + 176.0F), (double)(k + 320), 0.0D).color(200, 0, 0, 0).endVertex();
--            bufferbuilder.pos((double)((float)j + 176.0F), (double)((float)k - 96.0F - 16.0F), 0.0D).color(200, 0, 0, 0).endVertex();
+         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+         bufferbuilder.pos((double)((float)j - 176.0F), (double)((float)k - 96.0F - 16.0F), 0.0D).color(200, 0, 0, 0).endVertex();
+         bufferbuilder.pos((double)((float)j - 176.0F), (double)(k + 320), 0.0D).color(200, 0, 0, 0).endVertex();
+         bufferbuilder.pos((double)((float)j + 176.0F), (double)(k + 320), 0.0D).color(200, 0, 0, 0).endVertex();
+-        bufferbuilder.pos((double)((float)j + 176.0F), (double)((float)k - 96.0F - 16.0F), 0.0D).color(200, 0, 0, 0).endVertex();
 +            bufferbuilder.pos((double)((float)j + 4*176.0F), (double)((float)k - 96.0F - 16.0F), 0.0D).color(200, 0, 0, 0).endVertex();
-             tessellator.draw();
-             RenderSystem.disableBlend();
-             double d0 = 0.0D;
-@@ -1388,19 +1814,43 @@
-                 BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
-                 BlockPos blockpos = blockraytraceresult.getPos();
+         tessellator.draw();
+         RenderSystem.disableBlend();
+         double d0 = 0.0D;
+@@ -1383,9 +1812,9 @@
+         }
  
+         int k2 = 16777215;
+-        this.fontRenderer.func_238405_a_(p_238183_1_, s1, (float)(j - 160), (float)(k - 80 - 16), 16777215);
++            this.fontRenderer.drawStringWithShadow(s1, (float)(j - 160), (float)(k - 80 - 16), 16777215);
+         s1 = decimalformat.format(datapoint.rootRelTime) + "%";
+-        this.fontRenderer.func_238405_a_(p_238183_1_, s1, (float)(j + 160 - this.fontRenderer.getStringWidth(s1)), (float)(k - 80 - 16), 16777215);
++            this.fontRenderer.drawStringWithShadow(s1, (float)(j + 160 - this.fontRenderer.getStringWidth(s1)), (float)(k - 80 - 16), 16777215);
+ 
+         for (int j2 = 0; j2 < list.size(); ++j2)
+         {
+@@ -1440,34 +1869,54 @@
+ 
+     private void sendClickBlockToController(boolean leftClick)
+     {
+-        if (!leftClick)
+-        {
+-            this.leftClickCounter = 0;
+-        }
+-
+-        if (this.leftClickCounter <= 0 && !this.player.isHandActive())
+-        {
+-            if (leftClick && this.objectMouseOver != null && this.objectMouseOver.getType() == RayTraceResult.Type.BLOCK)
+-            {
+-                BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
+-                BlockPos blockpos = blockraytraceresult.getPos();
+-
 -                if (!this.world.getBlockState(blockpos).isAir())
 -                {
+-                    Direction direction = blockraytraceresult.getFace();
+-
+-                    if (this.playerController.onPlayerDamageBlock(blockpos, direction))
+-                    {
+-                        this.particles.addBlockHitEffects(blockpos, direction);
+-                        this.player.swingArm(Hand.MAIN_HAND);
+-                    }
+-                }
+-            }
+-            else
+-            {
+-                this.playerController.resetBlockRemoving();
+-            }
+-        }
++    	if (!leftClick)
++    	{
++    		this.leftClickCounter = 0;
++    	}
++
++    	if (this.leftClickCounter <= 0 && !this.player.isHandActive())
++    	{
++    		if (leftClick && this.objectMouseOver != null && this.objectMouseOver.getType() == RayTraceResult.Type.BLOCK)
++    		{
++    			BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
++    			BlockPos blockpos = blockraytraceresult.getPos();
++
 +    			Object inputEvent = null;
 +    			if (!this.world.isAirBlock(blockpos)) {
 +    				//Forge
@@ -1310,45 +1048,39 @@
 +    				if (inputEvent !=null && Reflector.callBoolean(inputEvent,  Reflector.Event_isCanceled)) {
 +    					if (Reflector.callBoolean(inputEvent, Reflector.ClickInputEvent_shouldSwingHand)) {
 +    						this.particles.addBlockHitEffects(blockpos, blockraytraceresult);
-+    						this.player.swingArm(Hand.MAIN_HAND);
++    						this.player.swingArm(Hand.MAIN_HAND, VRFirstPersonArmSwing.Attack);        			
 +    					}
 +    					return;
 +    				}
 +    				//
-                     Direction direction = blockraytraceresult.getFace();
- 
-                     if (this.playerController.onPlayerDamageBlock(blockpos, direction))
-                     {
-                         this.particles.addBlockHitEffects(blockpos, direction);
--                        this.player.swingArm(Hand.MAIN_HAND);
-+                        //Vivecraft this is here to keep the animation going while holding down attack.
-+                        this.player.swingArm(Hand.MAIN_HAND, VRFirstPersonArmSwing.Attack);
-                     }
--                }
--            }
--            else
--            {
-+    				//Forge
-+    				if(inputEvent != null) {
-+    					if (Reflector.callBoolean(inputEvent, Reflector.ClickInputEvent_shouldSwingHand)) {
-+    						this.particles.addBlockHitEffects(blockpos, blockraytraceresult);
-+    						this.player.swingArm(Hand.MAIN_HAND);
-+                }
-+            //Vivecraft seated check
-+			} else if (vrSettings.seated) {
-+			//
-+    				} else {
-+    					this.particles.addBlockHitEffects(blockpos, direction);
-+    					this.player.swingArm(Hand.MAIN_HAND);
++    				Direction direction = blockraytraceresult.getFace();
++
++    				if (this.playerController.onPlayerDamageBlock(blockpos, direction))
++    				{
++    					//Forge
++    					if(inputEvent != null) {
++    						if (Reflector.callBoolean(inputEvent, Reflector.ClickInputEvent_shouldSwingHand)) {
++    							this.particles.addBlockHitEffects(blockpos, blockraytraceresult);
++    							this.player.swingArm(Hand.MAIN_HAND, VRFirstPersonArmSwing.Attack);
++    						}
++    					} else {
++    						this.particles.addBlockHitEffects(blockpos, direction);
++    						this.player.swingArm(Hand.MAIN_HAND, VRFirstPersonArmSwing.Attack);        			
++    					}
 +    				}
 +    			}
 +    		}
-+    		else
++    		//Vivecraft only if seated
++    		else if (vrSettings.seated)
++   			//
 +    		{
-                 this.playerController.resetBlockRemoving();
-             }
-         }
-@@ -1421,6 +1871,12 @@
++    			this.playerController.resetBlockRemoving();
++    		}
++    	}
+     }
+ 
+     private void clickMouse()
+@@ -1485,6 +1934,12 @@
              }
              else if (!this.player.isRowingBoat())
              {
@@ -1361,7 +1093,7 @@
                  switch (this.objectMouseOver.getType())
                  {
                      case ENTITY:
-@@ -1431,7 +1887,7 @@
+@@ -1495,7 +1950,7 @@
                          BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
                          BlockPos blockpos = blockraytraceresult.getPos();
  
@@ -1370,7 +1102,7 @@
                          {
                              this.playerController.clickBlock(blockpos, blockraytraceresult.getFace());
                              break;
-@@ -1442,103 +1898,139 @@
+@@ -1506,103 +1961,139 @@
                          {
                              this.leftClickCounter = 10;
                          }
@@ -1606,7 +1338,7 @@
      }
  
      public MusicTicker getMusicTicker()
-@@ -1548,12 +2040,17 @@
+@@ -1612,12 +2103,17 @@
  
      public void runTick()
      {
@@ -1626,7 +1358,7 @@
  
          if (!this.isGamePaused)
          {
-@@ -1561,7 +2058,7 @@
+@@ -1625,7 +2121,7 @@
          }
  
          this.profiler.endSection();
@@ -1635,7 +1367,7 @@
          this.tutorial.onMouseHover(this.world, this.objectMouseOver);
          this.profiler.startSection("gameMode");
  
-@@ -1572,10 +2069,11 @@
+@@ -1636,10 +2132,11 @@
  
          this.profiler.endStartSection("textures");
  
@@ -1650,7 +1382,7 @@
  
          if (this.currentScreen == null && this.player != null)
          {
-@@ -1593,6 +2091,7 @@
+@@ -1657,6 +2154,7 @@
              this.displayGuiScreen((Screen)null);
          }
  
@@ -1658,7 +1390,7 @@
          if (this.currentScreen != null)
          {
              this.leftClickCounter = 10000;
-@@ -1610,6 +2109,11 @@
+@@ -1674,6 +2172,11 @@
          {
              this.ingameGUI.reset();
          }
@@ -1670,7 +1402,7 @@
  
          if (this.loadingGui == null && (this.currentScreen == null || this.currentScreen.passEvents))
          {
-@@ -1622,8 +2126,27 @@
+@@ -1686,8 +2189,27 @@
              }
          }
  
@@ -1700,7 +1432,7 @@
              this.profiler.endStartSection("gameRenderer");
  
              if (!this.isGamePaused)
-@@ -1649,14 +2172,23 @@
+@@ -1713,14 +2235,20 @@
  
                  this.world.tickEntities();
              }
@@ -1714,19 +1446,16 @@
 -        if (!this.isGamePaused)
 -        {
 +		// Vivecraft
-+		if (this.menuWorldRenderer != null)
-+			this.menuWorldRenderer.tick();
++//		if (this.menuWorldRenderer != null)
++//			this.menuWorldRenderer.tick();
 +		PlayerModelController.getInstance().tick();
 +		//
 +		
-+        //lol dont pause this while in the menu.
-+		AutoCalibration.logHeadPos(MCOpenVR.hmdPivotHistory.latest());
-+
 +		if (!this.isGamePaused) {
              this.musicTicker.tick();
          }
  
-@@ -1717,27 +2249,32 @@
+@@ -1780,27 +2308,32 @@
          this.profiler.endStartSection("keyboard");
          this.keyboardListener.tick();
          this.profiler.endSection();
@@ -1780,9 +1509,9 @@
          }
  
          while (this.gameSettings.keyBindSmoothCamera.isPressed())
-@@ -1797,7 +2334,9 @@
+@@ -1860,7 +2393,9 @@
          {
-             if (!this.player.isSpectator() && this.player.func_225609_n_(Screen.hasControlDown()))
+             if (!this.player.isSpectator() && this.player.drop(Screen.hasControlDown()))
              {
 -                this.player.swingArm(Hand.MAIN_HAND);
 +            	//Vivecraft - thow anim?
@@ -1791,16 +1520,16 @@
              }
          }
  
-@@ -1805,7 +2344,7 @@
+@@ -1868,7 +2403,7 @@
  
          if (flag2)
          {
 -            while (this.gameSettings.keyBindChat.isPressed())
 +   			if (this.currentScreen == null && this.gameSettings.keyBindChat.isPressed())
              {
-                 this.displayGuiScreen(new ChatScreen(""));
+                 this.func_238207_b_("");
              }
-@@ -1816,11 +2355,13 @@
+@@ -1879,11 +2414,13 @@
              }
          }
  
@@ -1819,7 +1548,7 @@
              }
  
              while (this.gameSettings.keyBindAttack.isPressed())
-@@ -1840,10 +2381,18 @@
+@@ -1900,10 +2437,18 @@
          }
          else
          {
@@ -1841,7 +1570,7 @@
  
              while (this.gameSettings.keyBindUseItem.isPressed())
              {
-@@ -1861,7 +2410,7 @@
+@@ -1921,7 +2466,7 @@
              this.rightClickMouse();
          }
  
@@ -1849,11 +1578,11 @@
 +		this.sendClickBlockToController(this.currentScreen == null && this.gameSettings.keyBindAttack.isKeyDown());
      }
  
-     public void launchIntegratedServer(String folderName, String worldName, @Nullable WorldSettings worldSettingsIn)
-@@ -1921,6 +2470,14 @@
+     public static DatapackCodec func_238180_a_(SaveFormat.LevelSave p_238180_0_)
+@@ -2066,6 +2611,13 @@
  
-         while (!this.integratedServer.serverIsInRunLoop())
-         {
+             while (!this.integratedServer.serverIsInRunLoop())
+             {
 +        	//Forge
 +            if ((Reflector.fml_StartupQuery_check.exists() && !Reflector.callBoolean(Reflector.fml_StartupQuery_check)) || this.integratedServer.isServerStopped()) {
 +                this.displayGuiScreen(null);
@@ -1861,15 +1590,13 @@
 +             } else if (this.currentScreen == null) // if we're showing nothing, put the working screen back again
 +               this.displayGuiScreen(worldloadprogressscreen);
 +            //
-+            
-             worldloadprogressscreen.tick();
-             this.runGameLoop(false);
+                 worldloadprogressscreen.tick();
+                 this.runGameLoop(false);
  
-@@ -1946,12 +2503,26 @@
-         {
-         }));
-         networkmanager.sendPacket(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
--        networkmanager.sendPacket(new CLoginStartPacket(this.getSession().getProfile()));
+@@ -2091,6 +2643,13 @@
+             {
+             }));
+             networkmanager.sendPacket(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
 +        //Forge
 +        com.mojang.authlib.GameProfile gameProfile = this.getSession().getProfile();
 +        if((Reflector.ForgeSession_hasCachedProperties.exists() && !Reflector.callBoolean(this.getSession(),Reflector.ForgeSession_hasCachedProperties))) {
@@ -1877,9 +1604,10 @@
 +           Reflector.call(this.getSession(), Reflector.ForgeSession_setProperties, gameProfile.getProperties());
 +        }
 +        //
-+        networkmanager.sendPacket(new CLoginStartPacket(gameProfile));
-         this.networkManager = networkmanager;
-     }
+             networkmanager.sendPacket(new CLoginStartPacket(this.getSession().getProfile()));
+             this.networkManager = networkmanager;
+         }
+@@ -2189,6 +2748,13 @@
  
      public void loadWorld(ClientWorld worldClientIn)
      {
@@ -1893,7 +1621,7 @@
          WorkingScreen workingscreen = new WorkingScreen();
          workingscreen.displaySavingString(new TranslationTextComponent("connect.joining"));
          this.updateScreenTick(workingscreen);
-@@ -1988,12 +2559,18 @@
+@@ -2225,12 +2791,18 @@
          IntegratedServer integratedserver = this.integratedServer;
          this.integratedServer = null;
          this.gameRenderer.resetData();
@@ -1911,8 +1639,8 @@
 +            //
              if (integratedserver != null)
              {
-                 while (!integratedserver.isThreadAlive())
-@@ -2006,6 +2583,9 @@
+                 this.profiler.startSection("waitForServer");
+@@ -2247,6 +2819,9 @@
              this.ingameGUI.resetPlayersOverlayFooterHeader();
              this.currentServerData = null;
              this.integratedServerIsRunning = false;
@@ -1922,7 +1650,7 @@
              this.game.leaveGameSession();
          }
  
-@@ -2030,6 +2610,9 @@
+@@ -2280,6 +2855,9 @@
          this.particles.clearEffects(worldIn);
          TileEntityRendererDispatcher.instance.setWorld(worldIn);
          this.func_230150_b_();
@@ -1931,8 +1659,8 @@
 +        //
      }
  
-     public final boolean isDemo()
-@@ -2062,6 +2645,16 @@
+     public boolean func_238216_r_()
+@@ -2339,6 +2917,16 @@
      {
          if (this.objectMouseOver != null && this.objectMouseOver.getType() != RayTraceResult.Type.MISS)
          {
@@ -1949,7 +1677,7 @@
              boolean flag = this.player.abilities.isCreativeMode;
              TileEntity tileentity = null;
              RayTraceResult.Type raytraceresult$type = this.objectMouseOver.getType();
-@@ -2223,6 +2816,8 @@
+@@ -2500,6 +3088,8 @@
                  }
              }
          }
@@ -1958,34 +1686,24 @@
      }
  
      private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
-@@ -2488,6 +3083,10 @@
- 
-     public MusicTicker.MusicType getAmbientMusicType()
-     {
-+    	//Forge
-+        MusicTicker.MusicType type = this.world == null || this.world.dimension == null ? null : (MusicTicker.MusicType)Reflector.call(this.world.dimension, Reflector.Dimension_getMusicType);
-+        if (type != null) return type;
-+        //
-         if (this.currentScreen instanceof WinGameScreen)
-         {
-             return MusicTicker.MusicType.CREDITS;
-@@ -2716,8 +3315,12 @@
+@@ -2997,8 +3587,12 @@
          {
              supplier = wrapV4(supplier);
          }
 -
+-        return new ClientResourcePackInfo(name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority, p_228011_6_);
 +    	//Forge
 +    	if(Reflector.IForgeIResourcePack_isHidden.exists())
 +    		return (ClientResourcePackInfo) Reflector.newInstance(Reflector.ClientResourcePackInfo_Constructor, name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority, Reflector.callBoolean(p_228011_3_,Reflector.IForgeIResourcePack_isHidden));   				
 +    	else 
-         return new ClientResourcePackInfo(name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority);
++            return new ClientResourcePackInfo(name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority, p_228011_6_);
 +    	//
      }
  
      private static Supplier<IResourcePack> wrapV3(Supplier<IResourcePack> p_228021_0_)
-@@ -2740,4 +3343,501 @@
-     {
-         this.modelManager.setMaxMipmapLevel(p_228020_1_);
+@@ -3063,4 +3657,506 @@
+         CREATE,
+         BACKUP;
      }
 +
 +	// VIVECRAFT ADDITIONS
@@ -2089,7 +1807,7 @@
 +
 +		Vec3d camplayer = vrPlayer.vrdata_room_pre.getHeadPivot().subtract(vrPlayer.vrdata_room_pre.getEye(RenderPass.THIRD).getPosition());	
 +
-+		net.minecraft.client.renderer.Matrix4f viewMatrix = vrPlayer.vrdata_room_pre.getEye(RenderPass.THIRD).getMatrix().transposed().toMCMatrix();
++		net.minecraft.util.math.vector.Matrix4f viewMatrix = vrPlayer.vrdata_room_pre.getEye(RenderPass.THIRD).getMatrix().transposed().toMCMatrix();
 +		Vector3 CameraLook = vrPlayer.vrdata_room_pre.getEye(RenderPass.THIRD).getMatrix().transform(Vector3.forward());
 +		
 +		GlStateManager.useProgram(VRShaders._DepthMask_shaderProgramId);
@@ -2348,6 +2066,10 @@
 +						portaleffect = 0;
 +				}
 +
++				if (player.inventory.armorItemInSlot(3).getItem() == Blocks.CARVED_PUMPKIN.asItem()) {
++					pumpkineffect = 1f;
++				}
++
 +				float var3 = (float) player.hurtTime - nano;
 +
 +				float percent = 1 - player.getHealth() / player.getMaxHealth();
@@ -2380,6 +2102,7 @@
 +			} else {
 +				watereffect = 0;
 +				portaleffect = 0;
++				pumpkineffect = 0;
 +			}
 +
 +			ARBShaderObjects.glUniform1fARB(VRShaders._Overlay_HealthAlpha, r);

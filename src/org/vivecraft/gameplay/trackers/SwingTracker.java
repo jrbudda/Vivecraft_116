@@ -19,13 +19,13 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ArrowItem;
-import net.minecraft.item.CarrotOnAStickItem;
 import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.FlintAndSteelItem;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.OnAStickItem;
 import net.minecraft.item.ShearsItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
@@ -41,7 +41,7 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
 import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class SwingTracker extends Tracker{
 
@@ -89,7 +89,7 @@ public class SwingTracker extends Tracker{
 				item instanceof ArrowItem ||
 				item instanceof HoeItem || 
 				item instanceof FishingRodItem || 
-				item instanceof CarrotOnAStickItem ||
+				item instanceof OnAStickItem ||
 				item instanceof ShearsItem||
 				item == Items.BONE ||
 				item == Items.BLAZE_ROD||
@@ -152,7 +152,7 @@ public class SwingTracker extends Tracker{
             		weaponLength = 0.7f;
             		tool = true;
             } else if (tool){
-            	entityReachAdd = 1.f;
+            	entityReachAdd = 1.0f;
             	weaponLength = 0.5f;
         		tool = true;
             } else if (item !=null){
@@ -373,7 +373,7 @@ public class SwingTracker extends Tracker{
 	public static float getItemFade(ClientPlayerEntity p, ItemStack is) {
 		float fade = p.getCooledAttackStrength(0)*.75f + .25f;
     	
-      	if(p.isShiftKeyDown()) 
+      	if(p.isSneaking()) 
           	fade =0.75f;
           
 	      	if(is != ItemStack.EMPTY) {

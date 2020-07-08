@@ -6,7 +6,7 @@
           if (!RenderSystem.isOnRenderThread()) {
              RenderSystem.recordRenderCall(() -> {
 -               p_229231_0_.func_229257_a_();
-+               this.field_229227_g_.func_229257_a_();
++               TextureAtlasSprite.this.field_229227_g_.func_229257_a_();
              });
           } else {
              this.field_229227_g_.func_229257_a_();

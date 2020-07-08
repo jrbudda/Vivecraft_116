@@ -1,15 +1,6 @@
 --- a/net/minecraft/client/particle/ParticleManager.java
 +++ b/net/minecraft/client/particle/ParticleManager.java
-@@ -177,7 +177,7 @@
-             preparationsProfiler.endSection();
-             preparationsProfiler.endTick();
-             return atlastexture$sheetdata;
--        }, backgroundExecutor).<Void>thenCompose(stage::markCompleteAwaitingOthers).thenAcceptAsync((p_lambda$reload$5_3_) ->
-+        }, backgroundExecutor).thenCompose(stage::markCompleteAwaitingOthers).thenAcceptAsync((p_lambda$reload$5_3_) ->
-         {
-             this.byType.clear();
-             reloadProfiler.startTick();
-@@ -267,7 +267,7 @@
+@@ -279,7 +279,7 @@
      @Nullable
      private <T extends IParticleData> Particle makeParticle(T particleData, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
      {

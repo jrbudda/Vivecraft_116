@@ -1,6 +1,6 @@
 --- a/net/optifine/CustomPanorama.java
 +++ b/net/optifine/CustomPanorama.java
-@@ -110,17 +110,17 @@
+@@ -108,17 +108,17 @@
          return aproperties;
      }
  

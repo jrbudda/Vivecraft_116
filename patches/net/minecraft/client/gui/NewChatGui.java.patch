@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/NewChatGui.java
 +++ b/net/minecraft/client/gui/NewChatGui.java
-@@ -166,7 +166,7 @@
+@@ -191,7 +191,7 @@
  
      public void printChatMessage(ITextComponent chatComponent)
      {

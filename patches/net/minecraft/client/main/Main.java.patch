@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/main/Main.java
 +++ b/net/minecraft/client/main/Main.java
-@@ -38,12 +38,19 @@
+@@ -39,7 +39,10 @@
  public class Main
  {
      private static final Logger LOGGER = LogManager.getLogger();
@@ -12,8 +12,11 @@
      public static void main(String[] p_main_0_)
      {
          OptionParser optionparser = new OptionParser();
-         optionparser.allowsUnrecognizedOptions();
+@@ -47,6 +50,11 @@
          optionparser.accepts("demo");
+         optionparser.accepts("disableMultiplayer");
+         optionparser.accepts("disableChat");
++        optionparser.accepts("demo");
 +        optionparser.accepts("kiosk");
 +        optionparser.accepts("viewonly");
 +        optionparser.accepts("katvr");
@@ -21,19 +24,8 @@
          optionparser.accepts("fullscreen");
          optionparser.accepts("checkGlErrors");
          OptionSpec<String> optionspec = optionparser.accepts("server").withRequiredArg();
-@@ -59,8 +66,8 @@
-         OptionSpec<String> optionspec10 = optionparser.accepts("uuid").withRequiredArg();
-         OptionSpec<String> optionspec11 = optionparser.accepts("accessToken").withRequiredArg().required();
-         OptionSpec<String> optionspec12 = optionparser.accepts("version").withRequiredArg().required();
--        OptionSpec<Integer> optionspec13 = optionparser.accepts("width").withRequiredArg().ofType(Integer.class).defaultsTo(854);
--        OptionSpec<Integer> optionspec14 = optionparser.accepts("height").withRequiredArg().ofType(Integer.class).defaultsTo(480);
-+        OptionSpec<Integer> optionspec13 = optionparser.accepts("width").withRequiredArg().ofType(Integer.class).defaultsTo(1280);
-+        OptionSpec<Integer> optionspec14 = optionparser.accepts("height").withRequiredArg().ofType(Integer.class).defaultsTo(720);
-         OptionSpec<Integer> optionspec15 = optionparser.accepts("fullscreenWidth").withRequiredArg().ofType(Integer.class);
-         OptionSpec<Integer> optionspec16 = optionparser.accepts("fullscreenHeight").withRequiredArg().ofType(Integer.class);
-         OptionSpec<String> optionspec17 = optionparser.accepts("userProperties").withRequiredArg().defaultsTo("{}");
-@@ -112,6 +119,17 @@
-         OptionalInt optionalint1 = toOptionalInt(getValue(optionset, optionspec16));
+@@ -115,6 +123,17 @@
+         OptionalInt optionalint1 = toOptionalInt(getValue(optionset, optionspec17));
          boolean flag = optionset.has("fullscreen");
          boolean flag1 = optionset.has("demo");
 +        //Vivecraft
@@ -47,10 +39,18 @@
 +        katvr = optionset.has("katvr");
 +        infinadeck = optionset.has("infinadeck");
 +        //
-         String s3 = getValue(optionset, optionspec12);
-         Gson gson = (new GsonBuilder()).registerTypeAdapter(PropertyMap.class, new Serializer()).create();
-         PropertyMap propertymap = JSONUtils.fromJson(gson, getValue(optionset, optionspec17), PropertyMap.class);
-@@ -267,6 +285,7 @@
+         boolean flag2 = optionset.has("disableMultiplayer");
+         boolean flag3 = optionset.has("disableChat");
+         String s3 = getValue(optionset, optionspec13);
+@@ -172,6 +191,7 @@
+         }
+         catch (Throwable throwable1)
+         {
++            LOGGER.warn("Failed to something: ", (Throwable)throwable1);
+             CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Initializing game");
+             crashreport.makeCategory("Initialization");
+             Minecraft.fillCrashReport((LanguageManager)null, gameconfiguration.gameInfo.version, (GameSettings)null, crashreport);
+@@ -274,6 +294,7 @@
  
      static
      {

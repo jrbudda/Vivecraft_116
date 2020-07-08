@@ -4,6 +4,8 @@ import org.lwjgl.glfw.GLFW;
 import org.vivecraft.control.InputSimulator;
 import org.vivecraft.gui.framework.TwoHandedScreen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.gui.widget.button.Button;
 
 public class GuiKeyboard extends TwoHandedScreen
@@ -125,11 +127,11 @@ public class GuiKeyboard extends TwoHandedScreen
     /**
      * Draws the screen and all the components in it.
      */
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void render(MatrixStack matrixstack, int mouseX, int mouseY, float partialTicks)
     {
-    	this.renderBackground();
-    	this.drawCenteredString(this.font, "Keyboard", this.width / 2, 2, 16777215);
-    	super.render(0, 0, partialTicks);
+    	this.renderBackground(matrixstack);
+    	this.drawCenteredString(matrixstack, this.font, "Keyboard", this.width / 2, 2, 16777215);
+    	super.render(matrixstack, 0, 0, partialTicks);
 
     }    
 

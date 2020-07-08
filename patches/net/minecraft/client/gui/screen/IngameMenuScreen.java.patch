@@ -1,24 +1,29 @@
 --- a/net/minecraft/client/gui/screen/IngameMenuScreen.java
 +++ b/net/minecraft/client/gui/screen/IngameMenuScreen.java
-@@ -1,7 +1,12 @@
+@@ -1,11 +1,17 @@
  package net.minecraft.client.gui.screen;
  
 +import org.vivecraft.gui.settings.GuiQuickCommandsInGame;
 +import org.vivecraft.settings.AutoCalibration;
 +import org.vivecraft.utils.external.jkatvr;
 +
+ import com.mojang.blaze3d.matrix.MatrixStack;
  import net.minecraft.client.gui.advancements.AdvancementsScreen;
  import net.minecraft.client.gui.widget.button.Button;
 +import net.minecraft.client.main.Main;
- import net.minecraft.client.resources.I18n;
- import net.minecraft.realms.RealmsBridge;
+ import net.minecraft.realms.RealmsBridgeScreen;
  import net.minecraft.util.SharedConstants;
-@@ -43,39 +48,43 @@
+ import net.minecraft.util.Util;
++import net.minecraft.util.text.StringTextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
+ 
+ public class IngameMenuScreen extends Screen
+@@ -43,29 +49,29 @@
          {
              this.minecraft.displayGuiScreen(new StatsScreen(this, this.minecraft.player.getStats()));
          }));
 -        String s = SharedConstants.getVersion().isStable() ? "https://aka.ms/javafeedback?ref=game" : "https://aka.ms/snapshotfeedback?ref=game";
--        this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, I18n.format("menu.sendFeedback"), (p_213072_2_) ->
+-        this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.sendFeedback"), (p_213072_2_) ->
 -        {
 -            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((p_213069_2_) -> {
 -                if (p_213069_2_)
@@ -29,7 +34,7 @@
 -                this.minecraft.displayGuiScreen(this);
 -            }, s, true));
 -        }));
--        this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + -16, 98, 20, I18n.format("menu.reportBugs"), (p_213063_1_) ->
+-        this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.reportBugs"), (p_213063_1_) ->
 -        {
 -            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((p_213064_1_) -> {
 -                if (p_213064_1_)
@@ -40,76 +45,59 @@
 -                this.minecraft.displayGuiScreen(this);
 -            }, "https://aka.ms/snapshotbugs?ref=game", true));
 -        }));
-+        
 +//        String s = SharedConstants.getVersion().isStable() ? "https://aka.ms/javafeedback?ref=game" : "https://aka.ms/snapshotfeedback?ref=game";
-+//        this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, I18n.format("menu.sendFeedback"), (p_213072_2_) ->
++//       this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.sendFeedback"), (p_213072_2_) ->
 +//        {
 +//            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((p_213069_2_) -> {
 +//                if (p_213069_2_)
 +//                {
 +//                    Util.getOSType().openURI(s);
 +//                }
-+//
++
 +//                this.minecraft.displayGuiScreen(this);
 +//            }, s, true));
 +//        }));
-+        
-+//        this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + -16, 98, 20, I18n.format("menu.reportBugs"), (p_213063_1_) ->
++//        this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.reportBugs"), (p_213063_1_) ->
 +//        {
 +//            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((p_213064_1_) -> {
 +//                if (p_213064_1_)
 +//                {
 +//                    Util.getOSType().openURI("https://aka.ms/snapshotbugs?ref=game");
 +//                }
-+//
++
 +//                this.minecraft.displayGuiScreen(this);
 +//            }, "https://aka.ms/snapshotbugs?ref=game", true));
 +//        }));
-+        
-         this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 96 + -16, 98, 20, I18n.format("menu.options"), (p_213071_1_) ->
+         this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 96 + -16, 98, 20, new TranslationTextComponent("menu.options"), (p_213071_1_) ->
          {
              this.minecraft.displayGuiScreen(new OptionsScreen(this, this.minecraft.gameSettings));
-         }));
-+        
-         Button button = this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 96 + -16, 98, 20, I18n.format("menu.shareToLan"), (p_213068_1_) ->
+@@ -108,6 +114,58 @@
          {
-             this.minecraft.displayGuiScreen(new ShareToLanScreen(this));
-         }));
-         button.active = this.minecraft.isSingleplayer() && !this.minecraft.getIntegratedServer().getPublic();
--        Button button1 = this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 204, 20, I18n.format("menu.returnToMenu"), (p_213067_1_) ->
-+        Button button1 = this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 168 + -16, 204, 20, I18n.format("menu.returnToMenu"), (p_213067_1_) ->
-         {
-             boolean flag = this.minecraft.isIntegratedServerRunning();
-             boolean flag1 = this.minecraft.isConnectedToRealms();
-@@ -107,7 +116,59 @@
-         if (!this.minecraft.isIntegratedServerRunning())
-         {
-             button1.setMessage(I18n.format("menu.disconnect"));
--        }
-+        }       
+             button1.setMessage(new TranslationTextComponent("menu.disconnect"));
+         }
 +		
 +		//VIVECRAFT
-+		this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, "Chat", (p) ->
++		this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, new StringTextComponent("Chat"), (p) ->
 +		{
 +			minecraft.displayGuiScreen(new ChatScreen(""));    
 +		}));
-+		this.addButton(new Button(this.width / 2 + 2, this.height / 4 + 72 + -16, 98, 20, "Commands", (p) ->
++		this.addButton(new Button(this.width / 2 + 2, this.height / 4 + 72 + -16, 98, 20, new StringTextComponent("Commands"), (p) ->
 +		{
 +			minecraft.displayGuiScreen(new GuiQuickCommandsInGame());
 +				init();
 +		})); 
-+		this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 49, 20, "Overlay", (p) ->
++		this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 49, 20, new StringTextComponent("Overlay"), (p) ->
 +		{
 +			minecraft.gameSettings.showDebugInfo = ! minecraft.gameSettings.showDebugInfo;
 +				minecraft.displayGuiScreen(null);
 +		})); 
-+		this.addButton(new Button(this.width / 2 - 51, this.height / 4 + 120 + -16, 49, 20, "Profiler", (p) ->
++		this.addButton(new Button(this.width / 2 - 51, this.height / 4 + 120 + -16, 49, 20, new StringTextComponent("Profiler"), (p) ->
 +		{
 +			minecraft.gameSettings.showDebugProfilerChart = ! minecraft.gameSettings.showDebugProfilerChart;
 +				minecraft.gameSettings.ofProfiler = minecraft.gameSettings.showDebugProfilerChart;
 +				minecraft.displayGuiScreen(null);
 +		})); 
-+		this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 120 + -16, 98, 20, "Screenshot", (p) ->
++		this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 120 + -16, 98, 20, new StringTextComponent("Screenshot"), (p) ->
 +		{
 +			minecraft.displayGuiScreen(null);
 +				minecraft.grabScreenShot = true;
@@ -123,7 +111,7 @@
 +		//            }
 +		//        }); 
 +		if (!minecraft.vrSettings.seated)
-+			this.addButton(new Button(this.width / 2 - 100, this.height / 4 + 144 + -16, 98, 20, "Calibrate Height", (p) ->
++			this.addButton(new Button(this.width / 2 - 100, this.height / 4 + 144 + -16, 98, 20, new StringTextComponent("Calibrate Height"), (p) ->
 +			{
 +					AutoCalibration.calibrateManual();
 +					minecraft.vrSettings.saveOptions();
@@ -131,7 +119,7 @@
 +					//GuiIngameMenu.this.mc.setIngameFocus() ???????
 +			}));
 +		if (Main.katvr)
-+			this.addButton(new Button(this.width / 2 + 100, this.height / 4 + -16, 98, 20, "Align KAT WALK", (p) ->
++			this.addButton(new Button(this.width / 2 + 100, this.height / 4 + -16, 98, 20, new StringTextComponent("Align KAT WALK"), (p) ->
 +			{
 +					jkatvr.resetYaw(minecraft.vrPlayer.vrdata_room_pre.hmd.getYaw());
 +					minecraft.displayGuiScreen(null);

@@ -1,15 +1,14 @@
 --- a/net/minecraft/client/renderer/FluidBlockRenderer.java
 +++ b/net/minecraft/client/renderer/FluidBlockRenderer.java
-@@ -67,6 +67,8 @@
+@@ -63,6 +63,7 @@
+             return false;
          }
      }
- 
 +    public static boolean skipStupidGoddamnChunkBoundaryClipping;
-+
-     public boolean render(ILightReader lightReaderIn, BlockPos posIn, IVertexBuilder vertexBuilderIn, IFluidState fluidStateIn)
+ 
+     private static boolean func_239283_a_(IBlockReader p_239283_0_, BlockPos p_239283_1_, Direction p_239283_2_, float p_239283_3_)
      {
-         BlockState blockstate = fluidStateIn.getBlockState();
-@@ -133,9 +135,11 @@
+@@ -148,9 +149,11 @@
                  float f8 = this.getFluidHeight(lightReaderIn, posIn.south(), fluidStateIn.getFluid());
                  float f9 = this.getFluidHeight(lightReaderIn, posIn.east().south(), fluidStateIn.getFluid());
                  float f10 = this.getFluidHeight(lightReaderIn, posIn.east(), fluidStateIn.getFluid());
@@ -22,5 +21,5 @@
 +                double d2 = skipStupidGoddamnChunkBoundaryClipping ? posIn.getZ() : (double)(posIn.getZ() & 15);
 +                //
                  float f11 = 0.001F;
-                 float f12 = flag2 ? 0.001F : 0.0F;
+                 float f12 = flag1 ? 0.001F : 0.0F;
  

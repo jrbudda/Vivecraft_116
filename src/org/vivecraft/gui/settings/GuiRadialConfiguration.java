@@ -6,6 +6,8 @@ import org.vivecraft.gui.framework.VROptionLayout;
 import org.vivecraft.gui.framework.VROptionLayout.Position;
 import org.vivecraft.settings.VRSettings;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
@@ -176,13 +178,13 @@ public class GuiRadialConfiguration extends GuiVROptionsBase
 	}
 
 	@Override
-	public void render(int par1, int par2, float par3) {
-		super.render(par1, par2, par3);
+	public void render(MatrixStack matrixstack, int par1, int par2, float par3) {
+		super.render(matrixstack, par1, par2, par3);
 
 		if (GuiRadialConfiguration.this.visibleList == null)
-			this.drawCenteredString(minecraft.fontRenderer, "Make sure Open Radial Menu is bound.", this.width / 2, this.height - 50, 0x55FF55);
+			this.drawCenteredString(matrixstack,minecraft.fontRenderer, "Make sure Open Radial Menu is bound.", this.width / 2, this.height - 50, 0x55FF55);
 
 		if(this.isShift)
-			this.drawCenteredString(minecraft.fontRenderer, "Hold (Keyboard Shift) with the radial menu open to switch to this set", this.width / 2, this.height - 36, 13777015);
+			this.drawCenteredString(matrixstack,minecraft.fontRenderer, "Hold (Keyboard Shift) with the radial menu open to switch to this set", this.width / 2, this.height - 36, 13777015);
 	}
 }

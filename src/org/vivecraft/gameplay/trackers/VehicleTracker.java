@@ -8,7 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.minecart.MinecartEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 
 public class VehicleTracker extends Tracker {
@@ -192,7 +192,7 @@ public class VehicleTracker extends Tracker {
 	
 	public int dismountCooldown = 0;
 	public boolean canRoomscaleDismount(ClientPlayerEntity player) {
-		 return player.moveForward ==0 && player.moveStrafing ==0 && player.isPassenger() && player.getRidingEntity().onGround && dismountCooldown ==0;
+		 return player.moveForward ==0 && player.moveStrafing ==0 && player.isPassenger() && player.getRidingEntity().isOnGround() && dismountCooldown ==0;
 	}
 	
 }

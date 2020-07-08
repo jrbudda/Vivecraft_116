@@ -9,7 +9,7 @@ import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class ArmorDisplay extends PhysicalItemSlotGui{
 	//TODO better Model

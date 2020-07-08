@@ -9,8 +9,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.math.vector.Vec3f;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.ArrowLayer;
@@ -38,7 +41,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity, VRPlayerModel<AbstractClientPlayerEntity>>
 {
@@ -65,11 +68,13 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
 
     	if (Minecraft.getInstance().currentPass == RenderPass.GUI && entityIn.isUser()) {
     		//smile for the camera. 		
+    		Matrix4f mat = matrixStackIn.getLast().getMatrix();
+    		double scale = new Vec3d(mat.m00, mat.m01, mat.m02).length();
     		matrixStackIn.getLast().getMatrix().setIdentity();
     		matrixStackIn.translate(0.0D, 0.0D, 1000.0D);
-    		matrixStackIn.scale((float)20, (float)20, (float)20);
-    		matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180.0F));
-    		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180 + Minecraft.getInstance().vrPlayer.vrdata_world_pre.getBodyYaw()));
+    		matrixStackIn.scale((float)scale, (float)scale, (float)scale);
+    		matrixStackIn.rotate(Vec3f.ZP.rotationDegrees(180.0F));
+    		matrixStackIn.rotate(Vec3f.YP.rotationDegrees(180 + Minecraft.getInstance().vrPlayer.vrdata_world_pre.getBodyYaw()));
     	} 
     	
     	PlayerModelController.RotInfo rotInfo = PlayerModelController.getInstance().getRotationsForPlayer(((PlayerEntity)entityIn).getUniqueID());
@@ -190,7 +195,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
         matrixStackIn.scale(0.9375F, 0.9375F, 0.9375F);
     }
 
-    protected void renderName(AbstractClientPlayerEntity entityIn, String displayNameIn, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
+    protected void renderName(AbstractClientPlayerEntity entityIn, ITextComponent displayNameIn, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
     {
         double d0 = this.renderManager.squareDistanceTo(entityIn);
         matrixStackIn.push();
@@ -203,7 +208,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             if (scoreobjective != null)
             {
                 Score score = scoreboard.getOrCreateScore(entityIn.getScoreboardName(), scoreobjective);
-                super.renderName(entityIn, score.getScorePoints() + " " + scoreobjective.getDisplayName().getFormattedText(), matrixStackIn, bufferIn, packedLightIn);
+                super.renderName(entityIn, (new StringTextComponent(Integer.toString(score.getScorePoints()))).func_240702_b_(" ").func_230529_a_(scoreobjective.getDisplayName()), matrixStackIn, bufferIn, packedLightIn);
                 matrixStackIn.translate(0.0D, (double)(9.0F * 1.15F * 0.025F), 0.0D);
             }
         }
@@ -265,7 +270,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
 
             if (!entityLiving.isSpinAttacking())
             {
-                matrixStackIn.rotate(Vector3f.XP.rotationDegrees(f2 * (-90.0F - entityLiving.rotationPitch)));
+                matrixStackIn.rotate(Vec3f.XP.rotationDegrees(f2 * (-90.0F - entityLiving.rotationPitch)));
             }
 
             Vec3d vec3d = entityLiving.getLook(partialTicks);
@@ -277,7 +282,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             {
                 double d2 = (vec3d1.x * vec3d.x + vec3d1.z * vec3d.z) / (Math.sqrt(d0) * Math.sqrt(d1));
                 double d3 = vec3d1.x * vec3d.z - vec3d1.z * vec3d.x;
-                matrixStackIn.rotate(Vector3f.YP.rotation((float)(Math.signum(d3) * Math.acos(d2))));
+                matrixStackIn.rotate(Vec3f.YP.rotation((float)(Math.signum(d3) * Math.acos(d2))));
             }
         }
         else if (f > 0.0F)
@@ -285,7 +290,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             super.applyRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
             float f3 = entityLiving.isInWater() ? -90.0F - entityLiving.rotationPitch : -90.0F;
             float f4 = MathHelper.lerp(f, 0.0F, f3);
-            matrixStackIn.rotate(Vector3f.XP.rotationDegrees(f4));
+            matrixStackIn.rotate(Vec3f.XP.rotationDegrees(f4));
 
             if (entityLiving.isActualySwimming())
             {

@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 
 import org.vivecraft.settings.VRSettings;
 
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vec2f;
 
 public class VROptionEntry {
     public final VRSettings.VrOptions option;

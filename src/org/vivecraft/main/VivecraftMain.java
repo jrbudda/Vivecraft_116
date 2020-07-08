@@ -67,7 +67,7 @@ public class VivecraftMain
 				}
 			}
 
-			transformers.add(2, new VivecraftASMTransformer(true));
+			//transformers.add(2, new VivecraftASMTransformer(true));
 			transformers.add(2, new MinecriftClassTransformer(Stage.MAIN, null));
 			int forgeObfIndex = 0;
 			for (int i = 0; i < transformers.size(); i++) {

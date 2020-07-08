@@ -1,39 +1,56 @@
 package org.vivecraft.asm;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import net.minecraft.launchwrapper.IClassTransformer;
+import javax.annotation.Nonnull;
 
-public class VivecraftASMTransformer implements IClassTransformer {
+import org.vivecraft.asm.handler.ASMHandlerContainerScreen;
+import org.vivecraft.asm.handler.ASMHandlerCreativeScreen;
+
+import cpw.mods.modlauncher.api.ITransformer;
+import cpw.mods.modlauncher.api.ITransformerVotingContext;
+import cpw.mods.modlauncher.api.TransformerVoteResult;
+import org.objectweb.asm.tree.ClassNode;
+
+public class VivecraftASMTransformer implements ITransformer<ClassNode> {
 	private final List<ASMClassHandler> asmHandlers = new ArrayList<ASMClassHandler>();
 	
 	public VivecraftASMTransformer() {
-		this(false);
-	}
-	
-	public VivecraftASMTransformer(boolean forge) {
-		//asmHandlers.add(new ASMHandlerGuiContainer());
-		//asmHandlers.add(new ASMHandlerGuiContainerCreative());
-		//asmHandlers.add(new ASMHandlerGuiIngameForge());
-		//if (forge) {
-		//	asmHandlers.add(new ASMHandlerFixITeleporter());
-		//}
+		asmHandlers.add(new ASMHandlerContainerScreen());
+		asmHandlers.add(new ASMHandlerCreativeScreen());
 	}
 
 	@Override
-	public byte[] transform(String name, String transformedName, byte[] bytes) {
+	public ClassNode transform(ClassNode input, ITransformerVotingContext context) {
 		for (ASMClassHandler handler : asmHandlers) {
 			if (!handler.shouldPatchClass()) continue;
-			ClassTuple tuple = handler.getDesiredClass();
-			if (name.equals(tuple.classNameObf)) {
-				System.out.println("Patching class: " + name + " (" + tuple.className + ")");
-				bytes = handler.patchClass(bytes, true);
-			} else if (name.equals(tuple.className)) {
-				System.out.println("Patching class: " + name);
-				bytes = handler.patchClass(bytes, false);
+			String className = handler.getDesiredClass();
+			if (className.equals(input.name)) {
+				System.out.println("Patching class: " + className);
+				handler.patchClass(input);
 			}
 		}
-		return bytes;
+		return input;
+	}
+
+	@Nonnull
+	@Override
+	public TransformerVoteResult castVote(ITransformerVotingContext iTransformerVotingContext) {
+		return TransformerVoteResult.YES;
+	}
+
+	@Nonnull
+	@Override
+	public Set<Target> targets() {
+		HashSet<Target> set = new HashSet<>();
+		for (ASMClassHandler handler : asmHandlers) {
+			if (!handler.shouldPatchClass()) continue;
+			Target target = Target.targetClass(handler.getDesiredClass());
+			set.add(target);
+		}
+		return set;
 	}
 }

@@ -4,8 +4,8 @@
              }
          }
  
--        RandomEntityRule[] arandomentityrule = list.toArray(new RandomEntityRule[list.size()]);
-+        RandomEntityRule[] arandomentityrule = (RandomEntityRule[]) list.toArray(new RandomEntityRule[list.size()]);
-         return arandomentityrule;
+-        return list.toArray(new RandomEntityRule[list.size()]);
++        return (RandomEntityRule[]) list.toArray(new RandomEntityRule[list.size()]);
      }
  
+     public boolean isValid(String path)

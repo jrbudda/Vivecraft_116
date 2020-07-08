@@ -1,14 +1,14 @@
 --- a/net/optifine/shaders/Shaders.java
 +++ b/net/optifine/shaders/Shaders.java
-@@ -114,6 +114,7 @@
- import net.optifine.util.TimedEvent;
+@@ -117,6 +117,7 @@
+ import net.optifine.util.WorldUtils;
  import org.apache.commons.io.IOUtils;
  import org.lwjgl.BufferUtils;
 +import org.lwjgl.opengl.ARBFragmentShader;
  import org.lwjgl.opengl.ARBGeometryShader4;
  import org.lwjgl.opengl.ARBShaderObjects;
  import org.lwjgl.opengl.ARBVertexShader;
-@@ -809,6 +810,7 @@
+@@ -810,6 +811,7 @@
  
      public static void loadShaderPack()
      {
@@ -16,7 +16,7 @@
          boolean flag = shaderPackLoaded;
          boolean flag1 = isOldLighting();
  
-@@ -1088,7 +1090,7 @@
+@@ -1095,7 +1097,7 @@
          Set set = props.keySet();
          List<ICustomTexture> list = new ArrayList<>();
  
@@ -25,20 +25,7 @@
          {
              if (s1.startsWith(s))
              {
-@@ -2047,10 +2049,10 @@
-         SMCLog.info(stringbuilder.toString());
-     }
- 
--    public static void startup(Minecraft mc)
-+    public static void startup(Minecraft mcin)
-     {
-         checkShadersModInstalled();
--        mc = mc;
-+        mc = mcin;
-         mc = Minecraft.getInstance();
-         capabilities = GL.getCapabilities();
-         glVersionString = GL11.glGetString(GL11.GL_VERSION);
-@@ -2462,11 +2464,11 @@
+@@ -2457,11 +2459,11 @@
  
      private static int getDrawBuffer(Program p, String str, int i)
      {
@@ -52,7 +39,7 @@
          }
          else
          {
-@@ -4314,14 +4316,14 @@
+@@ -4308,15 +4310,15 @@
          GlStateManager.activeTexture(33984);
      }
  
@@ -62,16 +49,19 @@
 -        if (currentWorld != world)
 +        if (currentWorld != worldin)
          {
-             World world = currentWorld;
+-            World world = currentWorld;
 -            currentWorld = world;
++            World worldold = currentWorld;
 +            currentWorld = worldin;
              setCameraOffset(mc.getRenderViewEntity());
--            int i = getDimensionId(world);
-+            int i = getDimensionId(worldin);
-             int j = getDimensionId(world);
+-            int i = WorldUtils.getDimensionId(world);
+-            int j = WorldUtils.getDimensionId(world);
++            int i = WorldUtils.getDimensionId(worldold);
++            int j = WorldUtils.getDimensionId(worldin);
  
              if (j != i)
-@@ -5765,7 +5767,7 @@
+             {
+@@ -5770,7 +5772,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

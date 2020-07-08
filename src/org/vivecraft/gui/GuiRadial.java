@@ -4,6 +4,8 @@ import org.vivecraft.control.VRInputAction;
 import org.vivecraft.gui.framework.TwoHandedScreen;
 import org.vivecraft.provider.MCOpenVR;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
@@ -116,11 +118,11 @@ public class GuiRadial extends TwoHandedScreen
     /**
      * Draws the screen and all the components in it.
      */
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void render(MatrixStack matrixstack, int mouseX, int mouseY, float partialTicks)
     {
-    	this.renderBackground();
+    	this.renderBackground(matrixstack);
     	
-    	super.render(0, 0, partialTicks);
+    	super.render(matrixstack, 0, 0, partialTicks);
 
     }    
 

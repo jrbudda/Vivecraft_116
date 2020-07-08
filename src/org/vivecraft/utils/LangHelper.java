@@ -24,13 +24,14 @@ public class LangHelper {
 			return;
 
 		try {
-			Map map = I18n.getLocaleProperties();
-			for (String s : IOUtils.readLines(is, StandardCharsets.UTF_8)) {
-				if (!s.isEmpty() && s.charAt(0) != '#') {
-					String[] split = s.split("=", 2);
-					map.put(split[0], split[1]);
-				}
-			}
+			//what does this do again?
+//			Map map = I18n.getLocaleProperties();
+//			for (String s : IOUtils.readLines(is, StandardCharsets.UTF_8)) {
+//				if (!s.isEmpty() && s.charAt(0) != '#') {
+//					String[] split = s.split("=", 2);
+//					map.put(split[0], split[1]);
+//				}
+//			}
 			is.close();
 		} catch (IOException e) {
 			System.out.println("Failed reading locale data");

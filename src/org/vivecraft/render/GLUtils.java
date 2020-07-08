@@ -11,7 +11,7 @@ import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.util.math.vector.Matrix4f;
 
 public class GLUtils {
     private static FloatBuffer matrixBuffer = GLAllocation.createDirectFloatBuffer(16);
@@ -31,7 +31,7 @@ public class GLUtils {
         GL11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, matrixBuffer);
 
         matrixBuffer.rewind();
-        net.minecraft.client.renderer.Matrix4f out = new net.minecraft.client.renderer.Matrix4f();
+        Matrix4f out = new Matrix4f();
         out.read(matrixBuffer);
 
         return out;

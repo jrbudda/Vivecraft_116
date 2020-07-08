@@ -1,9 +1,12 @@
 package org.vivecraft.gui.settings;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.ExtendedList;
+import net.minecraft.util.text.StringTextComponent;
 
 public class GuiQuickCommandsList extends ExtendedList<GuiQuickCommandsList.CommandEntry>
 {
@@ -36,7 +39,7 @@ public class GuiQuickCommandsList extends ExtendedList<GuiQuickCommandsList.Comm
         
         private CommandEntry(String command, GuiQuickCommandsList parent)
         {
-            txt = new TextFieldWidget(minecraft.fontRenderer, parent.width / 2 - 100, 60, 200, 20, "");
+            txt = new TextFieldWidget(minecraft.fontRenderer, parent.width / 2 - 100, 60, 200, 20, new StringTextComponent(""));
             txt.setText(command);
             this.btnDelete = new Button(0, 0, 18, 18, "X", (p) -> {
                 	CommandEntry.this.txt.setText("");
@@ -81,10 +84,10 @@ public class GuiQuickCommandsList extends ExtendedList<GuiQuickCommandsList.Comm
         }
         
         @Override
-        public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
+        public boolean func_231042_a_(char p_charTyped_1_, int p_charTyped_2_) {
         	if (txt.isFocused()) 
-        		return txt.charTyped(p_charTyped_1_, p_charTyped_2_);
-        	return super.charTyped(p_charTyped_1_, p_charTyped_2_);
+        		return txt.func_231042_a_(p_charTyped_1_, p_charTyped_2_);
+        	return super.func_231042_a_(p_charTyped_1_, p_charTyped_2_);
         }
         
         @Override
@@ -95,18 +98,18 @@ public class GuiQuickCommandsList extends ExtendedList<GuiQuickCommandsList.Comm
         }
         
         @Override
-		public void render(int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_194999_5_,float partialTicks)
+		public void render(MatrixStack matrixstack, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_194999_5_,float partialTicks)
         {
         	txt.x = x;
         	txt.y = y;
         	
-        	txt.render(mouseX, mouseY, partialTicks);
+        	txt.render(matrixstack, mouseX, mouseY, partialTicks);
         	//GuiQuickCommandsList.this.minecraft.fontRenderer.drawString(command, x + 40  - GuiQuickCommandsList.this.maxListLabelWidth, y + p_148279_5_ / 2 - GuiQuickCommandsList.this.minecraft.fontRenderer.FONT_HEIGHT / 2, 16777215);
 
         	this.btnDelete.x =txt.x+txt.getWidth() + 2;
         	this.btnDelete.y= txt.y;
         	this.btnDelete.visible = true;
-        	this.btnDelete.render(mouseX, mouseY, partialTicks);
+        	this.btnDelete.render(matrixstack, mouseX, mouseY, partialTicks);
 
         }
 

@@ -12,8 +12,8 @@
  import net.minecraft.block.BlockRenderType;
  import net.minecraft.block.BlockState;
  import net.minecraft.client.GameSettings;
-@@ -58,6 +63,12 @@
-     private final Map<EntityType, EntityRenderer> renderers = Maps.newHashMap();
+@@ -60,6 +65,12 @@
+     private final Map < EntityType, EntityRenderer> renderers = Maps.newHashMap();
      private final Map<String, PlayerRenderer> skinMap = Maps.newHashMap();
      private final PlayerRenderer playerRenderer;
 +	//VIVECRAFT
@@ -25,7 +25,7 @@
      private final FontRenderer textRenderer;
      public final TextureManager textureManager;
      private World world;
-@@ -215,13 +226,49 @@
+@@ -221,13 +232,49 @@
          }
      }
  

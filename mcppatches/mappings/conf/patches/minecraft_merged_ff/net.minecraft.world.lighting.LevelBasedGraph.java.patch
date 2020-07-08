@@ -13,7 +13,7 @@
  
        });
 -      longlist.forEach(this::func_215479_e);
-+      longlist.forEach((java.util.function.LongConsumer)this::func_215479_e);
++      longlist.forEach((java.util.function.LongConsumer) this::func_215479_e);
     }
  
     private void func_215484_a(long p_215484_1_, int p_215484_3_, int p_215484_4_, boolean p_215484_5_) {

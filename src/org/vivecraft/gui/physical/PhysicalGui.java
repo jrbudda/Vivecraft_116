@@ -19,7 +19,7 @@ import net.minecraft.inventory.container.CraftingResultSlot;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 import net.minecraft.util.registry.Registry;
 
 public abstract class PhysicalGui{
@@ -113,19 +113,19 @@ public abstract class PhysicalGui{
 
 	static boolean isMainPart(PlayerEntity player, BlockState blockState, BlockPos pos){
 
-		if(blockState.getBlock() instanceof ChestBlock){
-			Vec3d posVec=new Vec3d(pos).add(new Vec3d(0.5,0.5,0.5));
-			Vec3d left=new Vec3d(1,0,0);
-			Quaternion rot=getBlockOrientation(pos);
-			BlockPos neighborPos=new BlockPos(posVec.add(rot.multiply(left)));
-
-
-			BlockState neighborBlock=player.world.getBlockState(neighborPos);
-			if((neighborBlock.getBlock().equals(Blocks.CHEST) && blockState.getBlock().equals(Blocks.CHEST)) ||
-					(neighborBlock.getBlock().equals(Blocks.TRAPPED_CHEST) && blockState.getBlock().equals(Blocks.TRAPPED_CHEST)) ){
-				return false;
-			}
-		}
+//		if(blockState.getBlock() instanceof ChestBlock){
+//			Vec3d posVec=new Vec3d(pos).add(new Vec3d(0.5,0.5,0.5));
+//			Vec3d left=new Vec3d(1,0,0);
+//			Quaternion rot=getBlockOrientation(pos);
+//			BlockPos neighborPos=new BlockPos(posVec.add(rot.multiply(left)));
+//
+//
+//			BlockState neighborBlock=player.world.getBlockState(neighborPos);
+//			if((neighborBlock.getBlock().equals(Blocks.CHEST) && blockState.getBlock().equals(Blocks.CHEST)) ||
+//					(neighborBlock.getBlock().equals(Blocks.TRAPPED_CHEST) && blockState.getBlock().equals(Blocks.TRAPPED_CHEST)) ){
+//				return false;
+//			}
+//		}
 
 		return true;
 	}
@@ -135,32 +135,33 @@ public abstract class PhysicalGui{
 	 * Returns the direction of the block based on the way you are looking when facing it
 	 */
 	public static Quaternion getBlockOrientation(BlockPos pos) {
-		BlockState blockState = Minecraft.getInstance().world.getBlockState(pos);
-	//	Debug d=new Debug(new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5));
-		Vec3d dir;
-		if (blockState.getProperties().contains(HorizontalBlock.HORIZONTAL_FACING)) {
-			Direction facing = blockState.get(HorizontalBlock.HORIZONTAL_FACING);
-
-			dir = new Vec3d(facing.getDirectionVec()).scale(-1);
-			
-		} else {
-			dir = Minecraft.getInstance().player.getLookVec();
-
-			if (Math.abs(dir.x) > Math.abs(dir.z)) {
-				dir = new Vec3d(Math.signum(dir.x), 0, 0);
-			} else {
-				dir = new Vec3d(0, 0, Math.signum(dir.z));
-			}
-		}
-		
-		if (dir.x==0 && dir.y == 0 && dir.z == -1) {
-			return new Quaternion(0, 180, 0); //parallel vectors need special case		
-		}
-		
-	//	d.drawVector(Vec3d.ZERO,dir, Color.green);
-	//	d.drawVector(Vec3d.ZERO,new Vec3d(0,0,1),Color.red);
-		
-		return Quaternion.createFromToVector(new Vector3(0, 0, 1), new Vector3(dir));
+//		BlockState blockState = Minecraft.getInstance().world.getBlockState(pos);
+//	//	Debug d=new Debug(new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5));
+//		Vec3d dir;
+//		if (blockState.getProperties().contains(HorizontalBlock.HORIZONTAL_FACING)) {
+//			Direction facing = blockState.get(HorizontalBlock.HORIZONTAL_FACING);
+//
+//			dir = new Vec3d(facing.getDirectionVec()).scale(-1);
+//			
+//		} else {
+//			dir = Minecraft.getInstance().player.getLookVec();
+//
+//			if (Math.abs(dir.x) > Math.abs(dir.z)) {
+//				dir = new Vec3d(Math.signum(dir.x), 0, 0);
+//			} else {
+//				dir = new Vec3d(0, 0, Math.signum(dir.z));
+//			}
+//		}
+//		
+//		if (dir.x==0 && dir.y == 0 && dir.z == -1) {
+//			return new Quaternion(0, 180, 0); //parallel vectors need special case		
+//		}
+//		
+//	//	d.drawVector(Vec3d.ZERO,dir, Color.green);
+//	//	d.drawVector(Vec3d.ZERO,new Vec3d(0,0,1),Color.red);
+//		
+//		return Quaternion.createFromToVector(new Vector3(0, 0, 1), new Vector3(dir));
+		return null;
 	}
 
 

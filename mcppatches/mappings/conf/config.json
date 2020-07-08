@@ -1,6 +1,6 @@
 {
     "spec": 1,
-    "version": "1.15.2",
+    "version": "1.16.1",
     "data": {
         "access": "config/access.txt",
         "constructors": "config/constructors.txt",
@@ -42,7 +42,7 @@
                 "type": "merge",
                 "client": "{stripClientOutput}",
                 "server": "{stripServerOutput}",
-                "version": "1.15.2"
+                "version": "1.16.1"
             },
             {
                 "type": "rename",
@@ -150,7 +150,7 @@
     },
     "functions": {
         "decompile": {
-            "version": "net.minecraftforge:forgeflower:1.5.380.40",
+            "version": "net.minecraftforge:forgeflower:1.5.478.15",
             "args": [
                 "-din=1",
                 "-rbr=1",
@@ -159,6 +159,8 @@
                 "-rsy=1",
                 "-iec=1",
                 "-jvn=1",
+                "-isl=0",
+                "-iib=1",
                 "-log=TRACE",
                 "-cfg",
                 "{libraries}",
@@ -171,7 +173,7 @@
             "repo": "https://files.minecraftforge.net/maven/"
         },
         "mcinject": {
-            "version": "de.oceanlabs.mcp:mcinjector:3.7.7:fatjar",
+            "version": "de.oceanlabs.mcp:mcinjector:3.8.0:fatjar",
             "args": [
                 "--in",
                 "{input}",
@@ -191,7 +193,7 @@
             "repo": "https://files.minecraftforge.net/maven/"
         },
         "merge": {
-            "version": "net.minecraftforge:mergetool:1.0.9:fatjar",
+            "version": "net.minecraftforge:mergetool:1.1.1:fatjar",
             "args": [
                 "--client",
                 "{client}",

@@ -28,9 +28,10 @@ import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import io.github.classgraph.ClassGraph;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ILightReader;
+import net.minecraft.world.IBlockDisplayReader;
 import optifine.OptiFineTransformer;
 
 import org.apache.commons.io.IOUtils;
@@ -54,7 +55,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import jopenvr.HmdMatrix34_t;
 import net.minecraft.client.Minecraft;
 import net.minecraft.particles.IParticleData;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class Utils
 {
@@ -62,6 +63,8 @@ public class Utils
 	private static final char[] illegalChars = {34, 60, 62, 124, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 58, 42, 63, 92, 47};
 	private static final int CONNECT_TIMEOUT = 5000;
 	private static final int READ_TIMEOUT = 20000;
+
+	private static URI vivecraftZipURI;
 
 	static {
 		// Needs to be sorted for binary search
@@ -430,18 +433,7 @@ public class Utils
 			
 			//Live
 			System.out.println("Unpacking " + directory + " natives...");
-			ZipFile zip = null;
-			try {
-				URI uri = Utils.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-				File f = new File(uri);
-				zip = new ZipFile(f);
-			} catch (Exception e) {
-				zip = MinecriftClassTransformer.findMinecriftZipFile();
-			}
-			
-			if(zip == null)
-				throw new Exception("Could not find Zip");
-			
+			ZipFile zip = getVivecraftZip();
 			Enumeration<? extends ZipEntry> entries = zip.entries();
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
@@ -455,6 +447,39 @@ public class Utils
 			//
 		} catch (Exception e) {
 			System.out.println("Failed to unpack natives");
+			e.printStackTrace();
+		}
+	}
+
+	public static URI getVivecraftZipLocation() {
+		if (vivecraftZipURI != null)
+			return vivecraftZipURI;
+
+		List<URI> uris = new ClassGraph().getClasspathURIs();
+		for (URI uri : uris) {
+			try (ZipFile zipFile = new ZipFile(new File(uri))) {
+				if (zipFile.getEntry("org/vivecraft/provider/MCOpenVR.class") != null) {
+					System.out.println("Found Vivecraft zip: " + uri.toString());
+					vivecraftZipURI = uri;
+					break;
+				}
+			} catch (IOException e) {
+			}
+		}
+
+		if (vivecraftZipURI == null)
+			throw new RuntimeException("Could not find Vivecraft zip");
+		return vivecraftZipURI;
+	}
+
+	public static ZipFile getVivecraftZip() {
+		URI uri = getVivecraftZipLocation();
+
+		try {
+			File f = new File(uri);
+			return new ZipFile(f);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -683,7 +708,7 @@ public class Utils
 		}
 	}
 
-	public static int getCombinedLightWithMin(ILightReader lightReader, BlockPos pos, int minLight) {
+	public static int getCombinedLightWithMin(IBlockDisplayReader lightReader, BlockPos pos, int minLight) {
 		int light = WorldRenderer.getCombinedLight(lightReader, pos);
 		int blockLight = (light >> 4) & 0xF;
 		if (blockLight < minLight) {

@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class RowTracker extends Tracker{
 
@@ -83,7 +83,7 @@ public class RowTracker extends Tracker{
 				Vec3d arm2Pad=getArmToPaddleVector(paddle,boat);
 				Vec3d attach=getAttachmentPoint(paddle,boat);
 
-				Vec3d underWaterPoint=attach.add(arm2Pad.normalize()).subtract(boat.getPositionVector());
+				Vec3d underWaterPoint=attach.add(arm2Pad.normalize()).subtract(boat.getPositionVec());
 
 
 				if(lastUWPs[paddle]!=null){
@@ -122,7 +122,7 @@ public class RowTracker extends Tracker{
 		Vec3d attachmentPoint = new Vec3d((paddle==0? 9f: -9f) / 16f, (-5 + 15) / 16f, 3 / 16f); //values from ModelBoat
 		Quaternion boatRot = new Quaternion(boat.rotationPitch, -(boat.rotationYaw % 360f), 0).normalized();
 
-		return boat.getPositionVector().add(boatRot.multiply(attachmentPoint));
+		return boat.getPositionVec().add(boatRot.multiply(attachmentPoint));
 	}
 
 	Vec3d getAbsArmPos(int side){

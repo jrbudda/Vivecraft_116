@@ -169,7 +169,7 @@ public class VivecraftMovementInput extends MovementInput {
 		// VIVECRAFT DO ok.
 		this.jump = this.gameSettings.keyBindJump.isKeyDown() && ok;
 
-		this.field_228350_h_ = (mc.sneakTracker.sneakCounter > 0 || mc.sneakTracker.sneakOverride || this.gameSettings.keyBindSneak.isKeyDown())
+		this.sneaking = (mc.sneakTracker.sneakCounter > 0 || mc.sneakTracker.sneakOverride || this.gameSettings.keyBindSneak.isKeyDown())
 				&& mc.currentScreen == null;
 
 

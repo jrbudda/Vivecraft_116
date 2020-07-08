@@ -22,7 +22,7 @@ public class SneakTracker extends Tracker {
 		if(!Minecraft.getInstance().vrSettings.realisticSneakEnabled)
 			return false;
 		if(mc.playerController == null) return false;
-		if(p==null || !p.isAlive() || !p.onGround)
+		if(p==null || !p.isAlive() || !p.isOnGround())
 			return false;
 		if(p.isPassenger())
 			return false;

@@ -10,7 +10,7 @@
 -            if (k + i <= this.imageData.limit())
 +            if (offset2 + i <= this.imageData.limit())
              {
-                 this.interpolateData.clear();
+                 ((Buffer)this.interpolateData).clear();
  
                  for (int l = 0; l < i; ++l)
                  {

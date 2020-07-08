@@ -2,7 +2,7 @@ package org.vivecraft.gameplay.trackers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 /**
  * Created by Hendrik on 02-Aug-16.

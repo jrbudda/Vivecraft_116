@@ -1,0 +1,12 @@
+﻿diff -r -U 3 minecraft\net\minecraft\world\SerializableTickList.java minecraft_patched\net\minecraft\world\SerializableTickList.java
+--- a/net/minecraft/world/SerializableTickList.java
++++ b/net/minecraft/world/SerializableTickList.java
+@@ -15,7 +15,7 @@
+ 
+    public SerializableTickList(Function<T, ResourceLocation> p_i3266_1_, List<NextTickListEntry<T>> p_i3266_2_, long p_i3266_3_) {
+       this(p_i3266_1_, p_i3266_2_.stream().map((p_234854_2_) -> {
+-         return new SerializableTickList.TickHolder(p_234854_2_.func_151351_a(), p_234854_2_.field_180282_a, (int)(p_234854_2_.field_235017_b_ - p_i3266_3_), p_234854_2_.field_82754_f);
++         return new SerializableTickList.TickHolder<>(p_234854_2_.func_151351_a(), p_234854_2_.field_180282_a, (int)(p_234854_2_.field_235017_b_ - p_i3266_3_), p_234854_2_.field_82754_f);
+       }).collect(Collectors.toList()));
+    }
+ 

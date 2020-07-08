@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/gui/fonts/Font.java
++++ b/net/minecraft/client/gui/fonts/Font.java
+@@ -11,6 +11,8 @@
+ import java.util.List;
+ import java.util.Random;
+ import java.util.Set;
++import java.util.function.IntConsumer;
++
+ import net.minecraft.client.gui.fonts.providers.IGlyphProvider;
+ import net.minecraft.client.renderer.texture.TextureManager;
+ import net.minecraft.util.ResourceLocation;
+@@ -57,7 +59,7 @@
+         }
+ 
+         Set<IGlyphProvider> set = Sets.newHashSet();
+-        intset.forEach((p_lambda$setGlyphProviders$2_3_) ->
++        intset.forEach((IntConsumer)(p_lambda$setGlyphProviders$2_3_) ->
+         {
+             for (IGlyphProvider iglyphprovider1 : glyphProvidersIn)
+             {

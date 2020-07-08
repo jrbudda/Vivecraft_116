@@ -1,12 +1,12 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\monster\SlimeEntity.java minecraft_patched\net\minecraft\entity\monster\SlimeEntity.java
 --- minecraft\net\minecraft\entity\monster\SlimeEntity.java
 +++ minecraft_patched\net\minecraft\entity\monster\SlimeEntity.java
-@@ -177,7 +177,7 @@
+@@ -173,7 +173,7 @@
     }
  
     public EntityType<? extends SlimeEntity> func_200600_R() {
 -      return super.func_200600_R();
-+      return (EntityType<? extends SlimeEntity>) super.func_200600_R();
++      return (EntityType<? extends SlimeEntity>)super.func_200600_R();
     }
  
     public void func_70106_y() {

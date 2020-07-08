@@ -9,7 +9,7 @@
          {
              case 1:
              case 2:
-@@ -176,7 +176,7 @@
+@@ -175,7 +175,7 @@
              list.add(s);
          }
  
@@ -18,7 +18,7 @@
          return astring;
      }
  
-@@ -368,7 +368,7 @@
+@@ -365,7 +365,7 @@
  
                      if (object instanceof Object[])
                      {
@@ -27,7 +27,7 @@
                          stringbuffer.append(arrayToCommaSeparatedString(aobject));
                      }
                      else
-@@ -611,7 +611,7 @@
+@@ -608,7 +608,7 @@
          {
              int i = arr.length;
              int j = i + 1;
@@ -36,7 +36,7 @@
              System.arraycopy(arr, 0, aobject, 0, i);
              aobject[i] = obj;
              return aobject;
-@@ -622,7 +622,7 @@
+@@ -619,7 +619,7 @@
      {
          List list = new ArrayList<>(Arrays.asList(arr));
          list.add(index, obj);
@@ -45,7 +45,7 @@
          return list.toArray(aobject);
      }
  
-@@ -640,7 +640,7 @@
+@@ -637,7 +637,7 @@
          {
              int i = arr.length;
              int j = i + objs.length;
@@ -54,7 +54,7 @@
              System.arraycopy(arr, 0, aobject, 0, i);
              System.arraycopy(objs, 0, aobject, i, objs.length);
              return aobject;
-@@ -671,7 +671,7 @@
+@@ -667,7 +667,7 @@
          }
          else
          {

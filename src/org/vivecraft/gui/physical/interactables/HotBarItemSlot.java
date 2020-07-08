@@ -5,7 +5,7 @@ import org.vivecraft.gui.physical.WindowCoordinator;
 import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.inventory.container.ClickType;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class HotBarItemSlot extends PhysicalItemSlot {
 	PhysicalInventory.Hotbar gui;

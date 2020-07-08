@@ -33,7 +33,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 
 // VIVE
@@ -380,14 +380,14 @@ public class OpenVRPlayer
 		}
 		Minecraft mc = Minecraft.getInstance();
 		if(player == null) return;
-		if(player.isShiftKeyDown()) {return;} //jrbudda : prevent falling off things or walking up blocks while moving in room scale.
+		if(player.isSneaking()) {return;} //jrbudda : prevent falling off things or walking up blocks while moving in room scale.
 		if(player.isSleeping()) return; //
 		if(mc.jumpTracker.isjumping()) return; //
 		if(mc.climbTracker.isGrabbingLadder()) return; //
 		if(!player.isAlive()) return; //
 		
 		if(mc.vehicleTracker.canRoomscaleDismount(mc.player)) {
-			Vec3d mountpos = mc.player.getRidingEntity().getPositionVector();
+			Vec3d mountpos = mc.player.getRidingEntity().getPositionVec();
 			Vec3d tp = vrdata_world_pre.getHeadPivot();
 			double dist = Math.sqrt((tp.x - mountpos.x) * (tp.x - mountpos.x) + (tp.z - mountpos.z) *(tp.z - mountpos.z));
 			if (dist > 0.85) {
@@ -492,7 +492,7 @@ public class OpenVRPlayer
 						Vec3d look = player.getLookVec();
 						Vec3d forward = new Vec3d(look.x,0,look.z).normalize();
 						player.fallDistance = 0.0F;
-						mc.player.stepSound(new BlockPos(player.getPositionVector()), player.getPositionVector());
+						mc.player.stepSound(new BlockPos(player.getPositionVec()), player.getPositionVec());
 
 						break;
 					}
@@ -542,7 +542,7 @@ public class OpenVRPlayer
 			
 			p.multiplyVelocity(velscale);
 
-			mc.particles.addEffect(p.setBlockPos(bp).multipleParticleScaleBy(scale));
+			mc.particles.addEffect(p.setBlockPos(bp).multiplyParticleScaleBy(scale));
 
 		}
 	}

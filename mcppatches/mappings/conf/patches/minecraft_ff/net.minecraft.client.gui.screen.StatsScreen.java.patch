@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\client\gui\screen\StatsScreen.java minecraft_patched\net\minecraft\client\gui\screen\StatsScreen.java
 --- minecraft\net\minecraft\client\gui\screen\StatsScreen.java
 +++ minecraft_patched\net\minecraft\client\gui\screen\StatsScreen.java
-@@ -409,11 +409,11 @@
+@@ -419,11 +419,11 @@
                 i = 0;
                 j = 0;
              } else if (StatsList.this.field_195113_v.contains(StatsList.this.field_195110_A)) {

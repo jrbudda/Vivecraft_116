@@ -11,9 +11,9 @@
 +import java.io.IOException;
 +import java.io.InputStreamReader;
  import java.util.Collections;
+ import java.util.Optional;
  import java.util.Set;
- import javax.annotation.Nullable;
-@@ -16,6 +22,7 @@
+@@ -19,6 +25,7 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
  import net.minecraft.block.CommandBlockBlock;
@@ -21,15 +21,15 @@
  import net.minecraft.command.CommandSource;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -23,6 +30,7 @@
+@@ -26,6 +33,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.IJumpingMount;
  import net.minecraft.entity.MoverType;
-+import net.minecraft.entity.ai.attributes.IAttribute;
++import net.minecraft.entity.ai.attributes.Attribute;
  import net.minecraft.entity.item.BoatEntity;
  import net.minecraft.entity.item.ExperienceOrbEntity;
  import net.minecraft.entity.item.ItemEntity;
-@@ -45,6 +53,7 @@
+@@ -51,6 +59,7 @@
  import net.minecraft.nbt.StringNBT;
  import net.minecraft.network.IPacket;
  import net.minecraft.network.NetworkManager;
@@ -37,9 +37,9 @@
  import net.minecraft.network.PacketThreadUtil;
  import net.minecraft.network.play.client.CAnimateHandPacket;
  import net.minecraft.network.play.client.CChatMessagePacket;
-@@ -129,8 +138,15 @@
+@@ -140,8 +149,15 @@
  import net.minecraft.world.IWorldReader;
- import net.minecraft.world.dimension.DimensionType;
+ import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
 +import net.optifine.reflect.Reflector;
 +import net.optifine.reflect.ReflectorField;
@@ -53,7 +53,7 @@
  
  public class ServerPlayNetHandler implements IServerPlayNetHandler
  {
-@@ -270,6 +286,8 @@
+@@ -281,6 +297,8 @@
          {
              this.disconnect(new TranslationTextComponent("multiplayer.disconnect.idling"));
          }
@@ -62,7 +62,7 @@
      }
  
      public void captureCurrentPosition()
-@@ -385,11 +403,17 @@
+@@ -396,11 +414,17 @@
                  }
  
                  entity.setPositionAndRotation(d3, d4, d5, f, f1);
@@ -80,16 +80,16 @@
                      this.netManager.sendPacket(new SMoveVehiclePacket(entity));
                      return;
                  }
-@@ -1051,7 +1075,15 @@
+@@ -1105,7 +1129,15 @@
  
-         if (blockpos.getY() < this.server.getBuildLimit() - 1 || direction != Direction.UP && blockpos.getY() < this.server.getBuildLimit())
+         if (blockpos.getY() < this.server.getBuildLimit())
          {
 -            if (this.targetPos == null && this.player.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < 64.0D && serverworld.isBlockModifiable(this.player, blockpos))
 +        	double dist = 8D;
 +        	
 +        	//Forge
 +        	if(Reflector.ForgePlayer_REACH_DISTANCE.exists())
-+        		dist = player.getAttribute((IAttribute) Reflector.getFieldValue(Reflector.ForgePlayer_REACH_DISTANCE)).getValue() + 3;
++        		dist = player.getAttribute((Attribute) Reflector.getFieldValue(Reflector.ForgePlayer_REACH_DISTANCE)).getValue() + 3;
 +        	//
 +        	
 +            dist *= dist;
@@ -97,48 +97,105 @@
              {
                  ActionResultType actionresulttype = this.player.interactionManager.func_219441_a(this.player, serverworld, itemstack, hand, blockraytraceresult);
  
-@@ -1217,9 +1249,17 @@
-             }
-             else
-             {
-+            	//Forge
-+            	if(Reflector.ForgeHooks_newChatWithLinks.exists()) {
-+            		ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), Reflector.call(Reflector.ForgeHooks_newChatWithLinks, s));
-+                	itextcomponent = (ITextComponent) Reflector.call(Reflector.ForgeHooks_onServerChatEvent, this, s, itextcomponent);
-+                	if (itextcomponent == null) return;
-+            	} else {
-+            		//
-                 ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), s);
-                 this.server.getPlayerList().sendMessage(itextcomponent, false);
-             }
-+            }
+@@ -1259,43 +1291,51 @@
  
-             this.chatSpamThresholdCount += 20;
+     public void processChatMessage(CChatMessagePacket packetIn)
+     {
+-        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
+-
+-        if (this.player.getChatVisibility() == ChatVisibility.HIDDEN)
+-        {
+-            this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_240699_a_(TextFormatting.RED), ChatType.SYSTEM, Util.field_240973_b_));
+-        }
+-        else
+-        {
+-            this.player.markPlayerActive();
+-            String s = org.apache.commons.lang3.StringUtils.normalizeSpace(packetIn.getMessage());
++    	PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
  
-@@ -1345,6 +1385,11 @@
+-            for (int i = 0; i < s.length(); ++i)
+-            {
+-                if (!SharedConstants.isAllowedCharacter(s.charAt(i)))
+-                {
+-                    this.disconnect(new TranslationTextComponent("multiplayer.disconnect.illegal_characters"));
+-                    return;
+-                }
+-            }
+-
+-            if (s.startsWith("/"))
+-            {
+-                this.handleSlashCommand(s);
+-            }
+-            else
+-            {
+-                ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), s);
+-                this.server.getPlayerList().func_232641_a_(itextcomponent, ChatType.CHAT, this.player.getUniqueID());
+-            }
+-
+-            this.chatSpamThresholdCount += 20;
+-
+-            if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile()))
+-            {
+-                this.disconnect(new TranslationTextComponent("disconnect.spam"));
+-            }
+-        }
++    	if (this.player.getChatVisibility() == ChatVisibility.HIDDEN)
++    	{
++    		this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_240699_a_(TextFormatting.RED), ChatType.SYSTEM, Util.field_240973_b_));
++    	}
++    	else
++    	{
++    		this.player.markPlayerActive();
++    		String s = org.apache.commons.lang3.StringUtils.normalizeSpace(packetIn.getMessage());
++
++    		for (int i = 0; i < s.length(); ++i)
++    		{
++    			if (!SharedConstants.isAllowedCharacter(s.charAt(i)))
++    			{
++    				this.disconnect(new TranslationTextComponent("multiplayer.disconnect.illegal_characters"));
++    				return;
++    			}
++    		}
++
++    		if (s.startsWith("/"))
++    		{
++    			this.handleSlashCommand(s);
++    		}
++    		else
++    		{
++    			//Forge
++    			if(Reflector.ForgeHooks_newChatWithLinks.exists()) {
++    				ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), Reflector.call(Reflector.ForgeHooks_newChatWithLinks, s));
++    				itextcomponent = (ITextComponent) Reflector.call(Reflector.ForgeHooks_onServerChatEvent, this, s, itextcomponent);
++    				if (itextcomponent == null) return;
++    			} else {
++    				//
++    				ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), s);
++    				this.server.getPlayerList().func_232641_a_(itextcomponent, ChatType.CHAT, this.player.getUniqueID());
++    			}
++    		}
++
++    		this.chatSpamThresholdCount += 20;
++
++    		if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile()))
++    		{
++    			this.disconnect(new TranslationTextComponent("disconnect.spam"));
++    		}
++    	}
+     }
+ 
+     private void handleSlashCommand(String command)
+@@ -1409,6 +1449,9 @@
+                 }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.INTERACT_AT)
                  {
-                     Hand hand1 = packetIn.getHand();
-+                                       
 +                    //Forge
-+                    if (Reflector.call(Reflector.ForgeHooks_onInteractEntityAt, player, entity, packetIn.getHitVec(), hand1) != null) return;
++                    if (Reflector.call(Reflector.ForgeHooks_onInteractEntityAt, player, entity, packetIn.getHitVec(), hand) != null) return;
 +                    //
-+                    
-                     ActionResultType actionresulttype = entity.applyPlayerInteraction(this.player, packetIn.getHitVec(), hand1);
- 
-                     if (actionresulttype.isSuccess())
-@@ -1389,7 +1434,9 @@
-                         return;
-                     }
- 
--                    this.player = this.server.getPlayerList().recreatePlayerEntity(this.player, DimensionType.OVERWORLD, false);
-+                    //Forge - use player.dimension - ok for vanilla?
-+                    this.player = this.server.getPlayerList().recreatePlayerEntity(this.player, this.player.dimension, false);
-+                    //
- 
-                     if (this.server.isHardcore())
-                     {
-@@ -1612,6 +1659,109 @@
+                     optional = Optional.of(entity.applyPlayerInteraction(this.player, packetIn.getHitVec(), hand));
+                 }
+                 else if (packetIn.getAction() == CUseEntityPacket.Action.ATTACK)
+@@ -1681,6 +1724,109 @@
  
      public void processCustomPayload(CCustomPayloadPacket packetIn)
      {
@@ -184,11 +241,11 @@
 +				try {
 +					v = br.readLine();
 +					if(v.contains("NONVR")){
-+						this.player.sendMessage(new StringTextComponent("NONVR: " + this.player.getDisplayName().getFormattedText()));
++						this.player.sendMessage(new StringTextComponent("NONVR: " + this.player.getDisplayName().getString()), this.player.getUniqueID());
 +						vp.setVR(false);
 +					}
 +					else{
-+						this.player.sendMessage(new StringTextComponent("VR: " + this.player.getDisplayName().getFormattedText()));
++						this.player.sendMessage(new StringTextComponent("VR: " + this.player.getDisplayName().getString()), this.player.getUniqueID());
 +						vp.setVR(true);
 +					}  
 +				} catch (IOException e) {
@@ -221,7 +278,7 @@
 +    		case HEIGHT:
 +            	rawdata.resetReaderIndex();
 +            	rawdata.readByte();
-+    			vp.height = rawdata.readFloat();
++    			vp.heightscale = rawdata.readFloat();
 +    			break;			
 +    		case TELEPORT:
 +            	rawdata.resetReaderIndex();

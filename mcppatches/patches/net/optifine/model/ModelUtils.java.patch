@@ -9,8 +9,8 @@
      {
          for (BakedQuad bakedquad : quads)
          {
-@@ -85,17 +85,17 @@
-         return simplebakedmodel;
+@@ -84,17 +84,17 @@
+         return new SimpleBakedModel(list, map, model.isAmbientOcclusion(), model.isGui3d(), true, model.getParticleTexture(), model.getItemCameraTransforms(), model.getOverrides());
      }
  
 -    public static List duplicateQuadList(List list)

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -18,9 +18,12 @@
+@@ -19,9 +19,12 @@
  import java.util.Map.Entry;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
@@ -13,7 +13,7 @@
  import net.minecraft.profiler.IProfiler;
  import net.minecraft.resources.IResourceManager;
  import net.minecraft.util.JSONUtils;
-@@ -28,7 +31,10 @@
+@@ -29,7 +32,10 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.Util;
  import net.minecraft.util.registry.Registry;
@@ -24,8 +24,8 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -52,10 +58,25 @@
-         for (Entry<ResourceLocation, JsonObject> entry : objectIn.entrySet())
+@@ -53,10 +59,25 @@
+         for (Entry<ResourceLocation, JsonElement> entry : objectIn.entrySet())
          {
              ResourceLocation resourcelocation = entry.getKey();
 +            if (resourcelocation.getPath().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
@@ -40,7 +40,7 @@
 +                     }
 +            	}
 +            	//
-                 IRecipe<?> irecipe = deserializeRecipe(resourcelocation, entry.getValue());
+                 IRecipe<?> irecipe = deserializeRecipe(resourcelocation, JSONUtils.getJsonObject(entry.getValue(), "top element"));
 +                //Forge
 +                if (irecipe == null) {
 +                    LOGGER.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
@@ -50,7 +50,7 @@
                  map.computeIfAbsent(irecipe.getType(), (p_223391_0_) ->
                  {
                      return ImmutableMap.builder();
-@@ -67,6 +88,30 @@
+@@ -68,6 +89,30 @@
              }
          }
  

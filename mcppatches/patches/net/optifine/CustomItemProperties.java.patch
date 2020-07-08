@@ -17,7 +17,7 @@
              int[] aint = new int[ainteger.length];
  
              for (int k = 0; k < aint.length; ++k)
-@@ -347,11 +348,12 @@
+@@ -336,11 +337,12 @@
              Set set = map.keySet();
              Map map1 = new LinkedHashMap();
  
@@ -33,7 +33,7 @@
              }
  
              return map1;
-@@ -428,7 +430,7 @@
+@@ -416,7 +418,7 @@
              Set set = map.keySet();
              Map map1 = new LinkedHashMap();
  
@@ -42,7 +42,7 @@
              {
                  String s2 = (String)map.get(s1);
                  s2 = fixModelName(s2, basePath);
-@@ -647,7 +649,7 @@
+@@ -634,7 +636,7 @@
          {
              List list = new ArrayList();
  
@@ -51,7 +51,7 @@
              {
                  String s2 = (String)map.get(s1);
                  String s3 = s1.substring(s.length());
-@@ -655,7 +657,7 @@
+@@ -642,7 +644,7 @@
                  list.add(nbttagvalue);
              }
  
@@ -60,7 +60,7 @@
              return anbttagvalue;
          }
      }
-@@ -664,7 +666,7 @@
+@@ -651,7 +653,7 @@
      {
          Map map = new LinkedHashMap();
  
@@ -69,7 +69,7 @@
          {
              String s1 = props.getProperty(s);
  
-@@ -823,7 +825,7 @@
+@@ -810,7 +812,7 @@
  
          if (this.mapSprites != null)
          {

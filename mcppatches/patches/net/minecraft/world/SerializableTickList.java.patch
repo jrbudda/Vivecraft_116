@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/SerializableTickList.java
++++ b/net/minecraft/world/SerializableTickList.java
+@@ -18,7 +18,7 @@
+     {
+         this(p_i2386_1_, p_i2386_2_.stream().map((p_234854_2_) ->
+         {
+-            return new SerializableTickList.TickHolder(p_234854_2_.getTarget(), p_234854_2_.position, (int)(p_234854_2_.field_235017_b_ - p_i2386_3_), p_234854_2_.priority);
++            return new SerializableTickList.TickHolder<>(p_234854_2_.getTarget(), p_234854_2_.position, (int)(p_234854_2_.field_235017_b_ - p_i2386_3_), p_234854_2_.priority);
+         }).collect(Collectors.toList()));
+     }
+ 

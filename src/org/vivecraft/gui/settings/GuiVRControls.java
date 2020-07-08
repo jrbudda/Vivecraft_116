@@ -8,6 +8,8 @@ import org.vivecraft.gui.framework.GuiVROptionsBase;
 import org.vivecraft.gui.framework.VROptionEntry;
 import org.vivecraft.settings.VRSettings;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.TextFormatting;
 
@@ -37,11 +39,11 @@ public class GuiVRControls extends GuiVROptionsBase {
     }
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks) {
-		super.render(mouseX, mouseY, partialTicks);
-		this.drawCenteredString(minecraft.fontRenderer, "Bindings are handled by SteamVR Input.", this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2 - minecraft.fontRenderer.FONT_HEIGHT - 3, 16777215);
-		this.drawCenteredString(minecraft.fontRenderer, "Go to Settings > Controllers > Manage Controller Bindings in the dashboard.", this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2, 16777215);
-		this.drawCenteredString(minecraft.fontRenderer, TextFormatting.GOLD + "Steam must be running " + TextFormatting.ITALIC + "before" + TextFormatting.RESET + TextFormatting.GOLD + " SteamVR is started, or bindings will not save.", this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2 + minecraft.fontRenderer.FONT_HEIGHT + 3, 16777215);
+	public void render(MatrixStack matrixstack, int mouseX, int mouseY, float partialTicks) {
+		super.render(matrixstack, mouseX, mouseY, partialTicks);
+		this.drawCenteredString(matrixstack, minecraft.fontRenderer, "Bindings are handled by SteamVR Input.", this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2 - minecraft.fontRenderer.FONT_HEIGHT - 3, 16777215);
+		this.drawCenteredString(matrixstack, minecraft.fontRenderer, "Go to Settings > Controllers > Manage Controller Bindings in the dashboard.", this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2, 16777215);
+		this.drawCenteredString(matrixstack, minecraft.fontRenderer, TextFormatting.GOLD + "Steam must be running " + TextFormatting.ITALIC + "before" + TextFormatting.RESET + TextFormatting.GOLD + " SteamVR is started, or bindings will not save.", this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2 + minecraft.fontRenderer.FONT_HEIGHT + 3, 16777215);
 	}
 	
 		@Override

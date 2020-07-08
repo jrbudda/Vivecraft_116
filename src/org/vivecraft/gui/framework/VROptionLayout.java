@@ -6,7 +6,7 @@ import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vec2f;
 
 public class VROptionLayout
 {

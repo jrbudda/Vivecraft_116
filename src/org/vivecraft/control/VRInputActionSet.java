@@ -1,11 +1,14 @@
 package org.vivecraft.control;
 
+import org.vivecraft.provider.MCOpenVR;
+
 import net.minecraft.client.settings.KeyBinding;
 
 public enum VRInputActionSet {
 	INGAME("/actions/ingame", "vivecraft.actionset.ingame", "leftright", false),
 	GUI("/actions/gui", "vivecraft.actionset.gui", "leftright", false),
 	GLOBAL("/actions/global", "vivecraft.actionset.global", "leftright", false),
+	MOD("/actions/mod", "vivecraft.actionset.mod", "leftright", false),
 	CONTEXTUAL("/actions/contextual", "vivecraft.actionset.contextual", "single", false),
 	KEYBOARD("/actions/keyboard", "vivecraft.actionset.keyboard", "single", true),
 	MIXED_REALITY("/actions/mixedreality", "vivecraft.actionset.mixedReality", "single", true),
@@ -32,7 +35,7 @@ public enum VRInputActionSet {
 			case "vivecraft.key.category.keyboard":
 				return KEYBOARD;
 			default:
-				return INGAME;
+				return MCOpenVR.isModBinding(keyBinding) ? MOD : INGAME;
 		}
 	}
 }

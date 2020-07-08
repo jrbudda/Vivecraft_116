@@ -8,7 +8,7 @@ import org.vivecraft.utils.math.Matrix4f;
 import org.vivecraft.utils.math.Vector3;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class VRData{
 	public class VRDevicePose{
@@ -76,7 +76,9 @@ public class VRData{
 	public VRDevicePose c2;
 	public VRDevicePose h0;
 	public VRDevicePose h1;
-		
+	public VRDevicePose t0;
+	public VRDevicePose t1;
+	
 	public Vec3d origin;
 	public float rotation_radians;
 	public float worldScale;
@@ -100,7 +102,10 @@ public class VRData{
 		c1 = new VRDevicePose(this, MCOpenVR.getAimRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(1));
 		h0 = new VRDevicePose(this, MCOpenVR.getHandRotation(0),MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(0));
 		h1 = new VRDevicePose(this, MCOpenVR.getHandRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(1));
-		
+	
+		t0 = new VRDevicePose(this, getSmoothedRotation(0,0.33f), MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(0));
+		t1 = new VRDevicePose(this, getSmoothedRotation(1,0.33f), MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(1));
+
 		if (MCOpenVR.mrMovingCamActive)
 			c2 = new VRDevicePose(this, MCOpenVR.getAimRotation(2),MCOpenVR.getAimSource(2).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(2));
 		else {
@@ -110,6 +115,14 @@ public class VRData{
 			Vec3d dir = rot.transform(Vector3.forward()).toVec3d();
 			c2 = new VRDevicePose(this, rot, pos.subtract(hmd_raw).add(scaledPos), dir);
 		}
+	}
+	
+	private Matrix4f getSmoothedRotation(int c, float lenSec) {
+		Vec3d pos = MCOpenVR.controllerHistory[c].averagePosition(lenSec);
+		Vec3d f = MCOpenVR.controllerForwardHistory[c].averagePosition(lenSec);
+		Vec3d u = MCOpenVR.controllerUpHistory[c].averagePosition(lenSec);
+		Vec3d r = f.crossProduct(u);	
+		return new Matrix4f((float)r.x, (float)u.x, (float)-f.x, (float)r.y, (float)u.y, (float)-f.y, (float)r.z, (float)u.z, (float)-f.z);
 	}
 	
 	public VRDevicePose getController(int c){
@@ -169,9 +182,9 @@ public class VRData{
 		case THIRD:
 			return c2;
 		case SCOPER:
-			return c0;
+			return t0;
 		case SCOPEL:
-			return c1;
+			return t1;
 		}
 		return hmd;
 

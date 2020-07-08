@@ -11,8 +11,8 @@ import org.vivecraft.utils.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.Main;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec2f;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class RadialHandler {
 	//

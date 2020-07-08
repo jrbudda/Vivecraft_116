@@ -10,7 +10,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class PhysicalChest extends PhysicalItemSlotGui {
 	boolean wasOpen=false;
@@ -47,9 +47,9 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 		boolean isNeighbor = false;
 		if (this.blockState.getBlock().equals(Blocks.CHEST) && block.getBlock().equals(Blocks.CHEST) ||
 				this.blockState.getBlock().equals(Blocks.TRAPPED_CHEST) && block.getBlock().equals(Blocks.TRAPPED_CHEST)) {
-			Vec3d offset = new Vec3d(pos).subtract(new Vec3d(this.blockPos));
-			int x = Math.abs((int) Math.round(getAnchorRotation(partialTicks).inverse().multiply(offset).x));
-			isNeighbor = (x == 1);
+//			Vec3d offset = new Vec3d(pos).subtract(new Vec3d(this.blockPos));
+//			int x = Math.abs((int) Math.round(getAnchorRotation(partialTicks).inverse().multiply(offset).x));
+//			isNeighbor = (x == 1);
 		}
 
 		if (isFullyClosed() || (!pos.equals(this.blockPos) && !isNeighbor))

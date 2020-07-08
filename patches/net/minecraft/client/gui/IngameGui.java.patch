@@ -1,27 +1,25 @@
 --- a/net/minecraft/client/gui/IngameGui.java
 +++ b/net/minecraft/client/gui/IngameGui.java
-@@ -5,6 +5,8 @@
- import com.google.common.collect.Maps;
+@@ -6,6 +6,8 @@
  import com.google.common.collect.Ordering;
+ import com.mojang.blaze3d.matrix.MatrixStack;
  import com.mojang.blaze3d.platform.GlStateManager;
 +import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 +import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
  import com.mojang.blaze3d.systems.RenderSystem;
+ import com.mojang.datafixers.util.Pair;
  import java.util.Collection;
- import java.util.Iterator;
-@@ -12,6 +14,11 @@
- import java.util.Map;
- import java.util.Random;
+@@ -16,6 +18,9 @@
+ import java.util.UUID;
  import java.util.stream.Collectors;
-+
-+import javax.annotation.Nullable;
+ import javax.annotation.Nullable;
 +
 +import org.lwjgl.opengl.GL11;
 +
  import net.minecraft.block.Blocks;
  import net.minecraft.client.GameSettings;
  import net.minecraft.client.Minecraft;
-@@ -23,11 +30,13 @@
+@@ -27,11 +32,13 @@
  import net.minecraft.client.gui.overlay.DebugOverlayGui;
  import net.minecraft.client.gui.overlay.PlayerTabOverlayGui;
  import net.minecraft.client.gui.overlay.SubtitleOverlayGui;
@@ -35,7 +33,7 @@
  import net.minecraft.client.renderer.texture.AtlasTexture;
  import net.minecraft.client.renderer.texture.PotionSpriteUploader;
  import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-@@ -41,6 +50,7 @@
+@@ -44,6 +51,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.inventory.container.INamedContainerProvider;
  import net.minecraft.item.ItemStack;
@@ -43,16 +41,16 @@
  import net.minecraft.potion.Effect;
  import net.minecraft.potion.EffectInstance;
  import net.minecraft.potion.Effects;
-@@ -106,6 +116,8 @@
+@@ -115,6 +123,8 @@
      private int scaledWidth;
      private int scaledHeight;
      private final Map<ChatType, List<IChatListener>> chatListeners = Maps.newHashMap();
 +    // Vivecraft
 +    public boolean showPlayerList;
  
-     public IngameGui(Minecraft p_i232_1_)
+     public IngameGui(Minecraft p_i32_1_)
      {
-@@ -146,32 +158,41 @@
+@@ -155,32 +165,40 @@
          FontRenderer fontrenderer = this.getFontRenderer();
          RenderSystem.enableBlend();
  
@@ -62,9 +60,6 @@
 -        }
 -        else
 -        {
--            RenderSystem.enableDepthTest();
--            RenderSystem.defaultBlendFunc();
--        }
 +        //Vivecraft no no
 +//        if (Config.isVignetteEnabled())
 +//        {
@@ -74,28 +69,27 @@
 +//        {
 +//        	
 +//        }
-+        
-+        RenderSystem.enableDepthTest();
++
+             RenderSystem.enableDepthTest();
+-            RenderSystem.defaultBlendFunc();
+-        }
 +      //''  RenderSystem.defaultBlendFunc();
 +        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++
  
--        ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
+         ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
  
-+        ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
-+        
          if (this.mc.gameSettings.thirdPersonView == 0 && itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem())
          {
 -            this.renderPumpkinOverlay();
-+        	mc.pumpkineffect = 1f;
 +            //this.renderPumpkinOverlay();
          }
 +        //
-+        
  
 -        if (!this.mc.player.isPotionActive(Effects.NAUSEA))
 -        {
--            float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
--
+-            float f = MathHelper.lerp(p_238445_2_, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
+ 
 -            if (f > 0.0F)
 -            {
 -                this.renderPortal(f);
@@ -104,8 +98,8 @@
 +        //Vivecraft oh no no no.
 +//        if (!this.mc.player.isPotionActive(Effects.NAUSEA))
 +//        {
-+//            float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
-+//
++//            float f = MathHelper.lerp(p_238445_2_, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
++
 +//            if (f > 0.0F)
 +//            {
 +//                this.renderPortal(f);
@@ -114,13 +108,13 @@
  
          if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
          {
-@@ -188,9 +209,13 @@
+@@ -197,9 +215,13 @@
              this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
              RenderSystem.enableBlend();
              RenderSystem.enableAlphaTest();
--            this.renderAttackIndicator();
+-            this.renderAttackIndicator(p_238445_1_);
 +            //Vivecraft nope
-+            //this.renderAttackIndicator();
++            //this.renderAttackIndicator(p_238445_1_);
 +            //
              GlStateManager.enableAlphaTest();
 -            RenderSystem.defaultBlendFunc();
@@ -128,20 +122,9 @@
 +            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 +            ///
              this.mc.getProfiler().startSection("bossHealth");
-             this.overlayBoss.render();
+             this.overlayBoss.func_238484_a_(p_238445_1_);
              this.mc.getProfiler().endSection();
-@@ -223,6 +248,10 @@
-             {
-                 this.spectatorGui.renderSelectedItem();
-             }
-+            
-+            //Vivecraft
-+            renderViveHudIcons();
-+            //
-         }
- 
-         if (this.mc.player.getSleepTimer() > 0)
-@@ -276,7 +305,9 @@
+@@ -285,7 +307,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight - 68), 0.0F);
                      RenderSystem.enableBlend();
@@ -152,7 +135,7 @@
                      int k1 = 16777215;
  
                      if (this.animateOverlayMessageColor)
-@@ -318,7 +349,9 @@
+@@ -328,7 +352,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight / 2), 0.0F);
                      RenderSystem.enableBlend();
@@ -163,9 +146,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.scalef(4.0F, 4.0F, 4.0F);
                      int l1 = j1 << 24 & -16777216;
-@@ -365,9 +398,30 @@
+@@ -375,9 +401,30 @@
              {
-                 this.renderScoreboard(scoreobjective1);
+                 this.renderScoreboard(p_238445_1_, scoreobjective1);
              }
 +            
 +			if (mc.currentScreen != null) {
@@ -195,7 +178,7 @@
              RenderSystem.disableAlphaTest();
              RenderSystem.pushMatrix();
              RenderSystem.translatef(0.0F, (float)(this.scaledHeight - 48), 0.0F);
-@@ -377,7 +431,7 @@
+@@ -387,7 +434,7 @@
              RenderSystem.popMatrix();
              scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
  
@@ -203,18 +186,8 @@
 +            if ((this.mc.gameSettings.keyBindPlayerList.isKeyDown() || showPlayerList) && (!this.mc.isIntegratedServerRunning() || this.mc.player.connection.getPlayerInfoMap().size() > 1 || scoreobjective1 != null))
              {
                  this.overlayPlayerList.setVisible(true);
-                 this.overlayPlayerList.render(this.scaledWidth, scoreboard, scoreobjective1);
-@@ -594,6 +648,9 @@
-             int k = 182;
-             int l = 91;
-             this.setBlitOffset(-90);
-+            //VIVECRAFT
-+			GlStateManager.enableAlphaTest();
-+			///
-             this.blit(i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
-             this.blit(i - 91 - 1 + playerentity.inventory.currentItem * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
- 
-@@ -612,7 +669,9 @@
+                 this.overlayPlayerList.func_238523_a_(p_238445_1_, this.scaledWidth, scoreboard, scoreobjective1);
+@@ -622,7 +669,9 @@
              this.setBlitOffset(j);
              RenderSystem.enableRescaleNormal();
              RenderSystem.enableBlend();
@@ -225,18 +198,18 @@
              CustomItems.setRenderOffHand(false);
  
              for (int i1 = 0; i1 < 9; ++i1)
-@@ -766,7 +825,9 @@
-             {
-                 RenderSystem.pushMatrix();
-                 RenderSystem.enableBlend();
--                RenderSystem.defaultBlendFunc();
-+                //Vivecraft blend
-+                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-+                ///
-                 fill(i - 2, j - 2, i + this.getFontRenderer().getStringWidth(s) + 2, j + 9 + 2, this.mc.gameSettings.getChatBackgroundColor(0));
-                 FontRenderer fontrenderer = null;
+@@ -673,6 +722,10 @@
  
-@@ -1199,6 +1260,7 @@
+             RenderSystem.disableRescaleNormal();
+             RenderSystem.disableBlend();
++
++            //Vivecraft
++            renderViveHudIcons(p_238443_2_);
++            //
+         }
+     }
+ 
+@@ -1212,6 +1265,7 @@
          }
      }
  
@@ -244,7 +217,7 @@
      private void renderPumpkinOverlay()
      {
          RenderSystem.disableDepthTest();
-@@ -1230,6 +1292,8 @@
+@@ -1243,6 +1297,8 @@
          }
      }
  
@@ -253,7 +226,7 @@
      private void renderVignette(Entity entityIn)
      {
          if (!Config.isVignetteEnabled())
-@@ -1282,6 +1346,7 @@
+@@ -1295,6 +1351,7 @@
          }
      }
  
@@ -261,14 +234,14 @@
      private void renderPortal(float timeInPortal)
      {
          if (timeInPortal < 1.0F)
-@@ -1512,4 +1577,80 @@
+@@ -1520,4 +1577,80 @@
      {
          this.overlayDebug.resetChunk();
      }
 +    
 +	//VIVECRAFT ADDITIONS ***********************************
 +  	
-+  	private void renderViveHudIcons(){
++  	private void renderViveHudIcons(MatrixStack matrixstack){
 +          //VIVE SPRINTDICATOR
 +          if (this.mc.getRenderViewEntity() instanceof PlayerEntity)
 +          {
@@ -280,7 +253,7 @@
 +        	
 +        	  Effect e = null;
 +        	  if(entityplayer.isSprinting()) e = Effects.SPEED;      	  
-+        	  if(entityplayer.isShiftKeyDown()) e = Effects.BLINDNESS;
++        	  if(entityplayer.isSneaking()) e = Effects.BLINDNESS;
 +        	  if(entityplayer.isActualySwimming()) e = Effects.DOLPHINS_GRACE;
 +        	  if(entityplayer.isElytraFlying()) iconp = -1;
 +        	  
@@ -305,7 +278,7 @@
 +        		  this.mc.getTextureManager().bindTexture(sprite.getAtlasTexture().getTextureLocation());
 +        		  int w = this.mc.getMainWindow().getScaledWidth() / 2 - 109;
 +        		  int h = this.mc.getMainWindow().getScaledHeight() -39;      			  
-+        		  AbstractGui.blit(w, h, 0, 18, 18, sprite);        			
++        		  AbstractGui.blit(matrixstack, w, h, 0, 18, 18, sprite);        			
 +        	  }       	  
 +          }
 +          //

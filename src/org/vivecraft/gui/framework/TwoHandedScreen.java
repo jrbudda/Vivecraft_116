@@ -3,6 +3,8 @@ package org.vivecraft.gui.framework;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -33,7 +35,7 @@ public abstract class TwoHandedScreen extends Screen
 	}
 	
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks) {
+	public void render(MatrixStack matrixstack, int mouseX, int mouseY, float partialTicks) {
 		
         if (reinit)
         {
@@ -58,9 +60,9 @@ public abstract class TwoHandedScreen extends Screen
         	boolean buttonhovered2 = mX2 >= butt.x && mY2 >= butt.y && mX2 < butt.x + butt.getWidth() && mY2 < butt.y + 20;
         
         	if(buttonhovered1)
-        		butt.render((int)mX1, (int)mY1, partialTicks);
+        		butt.render(matrixstack, (int)mX1, (int)mY1, partialTicks);
         	else
-        		butt.render((int)mX2, (int)mY2, partialTicks);
+        		butt.render(matrixstack, (int)mX2, (int)mY2, partialTicks);
         	
         	if (buttonhovered1)
         		hoveredButtonId1 = butt;

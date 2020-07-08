@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.resources.I18n;
@@ -27,7 +29,7 @@ public class GuiRadialItemsList extends ExtendedList
     }
     
     public void buildList() {
-        KeyBinding[] bindings = ArrayUtils.clone(minecraft.gameSettings.keyBindings);
+        KeyBinding[] bindings = ArrayUtils.clone(mc.gameSettings.keyBindings);
         Arrays.sort(bindings);
         
         String cat = null;
@@ -55,13 +57,13 @@ public class GuiRadialItemsList extends ExtendedList
         public CategoryEntry(String p_i45028_2_)
         {
             this.labelText = I18n.format(p_i45028_2_, new Object[0]);
-            this.labelWidth = GuiRadialItemsList.this.minecraft.fontRenderer.getStringWidth(this.labelText);
+            this.labelWidth = GuiRadialItemsList.this.mc.fontRenderer.getStringWidth(this.labelText);
         }
 
 		@Override
-		public void render(int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_194999_5_,float partialTicks)
+		public void render(MatrixStack matrixstack, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_194999_5_,float partialTicks)
         {
-            minecraft.fontRenderer.drawString(this.labelText, GuiRadialItemsList.this.minecraft.currentScreen.width / 2 - this.labelWidth / 2, y + height  - GuiRadialItemsList.this.minecraft.fontRenderer.FONT_HEIGHT - 1, 6777215);
+            mc.fontRenderer.drawStringWithShadow(this.labelText, GuiRadialItemsList.this.mc.currentScreen.width / 2 - this.labelWidth / 2, y + height  - GuiRadialItemsList.this.minecraft.fontRenderer.FONT_HEIGHT - 1, 6777215);
         }
     }
 
@@ -77,11 +79,11 @@ public class GuiRadialItemsList extends ExtendedList
         }      
         
 		@Override
-		public void render(int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_194999_5_,float partialTicks)
+		public void render(MatrixStack matrixstack, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_194999_5_,float partialTicks)
         {
             TextFormatting formatting = TextFormatting.WHITE;
             if(p_194999_5_) formatting = TextFormatting.GREEN;
-			minecraft.fontRenderer.drawString(formatting + I18n.format(this.myKey.getKeyDescription()), minecraft.currentScreen.width / 2 - maxListLabelWidth / 2, y+ height / 2 - GuiRadialItemsList.this.minecraft.fontRenderer.FONT_HEIGHT / 2, 16777215);
+			mc.fontRenderer.drawStringWithShadow(formatting + I18n.format(this.myKey.getKeyDescription()), mc.currentScreen.width / 2 - maxListLabelWidth / 2, y+ height / 2 - GuiRadialItemsList.this.minecraft.fontRenderer.FONT_HEIGHT / 2, 16777215);
         }
 		
 		@Override

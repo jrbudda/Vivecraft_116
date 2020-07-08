@@ -1,6 +1,6 @@
 --- a/net/optifine/shaders/Shaders.java
 +++ b/net/optifine/shaders/Shaders.java
-@@ -121,13 +121,18 @@
+@@ -124,13 +124,18 @@
  import org.lwjgl.opengl.EXTFramebufferObject;
  import org.lwjgl.opengl.GL;
  import org.lwjgl.opengl.GL11;
@@ -20,7 +20,7 @@
      public static boolean isInitializedOnce = false;
      public static boolean isShaderPackInitialized = false;
      public static GLCapabilities capabilities;
-@@ -336,12 +341,12 @@
+@@ -339,12 +344,12 @@
      static final int MaxShadowColorBuffers = 8;
      static final int MaxShadowDepthBuffers = 2;
      static int usedColorBuffers = 0;
@@ -35,7 +35,7 @@
      static int sfb = 0;
      private static int[] gbuffersFormat = new int[8];
      public static boolean[] gbuffersClear = new boolean[8];
-@@ -431,7 +436,7 @@
+@@ -434,7 +439,7 @@
      private static ShaderOption[] shaderPackOptions = null;
      private static Set<String> shaderPackOptionSliders = null;
      static ShaderProfile[] shaderPackProfiles = null;
@@ -44,7 +44,7 @@
      static Map<String, IExpressionBool> shaderPackProgramConditions = new HashMap<>();
      public static final String PATH_SHADERS_PROPERTIES = "/shaders/shaders.properties";
      public static PropertyDefaultFastFancyOff shaderPackClouds = new PropertyDefaultFastFancyOff("clouds", "Clouds", 0);
-@@ -507,7 +512,7 @@
+@@ -510,7 +515,7 @@
      static final FloatBuffer tempMatrixDirectBuffer = nextFloatBuffer(16);
      static final FloatBuffer tempDirectFloatBuffer = nextFloatBuffer(16);
      static final IntBuffer dfbColorTextures = nextIntBuffer(16);
@@ -53,7 +53,7 @@
      static final IntBuffer sfbColorTextures = nextIntBuffer(8);
      static final IntBuffer sfbDepthTextures = nextIntBuffer(2);
      static final IntBuffer dfbDrawBuffers = nextIntBuffer(8);
-@@ -526,6 +531,11 @@
+@@ -529,6 +534,11 @@
      {
      }
  
@@ -65,7 +65,7 @@
      private static ByteBuffer nextByteBuffer(int size)
      {
          ByteBuffer bytebuffer = bigBuffer;
-@@ -830,7 +840,7 @@
+@@ -831,7 +841,7 @@
              shaderPackOptions = null;
              shaderPackOptionSliders = null;
              shaderPackProfiles = null;
@@ -74,7 +74,7 @@
              shaderPackProgramConditions.clear();
              shaderPackClouds.resetValue();
              shaderPackOldHandLight.resetValue();
-@@ -886,6 +896,27 @@
+@@ -893,6 +903,27 @@
          loadShaderPackResources();
          loadShaderPackDimensions();
          shaderPackOptions = loadShaderPackOptions();
@@ -102,7 +102,7 @@
          loadShaderPackProperties();
          boolean flag3 = shaderPackLoaded != flag;
          boolean flag4 = isOldLighting() != flag1;
-@@ -1059,7 +1090,7 @@
+@@ -1066,7 +1097,7 @@
                  shaderPackFrustumCulling.loadFrom(properties);
                  shaderPackOptionSliders = ShaderPackParser.parseOptionSliders(properties, shaderPackOptions);
                  shaderPackProfiles = ShaderPackParser.parseProfiles(properties, shaderPackOptions);
@@ -111,7 +111,7 @@
                  shaderPackProgramConditions = ShaderPackParser.parseProgramConditions(properties, shaderPackOptions);
                  customTexturesGbuffers = loadCustomTextures(properties, 0);
                  customTexturesComposite = loadCustomTextures(properties, 1);
-@@ -1564,7 +1595,7 @@
+@@ -1568,7 +1599,7 @@
      {
          ShaderOption[] ashaderoption = (ShaderOption[])shaderPackOptions.clone();
  
@@ -120,7 +120,7 @@
          {
              if (shaderPackProfiles != null)
              {
-@@ -1578,7 +1609,7 @@
+@@ -1581,7 +1612,7 @@
          else
          {
              String s = screenName != null ? "screen." + screenName : "screen";
@@ -129,7 +129,7 @@
  
              if (screenshaderoptions == null)
              {
-@@ -1599,7 +1630,7 @@
+@@ -1602,7 +1633,7 @@
                      }
                      else if (shaderoption instanceof ShaderOptionRest)
                      {
@@ -138,7 +138,7 @@
                          list.addAll(Arrays.asList(ashaderoption2));
                      }
                      else
-@@ -1618,13 +1649,13 @@
+@@ -1620,13 +1651,13 @@
      {
          String s = screenName != null ? "screen." + screenName : "screen";
  
@@ -154,7 +154,7 @@
              return screenshaderoptions == null ? def : screenshaderoptions.getColumns();
          }
      }
-@@ -2404,6 +2435,8 @@
+@@ -2399,6 +2430,8 @@
              }
  
              checkGLError("Shaders.init");
@@ -163,7 +163,7 @@
          }
      }
  
-@@ -3520,8 +3553,14 @@
+@@ -3516,8 +3549,14 @@
                  setProgramUniform1f(uniform_viewWidth, (float)renderWidth);
                  setProgramUniform1f(uniform_viewHeight, (float)renderHeight);
                  setProgramUniform1f(uniform_near, 0.05F);
@@ -180,7 +180,7 @@
                  setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
                  setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
                  setProgramUniform3f(uniform_upPosition, upPosition[0], upPosition[1], upPosition[2]);
-@@ -3891,8 +3930,9 @@
+@@ -3885,8 +3924,9 @@
      {
          renderDisplayWidth = mc.getMainWindow().getFramebufferWidth();
          renderDisplayHeight = mc.getMainWindow().getFramebufferHeight();
@@ -192,7 +192,7 @@
          setupFrameBuffer();
      }
  
-@@ -3922,20 +3962,23 @@
+@@ -3916,20 +3956,23 @@
          GL32.glDrawBuffers(0);
          GL32.glReadBuffer(0);
  
@@ -225,7 +225,7 @@
          checkGLError("FT d");
  
          for (int k = 0; k < usedColorBuffers; ++k)
-@@ -4093,7 +4136,7 @@
+@@ -4087,7 +4130,7 @@
          checkWorldChanged(mc.world);
          mc = minecraft;
          mc.getProfiler().startSection("init");
@@ -234,7 +234,7 @@
  
          if (!isShaderPackInitialized)
          {
-@@ -4113,9 +4156,10 @@
+@@ -4107,9 +4150,10 @@
              }
          }
  
@@ -246,7 +246,7 @@
          }
  
          if (needResizeShadow)
-@@ -4167,7 +4211,7 @@
+@@ -4161,7 +4205,7 @@
  
              if (entity != null)
              {
@@ -255,7 +255,7 @@
                  eyePosY = (float)activeRenderInfo.getProjectedView().getY();
                  eyeBrightness = mc.getRenderManager().getPackedLight(entity, partialTicks);
                  float f2 = (float)diffSystemTime * 0.01F;
-@@ -4196,7 +4240,6 @@
+@@ -4190,7 +4234,6 @@
  
                      if (livingentity.isPotionActive(Effects.NIGHT_VISION))
                      {
@@ -263,9 +263,9 @@
                          nightVision = GameRenderer.getNightVisionBrightness(livingentity, partialTicks);
                      }
  
-@@ -4239,7 +4282,9 @@
-         previousModelView.position(0);
-         modelView.position(0);
+@@ -4233,7 +4276,9 @@
+         ((Buffer)previousModelView).position(0);
+         ((Buffer)modelView).position(0);
          checkGLError("beginRender");
 -        ShadersRender.renderShadowMap(entityRenderer, activeRenderInfo, 0, partialTicks, finishTimeNano);
 +		// VIVECRAFT: Render shadow map once per frame instead of every damn pass
@@ -274,27 +274,25 @@
          mc.getProfiler().endSection();
          EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
  
-@@ -4511,9 +4556,16 @@
-         projection.position(0);
-         projectionInverse.position(0);
+@@ -4500,9 +4545,14 @@
+         ((Buffer)projection).position(0);
+         ((Buffer)projectionInverse).position(0);
          Matrix4f matrix4f = matrixStackIn.getLast().getMatrix();
 -        Matrix4f matrix4f1 = new Matrix4f(matrix4f);
 -        matrix4f1.transpose();
 -        matrix4f1.write(tempMat);
-+        
 +        //Vivecraft - I do not know why this is necessary to fix shadows. It should be in stereo already.
 +        MatrixStack mat = new MatrixStack();
 +        mat.getLast().getMatrix().setIdentity();
 +        mat.getLast().getMatrix().mul(matrix4f);
 +        gameRenderer.applystereo(mc.currentPass, mat);
 +        //
-+        
 +        mat.getLast().getMatrix().transpose();
 +        mat.getLast().getMatrix().write(tempMat);
-         modelView.position(0);
+         ((Buffer)modelView).position(0);
          modelView.put(tempMat);
-         SMath.invertMat4FBFA((FloatBuffer)modelViewInverse.position(0), (FloatBuffer)modelView.position(0), faModelViewInverse, faModelView);
-@@ -4653,13 +4705,24 @@
+         SMath.invertMat4FBFA((FloatBuffer)((Buffer)modelViewInverse).position(0), (FloatBuffer)((Buffer)modelView).position(0), faModelViewInverse, faModelView);
+@@ -4642,13 +4692,24 @@
          Matrix4f matrix4f1 = new Matrix4f(matrix4f);
          matrix4f1.transpose();
          matrix4f1.write(tempMat);

@@ -11,7 +11,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.client.util.ITooltipFlag;
-@@ -161,7 +165,7 @@
+@@ -117,7 +121,7 @@
          {
              ItemStack itemstack = playerIn.getHeldItem(handIn);
  
@@ -20,7 +20,7 @@
              {
                  playerIn.setActiveHand(handIn);
                  return ActionResult.resultConsume(itemstack);
-@@ -345,6 +349,18 @@
+@@ -301,6 +305,18 @@
          float f = player.rotationPitch;
          float f1 = player.rotationYaw;
          Vec3d vec3d = player.getEyePosition(1.0F);

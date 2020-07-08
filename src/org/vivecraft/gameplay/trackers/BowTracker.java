@@ -23,7 +23,7 @@ import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
 

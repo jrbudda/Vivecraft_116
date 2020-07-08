@@ -1,6 +1,6 @@
 --- a/net/optifine/Mipmaps.java
 +++ b/net/optifine/Mipmaps.java
-@@ -53,7 +53,7 @@
+@@ -54,7 +54,7 @@
  
                  if (k <= 0 && l <= 0)
                  {

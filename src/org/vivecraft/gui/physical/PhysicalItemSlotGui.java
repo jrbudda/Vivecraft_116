@@ -22,7 +22,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 
 public class PhysicalItemSlotGui extends PhysicalGui {
@@ -212,7 +212,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 			return new Vec3d(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5);
 		} else {
 			Vec3d prev=new Vec3d(entity.prevPosX,entity.prevPosY,entity.prevPosZ);
-			return prev.add((entity.getPositionVector().subtract(prev)).scale(partialTicks));
+			return prev.add((entity.getPositionVec().subtract(prev)).scale(partialTicks));
 		}
 	}
 
@@ -238,7 +238,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 	}
 
 	public void tryOpenWindow() {
-		if (mc.player.isShiftKeyDown())
+		if (mc.player.isSneaking())
 			return;
 		mc.physicalGuiManager.requestGuiSwitch(this);
 

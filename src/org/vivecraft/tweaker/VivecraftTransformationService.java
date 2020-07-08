@@ -18,7 +18,10 @@ import java.util.zip.ZipFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import org.vivecraft.asm.VivecraftASMTransformer;
 import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.utils.Utils;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformationService;
@@ -32,37 +35,31 @@ public class VivecraftTransformationService implements ITransformationService
     private static ZipFile ZipFile;
     private static VivecraftTransformer transformer;
 
+    @Override
     public String name()
     {
         return "Vivecraft";
     }
 
+    @Override
     public void initialize(IEnvironment environment)
     {
         LOGGER.info("VivecraftTransformationService.initialize");
     }
 
+    @Override
     public void beginScanning(IEnvironment environment)
     {
     }
 
+    @Override
     public void onLoad(IEnvironment env, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
         LOGGER.info("VivecraftTransformationService.onLoad");
-        ZipFileUrl = VivecraftTransformer.class.getProtectionDomain().getCodeSource().getLocation();
-      
+
         try {
-            MCOpenVR.unpackOpenvr();
-		} catch (Exception e) {
-	        LOGGER.info("Failed to unpack OpenVR Natives: " + e.toString());
-		}
-        
-        try
-        {
-            URI uri = ZipFileUrl.toURI();
-            File file1 = new File(uri);
-            ZipFile = new ZipFile(file1);
-            LOGGER.info("Vivecraft ZIP file: " + file1);
+            ZipFileUrl = Utils.getVivecraftZipLocation().toURL();
+            ZipFile = Utils.getVivecraftZip();
             transformer = new VivecraftTransformer(ZipFile);
         }
         catch (Exception exception)
@@ -72,11 +69,13 @@ public class VivecraftTransformationService implements ITransformationService
         }
     }
 
+    @Override
     public Entry<Set<String>, Supplier<Function<String, Optional<URL>>>> additionalResourcesLocator()
     {
         return ITransformationService.super.additionalResourcesLocator();
     }
 
+    @Override
     public Entry<Set<String>, Supplier<Function<String, Optional<URL>>>> additionalClassesLocator()
     {
         Set<String> set = new HashSet<>();
@@ -126,6 +125,7 @@ public class VivecraftTransformationService implements ITransformationService
         }
     }
 
+    @Override
     public List<ITransformer> transformers()
     {
         LOGGER.info("VivecraftTransformationService.transformers");
@@ -135,6 +135,8 @@ public class VivecraftTransformationService implements ITransformationService
         {
             list.add(transformer);
         }
+
+        list.add(new VivecraftASMTransformer());
 
         return list;
     }

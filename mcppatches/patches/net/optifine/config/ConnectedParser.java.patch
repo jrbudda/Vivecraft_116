@@ -4,12 +4,12 @@
                  }
              }
  
--            MatchBlock[] amatchblock1 = list.toArray(new MatchBlock[list.size()]);
-+            MatchBlock[] amatchblock1 = (MatchBlock[]) list.toArray(new MatchBlock[list.size()]);
-             return amatchblock1;
+-            return list.toArray(new MatchBlock[list.size()]);
++            return (MatchBlock[]) list.toArray(new MatchBlock[list.size()]);
          }
      }
-@@ -379,7 +379,7 @@
+ 
+@@ -376,7 +376,7 @@
  
      public static Comparable getPropertyValue(String value, Collection propertyValues)
      {
@@ -18,12 +18,12 @@
          {
              if (getValueName(comparable).equals(value))
              {
-@@ -494,7 +494,7 @@
+@@ -491,7 +491,7 @@
                  list = list1;
              }
  
--            Biome[] abiome = list.toArray(new Biome[list.size()]);
-+            Biome[] abiome = (Biome[]) list.toArray(new Biome[list.size()]);
-             return abiome;
+-            return list.toArray(new Biome[list.size()]);
++            return (Biome[]) list.toArray(new Biome[list.size()]);
          }
      }
+ 

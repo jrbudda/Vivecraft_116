@@ -1,6 +1,6 @@
 --- a/net/optifine/http/HttpPipeline.java
 +++ b/net/optifine/http/HttpPipeline.java
-@@ -216,7 +216,7 @@
+@@ -213,7 +213,7 @@
  
      public static boolean hasActiveRequests()
      {

@@ -8,7 +8,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.network.play.client.CPlayerDiggingPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 import net.minecraft.util.text.ChatType;
 
 
@@ -80,7 +80,7 @@ public class BackpackTracker extends Tracker {
 							if (mc.vrSettings.physicalGuiEnabled) {
 								mc.physicalGuiManager.toggleInventoryBag();
 							} else
-								player.connection.sendPacket(new CPlayerDiggingPacket(CPlayerDiggingPacket.Action.SWAP_HELD_ITEMS, BlockPos.ZERO, Direction.DOWN));
+								player.connection.sendPacket(new CPlayerDiggingPacket(CPlayerDiggingPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ZERO, Direction.DOWN));
 						}
 					}
 					MCOpenVR.triggerHapticPulse(c, 1500);

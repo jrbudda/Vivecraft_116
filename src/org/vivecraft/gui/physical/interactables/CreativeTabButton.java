@@ -4,7 +4,7 @@ import org.vivecraft.gui.physical.PhysicalInventory;
 import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.item.ItemGroup;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class CreativeTabButton extends Button {
 	public PhysicalInventory inventory;

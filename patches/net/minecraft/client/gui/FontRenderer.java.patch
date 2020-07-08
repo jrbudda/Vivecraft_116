@@ -1,38 +1,12 @@
 --- a/net/minecraft/client/gui/FontRenderer.java
 +++ b/net/minecraft/client/gui/FontRenderer.java
-@@ -10,6 +10,8 @@
- import java.util.Arrays;
- import java.util.List;
- import java.util.Random;
+@@ -376,4 +376,9 @@
+             return this.field_238438_l_;
+         }
+     }
 +
-+import net.minecraft.client.Minecraft;
- import net.minecraft.client.gui.fonts.EmptyGlyph;
- import net.minecraft.client.gui.fonts.Font;
- import net.minecraft.client.gui.fonts.IGlyph;
-@@ -17,6 +19,7 @@
- import net.minecraft.client.gui.fonts.providers.IGlyphProvider;
- import net.minecraft.client.gui.fonts.providers.TextureGlyphProvider;
- import net.minecraft.client.renderer.IRenderTypeBuffer;
-+import net.minecraft.client.renderer.LightTexture;
- import net.minecraft.client.renderer.Matrix4f;
- import net.minecraft.client.renderer.Tessellator;
- import net.minecraft.client.renderer.TransformationMatrix;
-@@ -138,14 +141,16 @@
-         {
-             GlStateManager.getBlendState(this.oldBlendState);
-             GlStateManager.enableBlend();
--            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-+            // VIVECRAFT: DestFactor of ONE is really what we want here, because math
-+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-+         //   RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-         }
- 
-         if (dropShadow)
-         {
-             this.renderStringAtPos(text, x, y, color, true, matrix, buffer, transparentIn, colorBackgroundIn, packedLight);
-         }
--
-+        
-         Matrix4f matrix4f = matrix.copy();
-         matrix4f.translate(new Vector3f(0.0F, 0.0F, 0.001F));
-         x = this.renderStringAtPos(text, x, y, color, false, matrix4f, buffer, transparentIn, colorBackgroundIn, packedLight);
++	public void drawStringWithShadow(String string, float l, float i1, int disabledColor) {
++		// TODO Auto-generated method stub
++		
++	}
+ }

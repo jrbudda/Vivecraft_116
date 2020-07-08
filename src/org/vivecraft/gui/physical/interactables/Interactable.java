@@ -3,7 +3,7 @@ package org.vivecraft.gui.physical.interactables;
 import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public interface Interactable{
 	void render(double partialTicks, int renderLayer);

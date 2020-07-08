@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/layers/BipedArmorLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/BipedArmorLayer.java
+@@ -120,7 +120,7 @@
+         p_renderModel_5_.render(p_renderModel_1_, ivertexbuilder, p_renderModel_3_, OverlayTexture.NO_OVERLAY, p_renderModel_6_, p_renderModel_7_, p_renderModel_8_, 1.0F);
+     }
+ 
+-    private A func_241736_a_(EquipmentSlotType p_241736_1_)
++    public A func_241736_a_(EquipmentSlotType p_241736_1_)
+     {
+         return (A)(this.isLegSlot(p_241736_1_) ? this.modelLeggings : this.modelArmor);
+     }

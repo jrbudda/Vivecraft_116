@@ -1,6 +1,6 @@
 --- a/net/optifine/CustomItems.java
 +++ b/net/optifine/CustomItems.java
-@@ -520,11 +520,11 @@
+@@ -519,11 +519,11 @@
  
          for (int i = 0; i < list.size(); ++i)
          {
@@ -15,7 +15,7 @@
                  Arrays.sort(acustomitemproperties1, new CustomItemsComparator());
                  acustomitemproperties[i] = acustomitemproperties1;
              }
-@@ -596,15 +596,15 @@
+@@ -595,15 +595,15 @@
              list.add((List<CustomItemProperties>)null);
          }
  
@@ -36,14 +36,3 @@
      }
  
      public static IBakedModel getCustomItemModel(ItemStack itemStack, IBakedModel model, ResourceLocation modelLocation, boolean fullModel)
-@@ -1209,8 +1209,8 @@
-         return useGlint;
-     }
- 
--    public static void setRenderOffHand(boolean renderOffHand)
-+    public static void setRenderOffHand(boolean renderOffHandin)
-     {
--        renderOffHand = renderOffHand;
-+        renderOffHand = renderOffHandin;
-     }
- }

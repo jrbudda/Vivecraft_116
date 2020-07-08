@@ -127,7 +127,6 @@ public class VRSettings
     public double headToHmdLength=0.10f;
     public float autoCalibration=-1;
     public float manualCalibration=-1;
-    public float playerEyeHeight = 1.62f;
 	public boolean alwaysSimulateKeyboard = false;
 	public int bowMode = BOW_MODE_ON;
 	public String keyboardKeys =  "`1234567890-=qwertyuiop[]\\asdfghjkl;\':\"zxcvbnm,./?<>";
@@ -1503,7 +1502,6 @@ public class VRSettings
                 if(seated) {
                     MCOpenVR.resetPosition();
                 }
-                playerEyeHeight = (float) Minecraft.getInstance().vrPlayer.vrdata_room_pre.getHeadPivot().y;
                 break;
             case FREEMOVE_MODE:
                 switch (this.vrFreeMoveMode) {
@@ -1727,7 +1725,6 @@ public class VRSettings
             var5.println("version:" + version);
             var5.println("newlyCreated:" + false );
             //var5.println("firstLoad:" + this.firstLoad );  
-            var5.println("playerEyeHeight:" + this.playerEyeHeight);
             var5.println("stereoProviderPluginID:"+ this.stereoProviderPluginID);
             var5.println("badStereoProviderPluginID:"+ this.badStereoProviderPluginID);
             var5.println("hudOpacity:" + this.hudOpacity);
@@ -1874,19 +1871,7 @@ public class VRSettings
         }
     }
 
-  
-    public void setMinecraftPlayerEyeHeight(float eyeHeight)
-    {
-        this.playerEyeHeight = eyeHeight;
-    }
-
-    public float getMinecraftPlayerEyeHeight(){
-        return playerEyeHeight;
-    }
-
-
-
-    /**
+     /**
      * Parses a string into a float.
      */
     private float parseFloat(String par1Str)

@@ -10,22 +10,4 @@
     }
  
     private static <T> T[] func_226177_a_(Object[] p_226177_0_) {
-@@ -96,7 +96,7 @@
-    }
- 
-    public boolean remove(Object p_remove_1_) {
--      int i = this.func_226182_c_(p_remove_1_);
-+      int i = this.func_226182_c_((T)p_remove_1_);
-       if (i >= 0) {
-          this.func_226183_d_(i);
-          return true;
-@@ -110,7 +110,7 @@
-    }
- 
-    public boolean contains(Object p_contains_1_) {
--      int i = this.func_226182_c_(p_contains_1_);
-+      int i = this.func_226182_c_((T)p_contains_1_);
-       return i >= 0;
-    }
- 
 

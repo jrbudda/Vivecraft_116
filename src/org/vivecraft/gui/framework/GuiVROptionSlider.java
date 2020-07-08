@@ -2,10 +2,12 @@ package org.vivecraft.gui.framework;
 
 import org.vivecraft.settings.VRSettings;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.StringTextComponent;
 
 public class GuiVROptionSlider extends GuiVROptionButton
 {
@@ -22,7 +24,7 @@ public class GuiVROptionSlider extends GuiVROptionButton
         this.maxValue = max;
         Minecraft minecraft = Minecraft.getInstance();
         this.sliderValue = enumOptions.normalizeValue(minecraft.vrSettings.getOptionFloatValue(enumOptions));
-        this.setMessage(minecraft.vrSettings.getButtonDisplayString(enumOptions));
+        this.setMessage(new StringTextComponent(minecraft.vrSettings.getButtonDisplayString(enumOptions)));
     }
 
     public GuiVROptionSlider(int id, int x, int y, VRSettings.VrOptions option, double min, double max)
@@ -53,21 +55,21 @@ public class GuiVROptionSlider extends GuiVROptionButton
         double d0 = this.enumOptions.denormalizeValue((float) this.sliderValue);
         mc.vrSettings.setOptionFloatValue(this.enumOptions, (float) d0);
         this.sliderValue = this.enumOptions.normalizeValue((float) d0);
-        this.setMessage(mc.vrSettings.getButtonDisplayString(this.enumOptions));
+        this.setMessage(new StringTextComponent(mc.vrSettings.getButtonDisplayString(this.enumOptions)));
     }
     
     /**
      * Fired when the mouse button is dragged. Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
-    protected void renderBg(Minecraft mc, int mouseX, int mouseY)
+    protected void renderBg(MatrixStack matrixstack, Minecraft mc, int mouseX, int mouseY)
     {
         if (this.visible)
         {
             mc.getTextureManager().bindTexture(WIDGETS_LOCATION);
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             int i = (this.isHovered() ? 2 : 1) * 20;
-            this.blit(this.x + (int)(this.sliderValue * (double)(this.width - 8)), this.y, 0, 46 + i, 4, 20);
-            this.blit(this.x + (int)(this.sliderValue * (double)(this.width - 8)) + 4, this.y, 196, 46 + i, 4, 20);
+            this.blit(matrixstack, this.x + (int)(this.sliderValue * (double)(this.width - 8)), this.y, 0, 46 + i, 4, 20);
+            this.blit(matrixstack, this.x + (int)(this.sliderValue * (double)(this.width - 8)) + 4, this.y, 196, 46 + i, 4, 20);
         }
     }
 
@@ -80,7 +82,7 @@ public class GuiVROptionSlider extends GuiVROptionButton
         this.sliderValue = MathHelper.clamp(this.sliderValue, 0.0D, 1.0D);
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.vrSettings.setOptionFloatValue(this.enumOptions, (float) this.enumOptions.denormalizeValue((float) this.sliderValue));
-        this.setMessage(minecraft.vrSettings.getButtonDisplayString(this.enumOptions));
+        this.setMessage(new StringTextComponent(minecraft.vrSettings.getButtonDisplayString(this.enumOptions)));
         this.dragging = true;
     }
     

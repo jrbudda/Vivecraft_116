@@ -1,38 +1,28 @@
 --- a/net/minecraft/entity/projectile/ThrowableEntity.java
 +++ b/net/minecraft/entity/projectile/ThrowableEntity.java
-@@ -2,6 +2,10 @@
+@@ -1,5 +1,8 @@
+ package net.minecraft.entity.projectile;
  
- import java.util.UUID;
- import javax.annotation.Nullable;
-+
 +import org.vivecraft.api.NetworkHelper;
 +import org.vivecraft.api.ServerVivePlayer;
 +
+ import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
- import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
-@@ -12,6 +16,7 @@
- import net.minecraft.network.IPacket;
- import net.minecraft.network.play.server.SSpawnObjectPacket;
- import net.minecraft.particles.ParticleTypes;
-+import net.minecraft.util.Hand;
- import net.minecraft.util.math.AxisAlignedBB;
- import net.minecraft.util.math.BlockRayTraceResult;
- import net.minecraft.util.math.MathHelper;
-@@ -20,6 +25,7 @@
- import net.minecraft.util.math.Vec3d;
+@@ -15,6 +18,7 @@
+ import net.minecraft.util.math.RayTraceResult;
+ import net.minecraft.util.math.vector.Vec3d;
  import net.minecraft.world.World;
- import net.minecraft.world.server.ServerWorld;
 +import net.optifine.reflect.Reflector;
  
- public abstract class ThrowableEntity extends Entity implements IProjectile
+ public abstract class ThrowableEntity extends ProjectileEntity
  {
-@@ -49,6 +55,15 @@
-         this(p_i406_1_, p_i406_2_.getPosX(), p_i406_2_.getPosYEye() - (double)0.1F, p_i406_2_.getPosZ(), p_i406_3_);
-         this.owner = p_i406_2_;
-         this.ownerId = p_i406_2_.getUniqueID();
+@@ -33,6 +37,15 @@
+     {
+         this(p_i3867_1_, p_i3867_2_.getPosX(), p_i3867_2_.getPosYEye() - (double)0.1F, p_i3867_2_.getPosZ(), p_i3867_3_);
+         this.setShooter(p_i3867_2_);
 +        //VIVE SET SPAWNPOS
-+        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(owner.getUniqueID());
++        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i3867_2_.getUniqueID());
 +        if (vp !=null && vp.isVR())
 +        {
 +        	Vec3d aimSource = vp.getControllerPos(vp.activeHand);
@@ -43,32 +33,15 @@
      }
  
      public boolean isInRangeToRenderDist(double distance)
-@@ -66,6 +81,15 @@
+@@ -79,6 +92,11 @@
  
-     public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
-     {
-+    	//VIVE USE CONTROLLER
-+        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(owner.getUniqueID());
-+        if (vp !=null && vp.isVR())
-+        {
-+        	Vec3d aim = vp.getControllerDir(vp.activeHand);
-+        	rotationPitchIn = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
-+			rotationYawIn = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		
-+        	}
-+        //END VIVE
-         float f = -MathHelper.sin(rotationYawIn * ((float)Math.PI / 180F)) * MathHelper.cos(rotationPitchIn * ((float)Math.PI / 180F));
-         float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * ((float)Math.PI / 180F));
-         float f2 = MathHelper.cos(rotationYawIn * ((float)Math.PI / 180F)) * MathHelper.cos(rotationPitchIn * ((float)Math.PI / 180F));
-@@ -152,6 +176,12 @@
-             }
-             else
-             {
+         if (raytraceresult.getType() != RayTraceResult.Type.MISS && !flag)
+         {
 +                //Forge
-+                boolean flag = false;
 +                if(Reflector.ForgeEventFactory_onProjectileImpactT.exists())
 +                	flag = Reflector.callBoolean(Reflector.ForgeEventFactory_onProjectileImpactT, this, raytraceresult);
 +                if(!flag)
 +                //
-                 this.onImpact(raytraceresult);
-             }
+             this.onImpact(raytraceresult);
          }
+ 

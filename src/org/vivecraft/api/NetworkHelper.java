@@ -23,7 +23,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class NetworkHelper {
 
@@ -117,7 +117,7 @@ public class NetworkHelper {
 
 		if (userheight != heightlast) {
 			ByteBuf payload = Unpooled.buffer();
-			payload.writeFloat(userheight);
+			payload.writeFloat(userheight / AutoCalibration.defaultHeight);
 			byte[] out = new byte[payload.readableBytes()];
 			payload.readBytes(out);
 			CCustomPayloadPacket pack = getVivecraftClientPacket(PacketDiscriminators.HEIGHT,out);
@@ -177,7 +177,7 @@ public class NetworkHelper {
 			Minecraft.getInstance().getConnection().sendPacket(pack);
 		}
 		
-		PlayerModelController.getInstance().Update(Minecraft.getInstance().player.getGameProfile().getId(), a, b, c, worldScale, userheight / ServerVivePlayer.defaultHeight, true);
+		PlayerModelController.getInstance().Update(Minecraft.getInstance().player.getGameProfile().getId(), a, b, c, worldScale, userheight / AutoCalibration.defaultHeight, true);
 
 	}
 	
@@ -204,7 +204,7 @@ public class NetworkHelper {
 				continue;
 			}
 
-			double d = sendTo.player.getPositionVector().squareDistanceTo(v.player.getPositionVector());
+			double d = sendTo.player.getPositionVec().squareDistanceTo(v.player.getPositionVec());
 
 			if (d < 256 * 256) {
 				SCustomPayloadPlayPacket pack  = getVivecraftServerPacket(PacketDiscriminators.UBERPACKET, v.getUberPacket());

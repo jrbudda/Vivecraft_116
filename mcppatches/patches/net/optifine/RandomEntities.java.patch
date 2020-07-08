@@ -1,6 +1,6 @@
 --- a/net/optifine/RandomEntities.java
 +++ b/net/optifine/RandomEntities.java
-@@ -442,7 +442,7 @@
+@@ -439,7 +439,7 @@
              }
              else
              {

@@ -4,8 +4,8 @@
                  }
              }
  
--            Field[] afield = list.toArray(new Field[list.size()]);
-+            Field[] afield = (Field[]) list.toArray(new Field[list.size()]);
-             return afield;
+-            return list.toArray(new Field[list.size()]);
++            return (Field[]) list.toArray(new Field[list.size()]);
          }
-         catch (Exception var5)
+         catch (Exception exception)
+         {

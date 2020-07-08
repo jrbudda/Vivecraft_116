@@ -1,19 +1,11 @@
 --- a/net/optifine/util/FontUtils.java
 +++ b/net/optifine/util/FontUtils.java
-@@ -14,6 +14,7 @@
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.Util;
- import net.optifine.Config;
-+import java.util.Set;
- 
- public class FontUtils
- {
-@@ -61,7 +62,7 @@
+@@ -62,7 +62,7 @@
      {
-         Char2ObjectMap<Float> char2objectmap = new Char2ObjectOpenHashMap<>();
+         Int2ObjectMap<Float> int2objectmap = new Int2ObjectOpenHashMap<>();
  
 -        for (String s : props.keySet())
-+        for (String s : (Set<String>)(Set<?>)props.keySet())
++        for (String s : (Iterable<String>)(Iterable<?>)props.keySet())
          {
              String s1 = "width.";
  

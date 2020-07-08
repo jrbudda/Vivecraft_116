@@ -28,7 +28,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class TeleportTracker extends Tracker{
     private float teleportEnergy;
@@ -385,7 +385,7 @@ public class TeleportTracker extends Tracker{
 
                 checkAndSetTeleportDestination(mc, player, start, collision, reverseEpsilon);
                                         
-    			Vec3d diff = mc.player.getPositionVector().subtract(movementTeleportDestination);
+    			Vec3d diff = mc.player.getPositionVec().subtract(movementTeleportDestination);
        
         		double yDiff = diff.y;
         		movementTeleportDistance = diff.length();
@@ -393,7 +393,7 @@ public class TeleportTracker extends Tracker{
         		
         		boolean ok = true;
         		
-            	if(mc.player.isShiftKeyDown()) {
+            	if(mc.player.isSneaking()) {
             		if(yDiff > 0.2)
             			ok = false;
             	}        	
@@ -466,7 +466,7 @@ public class TeleportTracker extends Tracker{
     		boolean emptySpotReq = mc.world.hasNoCollisions(player,bb);
 
     		if(!emptySpotReq){
-    			Vec3d center = new Vec3d(bp).add(0.5, 0, 0.5);
+    			Vec3d center = Vec3d.fromBlockPosMiddleBottom(bp);
     			offset = center.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     			bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     			emptySpotReq = mc.world.hasNoCollisions(player,bb);	
@@ -522,7 +522,7 @@ public class TeleportTracker extends Tracker{
     				!mc.world.hasNoCollisions(player,bb.grow(0, .125 + ex, 0));     
 
     		if(!emptySpotReq){
-    			Vec3d center = new Vec3d(hitBlock).add(0.5, height, 0.5);
+    			Vec3d center = Vec3d.fromBlockPosMiddleWithOffset(hitBlock, height);
     			offset = center.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     			bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     			emptySpotReq = mc.world.hasNoCollisions(player,bb) &&

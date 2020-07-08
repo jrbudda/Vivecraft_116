@@ -8,28 +8,4 @@
 +import net.minecraft.client.Minecraft;
  import net.minecraft.client.renderer.IRenderTypeBuffer;
  import net.minecraft.client.renderer.LightTexture;
- import net.minecraft.client.renderer.Matrix4f;
-@@ -13,6 +15,7 @@
- import net.minecraft.entity.item.HangingEntity;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.MathHelper;
-+import net.minecraft.util.math.Vec3d;
- import net.minecraft.world.LightType;
- import net.optifine.Config;
- import net.optifine.shaders.Shaders;
-@@ -76,6 +79,15 @@
-             double d7 = MathHelper.lerp((double)partialTicks, leashHolder.prevPosY + (double)leashHolder.getEyeHeight() * 0.7D, leashHolder.getPosY() + (double)leashHolder.getEyeHeight() * 0.7D) - d4 * 0.5D - 0.25D;
-             double d8 = MathHelper.lerp((double)partialTicks, leashHolder.prevPosZ, leashHolder.getPosZ()) - d3 * 0.7D + d2 * 0.5D * d5;
-             double d9 = (double)(MathHelper.lerp(partialTicks, entityLivingIn.renderYawOffset, entityLivingIn.prevRenderYawOffset) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
-+            // VIVE START 
-+            if (leashHolder == Minecraft.getInstance().player)
-+            {
-+            	Vec3d aimSource = Minecraft.getInstance().vrPlayer.vrdata_world_render.getController(0).getPosition();
-+            	d6 = aimSource.x;
-+            	d7 = aimSource.y; 
-+            	d8 = aimSource.z;             		         
-+            }
-+            // VIVE END 
-             d2 = Math.cos(d9) * (double)entityLivingIn.getWidth() * 0.4D;
-             d3 = Math.sin(d9) * (double)entityLivingIn.getWidth() * 0.4D;
-             double d10 = MathHelper.lerp((double)partialTicks, entityLivingIn.prevPosX, entityLivingIn.getPosX()) + d2;
+ import net.minecraft.client.renderer.RenderType;

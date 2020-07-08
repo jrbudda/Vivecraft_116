@@ -9,7 +9,7 @@
          GLFW.glfwSetWindowPosCallback(this.handle, this::onWindowPosUpdate);
          GLFW.glfwSetWindowSizeCallback(this.handle, this::onWindowSizeUpdate);
          GLFW.glfwSetWindowFocusCallback(this.handle, this::onWindowFocusUpdate);
-@@ -307,7 +307,9 @@
+@@ -308,7 +308,9 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
          this.vsync = vsyncEnabled;
@@ -20,7 +20,7 @@
      }
  
      public void close()
-@@ -326,21 +328,22 @@
+@@ -327,21 +329,22 @@
          this.windowY = windowYIn;
      }
  
@@ -47,7 +47,7 @@
                  }
              }
          }
-@@ -358,8 +361,13 @@
+@@ -359,8 +362,13 @@
  
      private void onWindowSizeUpdate(long windowPointer, int windowWidthIn, int windowHeightIn)
      {
@@ -61,16 +61,16 @@
      }
  
      private void onWindowFocusUpdate(long windowPointer, boolean hasFocus)
-@@ -486,7 +494,7 @@
+@@ -495,7 +503,7 @@
      {
          int i;
  
 -        for (i = 1; i != guiScaleIn && i < this.framebufferWidth && i < this.framebufferHeight && this.framebufferWidth / (i + 1) >= 320 && this.framebufferHeight / (i + 1) >= 240; ++i)
 +        for (i = 1; i != guiScaleIn && i < this.width && i < this.height && this.width / (i + 1) >= 320 && this.height / (i + 1) >= 240; ++i)
          {
-             ;
          }
-@@ -502,10 +510,10 @@
+ 
+@@ -510,10 +518,10 @@
      public void setGuiScale(double scaleFactor)
      {
          this.guiScaleFactor = scaleFactor;
@@ -85,7 +85,7 @@
      }
  
      public void func_230148_b_(String p_230148_1_)
-@@ -525,12 +533,16 @@
+@@ -533,12 +541,16 @@
  
      public int getFramebufferWidth()
      {

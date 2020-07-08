@@ -1,0 +1,11 @@
+--- a/net/minecraft/state/StateHolder.java
++++ b/net/minecraft/state/StateHolder.java
+@@ -90,7 +90,7 @@
+         return stringbuilder.toString();
+     }
+ 
+-    public Collection < Property<? >> func_235904_r_()
++    public Collection < Property> func_235904_r_()
+     {
+         return Collections.unmodifiableCollection(this.field_235891_b_.keySet());
+     }

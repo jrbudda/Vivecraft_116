@@ -4,7 +4,7 @@ import org.vivecraft.utils.lwjgl.Matrix3f;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 import org.vivecraft.utils.lwjgl.Vector3f;
 
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 /**
  *

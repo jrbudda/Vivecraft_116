@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\inventory\container\ContainerType.java minecraft_patched\net\minecraft\inventory\container\ContainerType.java
 --- minecraft\net\minecraft\inventory\container\ContainerType.java
 +++ minecraft_patched\net\minecraft\inventory\container\ContainerType.java
-@@ -39,5 +39,6 @@
+@@ -40,5 +40,6 @@
     }
  
     interface IFactory<T extends Container> {

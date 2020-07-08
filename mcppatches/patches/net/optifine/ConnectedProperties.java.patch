@@ -8,7 +8,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
-@@ -318,7 +319,7 @@
+@@ -311,7 +312,7 @@
                  list.add(s);
              }
  
@@ -17,21 +17,21 @@
  
              for (int i1 = 0; i1 < astring2.length; ++i1)
              {
-@@ -480,7 +481,7 @@
+@@ -473,7 +474,7 @@
  
-     public static IProperty getProperty(String key, Collection properties)
+     public static Property getProperty(String key, Collection properties)
      {
--        for (IProperty iproperty : properties)
-+        for (IProperty iproperty : (Set<IProperty>)(Set<?>)properties)
+-        for (Property property : properties)
++        for (Property property : (Iterable<Property>)(Iterable<?>)properties)
          {
-             if (key.equals(iproperty.getName()))
+             if (key.equals(property.getName()))
              {
-@@ -1242,7 +1243,7 @@
+@@ -1226,7 +1227,7 @@
                  }
              }
  
--            TextureAtlasSprite[] atextureatlassprite = list.toArray(new TextureAtlasSprite[list.size()]);
-+            TextureAtlasSprite[] atextureatlassprite = (TextureAtlasSprite[]) list.toArray(new TextureAtlasSprite[list.size()]);
-             return atextureatlassprite;
+-            return list.toArray(new TextureAtlasSprite[list.size()]);
++            return (TextureAtlasSprite[]) list.toArray(new TextureAtlasSprite[list.size()]);
          }
      }
+ 

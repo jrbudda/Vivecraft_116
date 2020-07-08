@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/MobEntity.java
++++ b/net/minecraft/entity/MobEntity.java
+@@ -1427,7 +1427,7 @@
+                 if (!this.world.isRemote)
+                 {
+                     SpawnEggItem spawneggitem = (SpawnEggItem)itemstack.getItem();
+-                    Optional<MobEntity> optional = spawneggitem.func_234809_a_(p_233661_1_, this, this.getType(), this.world, this.getPositionVec(), itemstack);
++                    Optional<MobEntity> optional = spawneggitem.func_234809_a_(p_233661_1_, this, (EntityType<? extends MobEntity>) this.getType(), this.world, this.getPositionVec(), itemstack);
+                     optional.ifPresent((p_lambda$func_233661_c_$2_2_) ->
+                     {
+                         this.onChildSpawnFromEgg(p_233661_1_, p_lambda$func_233661_c_$2_2_);

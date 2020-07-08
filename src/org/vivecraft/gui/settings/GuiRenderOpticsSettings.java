@@ -11,6 +11,8 @@ import org.vivecraft.gui.framework.GuiVROptionsBase;
 import org.vivecraft.settings.VRHotkeys;
 import org.vivecraft.settings.VRSettings;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 
@@ -102,8 +104,8 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     }
     
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-    	super.render(mouseX, mouseY, partialTicks);
+    public void render(MatrixStack matrixstack,int mouseX, int mouseY, float partialTicks) {
+    	super.render(matrixstack, mouseX, mouseY, partialTicks);
     }
     
     @Override

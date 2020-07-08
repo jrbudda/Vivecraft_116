@@ -11,30 +11,23 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
-@@ -46,11 +50,13 @@
+@@ -51,12 +55,14 @@
  import net.minecraft.util.math.BlockRayTraceResult;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.RayTraceContext;
 +import net.minecraft.util.math.RayTraceResult.Type;
- import net.minecraft.util.math.Vec3d;
+ import net.minecraft.util.math.vector.Vec3d;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
 +import net.optifine.reflect.Reflector;
  
- public class EndermanEntity extends MonsterEntity
+ public class EndermanEntity extends MonsterEntity implements IAngerable
  {
-@@ -99,7 +105,6 @@
- 
-     public void setAttackTarget(@Nullable LivingEntity entitylivingbaseIn)
-     {
--        super.setAttackTarget(entitylivingbaseIn);
-         IAttributeInstance iattributeinstance = this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
- 
-         if (entitylivingbaseIn == null)
-@@ -119,6 +124,9 @@
-                 iattributeinstance.applyModifier(ATTACKING_SPEED_BOOST);
+@@ -126,6 +132,9 @@
+                 modifiableattributeinstance.func_233767_b_(ATTACKING_SPEED_BOOST);
              }
          }
 +        //Forge move down here
@@ -43,7 +36,7 @@
      }
  
      protected void registerData()
-@@ -191,15 +199,33 @@
+@@ -226,15 +235,33 @@
          }
          else
          {
@@ -82,7 +75,7 @@
      protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
      {
          return 2.55F;
-@@ -281,6 +307,16 @@
+@@ -322,6 +349,16 @@
  
          if (flag && !flag1)
          {
@@ -98,8 +91,8 @@
 +            
              boolean flag2 = this.attemptTeleport(x, y, z, true);
  
-             if (flag2)
-@@ -484,11 +520,16 @@
+             if (flag2 && !this.isSilent())
+@@ -535,11 +572,16 @@
  
          public boolean shouldExecute()
          {
@@ -117,7 +110,7 @@
              {
                  return false;
              }
-@@ -510,8 +551,11 @@
+@@ -561,8 +603,11 @@
              BlockPos blockpos1 = blockpos.down();
              BlockState blockstate1 = iworld.getBlockState(blockpos1);
              BlockState blockstate2 = this.enderman.getHeldBlockState();
@@ -131,18 +124,20 @@
              {
                  iworld.setBlockState(blockpos, blockstate2, 3);
                  this.enderman.setHeldBlockState((BlockState)null);
-@@ -520,6 +564,10 @@
+@@ -571,7 +616,11 @@
  
          private boolean func_220836_a(IWorldReader p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_)
          {
+-            return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
 +        	if(Reflector.IForgeBlockState_isAir2.exists()) {
 +        		boolean flag = Reflector.callBoolean(p_220836_4_, Reflector.IForgeBlockState_isAir2, p_220836_1_, p_220836_2_);
-+        		return !flag && p_220836_5_.isCollisionShapeOpaque(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
++        		return !flag && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
 +        	}else
-             return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.isCollisionShapeOpaque(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
++         	   return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
          }
      }
-@@ -572,11 +620,16 @@
+ 
+@@ -623,11 +672,16 @@
  
          public boolean shouldExecute()
          {

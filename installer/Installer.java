@@ -55,14 +55,14 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	public static String winredist2010_32url = "http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe";
 
 	/* DO NOT RENAME THESE STRING CONSTS - THEY ARE USED IN (AND THE VALUES UPDATED BY) THE AUTOMATED BUILD SCRIPTS */
-    private static final String MINECRAFT_VERSION = "1.15.2";
-    private static final String MC_VERSION        = "1.15.2";
-    private static final String MC_MD5            = "1d87e7d75a99172f0cffc4f96cdc44da";
+    private static final String MINECRAFT_VERSION = "1.16.1";
+    private static final String MC_VERSION        = "1.16.1";
+    private static final String MC_MD5            = "9b94beec05c9580343f663165fa53d3f";
 	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.15.2_HD_U_G1_pre15";
-    private static final String OF_MD5            = "0127f841a34f112b20889ccf81063adf";
+    private static final String OF_FILE_NAME      = "1.16.1_HD_U_G2_pre2";
+    private static final String OF_MD5            = "54b6aabdb8406360a1aa21a108138bdf";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "31.1.63";
+    private static String FORGE_VERSION     = "32.0.47";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "Vivecraft " + MINECRAFT_VERSION;

@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\ai\brain\task\InteractWithEntityTask.java minecraft_patched\net\minecraft\entity\ai\brain\task\InteractWithEntityTask.java
 --- minecraft\net\minecraft\entity\ai\brain\task\InteractWithEntityTask.java
 +++ minecraft_patched\net\minecraft\entity\ai\brain\task\InteractWithEntityTask.java
-@@ -51,7 +51,7 @@
+@@ -59,7 +59,7 @@
           p_220437_3_.stream().filter((p_220440_1_) -> {
              return this.field_220448_c.equals(p_220440_1_.func_200600_R());
           }).map((p_220439_0_) -> {

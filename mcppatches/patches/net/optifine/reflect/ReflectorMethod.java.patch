@@ -4,8 +4,8 @@
              }
          }
  
--        Method[] amethod1 = list.toArray(new Method[list.size()]);
-+        Method[] amethod1 = (Method[]) list.toArray(new Method[list.size()]);
-         return amethod1;
+-        return list.toArray(new Method[list.size()]);
++        return (Method[]) list.toArray(new Method[list.size()]);
      }
  
+     public void resolve()

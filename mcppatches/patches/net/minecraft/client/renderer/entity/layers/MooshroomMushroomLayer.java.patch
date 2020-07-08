@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/renderer/entity/layers/MooshroomMushroomLayer.java
 +++ b/net/minecraft/client/renderer/entity/layers/MooshroomMushroomLayer.java
 @@ -31,7 +31,7 @@
-     public MooshroomMushroomLayer(IEntityRenderer<T, CowModel<T>> p_i78_1_)
+     public MooshroomMushroomLayer(IEntityRenderer<T, CowModel<T>> p_i250_1_)
      {
-         super(p_i78_1_);
--        MooshroomRenderer mooshroomrenderer = (MooshroomRenderer)p_i78_1_;
-+        IEntityRenderer<T, CowModel<T>>  mooshroomrenderer = p_i78_1_;
+         super(p_i250_1_);
+-        MooshroomRenderer mooshroomrenderer = (MooshroomRenderer)p_i250_1_;
++        IEntityRenderer<T, CowModel<T>> mooshroomrenderer = p_i250_1_;
          this.modelRendererMushroom = new ModelRenderer(mooshroomrenderer.getEntityModel());
          this.modelRendererMushroom.setTextureSize(16, 16);
          this.modelRendererMushroom.rotationPointX = -6.0F;

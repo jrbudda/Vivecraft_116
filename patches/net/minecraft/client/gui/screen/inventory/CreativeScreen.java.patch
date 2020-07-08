@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/inventory/CreativeScreen.java
 +++ b/net/minecraft/client/gui/screen/inventory/CreativeScreen.java
-@@ -11,6 +11,9 @@
+@@ -12,6 +12,9 @@
  import java.util.Objects;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
@@ -10,25 +10,23 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.entity.player.ClientPlayerEntity;
  import net.minecraft.client.gui.DisplayEffectsScreen;
-@@ -452,7 +455,11 @@
- 
+@@ -456,6 +459,10 @@
              (this.container).itemList.addAll(isearchtree.search(s.toLowerCase(Locale.ROOT)));
          }
--
-+        
-+        //VIVECRAFT idk what this is for anymore.
-+        ASMDelegator.addCreativeSearch(this.searchField.getText(), (this.container).itemList);
+ 
++        // VIVECRAFT: Add custom items to creative menu search
++        ASMDelegator.addCreativeSearch(this.searchField.getText(), this.container.itemList);
 +        //
 +        
          this.currentScroll = 0.0F;
          this.container.scrollTo(0.0F);
      }
-@@ -591,6 +598,9 @@
+@@ -594,6 +601,9 @@
          else if (tab != ItemGroup.SEARCH)
          {
              tab.fill((this.container).itemList);
-+            //VIVECRAFT - what is this even
-+            ASMDelegator.addCreativeItems(tab, container.itemList);
++            //VIVECRAFT: Add custom items to creative menu tabs
++            ASMDelegator.addCreativeItems(tab, this.container.itemList);
 +            //
          }
  

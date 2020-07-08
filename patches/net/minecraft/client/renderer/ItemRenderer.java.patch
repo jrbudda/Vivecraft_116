@@ -1,29 +1,27 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -11,6 +11,12 @@
- import java.util.Random;
+@@ -12,6 +12,10 @@
  import java.util.Set;
  import javax.annotation.Nullable;
-+
+ import net.minecraft.block.Block;
 +import org.lwjgl.opengl.GL14;
 +import org.vivecraft.gameplay.trackers.SwingTracker;
 +import org.vivecraft.gameplay.trackers.TelescopeTracker;
 +import org.vivecraft.render.SpecialItemRenderer;
-+
  import net.minecraft.block.BlockState;
- import net.minecraft.client.Minecraft;
- import net.minecraft.client.entity.player.ClientPlayerEntity;
-@@ -48,6 +54,7 @@
- import net.optifine.CustomItems;
+ import net.minecraft.block.BreakableBlock;
+ import net.minecraft.block.StainedGlassPaneBlock;
+@@ -54,6 +58,7 @@
+ import net.optifine.EmissiveTextures;
  import net.optifine.reflect.Reflector;
  import net.optifine.reflect.ReflectorForge;
 +import net.optifine.render.GlAlphaState;
  import net.optifine.render.RenderTypes;
+ import net.optifine.shaders.Shaders;
  
- public class ItemRenderer implements IResourceManagerReloadListener
-@@ -62,6 +69,13 @@
-     private boolean renderModelHasEmissive = false;
-     private boolean renderModelEmissive = false;
+@@ -67,6 +72,13 @@
+     private final ItemColors itemColors;
+     public ModelManager modelManager = null;
      private static boolean renderItemGui = false;
 +    
 +    //Vivecraft
@@ -33,9 +31,9 @@
 +    private GlAlphaState alphaState = new GlAlphaState();
 +    //
  
-     public ItemRenderer(TextureManager p_i49_1_, ModelManager p_i49_2_, ItemColors p_i49_3_)
+     public ItemRenderer(TextureManager p_i128_1_, ModelManager p_i128_2_, ItemColors p_i128_3_)
      {
-@@ -146,6 +160,14 @@
+@@ -150,6 +162,14 @@
  
              matrixStackIn.translate(-0.5D, -0.5D, -0.5D);
  
@@ -47,24 +45,22 @@
 +            	fade = manualFade;
 +            }
 +            //
-             if (!modelIn.isBuiltInRenderer() && (itemStackIn.getItem() != Items.TRIDENT || flag1))
+             if (!modelIn.isBuiltInRenderer() && (itemStackIn.getItem() != Items.TRIDENT || flag))
              {
-                 RenderType rendertype1 = RenderTypeLookup.getRenderType(itemStackIn);
-@@ -159,7 +181,12 @@
-                 {
-                     rendertype = rendertype1;
-                 }
--
-+                
-+                //Vivecraft ¯\_(ツ)_/¯ pick one? make a better one?
-+                if(isfphand && fade < 1)
-+                	rendertype = Atlases.getTranslucentBlockType();
-+                //
-+                
-                 IVertexBuilder ivertexbuilder = getBuffer(bufferIn, rendertype, true, itemStackIn.hasEffect());
+                 boolean flag1;
+@@ -166,7 +186,10 @@
  
-                 if (Config.isCustomItems())
-@@ -216,7 +243,19 @@
+                 RenderType rendertype = RenderTypeLookup.func_239219_a_(itemStackIn, flag1);
+                 IVertexBuilder ivertexbuilder;
+-
++                //Vivecraft �\_(?)_/� pick one? make a better one?
++                if(isfphand && fade < 1)
++                	rendertype = Atlases.getTranslucentCullBlockType();
++                //
+                 if (itemStackIn.getItem() == Items.COMPASS && itemStackIn.hasEffect())
+                 {
+                     matrixStackIn.push();
+@@ -303,7 +326,19 @@
              {
                  k = this.itemColors.getColor(itemStackIn, bakedquad.getTintIndex());
              }
@@ -85,7 +81,7 @@
              float f = (float)(k >> 16 & 255) / 255.0F;
              float f1 = (float)(k >> 8 & 255) / 255.0F;
              float f2 = (float)(k & 255) / 255.0F;
-@@ -227,7 +266,7 @@
+@@ -314,7 +349,7 @@
              }
              else
              {
@@ -94,7 +90,7 @@
              }
          }
      }
-@@ -292,10 +331,15 @@
+@@ -371,10 +406,15 @@
          this.textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
          this.textureManager.getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
          RenderSystem.enableRescaleNormal();
@@ -109,9 +105,9 @@
 +        // VIVECRAFT: DestFactor of ONE is really what we want here, because math
 +        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
          RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
- 
-         if (Config.isCustomItems())
-@@ -315,7 +359,6 @@
+         RenderSystem.translatef((float)x, (float)y, 100.0F + this.zLevel);
+         RenderSystem.translatef(8.0F, 8.0F, 0.0F);
+@@ -388,7 +428,6 @@
          {
              RenderHelper.setupGuiFlatDiffuseLighting();
          }
@@ -119,7 +115,7 @@
          this.renderItem(stack, ItemCameraTransforms.TransformType.GUI, false, matrixstack, irendertypebuffer$impl, 15728880, OverlayTexture.NO_OVERLAY, bakedmodel);
          irendertypebuffer$impl.finish();
          RenderSystem.enableDepthTest();
-@@ -469,4 +512,21 @@
+@@ -552,4 +591,21 @@
      {
          return VanillaResourceType.MODELS;
      }

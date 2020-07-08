@@ -25,7 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
@@ -81,13 +81,13 @@ public class InteractTracker extends Tracker{
 				try { // constructor throws an exception if method doesn't exist
 					ReflectionMethod r = new MCReflection.ReflectionMethod(c, MCReflection.BlockState_OnBlockActivated, BlockState.class, World.class, BlockPos.class, PlayerEntity.class, Hand.class, BlockRayTraceResult.class);
 					rightClickable.add(c);
-				} catch (Exception e) {
+				} catch (Throwable e) {
 				}
 				c = c.getSuperclass();
 				try {
 					ReflectionMethod r = new MCReflection.ReflectionMethod(c, MCReflection.BlockState_OnBlockActivated, BlockState.class, World.class, BlockPos.class, PlayerEntity.class, Hand.class, BlockRayTraceResult.class);
 					rightClickable.add(c);
-				} catch (Exception e) {
+				} catch (Throwable e) {
 				}
 			}
 			rightClickable.remove(Block.class);

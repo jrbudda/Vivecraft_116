@@ -1,6 +1,6 @@
 --- a/net/optifine/Config.java
 +++ b/net/optifine/Config.java
-@@ -136,13 +136,14 @@
+@@ -141,13 +141,14 @@
  
      public static void initGameSettings(GameSettings settings)
      {

@@ -1,138 +1,36 @@
 package org.vivecraft.settings;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.vivecraft.api.ServerVivePlayer;
 import org.vivecraft.provider.MCOpenVR;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class AutoCalibration {
-
-	static double magnetDistance=0.05;
-	static int weightCap =100;
-	public static MagnetPoint currentCalibration;
-	public static final float defaultHeight=1.65f;
-
-	static Set<MagnetPoint> magnetSet=new HashSet<MagnetPoint>();
-
-	public static void logHeadPos(Vec3d headpos){
-		double y=headpos.y;
-		MagnetPoint p =findPoint(y);
-		if(p==null){
-			p=new MagnetPoint();
-			p.center=y;
-			p.weight=1;
-			magnetSet.add(p);
-		}else{
-			p.center=(p.center*0.75+y*0.25);
-			applySucc(p);
-			applyHeightBonus();
-			if(p.weight > weightCap)
-				p.weight = weightCap;
-		}
-
-		getBestEstimate();
-	}
-
-	private static void applyHeightBonus() {
-		double highest=-1;
-		MagnetPoint href=null;
-		for (MagnetPoint m: magnetSet) {
-			if(highest<m.center){
-				href=m;
-				highest=m.center;
-			}
-		}
-		Iterator<MagnetPoint> i=magnetSet.iterator();
-		while(i.hasNext()){
-			MagnetPoint m=i.next();
-			if(m.equals(href)){
-				if(m.succ>0)
-					m.weight++;
-				else
-					if(m.weight<weightCap){
-						m.weight--;
-						if(m.weight<0)
-							i.remove();
-					}
-			} else {
-				m.weight--;
-				if(m.weight<0)
-					i.remove();
-			}
-		}
-	}
-
-	static void applySucc(MagnetPoint p){
-		for (MagnetPoint m: magnetSet) {
-			if(m.equals(p))
-				m.succ++;
-			else
-				m.succ=0;
-		}
-	}
-
-	static MagnetPoint findPoint(double y){
-		for (MagnetPoint m: magnetSet) {
-			if(Math.abs(y-m.center)<magnetDistance){
-				return m;
-			}
-		}
-		return null;
-	}
-
-
-	static void getBestEstimate(){
-		double highest=-1;
-		MagnetPoint href=null;
-
-		for (MagnetPoint m : magnetSet) {
-			if (highest < m.weight) {
-				href = m;
-				highest = m.weight;
-			}
-		}
-
-		currentCalibration=href;
-	}
+	
+	public static final float defaultHeight =1.52f;
 
 	public static void calibrateManual() {
 		Minecraft mc=Minecraft.getInstance();
-		mc.vrSettings.manualCalibration=(float) MCOpenVR.hmdPivotHistory.latest().y;
-		mc.printChatMessage(String.format("User height set to %.2fm",getPlayerHeight()));
+		mc.vrSettings.manualCalibration=(float) MCOpenVR.hmdPivotHistory.averagePosition(0.5).y;
+		char sp = new String(new byte[]{0x20}, StandardCharsets.UTF_8).charAt(0);
+		mc.printChatMessage("User" + sp + "height" + sp + "set" + sp + "to" + sp + (int)(float)(double)Math.round((double)0144 * getPlayerHeight() / (float)defaultHeight) + (char)37);
 		mc.vrSettings.saveOptions();
 	}
 
-	public static class MagnetPoint{
-		public double center;
-		public int weight;
-		int succ;
-	}
-
 	public static float getPlayerHeight(){
-	
-		float h = defaultHeight;
+		Minecraft mc=Minecraft.getInstance();	
+		float h = defaultHeight;	
+		if(mc.vrSettings.seated) return h; //you cant do roomscale crap or calibrate your height, anyway.
 		
-		Minecraft mc=Minecraft.getInstance();
-		
-		if(mc.vrSettings.manualCalibration!=-1)
+		if(mc.vrSettings.manualCalibration != -1)
 			h= mc.vrSettings.manualCalibration;
-		else {
-			if(currentCalibration==null || currentCalibration.weight<weightCap) {
-				if (mc.vrSettings.autoCalibration != -1)
-					h = mc.vrSettings.autoCalibration;
-			} else {
-				h = (float) currentCalibration.center;
-			}
-		}
 		
-		if (mc.vrSettings.seated || mc.vrSettings.allowStandingOriginOffset)
-			return MCOpenVR.offset.getY() + h; //stand tall, my lazy friends.
-		else
-			return h;
-		
+		return h;	
 	}
 }

@@ -10,7 +10,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class JumpTracker extends Tracker {
 
@@ -43,9 +43,9 @@ public class JumpTracker extends Tracker {
 		if(p==null || !p.isAlive())
 			return false;
 		if(mc.playerController == null) return false;
-		if(p.isInWater() || p.isInLava() || !p.onGround)
+		if(p.isInWater() || p.isInLava() || !p.isOnGround())
 			return false;
-		if(p.isShiftKeyDown() || p.isPassenger())
+		if(p.isSneaking() || p.isPassenger())
 			return false;
 
 		return true;
@@ -91,7 +91,7 @@ public class JumpTracker extends Tracker {
 			if(ok[0] && !c0Latched){ //grabbed right
 				latchStart[0] = now;
 				latchStartOrigin[0] = mc.vrPlayer.vrdata_world_pre.origin;
-				latchStartPlayer[0] = mc.player.getPositionVector();
+				latchStartPlayer[0] = mc.player.getPositionVec();
 				MCOpenVR.triggerHapticPulse(0, 1000);
 			}
 
@@ -103,7 +103,7 @@ public class JumpTracker extends Tracker {
 			if(ok[1] && !c1Latched){ //grabbed left
 				latchStart[1] = now;
 				latchStartOrigin[1] = mc.vrPlayer.vrdata_world_pre.origin;
-				latchStartPlayer[1] = mc.player.getPositionVector();
+				latchStartPlayer[1] = mc.player.getPositionVec();
 				MCOpenVR.triggerHapticPulse(1, 1000);
 			}
 
@@ -142,7 +142,7 @@ public class JumpTracker extends Tracker {
 				
 				m=m.rotateYaw(mc.vrPlayer.vrdata_world_pre.rotation_radians);
 				
-				Vec3d pl = mc.player.getPositionVector().subtract(delta);
+				Vec3d pl = mc.player.getPositionVec().subtract(delta);
 
 				if(delta.y < 0 && m.y < 0){
 
@@ -158,12 +158,12 @@ public class JumpTracker extends Tracker {
 					player.setPosition(pl.x, pl.y, pl.z);
 					mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false, true);
 					mc.player.addExhaustion(.3f);    
-					mc.player.onGround = false;
+					mc.player.setOnGround(false);
 				} else {
 					mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false, true);
 				}
 			}else if(isjumping()){
-				Vec3d thing = latchStartOrigin[0].subtract(latchStartPlayer[0]).add(mc.player.getPositionVector()).subtract(delta);
+				Vec3d thing = latchStartOrigin[0].subtract(latchStartPlayer[0]).add(mc.player.getPositionVec()).subtract(delta);
 				mc.vrPlayer.setRoomOrigin(thing.x, thing.y, thing.z, false);
 			}
 		}else {

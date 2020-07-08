@@ -24,7 +24,7 @@ public class ASMUtil {
 	public static MethodNode findMethod(ClassNode node, MethodTuple tuple) {
 		for (Iterator<MethodNode> it = node.methods.iterator(); it.hasNext(); ) {
 			MethodNode method = it.next();
-			if ((method.name.equals(tuple.methodName) && method.desc.equals(tuple.methodDesc)) || (method.name.equals(tuple.methodNameObf) && method.desc.equals(tuple.methodDescObf))) {
+			if (method.name.equals(tuple.methodName) && method.desc.equals(tuple.methodDesc)) {
 				return method;
 			}
 		}
@@ -34,7 +34,7 @@ public class ASMUtil {
 	public static boolean deleteMethod(ClassNode node, MethodTuple tuple) {
 		for (Iterator<MethodNode> it = node.methods.iterator(); it.hasNext(); ) {
 			MethodNode method = it.next();
-			if ((method.name.equals(tuple.methodName) && method.desc.equals(tuple.methodDesc)) || (method.name.equals(tuple.methodNameObf) && method.desc.equals(tuple.methodDescObf))) {
+			if (method.name.equals(tuple.methodName) && method.desc.equals(tuple.methodDesc)) {
 				it.remove();
 				return true;
 			}
@@ -53,7 +53,7 @@ public class ASMUtil {
 	}
 	
 	public static AbstractInsnNode findFirstOpcode(MethodNode node, int opcode) {
-		return findNthOpcode(node, opcode, 0);
+		return findNthOpcode(node, 0, opcode);
 	}
 	
 	public static AbstractInsnNode findLastOpcode(MethodNode node, int opcode) {
@@ -67,7 +67,7 @@ public class ASMUtil {
 		return ret;
 	}
 	
-	public static AbstractInsnNode findNthOpcode(MethodNode node, int opcode, int n) {
+	public static AbstractInsnNode findNthOpcode(MethodNode node, int n, int opcode) {
 		int i = 0;
 		for (Iterator<AbstractInsnNode> it = node.instructions.iterator(); it.hasNext(); ) {
 			AbstractInsnNode instruction = it.next();
@@ -79,7 +79,7 @@ public class ASMUtil {
 	}
 	
 	public static AbstractInsnNode findFirstInstruction(MethodNode node, int opcode, Object... args) {
-		return findNthInstruction(node, opcode, 0, args);
+		return findNthInstruction(node, 0, opcode, args);
 	}
 	
 	public static AbstractInsnNode findLastInstruction(MethodNode node, int opcode, Object... args) {
@@ -93,7 +93,7 @@ public class ASMUtil {
 		return ret;
 	}
 	
-	public static AbstractInsnNode findNthInstruction(MethodNode node, int opcode, int n, Object... args) {
+	public static AbstractInsnNode findNthInstruction(MethodNode node, int n, int opcode, Object... args) {
 		int i = 0;
 		for (Iterator<AbstractInsnNode> it = node.instructions.iterator(); it.hasNext(); ) {
 			AbstractInsnNode instruction = it.next();
@@ -111,7 +111,7 @@ public class ASMUtil {
 	public static boolean addMethod(ClassNode node, MethodTuple tuple, MethodNode method) {
 	
 		for (Iterator<MethodNode> it = node.methods.iterator(); it.hasNext(); ) {
-			if ((method.name.equals(tuple.methodName) && method.desc.equals(tuple.methodDesc)) || (method.name.equals(tuple.methodNameObf) && method.desc.equals(tuple.methodDescObf))) {
+			if (method.name.equals(tuple.methodName) && method.desc.equals(tuple.methodDesc)) {
 				//exists.
 				return false;
 			}

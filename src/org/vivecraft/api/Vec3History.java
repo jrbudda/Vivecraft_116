@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import net.minecraft.util.Util;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class Vec3History {
 

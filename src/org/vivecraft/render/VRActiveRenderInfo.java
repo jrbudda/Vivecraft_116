@@ -4,10 +4,10 @@ import org.vivecraft.api.VRData.VRDevicePose;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.math.vector.Vec3f;
 import net.minecraft.client.shader.Shader;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 import net.minecraft.world.IBlockReader;
 import net.optifine.shaders.Shaders;
 
@@ -27,7 +27,7 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 			p = RenderPass.CENTER;
 		
 		VRDevicePose src = mc.vrPlayer.vrdata_world_render.getEye(p);	
-		this.setPostion(src.getPosition());
+		this.setPosition(src.getPosition());
 			
 		// this.setDirection(mc.vrPlayer.vrdata_world_render.hmd.getYaw(),mc.vrPlayer.vrdata_world_render.hmd.getPitch());
 		this.pitch = -src.getPitch(); //No, I do not know why this is negative.
@@ -45,8 +45,8 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 
 		//This is used for rendering sprites normal to the camera dir, which is terrible and needs to change.
         this.rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-        this.rotation.multiply(Vector3f.YP.rotationDegrees(-yaw));
-        this.rotation.multiply(Vector3f.XP.rotationDegrees(pitch));
+        this.rotation.multiply(Vec3f.YP.rotationDegrees(-yaw));
+        this.rotation.multiply(Vec3f.XP.rotationDegrees(pitch));
 	}
 
 	@Override

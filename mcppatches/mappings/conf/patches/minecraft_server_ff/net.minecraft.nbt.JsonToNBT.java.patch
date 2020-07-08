@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\nbt\JsonToNBT.java minecraft_patched\net\minecraft\nbt\JsonToNBT.java
 --- minecraft\net\minecraft\nbt\JsonToNBT.java
 +++ minecraft_patched\net\minecraft\nbt\JsonToNBT.java
-@@ -236,11 +236,11 @@
+@@ -235,11 +235,11 @@
              }
  
              if (p_229706_2_ == ByteNBT.field_229668_a_) {

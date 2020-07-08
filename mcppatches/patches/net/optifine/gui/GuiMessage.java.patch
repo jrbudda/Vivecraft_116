@@ -1,15 +1,6 @@
 --- a/net/optifine/gui/GuiMessage.java
 +++ b/net/optifine/gui/GuiMessage.java
-@@ -45,7 +45,7 @@
-         this.drawCenteredString(this.fontRenderer, this.messageLine1, this.width / 2, 70, 16777215);
-         int i = 90;
- 
--        for (String s : this.listLines2)
-+        for (String s : (List<String>)this.listLines2)
-         {
-             this.drawCenteredString(this.fontRenderer, s, this.width / 2, i, 16777215);
-             i += 9;
-@@ -58,7 +58,7 @@
+@@ -62,7 +62,7 @@
      {
          this.ticksUntilEnable = ticksUntilEnable;
  
@@ -18,7 +9,7 @@
          {
              button.active = false;
          }
-@@ -70,7 +70,7 @@
+@@ -74,7 +74,7 @@
  
          if (--this.ticksUntilEnable == 0)
          {

@@ -114,7 +114,7 @@ public class PhysicalGuiManager extends Tracker {
 		if(playerInventory == null)
 			init(player);
 
-		BlockPos playerPos = player.getPosition();
+		BlockPos playerPos = player.getBlockPos();
 		Iterator<PhysicalGui> iterator = guisInRange.iterator();
 
 		while (iterator.hasNext()) {

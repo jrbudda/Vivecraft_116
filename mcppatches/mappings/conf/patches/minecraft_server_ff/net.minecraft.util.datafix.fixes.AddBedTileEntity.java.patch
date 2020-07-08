@@ -3,7 +3,7 @@
 +++ minecraft_patched\net\minecraft\util\datafix\fixes\AddBedTileEntity.java
 @@ -41,7 +41,7 @@
        int i = 416;
-       return TypeRewriteRule.seq(this.fixTypeEverywhere("InjectBedBlockEntityType", this.getInputSchema().findChoiceType(TypeReferences.field_211294_j), this.getOutputSchema().findChoiceType(TypeReferences.field_211294_j), (p_212021_0_) -> {
+       return TypeRewriteRule.seq(this.fixTypeEverywhere("InjectBedBlockEntityType", this.getInputSchema().findChoiceType(TypeReferences.field_211294_j), this.getOutputSchema().findChoiceType(TypeReferences.field_211294_j), (p_233085_0_) -> {
           return (p_209696_0_) -> {
 -            return p_209696_0_;
 +            return (com.mojang.datafixers.util.Pair)p_209696_0_;

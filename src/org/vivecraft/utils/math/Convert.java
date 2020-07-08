@@ -2,7 +2,7 @@ package org.vivecraft.utils.math;
 
 import java.nio.FloatBuffer;
 
-import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.util.math.vector.Matrix4f;
 
 public class Convert {
 	public static Convert.Matrix matrix(float[] floatArray){
@@ -128,10 +128,10 @@ public class Convert {
 			}
 		}
 		
-		public net.minecraft.client.renderer.Matrix4f toMCMatrix4f() {
+		public net.minecraft.util.math.vector.Matrix4f toMCMatrix4f() {
 			needFloats();
 			if (dimension == 4) {
-				Matrix4f mat = new net.minecraft.client.renderer.Matrix4f();
+				Matrix4f mat = new net.minecraft.util.math.vector.Matrix4f();
 				mat.write(this.toFloatBuffer());
 				return mat;
 			} else {

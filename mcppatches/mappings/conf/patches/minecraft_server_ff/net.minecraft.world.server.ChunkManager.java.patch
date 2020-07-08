@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\world\server\ChunkManager.java minecraft_patched\net\minecraft\world\server\ChunkManager.java
 --- minecraft\net\minecraft\world\server\ChunkManager.java
 +++ minecraft_patched\net\minecraft\world\server\ChunkManager.java
-@@ -551,7 +551,7 @@
+@@ -558,7 +558,7 @@
                 chunk.func_177417_c(true);
                 this.field_219255_i.func_147448_a(chunk.func_177434_r().values());
                 List<Entity> list = null;

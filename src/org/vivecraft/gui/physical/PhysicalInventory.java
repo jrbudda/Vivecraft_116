@@ -35,7 +35,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class PhysicalInventory extends PhysicalItemSlotGui {
 	public Hotbar hotbar;

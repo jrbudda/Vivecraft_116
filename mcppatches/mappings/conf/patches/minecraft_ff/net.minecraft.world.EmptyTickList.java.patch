@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\world\EmptyTickList.java minecraft_patched\net\minecraft\world\EmptyTickList.java
 --- minecraft\net\minecraft\world\EmptyTickList.java
 +++ minecraft_patched\net\minecraft\world\EmptyTickList.java
-@@ -7,7 +7,7 @@
+@@ -6,7 +6,7 @@
     private static final EmptyTickList<Object> field_205389_a = new EmptyTickList<>();
  
     public static <T> EmptyTickList<T> func_205388_a() {

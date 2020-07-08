@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/AtlasTexture.java
 +++ b/net/minecraft/client/renderer/texture/AtlasTexture.java
-@@ -171,7 +171,7 @@
+@@ -172,7 +172,7 @@
              {
                  GlStateManager.bindTexture(this.getMultiTexID().norm);
  
@@ -9,7 +9,7 @@
                  {
                      TextureAtlasSprite textureatlassprite5 = textureatlassprite2.spriteNormal;
  
-@@ -186,7 +186,7 @@
+@@ -187,7 +187,7 @@
              {
                  GlStateManager.bindTexture(this.getMultiTexID().spec);
  
@@ -18,7 +18,7 @@
                  {
                      TextureAtlasSprite textureatlassprite6 = textureatlassprite3.spriteSpecular;
  
-@@ -751,7 +751,7 @@
+@@ -752,7 +752,7 @@
                              }
                              else
                              {

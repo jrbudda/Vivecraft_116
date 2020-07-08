@@ -57,7 +57,7 @@ public class Matrix4f extends Matrix implements Serializable {
 		load(src);
 	}
 
-	public Matrix4f(final net.minecraft.client.renderer.Matrix4f src) {
+	public Matrix4f(final net.minecraft.util.math.vector.Matrix4f src) {
 		super();
 
 		this.m00 = src.m00;

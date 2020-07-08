@@ -23,11 +23,11 @@
             "--fml.forgeVersion",
             "$FORGEVERSION",
             "--fml.mcVersion",
-            "1.15.2",
+            "$MCVERSION",
             "--fml.forgeGroup",
             "net.minecraftforge",
             "--fml.mcpVersion",
-            "20200414.225201"
+            "20200625.160719"
         ]
     },
     "libraries": [
@@ -98,35 +98,35 @@
             }
         },
         {
-            "name": "net.minecraftforge:accesstransformers:2.1.1-shadowed",
+            "name": "net.minecraftforge:accesstransformers:2.1.3-shadowed",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/accesstransformers/2.1.1-shadowed/accesstransformers-2.1.1-shadowed.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/accesstransformers/2.1.1/accesstransformers-2.1.1-shadowed.jar",
-                    "sha1": "1d1e439ef345ab5fd76df679de70a0c35f03bf4a",
+                    "path": "net/minecraftforge/accesstransformers/2.1.3-shadowed/accesstransformers-2.1.3-shadowed.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/accesstransformers/2.1.3/accesstransformers-2.1.3-shadowed.jar",
+                    "sha1": "addc10ee659e011004852c6cf1d036180f67a169",
                     "size": 444938
                 }
             }
         },
         {
-            "name": "net.minecraftforge:eventbus:2.1.0-service",
+            "name": "net.minecraftforge:eventbus:2.2.0-service",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/eventbus/2.1.0-service/eventbus-2.1.0-service.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/eventbus/2.1.0/eventbus-2.1.0-service.jar",
-                    "sha1": "3bd19d594d0b193b84795fab50ae3c991d3799fa",
-                    "size": 39777
+                    "path": "net/minecraftforge/eventbus/2.2.0-service/eventbus-2.2.0-service.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/eventbus/2.2.0/eventbus-2.2.0-service.jar",
+                    "sha1": "e663ad1f795b81da8a132c8fde40580b05c2343d",
+                    "size": 39776
                 }
             }
         },
         {
-          "name": "net.minecraftforge:forgespi:2.1.2",
+            "name": "net.minecraftforge:forgespi:3.0.0",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/forgespi/2.1.2/forgespi-2.1.2.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forgespi/2.1.2/forgespi-2.1.2.jar",
-                    "sha1": "867d339ca81f375c560da6d37084066e7f537f15",
-                    "size": 19445
+                    "path": "net/minecraftforge/forgespi/3.0.0/forgespi-3.0.0.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forgespi/3.0.0/forgespi-3.0.0.jar",
+                    "sha1": "f950d208c9fa7a1d7700d8a222bd08d4baf90600",
+                    "size": 19925
                 }
             }
         },
@@ -197,13 +197,13 @@
             }
         },
         {
-            "name": "net.jodah:typetools:0.6.1",
+            "name": "net.jodah:typetools:0.8.1",
             "downloads": {
                 "artifact": {
-                    "path": "net/jodah/typetools/0.6.1/typetools-0.6.1.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/jodah/typetools/0.6.1/typetools-0.6.1.jar",
-                    "sha1": "55a544eebff09427be04bebfc62bfc4cc2de8c93",
-                    "size": 14941
+                    "path": "net/jodah/typetools/0.8.1/typetools-0.8.1.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/jodah/typetools/0.8.1/typetools-0.8.1.jar",
+                    "sha1": "d12de898d333cb7eb0e39a35db03c1e09d92d595",
+                    "size": 15367
                 }
             }
         },

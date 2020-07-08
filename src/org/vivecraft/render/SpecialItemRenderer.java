@@ -3,11 +3,12 @@ package org.vivecraft.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import net.minecraft.client.renderer.Matrix3f;
-import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vec3i;
+import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.Vec3i;
 
 public class SpecialItemRenderer {
 	//This is just copied from IVertexBuilder to allow passing dynamic alpha values into the quad.
@@ -21,7 +22,7 @@ public class SpecialItemRenderer {
     {
         int[] aint = buffer.isMultiTexture() ? quadIn.getVertexDataSingle() : quadIn.getVertexData();
         buffer.putSprite(quadIn.getSprite());
-        boolean flag = buffer.isSeparateAoInAlpha();
+        boolean flag = BlockModelRenderer.isSeparateAoLightValue();
         Vec3i vec3i = quadIn.getFace().getDirectionVec();
         float f = (float)vec3i.getX();
         float f1 = (float)vec3i.getY();

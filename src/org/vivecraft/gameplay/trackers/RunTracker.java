@@ -5,7 +5,7 @@ import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class RunTracker extends Tracker {
 
@@ -22,7 +22,7 @@ public class RunTracker extends Tracker {
 		if(p==null || !p.isAlive())
 			return false;
 		if(mc.playerController == null) return false;
-		if(!p.onGround && (p.isInWater() || p.isInLava())) 
+		if(!p.isOnGround() && (p.isInWater() || p.isInLava())) 
 			return false;
 		if(p.isOnLadder()) 
 			return false;

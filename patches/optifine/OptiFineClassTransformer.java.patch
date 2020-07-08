@@ -9,7 +9,7 @@
              URI uri = url.toURI();
              File file1 = new File(uri);
              this.ofZipFile = new ZipFile(file1);
-@@ -74,7 +74,7 @@
+@@ -65,7 +65,7 @@
      public InputStream getResourceStream(String path)
      {
          path = Utils.ensurePrefix(path, "/");

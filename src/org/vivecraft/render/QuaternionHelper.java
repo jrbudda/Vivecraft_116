@@ -5,7 +5,7 @@ import java.nio.FloatBuffer;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 import org.vivecraft.utils.lwjgl.Quaternion;
 
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 /**
  * With thanks to 'Exemplos de LWJGL', by fabcam...@hotmail.com

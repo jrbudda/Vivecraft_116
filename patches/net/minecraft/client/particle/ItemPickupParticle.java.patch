@@ -9,7 +9,7 @@
  import net.minecraft.client.renderer.ActiveRenderInfo;
  import net.minecraft.client.renderer.IRenderTypeBuffer;
  import net.minecraft.client.renderer.RenderTypeBuffers;
-@@ -53,14 +55,28 @@
+@@ -59,14 +61,28 @@
  
          float f = ((float)this.age + partialTicks) / 3.0F;
          f = f * f;

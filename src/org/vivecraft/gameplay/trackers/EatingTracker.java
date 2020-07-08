@@ -12,7 +12,7 @@ import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 /**
  * Created by Hendrik on 02-Aug-16.

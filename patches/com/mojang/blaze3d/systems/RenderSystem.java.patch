@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/systems/RenderSystem.java
 +++ b/com/mojang/blaze3d/systems/RenderSystem.java
-@@ -909,7 +909,8 @@
+@@ -952,7 +952,8 @@
  
      public static void defaultBlendFunc()
      {

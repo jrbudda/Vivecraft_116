@@ -7,13 +7,15 @@ import org.lwjgl.glfw.GLFW;
 import org.vivecraft.gui.framework.VROptionLayout.Position;
 import org.vivecraft.settings.VRSettings;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vec2f;
 import net.minecraft.util.text.StringTextComponent;
 import net.optifine.gui.TooltipManager;
 
@@ -96,7 +98,7 @@ public abstract class GuiVROptionsBase extends Screen
 						if (layout.getCustomHandler() != null && layout.getCustomHandler().apply((GuiVROptionButton) p, new Vec2f((float)0, (float)0)))
 							return;
 						GuiVROptionsBase.this.settings.setOptionValue(((GuiVROptionButton)p).getOption());
-						p.setMessage(layout.getButtonText());
+						p.setMessage(new StringTextComponent(layout.getButtonText()));
 				}));
 			}
 			else if (layout.getScreen() != null)
@@ -172,24 +174,24 @@ public abstract class GuiVROptionsBase extends Screen
 
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks)
+	public void render(MatrixStack matrixstack, int mouseX, int mouseY, float partialTicks)
 	{
 		if (reinit) {
 			this.reinit = false;
 			this.init();
 		}
-		this.renderBackground();
+		this.renderBackground(matrixstack);
 		if (visibleList != null)
-			visibleList.render(mouseX, mouseY, partialTicks);
-		this.drawCenteredString(this.font, this.vrTitle, this.width / 2, 15, 16777215);
+			visibleList.render(matrixstack, mouseX, mouseY, partialTicks);
+		this.drawCenteredString(matrixstack,this.font, this.vrTitle, this.width / 2, 15, 16777215);
 
 		if (btnDefaults != null)
 			btnDefaults.visible = drawDefaultButtons;
 		if (btnDone != null)
 			btnDone.visible = drawDefaultButtons;
 
-		super.render(mouseX, mouseY, partialTicks);
-		this.tooltipManager.drawTooltips(mouseX, mouseY, buttons);
+		super.render(matrixstack, mouseX, mouseY, partialTicks);
+		this.tooltipManager.drawTooltips(matrixstack, mouseX, mouseY, buttons);
 	}
     protected void actionPerformed(Widget button)
     {
@@ -286,9 +288,9 @@ public abstract class GuiVROptionsBase extends Screen
     }
     
     @Override
-    public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
-    	if (visibleList != null && visibleList.charTyped(p_charTyped_1_, p_charTyped_2_))
+    public boolean func_231042_a_(char p_charTyped_1_, int p_charTyped_2_) {
+    	if (visibleList != null && visibleList.func_231042_a_(p_charTyped_1_, p_charTyped_2_))
     		return true;
-    	return super.charTyped(p_charTyped_1_, p_charTyped_2_);
+    	return super.func_231042_a_(p_charTyped_1_, p_charTyped_2_);
     }
 }

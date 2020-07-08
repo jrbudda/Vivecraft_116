@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\client\renderer\tileentity\TileEntityRendererDispatcher.java minecraft_patched\net\minecraft\client\renderer\tileentity\TileEntityRendererDispatcher.java
 --- minecraft\net\minecraft\client\renderer\tileentity\TileEntityRendererDispatcher.java
 +++ minecraft_patched\net\minecraft\client\renderer\tileentity\TileEntityRendererDispatcher.java
-@@ -58,7 +58,7 @@
+@@ -59,7 +59,7 @@
  
     @Nullable
     public <E extends TileEntity> TileEntityRenderer<E> func_147547_b(E p_147547_1_) {

@@ -39,8 +39,8 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec2f;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class GuiHandler {
 	public static Minecraft mc = Minecraft.getInstance();

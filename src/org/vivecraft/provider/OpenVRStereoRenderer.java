@@ -31,9 +31,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.world.DimensionType;
 import net.optifine.Config;
 import net.optifine.shaders.Shaders;
 /**
@@ -53,7 +55,7 @@ public class OpenVRStereoRenderer
 	public Framebuffer telescopeFramebufferR;
 	public Framebuffer telescopeFramebufferL;
 	
-	public net.minecraft.client.renderer.Matrix4f[] eyeproj = new net.minecraft.client.renderer.Matrix4f[2];
+	public Matrix4f[] eyeproj = new Matrix4f[2];
 	//public net.minecraft.client.renderer.Matrix4f[] cloudeyeproj = new net.minecraft.client.renderer.Matrix4f[2];
 
 	public int mirrorFBWidth;     /* Actual width of the display buffer */
@@ -67,7 +69,7 @@ public class OpenVRStereoRenderer
 	public boolean lastFogFast = false;
 	public float lastWorldScale = 0f;
 	public boolean lastEnableVsync = true;
-	public DimensionType lastDimensionId = DimensionType.OVERWORLD;
+	public RegistryKey<DimensionType> lastDimensionId = DimensionType.field_235999_c_;
 	public int lastGuiScale = 0;
 	public float renderScale;
 	public static final String RENDER_SETUP_FAILURE_MESSAGE = "Failed to initialise stereo rendering plugin: ";
@@ -118,21 +120,21 @@ public class OpenVRStereoRenderer
 		return resolution;
 	}
 
-	public net.minecraft.client.renderer.Matrix4f getProjectionMatrix(int eyeType,float nearClip,float farClip)
+	public Matrix4f getProjectionMatrix(int eyeType,float nearClip,float farClip)
 	{
 		if ( eyeType == 0 )
 		{
 			HmdMatrix44_t mat = MCOpenVR.vrsystem.GetProjectionMatrix.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Left, nearClip, farClip);
 			//	MCOpenVR.texType0.depth.mProjection = mat;
 			//	MCOpenVR.texType0.depth.write();
-			net.minecraft.client.renderer.Matrix4f left  = new net.minecraft.client.renderer.Matrix4f();
+			Matrix4f left  = new Matrix4f();
 			left.setFromOpenVR(mat);
 			return left;
 		}else{
 			HmdMatrix44_t mat = MCOpenVR.vrsystem.GetProjectionMatrix.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Right, nearClip, farClip);
 			//	MCOpenVR.texType1.depth.mProjection = mat;
 			//	MCOpenVR.texType1.depth.write();
-			net.minecraft.client.renderer.Matrix4f right  = new net.minecraft.client.renderer.Matrix4f();
+			Matrix4f right  = new Matrix4f();
 			right.setFromOpenVR(mat);
 			return right;
 		}
@@ -765,11 +767,11 @@ public class OpenVRStereoRenderer
 	
 		if(mc.player != null) {
 			if (TelescopeTracker.isTelescope(mc.player.getHeldItemMainhand())) {
-				if(TelescopeTracker.isViewing(mc.player, 0))
+				if(TelescopeTracker.isViewing(0))
 					passes.add(RenderPass.SCOPER);
 			}		
 			if (TelescopeTracker.isTelescope(mc.player.getHeldItemOffhand())) {
-				if(TelescopeTracker.isViewing(mc.player, 1))
+				if(TelescopeTracker.isViewing(1))
 					passes.add(RenderPass.SCOPEL);
 			}	
 		}

@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\EntitySpawnPlacementRegistry.java minecraft_patched\net\minecraft\entity\EntitySpawnPlacementRegistry.java
 --- minecraft\net\minecraft\entity\EntitySpawnPlacementRegistry.java
 +++ minecraft_patched\net\minecraft\entity\EntitySpawnPlacementRegistry.java
-@@ -54,7 +54,7 @@
+@@ -57,7 +57,7 @@
  
     public static <T extends Entity> boolean func_223515_a(EntityType<T> p_223515_0_, IWorld p_223515_1_, SpawnReason p_223515_2_, BlockPos p_223515_3_, Random p_223515_4_) {
        EntitySpawnPlacementRegistry.Entry entityspawnplacementregistry$entry = field_209347_a.get(p_223515_0_);

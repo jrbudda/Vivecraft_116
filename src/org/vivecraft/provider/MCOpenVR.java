@@ -1,5 +1,6 @@
 package org.vivecraft.provider;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -10,11 +11,13 @@ import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import net.optifine.reflect.Reflector;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.glfw.GLFW;
 import org.vivecraft.api.Vec3History;
@@ -39,7 +43,6 @@ import org.vivecraft.control.VivecraftMovementInput;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.gameplay.screenhandlers.RadialHandler;
-import org.vivecraft.menuworlds.MenuWorldExporter;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRHotkeys;
@@ -98,7 +101,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
@@ -149,6 +152,8 @@ public class MCOpenVR
 	public static Vec3History hmdHistory = new Vec3History();
 	public static Vec3History hmdPivotHistory = new Vec3History();
 	public static Vec3History[] controllerHistory = new Vec3History[] { new Vec3History(), new Vec3History()};
+	public static Vec3History[] controllerForwardHistory = new Vec3History[] { new Vec3History(), new Vec3History()};
+	public static Vec3History[] controllerUpHistory = new Vec3History[] { new Vec3History(), new Vec3History()};
 
 	//Covid-19 Quarantine Helper Code
 	private static final Matrix4f Neutral_HMD = new Matrix4f(1,0,0,0f,
@@ -243,6 +248,8 @@ public class MCOpenVR
 	public static float mrControllerRoll;
 
 	private static Set<KeyBinding> keyBindingSet;
+	// Vivecraft bindings included
+	private static Set<KeyBinding> vanillaBindingSet;
 	
 	//hmd sampling
 	public static int hmdAvgLength = 90;
@@ -316,32 +323,33 @@ public class MCOpenVR
 
 	private static boolean tried;
 
-	public static void unpackOpenvr() {
+	private static void unpackPlatformNatives() {
 		String osname = System.getProperty("os.name").toLowerCase();
-		String osarch= System.getProperty("os.arch").toLowerCase();
+		String osarch = System.getProperty("os.arch").toLowerCase();
 
 		String osFolder = "win";
 
-		if( osname.contains("linux")){
+		if (osname.contains("linux")) {
 			osFolder = "linux";
-		}
-		else if( osname.contains("mac")){
+		} else if (osname.contains("mac")) {
 			osFolder = "osx";
 		}
 
-		if (osarch.contains("64"))
-		{
-			osFolder += "64";
-		} else {
-			osFolder += "32";
+		if (!osname.contains("mac")) {
+			if (osarch.contains("64")) {
+				osFolder += "64";
+			} else {
+				osFolder += "32";
+			}
 		}
+
 		try {
 			Utils.unpackNatives(osFolder);
 		} catch (Exception e) {
 			System.out.println("Native path not found");
 			return;
 		}
-		
+
 		String openVRPath = new File("openvr/" + osFolder).getAbsolutePath();
 		System.out.println("Adding OpenVR search path: " + openVRPath);
 		NativeLibrary.addSearchPath("openvr_api", openVRPath);
@@ -359,7 +367,7 @@ public class MCOpenVR
 
 		mc = Minecraft.getInstance();
 
-		unpackOpenvr();
+		unpackPlatformNatives();
 		
 		if(jopenvr.JOpenVRLibrary.VR_IsHmdPresent() == 0){
 			initStatus =  "VR Headset not detected.";
@@ -500,6 +508,9 @@ public class MCOpenVR
 	public static KeyBinding[] initializeBindings(KeyBinding[] keyBindings) {
 		for (KeyBinding keyBinding : getKeyBindings())
 			keyBindings = ArrayUtils.add(keyBindings, keyBinding);
+
+		// Copy the bindings array here so we know which ones are from mods
+		setVanillaBindings(keyBindings);
 
 		Map<String, Integer> co = (Map<String, Integer>)MCReflection.KeyBinding_CATEGORY_ORDER.get(null);
 		co.put("vivecraft.key.category.gui", 8);
@@ -645,12 +656,62 @@ public class MCOpenVR
 		addActionParams(map, GuiHandler.keyKeyboardClick, "suggested", "boolean", null);
 		addActionParams(map, GuiHandler.keyKeyboardShift, "suggested", "boolean", null);
 
+		File file = new File("customactionsets.txt");
+		if (file.exists()) {
+			System.out.println("Loading custom action set definitions...");
+			try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					String[] tokens = line.split(":", 2);
+					if (tokens.length < 2) {
+						System.out.println("Invalid tokens: " + line);
+						continue;
+					}
+
+					KeyBinding keyBinding = findKeyBinding(tokens[0]);
+					if (keyBinding == null) {
+						System.out.println("Unknown key binding: " + tokens[0]);
+						continue;
+					}
+					if (getKeyBindings().contains(keyBinding)) {
+						System.out.println("NO! Don't touch Vivecraft bindings!");
+						continue;
+					}
+
+					VRInputActionSet actionSet = null;
+					switch (tokens[1].toLowerCase()) {
+						case "ingame":
+							actionSet = VRInputActionSet.INGAME;
+							break;
+						case "gui":
+							actionSet = VRInputActionSet.GUI;
+							break;
+						case "global":
+							actionSet = VRInputActionSet.GLOBAL;
+							break;
+					}
+					if (actionSet == null) {
+						System.out.println("Unknown action set: " + tokens[1]);
+						continue;
+					}
+
+					addActionParams(map, keyBinding, "optional", "boolean", actionSet);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 		return map;
 	}
 
 	private static void addActionParams(Map<String, ActionParams> map, KeyBinding keyBinding, String requirement, String type, VRInputActionSet actionSetOverride) {
 		ActionParams params = new ActionParams(requirement, type, actionSetOverride);
 		map.put(keyBinding.getKeyDescription(), params);
+	}
+
+	private static KeyBinding findKeyBinding(String name) {
+		return Arrays.stream(mc.gameSettings.keyBindings).filter(kb -> name.equals(kb.getKeyDescription())).findFirst().orElse(null);
 	}
 
 	public static final String ACTION_LEFT_HAND = "/actions/global/in/lefthand";
@@ -664,6 +725,8 @@ public class MCOpenVR
 
 		List<Map<String, Object>> actionSets = new ArrayList<>();
 		for (VRInputActionSet actionSet : VRInputActionSet.values()) {
+			if (actionSet == VRInputActionSet.MOD && !Reflector.ClientModLoader.exists())
+				continue;
 			String usage = actionSet.usage;
 			if (actionSet.advanced && !mc.vrSettings.allowAdvancedBindings)
 				usage = "hidden";
@@ -775,6 +838,8 @@ public class MCOpenVR
 	private static VRActiveActionSet_t[] getActiveActionSets() {
 		ArrayList<VRInputActionSet> list = new ArrayList<>();
 		list.add(VRInputActionSet.GLOBAL);
+		if (Reflector.ClientModLoader.exists())
+			list.add(VRInputActionSet.MOD);
 		list.add(VRInputActionSet.MIXED_REALITY);
 		list.add(VRInputActionSet.TECHNICAL);
 		if (mc.currentScreen == null) {
@@ -1692,7 +1757,7 @@ public class MCOpenVR
 		if (keyExportWorld.isPressed()) {
 			if (mc.world != null && mc.player != null) {
 				try {
-					final BlockPos pos = mc.player.getPosition();
+					final BlockPos pos = mc.player.getBlockPos();
 					final int size = 320;
 					File dir = new File("menuworlds/custom_114");
 					dir.mkdirs();
@@ -1706,22 +1771,22 @@ public class MCOpenVR
 					System.out.println("Exporting world... area size: " + size);
 					System.out.println("Saving to " + file.getAbsolutePath());
 					if (mc.isIntegratedServerRunning()) {
-						final World world = mc.getIntegratedServer().getWorld(mc.player.dimension);
+						final World world = mc.getIntegratedServer().getWorld(mc.player.world.getDimension());
 						 CompletableFuture<Void> task = mc.getIntegratedServer().runAsync(new Runnable() {
 							@Override
 							public void run() {
-								try {
-									MenuWorldExporter.saveAreaToFile(world, pos.getX() - size / 2, pos.getZ() - size / 2, size, size, pos.getY(), file);
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
+//								try {
+//									MenuWorldExporter.saveAreaToFile(world, pos.getX() - size / 2, pos.getZ() - size / 2, size, size, pos.getY(), file);
+//								} catch (IOException e) {
+//									e.printStackTrace();
+//								}
 							}
 						});
 						while (!task.isDone()) {
 							Thread.sleep(10);
 						}
 					} else {
-						MenuWorldExporter.saveAreaToFile(mc.world, pos.getX() - size / 2, pos.getZ() - size / 2, size, size, pos.getY(), file);
+				//		MenuWorldExporter.saveAreaToFile(mc.world, pos.getX() - size / 2, pos.getZ() - size / 2, size, size, pos.getY(), file);
 					}
 					mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("World export complete... area size: " + size));
 					mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("Saved to " + file.getAbsolutePath()));
@@ -2386,6 +2451,8 @@ public class MCOpenVR
 	public static float seatedRot;
 
 	public static Vector3 forward = new Vector3(0,0,-1);
+	public static Vector3 up = new Vector3(0,1,0);
+
 	static double aimPitch = 0; //needed for seated mode.
 
 
@@ -2553,6 +2620,9 @@ public class MCOpenVR
 
 			Vec3d dir = getAimVector(0);
 			aimPitch = (float)Math.toDegrees(Math.asin(dir.y/dir.length()));
+			controllerForwardHistory[0].add(dir);
+			Vec3d updir = 	controllerRotation[0].transform(up).toVec3d();
+			controllerUpHistory[0].add(updir);
 		}
 
 		{//left controller
@@ -2606,7 +2676,12 @@ public class MCOpenVR
 			controllerRotation[1].M[3][1] = 0.0F;
 			controllerRotation[1].M[3][2] = 0.0F;
 			controllerRotation[1].M[3][3] = 1.0F;
-
+			
+			Vec3d dir = getAimVector(1);
+			controllerForwardHistory[1].add(dir);
+			Vec3d updir = 	controllerRotation[1].transform(up).toVec3d();
+			controllerUpHistory[1].add(updir);
+			
 			if(mc.vrSettings.seated){
 				aimSource[1] = getCenterEyePosition();
 				aimSource[0] = getCenterEyePosition();
@@ -2680,9 +2755,17 @@ public class MCOpenVR
 		offset=new Vector3(0,0,0);
 	}
 
+	public static void setVanillaBindings(KeyBinding[] bindings) {
+		vanillaBindingSet = new HashSet<>(Arrays.asList(bindings));
+	}
+
 	public static boolean isSafeBinding(KeyBinding kb) {
 		// Stupid hard-coded junk
 		return getKeyBindings().contains(kb) || kb == mc.gameSettings.keyBindChat || kb == mc.gameSettings.keyBindInventory;
+	}
+
+	public static boolean isModBinding(KeyBinding kb) {
+		return !vanillaBindingSet.contains(kb);
 	}
 
 	public static boolean isHMDTracking() {

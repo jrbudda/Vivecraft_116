@@ -1,0 +1,38 @@
+--- a/net/minecraft/client/renderer/FluidBlockRenderer.java
++++ b/net/minecraft/client/renderer/FluidBlockRenderer.java
+@@ -84,7 +84,7 @@
+     public boolean render(IBlockDisplayReader lightReaderIn, BlockPos posIn, IVertexBuilder vertexBuilderIn, FluidState fluidStateIn)
+     {
+         BlockState blockstate = fluidStateIn.getBlockState();
+-        boolean f;
++        boolean flag7;
+ 
+         try
+         {
+@@ -139,7 +139,7 @@
+                 float f35 = (float)(i >> 16 & 255) / 255.0F;
+                 float f1 = (float)(i >> 8 & 255) / 255.0F;
+                 float f2 = (float)(i & 255) / 255.0F;
+-                boolean flag7 = false;
++                flag7 = false;
+                 float f3 = lightReaderIn.func_230487_a_(Direction.DOWN, true);
+                 float f4 = lightReaderIn.func_230487_a_(Direction.UP, true);
+                 float f5 = lightReaderIn.func_230487_a_(Direction.NORTH, true);
+@@ -405,7 +405,7 @@
+                 return flag7;
+             }
+ 
+-            f = false;
++            flag7 = false;
+         }
+         finally
+         {
+@@ -415,7 +415,7 @@
+             }
+         }
+ 
+-        return f;
++        return flag7;
+     }
+ 
+     private void vertexVanilla(IVertexBuilder vertexBuilderIn, double x, double y, double z, float red, float green, float blue, float u, float v, int packedLight)

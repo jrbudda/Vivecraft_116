@@ -28,18 +28,25 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
     private static final Logger LOGGER = LogManager.getLogger();
     private ZipFile ZipFile;
 
-    private List<String> exclusions = Arrays.asList(new String[]{"net/minecraft/item/Item", "net/minecraft/item/Item$Properties"});
+    private List<String> exclusions = Arrays.asList(
+            "net/minecraft/item/Item",
+            "net/minecraft/item/Item$Properties",
+            "net/minecraft/client/gui/screen/inventory/ContainerScreen",
+            "net/minecraft/client/gui/screen/inventory/CreativeScreen"
+    );
     
     public VivecraftTransformer(ZipFile ZipFile)
     {
         this.ZipFile = ZipFile;
     }
 
+    @Override
     public TransformerVoteResult castVote(ITransformerVotingContext context)
     {
         return TransformerVoteResult.YES;
     }
 
+    @Override
     public Set<Target> targets()
     {
         Set<Target> set = new HashSet<>();
@@ -60,12 +67,11 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
         return set;
     }
 
+    @Override
     public ClassNode transform(ClassNode input, ITransformerVotingContext context)
     {
         ClassNode classnode = input;
         String s = context.getClassName();
-    	System.out.println("Vivecraft Transform " + s);
-
         String s1 = s.replace('.', '/');
         byte[] abyte = this.getResourceBytes("srg/" + s1 + ".clsrg");
 

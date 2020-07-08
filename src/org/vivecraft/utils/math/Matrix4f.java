@@ -191,8 +191,8 @@ public class Matrix4f {
       return m;
    }
    
-   public net.minecraft.client.renderer.Matrix4f toMCMatrix() {
-	   net.minecraft.client.renderer.Matrix4f out = new net.minecraft.client.renderer.Matrix4f();
+   public net.minecraft.util.math.vector.Matrix4f toMCMatrix() {
+	   net.minecraft.util.math.vector.Matrix4f out = new net.minecraft.util.math.vector.Matrix4f();
 	      out.m00 = this.M[0][0];
 	      out.m01 = this.M[0][1];
 	      out.m02 = this.M[0][2];

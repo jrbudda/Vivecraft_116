@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\util\WeightedList.java minecraft_patched\net\minecraft\util\WeightedList.java
 --- minecraft\net\minecraft\util\WeightedList.java
 +++ minecraft_patched\net\minecraft\util\WeightedList.java
-@@ -40,7 +40,7 @@
+@@ -30,7 +30,7 @@
     }
  
     public WeightedList<U> func_226313_a_(U p_226313_1_, int p_226313_2_) {

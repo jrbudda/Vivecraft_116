@@ -26,7 +26,7 @@ import com.google.common.util.concurrent.Runnables;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.WinGameScreen;
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
 
 public class VRHotkeys {

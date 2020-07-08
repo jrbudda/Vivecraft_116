@@ -11,9 +11,9 @@
  import javax.annotation.Nullable;
 +
 +import net.minecraft.client.Minecraft;
-+import net.minecraft.client.renderer.Vector3f;
++import net.minecraft.util.math.vector.Vec3f;
  import net.minecraft.util.math.MathHelper;
-+import net.minecraft.util.math.Vec3d;
++import net.minecraft.util.math.vector.Vec3d;
 +
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -30,28 +30,27 @@
  
  public class SoundSystem
  {
-@@ -48,6 +59,9 @@
+@@ -48,6 +59,8 @@
      private SoundSystem.IHandler streamingHandler = DUMMY_HANDLER;
-     private final Listener field_216416_g = new Listener();
+     private final Listener listener = new Listener();
  
 +    // Vivecraft
 +    public static List<String> hrtfList = new ArrayList<>();
-+
-     public void func_216404_a()
+     public void init()
      {
-         this.field_216411_b = func_216406_f();
-@@ -73,6 +87,80 @@
+         this.device = openDevice();
+@@ -73,6 +86,80 @@
              ALCapabilities alcapabilities = AL.createCapabilities(alccapabilities);
              ALUtils.checkALError("Initialization");
  
 +            // Vivecraft: HRTF directional audio
 +            hrtfList.clear();
 +            if (alccapabilities.ALC_SOFT_HRTF) {
-+                int hrtfCount = ALC10.alcGetInteger(this.field_216411_b, SOFTHRTF.ALC_NUM_HRTF_SPECIFIERS_SOFT);
++                int hrtfCount = ALC10.alcGetInteger(this.device, SOFTHRTF.ALC_NUM_HRTF_SPECIFIERS_SOFT);
 +                if (hrtfCount > 0) {
 +                    LOGGER.info("Available HRTFs:");
 +                    for (int h = 0; h < hrtfCount; h++) {
-+                        String name = Objects.requireNonNull(SOFTHRTF.alcGetStringiSOFT(this.field_216411_b, SOFTHRTF.ALC_HRTF_SPECIFIER_SOFT, h));
++                        String name = Objects.requireNonNull(SOFTHRTF.alcGetStringiSOFT(this.device, SOFTHRTF.ALC_HRTF_SPECIFIER_SOFT, h));
 +                        hrtfList.add(name);
 +                        LOGGER.info("{}: {}", h, name);
 +                    }
@@ -83,12 +82,12 @@
 +                    }
 +
 +                    buf.put(0).flip();
-+                    SOFTHRTF.alcResetDeviceSOFT(this.field_216411_b, buf);
++                    SOFTHRTF.alcResetDeviceSOFT(this.device, buf);
 +
 +                    if (!ALUtils.checkALError("HRTF initialization")) {
 +                        LOGGER.info("HRTF initialized.");
 +
-+                        int status = ALC10.alcGetInteger(this.field_216411_b, SOFTHRTF.ALC_HRTF_STATUS_SOFT);
++                        int status = ALC10.alcGetInteger(this.device, SOFTHRTF.ALC_HRTF_STATUS_SOFT);
 +                        switch (status) {
 +                            case SOFTHRTF.ALC_HRTF_DISABLED_SOFT:
 +                                LOGGER.info("HRTF status: disabled");
@@ -121,9 +120,9 @@
              if (!alcapabilities.AL_EXT_source_distance_model)
              {
                  throw new IllegalStateException("AL_EXT_source_distance_model is not supported");
-@@ -177,7 +265,7 @@
+@@ -174,7 +261,7 @@
      {
-         return this.field_216416_g;
+         return this.listener;
      }
 -
 +   

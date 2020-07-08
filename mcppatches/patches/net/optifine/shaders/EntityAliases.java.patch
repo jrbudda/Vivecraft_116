@@ -9,7 +9,7 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.util.ResourceLocation;
  import net.optifine.Config;
-@@ -112,7 +114,7 @@
+@@ -106,7 +108,7 @@
                  Config.dbg("[Shaders] Parsing entity mappings: " + path);
                  ConnectedParser connectedparser = new ConnectedParser("Shaders");
  

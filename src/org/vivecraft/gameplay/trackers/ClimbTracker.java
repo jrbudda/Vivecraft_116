@@ -24,7 +24,7 @@ import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShape;
 
 public class ClimbTracker extends Tracker{
@@ -150,7 +150,7 @@ public class ClimbTracker extends Tracker{
 
 		if (wasGrabbingLadder() && !isGrabbingLadder())
 			forceActivate = true;
-		else if (mc.player.onGround || mc.player.abilities.isFlying)
+		else if (mc.player.isOnGround() || mc.player.abilities.isFlying)
 			forceActivate = false;
 
 		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).setEnabled(ControllerType.RIGHT, isClimbeyClimb() && (isGrabbingLadder() || inblock[0] || forceActivate));
@@ -317,8 +317,8 @@ public class ClimbTracker extends Tracker{
 			} else { //Climbey
 				//TODO whitelist by block type
 
-				if(mc.player.onGround)
-					mc.player.onGround = !latched[0] && !latched[1];
+				if(mc.player.isOnGround())
+					mc.player.setOnGround(!latched[0] && !latched[1]);
 
 				if(c == 0)
 					button[c] = MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT);
@@ -363,7 +363,7 @@ public class ClimbTracker extends Tracker{
 						wantjump = false;
 						latchStart[c] = cpos[c];
 						latchStart_room[c] = mc.vrPlayer.vrdata_room_pre.getController(c).getPosition();
-						latchStartBody[c] = player.getPositionVector();
+						latchStartBody[c] = player.getPositionVec();
 						latchStartController = c;
 						latchbox[c] = box[c];
 						latched[c] = true;
@@ -393,7 +393,7 @@ public class ClimbTracker extends Tracker{
 					grabbed = true;
 					latchStart[c] = cpos[c];
 					latchStart_room[c] = mc.vrPlayer.vrdata_room_pre.getController(c).getPosition();
-					latchStartBody[c] = player.getPositionVector();
+					latchStartBody[c] = player.getPositionVec();
 					latchStartController = c;
 					latched[c] = true;
 					latchbox[c] = box[c];
@@ -424,7 +424,7 @@ public class ClimbTracker extends Tracker{
 		}
 
 		if(!latched[0] && !latched[1] && !jump){
-			if(player.onGround && unsetflag){
+			if(player.isOnGround() && unsetflag){
 				unsetflag = false;
 				MCOpenVR.keyClimbeyGrab.unpressKey(ControllerType.RIGHT);
 				MCOpenVR.keyClimbeyGrab.unpressKey(ControllerType.LEFT);
@@ -585,7 +585,7 @@ public class ClimbTracker extends Tracker{
 
 		} else { //jump!
 			wantjump = false;
-			Vec3d pl = player.getPositionVector().subtract(delta);
+			Vec3d pl = player.getPositionVec().subtract(delta);
 
 			Vec3d m = MCOpenVR.controllerHistory[latchStartController].netMovement(0.3);
 			double s = MCOpenVR.controllerHistory[latchStartController].averageSpeed(0.3f);

@@ -1,8 +1,8 @@
 --- a/net/minecraft/entity/projectile/AbstractArrowEntity.java
 +++ b/net/minecraft/entity/projectile/AbstractArrowEntity.java
-@@ -7,6 +7,10 @@
- import java.util.Optional;
- import java.util.UUID;
+@@ -5,6 +5,10 @@
+ import java.util.Arrays;
+ import java.util.List;
  import javax.annotation.Nullable;
 +
 +import org.vivecraft.api.NetworkHelper;
@@ -11,7 +11,7 @@
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.block.BlockState;
  import net.minecraft.enchantment.EnchantmentHelper;
-@@ -30,6 +34,7 @@
+@@ -28,6 +32,7 @@
  import net.minecraft.network.play.server.SSpawnObjectPacket;
  import net.minecraft.particles.ParticleTypes;
  import net.minecraft.util.DamageSource;
@@ -19,20 +19,20 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.SoundEvent;
  import net.minecraft.util.SoundEvents;
-@@ -45,6 +50,7 @@
+@@ -42,6 +47,7 @@
+ import net.minecraft.util.math.vector.Vec3d;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
- import net.minecraft.world.server.ServerWorld;
 +import net.optifine.reflect.Reflector;
  
- public abstract class AbstractArrowEntity extends Entity implements IProjectile
+ public abstract class AbstractArrowEntity extends ProjectileEntity
  {
-@@ -84,7 +90,20 @@
+@@ -78,7 +84,20 @@
  
-         if (p_i996_2_ instanceof PlayerEntity)
+         if (p_i3311_2_ instanceof PlayerEntity)
          {
 -            this.pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
-+        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i996_2_.getUniqueID());
++        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i3311_2_.getUniqueID());
 +        	if (vp !=null && vp.isVR())
 +        	{
 +         		//VIVE SET SPAWNPOS
@@ -49,44 +49,8 @@
          }
      }
  
-@@ -112,14 +131,29 @@
-         this.dataManager.register(field_212362_a, Optional.empty());
-         this.dataManager.register(PIERCE_LEVEL, (byte)0);
-     }
--
-+       
-     public void shoot(Entity shooter, float pitch, float yaw, float p_184547_4_, float velocity, float inaccuracy)
-     {
--        float f = -MathHelper.sin(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
--        float f1 = -MathHelper.sin(pitch * ((float)Math.PI / 180F));
--        float f2 = MathHelper.cos(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
--        this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
--        this.setMotion(this.getMotion().add(shooter.getMotion().x, shooter.onGround ? 0.0D : shooter.getMotion().y, shooter.getMotion().z));
-+    	//VIVE SET AIM AND SPEED
-+    	//Crossbow aim is not done here. See crossbowitem.
-+    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.shootingEntity);
-+    	if (vp !=null && vp.isVR())
-+    	{ 
-+    		Vec3d aim = vp.getControllerDir(vp.activeHand);	
-+			if( !vp.isSeated() && vp.getDraw() > 0){ //roomscale bow.
-+				aim = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
-+				velocity = velocity * vp.getDraw();  
-+				this.damage *= 2;
-+			}   		
-+			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
-+			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
-+    	}
-+    	///
-+    	float f = -MathHelper.sin(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
-+    	float f1 = -MathHelper.sin(pitch * ((float)Math.PI / 180F));
-+    	float f2 = MathHelper.cos(yaw * ((float)Math.PI / 180F)) * MathHelper.cos(pitch * ((float)Math.PI / 180F));
-+    	this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
-+    	this.setMotion(this.getMotion().add(shooter.getMotion().x, shooter.onGround ? 0.0D : shooter.getMotion().y, shooter.getMotion().z));
-     }
- 
-     public void shoot(double x, double y, double z, float velocity, float inaccuracy)
-@@ -174,7 +208,15 @@
-         BlockPos blockpos = new BlockPos(this);
+@@ -142,7 +161,15 @@
+         BlockPos blockpos = this.getBlockPos();
          BlockState blockstate = this.world.getBlockState(blockpos);
  
 -        if (!blockstate.isAir() && !flag)
@@ -102,17 +66,17 @@
          {
              VoxelShape voxelshape = blockstate.getCollisionShape(this.world, blockpos);
  
-@@ -253,7 +295,12 @@
+@@ -217,7 +244,12 @@
                      }
                  }
  
 -                if (raytraceresult != null && !flag)
 +                //Forge
 +                boolean f = true;
-+                if(Reflector.ForgeEventFactory_onProjectileImpactA.exists())
++                if(raytraceresult !=null && Reflector.ForgeEventFactory_onProjectileImpactA.exists())
 +                	f = raytraceresult.getType() != RayTraceResult.Type.MISS && !Reflector.callBoolean(Reflector.ForgeEventFactory_onProjectileImpactA, this, raytraceresult);
 +
 +                if (raytraceresult != null && !flag && f)
                  {
-                     this.onHit(raytraceresult);
+                     this.onImpact(raytraceresult);
                      this.isAirBorne = true;

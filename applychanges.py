@@ -60,10 +60,13 @@ def applychanges(mcp_dir, patch_dir = "patches", applyPatches=True, backup = Tru
     mod_bak_dir = os.path.join(mcp_dir, "src","minecraft-bak")
     org_src_dir = os.path.join(mcp_dir, "src",origDir)
     mod_res_dir = os.path.join(mcp_dir, "src","resources")
+    tmp = os.path.join(mcp_dir, "src","tmp") 
     
     if backup and os.path.exists(mod_src_dir):
         print("Backing up src/minecraft to src/minecraft-bak")
-        shutil.rmtree( mod_bak_dir, True )
+        #fuck python and the horse it rode in on.
+        shutil.move(mod_bak_dir, tmp)
+        reallyrmtree(tmp)
         shutil.move( mod_src_dir, mod_bak_dir )
         
     if copyOriginal:
@@ -77,7 +80,33 @@ def applychanges(mcp_dir, patch_dir = "patches", applyPatches=True, backup = Tru
         #merge in the new classes
         merge_tree( os.path.join( base_dir, "src" ), mod_src_dir )
         merge_tree( os.path.join( base_dir, "resources" ), mod_res_dir )
-    
+
+def reallyrmtree(path):
+    if not sys.platform.startswith('win'):
+        if os.path.exists(path):
+            shutil.rmtree(path)
+    else:
+        i = 0
+        try:
+            while os.path.isdir(path)and i < 20:
+                shutil.rmtree(path, onerror=rmtree_onerror)
+                i += 1
+        except OSError:
+            pass
+
+        # raise OSError if the path still exists even after trying really hard
+        if not os.path.isdir(path):
+            pass
+        else:
+            raise OSError(errno.EPERM, "Failed to remove: '" + path + "'", path)
+            
+def rmtree_onerror(func, path, _):
+    time.sleep(0.5)
+    try:
+        func(path)
+    except OSError:
+        pass
+        
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to MCP to use', default=None)

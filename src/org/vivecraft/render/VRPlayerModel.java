@@ -14,7 +14,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vec3d;
 
 public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
 {
@@ -219,18 +219,18 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     	this.bipedHeadwear.copyModelAngles(this.bipedHead);
     	
     	if(this.armor != null) { //wtf  	
-    		this.armor.getModelFromSlot(EquipmentSlotType.HEAD).bipedHead.copyModelAngles(this.bipedHead);
+    		this.armor.func_241736_a_(EquipmentSlotType.HEAD).bipedHead.copyModelAngles(this.bipedHead);
 	    	if(!seated) {
-		    	this.armor.getModelFromSlot(EquipmentSlotType.HEAD).bipedBody.copyModelAngles(this.bipedBody);
+		    	this.armor.func_241736_a_(EquipmentSlotType.HEAD).bipedBody.copyModelAngles(this.bipedBody);
 		    	
-		    	this.armor.getModelFromSlot(EquipmentSlotType.HEAD).bipedRightArm.copyModelAngles(this.rightShoulder);
-		    	this.armor.getModelFromSlot(EquipmentSlotType.HEAD).bipedLeftArm.copyModelAngles(this.leftShoulder);    
+		    	this.armor.func_241736_a_(EquipmentSlotType.HEAD).bipedRightArm.copyModelAngles(this.rightShoulder);
+		    	this.armor.func_241736_a_(EquipmentSlotType.HEAD).bipedLeftArm.copyModelAngles(this.leftShoulder);    
+
+		    	this.armor.func_241736_a_(EquipmentSlotType.LEGS).bipedRightLeg.copyModelAngles(this.bipedRightLeg);
+		    	this.armor.func_241736_a_(EquipmentSlotType.LEGS).bipedLeftLeg.copyModelAngles(this.bipedLeftLeg);
 		    	
-		    	this.armor.getModelFromSlot(EquipmentSlotType.LEGS).bipedRightLeg.copyModelAngles(this.bipedRightLeg);
-		    	this.armor.getModelFromSlot(EquipmentSlotType.LEGS).bipedLeftLeg.copyModelAngles(this.bipedLeftLeg);
-		    	
-		    	this.armor.getModelFromSlot(EquipmentSlotType.FEET).bipedRightLeg.copyModelAngles(this.bipedRightLeg);
-		    	this.armor.getModelFromSlot(EquipmentSlotType.FEET).bipedLeftLeg.copyModelAngles(this.bipedLeftLeg);
+		    	this.armor.func_241736_a_(EquipmentSlotType.FEET).bipedRightLeg.copyModelAngles(this.bipedRightLeg);
+		    	this.armor.func_241736_a_(EquipmentSlotType.FEET).bipedLeftLeg.copyModelAngles(this.bipedLeftLeg);
 		    	}
     	}
     	

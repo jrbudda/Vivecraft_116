@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/entity/player/ClientPlayerEntity.java
 +++ b/net/minecraft/client/entity/player/ClientPlayerEntity.java
-@@ -1,11 +1,33 @@
+@@ -1,11 +1,34 @@
  package net.minecraft.client.entity.player;
  
  import com.google.common.collect.Lists;
@@ -8,10 +8,11 @@
 +import io.netty.buffer.ByteBuf;
 +import io.netty.buffer.Unpooled;
 +
- import java.util.Collections;
++import java.util.Collections;
 +import java.util.HashMap;
  import java.util.Iterator;
  import java.util.List;
+ import java.util.UUID;
  import javax.annotation.Nullable;
 +
 +import net.minecraft.network.play.client.*;
@@ -32,9 +33,9 @@
 +import net.minecraft.block.Blocks;
 +import net.minecraft.block.SoundType;
  import net.minecraft.client.Minecraft;
+ import net.minecraft.client.audio.BiomeSoundHandler;
  import net.minecraft.client.audio.BubbleColumnAmbientSoundHandler;
- import net.minecraft.client.audio.ElytraSound;
-@@ -22,6 +44,7 @@
+@@ -23,6 +46,7 @@
  import net.minecraft.client.gui.screen.JigsawScreen;
  import net.minecraft.client.gui.screen.Screen;
  import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -42,7 +43,7 @@
  import net.minecraft.client.network.play.ClientPlayNetHandler;
  import net.minecraft.client.util.ClientRecipeBook;
  import net.minecraft.client.world.ClientWorld;
-@@ -31,24 +54,18 @@
+@@ -32,24 +56,18 @@
  import net.minecraft.entity.Pose;
  import net.minecraft.entity.item.BoatEntity;
  import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
@@ -72,23 +73,23 @@
  import net.minecraft.particles.ParticleTypes;
  import net.minecraft.potion.Effect;
  import net.minecraft.potion.EffectInstance;
-@@ -70,12 +87,15 @@
+@@ -71,11 +89,15 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
 +import net.minecraft.util.math.RayTraceResult;
- import net.minecraft.util.math.Vec2f;
- import net.minecraft.util.math.Vec3d;
  import net.minecraft.util.math.shapes.ISelectionContext;
  import net.minecraft.util.math.shapes.VoxelShape;
+ import net.minecraft.util.math.vector.Vec2f;
+ import net.minecraft.util.math.vector.Vec3d;
  import net.minecraft.util.text.ITextComponent;
 +import net.minecraft.world.World;
- import net.minecraft.world.dimension.DimensionType;
++import net.minecraft.world.DimensionType;
 +import net.optifine.reflect.Reflector;
  
  public class ClientPlayerEntity extends AbstractClientPlayerEntity
  {
-@@ -98,6 +118,23 @@
+@@ -99,6 +121,23 @@
      public MovementInput movementInput;
      protected final Minecraft mc;
      protected int sprintToggleTimer;
@@ -112,9 +113,9 @@
      public int sprintingTicksLeft;
      public float renderArmYaw;
      public float renderArmPitch;
-@@ -127,6 +164,86 @@
-         this.ambientSoundHandlers.add(new UnderwaterAmbientSoundHandler(this, p_i745_1_.getSoundHandler()));
+@@ -130,9 +169,104 @@
          this.ambientSoundHandlers.add(new BubbleColumnAmbientSoundHandler(this));
+         this.ambientSoundHandlers.add(new BiomeSoundHandler(this, p_i2689_1_.getSoundHandler(), p_i2689_2_.getBiomeManager()));
      }
 +    //VIVE
 +    public void setItemInUseClient(ItemStack item, Hand hand){
@@ -197,10 +198,6 @@
 +	
 +	//END VIVECRAFT
  
-     public boolean isGlowing()
-     {
-@@ -135,6 +252,21 @@
- 
      public boolean attackEntityFrom(DamageSource source, float amount)
      {
 +    	//VIVECRAFT
@@ -221,7 +218,7 @@
          return false;
      }
  
-@@ -142,6 +274,8 @@
+@@ -140,6 +274,8 @@
      {
      }
  
@@ -230,7 +227,7 @@
      public boolean startRiding(Entity entityIn, boolean force)
      {
          if (!super.startRiding(entityIn, force))
-@@ -161,7 +295,10 @@
+@@ -159,7 +295,10 @@
                  this.rotationYaw = entityIn.rotationYaw;
                  this.setRotationYawHead(entityIn.rotationYaw);
              }
@@ -242,9 +239,9 @@
              return true;
          }
      }
-@@ -170,6 +307,10 @@
+@@ -168,6 +307,10 @@
      {
-         super.stopRiding();
+         super.func_233575_bb_();
          this.rowingBoat = false;
 +        //Vivecraft
 +        this.mc.vehicleTracker.onStopRiding(this);
@@ -253,7 +250,7 @@
      }
  
      public float getPitch(float partialTicks)
-@@ -280,6 +421,13 @@
+@@ -291,6 +434,13 @@
              }
  
              this.prevOnGround = this.onGround;
@@ -267,7 +264,7 @@
              this.autoJumpEnabled = this.mc.gameSettings.autoJump;
          }
      }
-@@ -294,10 +442,31 @@
+@@ -305,10 +455,31 @@
      public void sendChatMessage(String message)
      {
          this.connection.sendPacket(new CChatMessagePacket(message));
@@ -299,7 +296,7 @@
          super.swingArm(hand);
          this.connection.sendPacket(new CAnimateHandPacket(hand));
      }
-@@ -551,7 +720,24 @@
+@@ -577,7 +748,24 @@
  
      public void playSound(SoundEvent soundIn, float volume, float pitch)
      {
@@ -325,9 +322,9 @@
      }
  
      public void playSound(SoundEvent p_213823_1_, SoundCategory p_213823_2_, float p_213823_3_, float p_213823_4_)
-@@ -730,6 +916,9 @@
-         boolean flag1 = this.movementInput.field_228350_h_;
+@@ -750,6 +938,9 @@
          boolean flag2 = this.func_223110_ee();
+         this.field_239203_ch_ = !this.abilities.isFlying && !this.isSwimming() && this.isPoseClear(Pose.CROUCHING) && (this.isSneaking() || !this.isSleeping() && !this.isPoseClear(Pose.STANDING));
          this.movementInput.func_225607_a_(this.func_228354_I_());
 +        //Forge
 +        Reflector.call(Reflector.ForgeHooksClient_onInputUpdate, this, this.movementInput);
@@ -335,7 +332,7 @@
          this.mc.getTutorial().handleMovement(this.movementInput);
  
          if (this.isHandActive() && !this.isPassenger())
-@@ -748,12 +937,17 @@
+@@ -768,12 +959,17 @@
              this.movementInput.jump = true;
          }
  
@@ -358,8 +355,8 @@
 +	        this.pushOutOfBlocks(this.getPosX() + (double)this.getWidth() * 0.35D, y, this.getPosZ() + (double)this.getWidth() * 0.35D);
          }
  
-         boolean flag4 = (float)this.getFoodStats().getFoodLevel() > 6.0F || this.abilities.allowFlying;
-@@ -915,6 +1109,9 @@
+         if (flag1)
+@@ -940,6 +1136,9 @@
          }
  
          super.livingTick();
@@ -369,7 +366,7 @@
  
          if (this.onGround && this.abilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
-@@ -1008,12 +1205,58 @@
+@@ -1033,12 +1232,58 @@
          return super.removeActivePotionEffect(potioneffectin);
      }
  
@@ -385,7 +382,7 @@
 +    	if(pos.length() == 0) return;
 +    	if(this.isPassenger())return;
 +    	boolean freemove = OpenVRPlayer.get().getFreeMove();
-+    	boolean doY = freemove || (Minecraft.getInstance().vrSettings.simulateFalling && !this.isOnLadder()) && !this.isShiftKeyDown();
++    	boolean doY = freemove || (Minecraft.getInstance().vrSettings.simulateFalling && !this.isOnLadder()) && !this.isSneaking();
 +    	if(mc.climbTracker.isActive(this) && (freemove || mc.climbTracker.isGrabbingLadder())) doY = true;
 +    	Vec3d roomOrigin = OpenVRPlayer.get().roomOrigin;
 +    	//   	Vec3 camloc = Minecraft.getInstance().vrPlayer.getHMDPos_World();
@@ -432,7 +429,7 @@
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1031,13 +1274,17 @@
+@@ -1056,13 +1301,17 @@
              float f = this.getAIMoveSpeed();
              float f1 = (float)vec3d2.lengthSquared();
  
@@ -452,7 +449,7 @@
                  vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vec3d2.lengthSquared();
  
-@@ -1220,4 +1467,406 @@
+@@ -1248,4 +1497,406 @@
              return this.eyesInWaterPlayer;
          }
      }
@@ -707,24 +704,24 @@
 +    	return this == Minecraft.getInstance().player;
 +    }
 +
-+    	//Vivecraft override from LivingEntity because addItemParticles is private
-+    	@Override
-+        protected void func_226293_b_(ItemStack p_226293_1_, int p_226293_2_)
-+        {
-+            if (!p_226293_1_.isEmpty() && this.isHandActive())
-+            {
-+                if (p_226293_1_.getUseAction() == UseAction.DRINK)
-+                {
-+                    this.playSound(this.getDrinkSound(p_226293_1_), 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
-+                }
++    //Vivecraft override from LivingEntity because addItemParticles is private
++    @Override
++    protected void triggerItemUseEffects(ItemStack p_226293_1_, int p_226293_2_)
++    {
++    	if (!p_226293_1_.isEmpty() && this.isHandActive())
++    	{
++    		if (p_226293_1_.getUseAction() == UseAction.DRINK)
++    		{
++    			this.playSound(this.getDrinkSound(p_226293_1_), 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
++    		}
 +
-+                if (p_226293_1_.getUseAction() == UseAction.EAT)
-+                {
-+                    this.addItemParticles(p_226293_1_, p_226293_2_);
-+                    this.playSound(this.getEatSound(p_226293_1_), 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
-+                }
-+            }
-+        }
++    		if (p_226293_1_.getUseAction() == UseAction.EAT)
++    		{
++    			this.addItemParticles(p_226293_1_, p_226293_2_);
++    			this.playSound(this.getEatSound(p_226293_1_), 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
++    		}
++    	}
++    }
 +
 +        private void addItemParticles(ItemStack stack, int count)
 +        {

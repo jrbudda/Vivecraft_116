@@ -47,6 +47,7 @@ vivecraft.key.category.keyboard=Keyboard
 vivecraft.actionset.ingame=In-Game
 vivecraft.actionset.gui=GUI
 vivecraft.actionset.global=Global
+vivecraft.actionset.mod=Modded
 vivecraft.actionset.contextual=Contextual
 vivecraft.actionset.keyboard=Keyboard
 vivecraft.actionset.mixedReality=Mixed Reality

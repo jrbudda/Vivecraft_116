@@ -1,0 +1,15 @@
+--- a/net/minecraft/item/ItemModelsProperties.java
++++ b/net/minecraft/item/ItemModelsProperties.java
+@@ -290,6 +290,12 @@
+         });
+         func_239418_a_(Items.CROSSBOW, new ResourceLocation("charged"), (p_239425_0_, p_239425_1_, p_239425_2_) ->
+         {
++//        	//Vivecraft - show arrow on crossbow when its fully drawn, to indicate it is ok to let go of right click
++//        	//This replaces the animation that would normally indicate to the player the bow is fully charged. 
++//            return p_239425_2_ != null && 
++//            		(p_239425_2_.isHandActive() && CrossbowItem.getCharge(p_239425_0_.getUseDuration() - p_239425_2_.getItemInUseCount(), p_239425_0_) == 1.0 || 
++//            				CrossbowItem.isCharged(p_239425_0_)) ? 1.0F : 0.0F;
++            
+             return p_239425_2_ != null && CrossbowItem.isCharged(p_239425_0_) ? 1.0F : 0.0F;
+         });
+         func_239418_a_(Items.CROSSBOW, new ResourceLocation("firework"), (p_239424_0_, p_239424_1_, p_239424_2_) ->

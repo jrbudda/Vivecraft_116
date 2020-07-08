@@ -10,26 +10,11 @@
 +import org.vivecraft.utils.math.Vector3;
 +
  import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.client.renderer.Quaternion;
- import net.minecraft.client.renderer.Vector3f;
-@@ -59,7 +64,11 @@
-         });
-         this.addPropertyOverride(new ResourceLocation("charged"), (p_220030_0_, p_220030_1_, p_220030_2_) ->
-         {
--            return p_220030_2_ != null && isCharged(p_220030_0_) ? 1.0F : 0.0F;
-+        	//Vivecraft - show arrow on crossbow when its fully drawn, to indicate it is ok to let go of right click
-+        	//This replaces the animation that would normally indicate to the player the bow is fully charged. 
-+            return p_220030_2_ != null && 
-+            		(p_220030_2_.isHandActive() && getCharge(this.getUseDuration(p_220030_0_) - p_220030_2_.getItemInUseCount(), p_220030_0_) == 1.0 || 
-+            		isCharged(p_220030_0_)) ? 1.0F : 0.0F;
-         });
-         this.addPropertyOverride(new ResourceLocation("firework"), (p_220020_0_, p_220020_1_, p_220020_2_) ->
-         {
-@@ -280,8 +289,16 @@
-             else
-             {
+ import net.minecraft.client.util.ITooltipFlag;
+ import net.minecraft.enchantment.EnchantmentHelper;
+@@ -259,6 +264,14 @@
                  Vec3d vec3d1 = shooter.getUpVector(1.0F);
--                Quaternion quaternion = new Quaternion(new Vector3f(vec3d1), projectileAngle, true);
+                 Quaternion quaternion = new Quaternion(new Vec3f(vec3d1), projectileAngle, true);
                  Vec3d vec3d = shooter.getLook(1.0F);
 +            	//VIVE SET AIM AND SPEED
 +            	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
@@ -39,7 +24,15 @@
 +            		vec3d1 = vp.getControllerVectorCustom(vp.activeHand, new Vector3(0, 1, 0));
 +            	}
 +            	///
-+                Quaternion quaternion = new Quaternion(new Vector3f(vec3d1), projectileAngle, true);
-                 Vector3f vector3f = new Vector3f(vec3d);
-                 vector3f.transform(quaternion);
-                 iprojectile.shoot((double)vector3f.getX(), (double)vector3f.getY(), (double)vector3f.getZ(), velocity, inaccuracy);
+                 Vec3f vec3f = new Vec3f(vec3d);
+                 vec3f.transform(quaternion);
+                 projectileentity.shoot((double)vec3f.getX(), (double)vec3f.getY(), (double)vec3f.getZ(), velocity, inaccuracy);
+@@ -417,7 +430,7 @@
+         }
+     }
+ 
+-    private static float getCharge(int useTime, ItemStack stack)
++    public static float getCharge(int useTime, ItemStack stack)
+     {
+         float f = (float)useTime / (float)getChargeTime(stack);
+ 
