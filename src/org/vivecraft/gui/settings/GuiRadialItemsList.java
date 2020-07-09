@@ -63,7 +63,7 @@ public class GuiRadialItemsList extends ExtendedList
 		@Override
 		public void render(MatrixStack matrixstack, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_194999_5_,float partialTicks)
         {
-            mc.fontRenderer.drawStringWithShadow(this.labelText, GuiRadialItemsList.this.mc.currentScreen.width / 2 - this.labelWidth / 2, y + height  - GuiRadialItemsList.this.minecraft.fontRenderer.FONT_HEIGHT - 1, 6777215);
+            mc.fontRenderer.drawString(matrixstack, this.labelText, GuiRadialItemsList.this.mc.currentScreen.width / 2 - this.labelWidth / 2, y + height  - GuiRadialItemsList.this.minecraft.fontRenderer.FONT_HEIGHT - 1, 6777215);
         }
     }
 
@@ -83,7 +83,7 @@ public class GuiRadialItemsList extends ExtendedList
         {
             TextFormatting formatting = TextFormatting.WHITE;
             if(p_194999_5_) formatting = TextFormatting.GREEN;
-			mc.fontRenderer.drawStringWithShadow(formatting + I18n.format(this.myKey.getKeyDescription()), mc.currentScreen.width / 2 - maxListLabelWidth / 2, y+ height / 2 - GuiRadialItemsList.this.minecraft.fontRenderer.FONT_HEIGHT / 2, 16777215);
+			mc.fontRenderer.drawString(matrixstack, formatting + I18n.format(this.myKey.getKeyDescription()), mc.currentScreen.width / 2 - maxListLabelWidth / 2, y+ height / 2 - GuiRadialItemsList.this.minecraft.fontRenderer.FONT_HEIGHT / 2, 16777215);
         }
 		
 		@Override

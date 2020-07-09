@@ -1,12 +1,8 @@
 --- a/net/minecraft/client/gui/FontRenderer.java
 +++ b/net/minecraft/client/gui/FontRenderer.java
-@@ -376,4 +376,9 @@
+@@ -376,4 +376,5 @@
              return this.field_238438_l_;
          }
      }
 +
-+	public void drawStringWithShadow(String string, float l, float i1, int disabledColor) {
-+		// TODO Auto-generated method stub
-+		
-+	}
  }

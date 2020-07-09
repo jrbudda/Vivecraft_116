@@ -14,6 +14,7 @@ import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 import org.vivecraft.utils.lwjgl.Vector3f;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -321,6 +322,7 @@ public class PhysicalKeyboard {
 		}
 
 		Tessellator tess = Tessellator.getInstance();
+		MatrixStack matrixstack = new MatrixStack();
 		for (KeyButton key : keys) {
 			AxisAlignedBB box = key.getRenderBoundingBox();
 			GlStateManager.Color color = key.getRenderColor();
@@ -380,7 +382,7 @@ public class PhysicalKeyboard {
 			// Draw the text
 			GlStateManager.translatef(0, 0, textZ);
 			GlStateManager.scalef(textScale, textScale, 1.0F);
-			fontRenderer.drawStringWithShadow(key.label, textX / textScale, textY / textScale, 0xFFFFFFFF);
+			fontRenderer.drawString(matrixstack, key.label, textX / textScale, textY / textScale, 0xFFFFFFFF);
 			GlStateManager.scalef(1.0F / textScale, 1.0F / textScale, 1.0F);
 			GlStateManager.translatef(0, 0, -textZ);
 

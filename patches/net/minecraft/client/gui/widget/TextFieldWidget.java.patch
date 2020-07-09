@@ -35,7 +35,7 @@
 +                //VIVECRAFT
 +            } else {
 +            	if(!Minecraft.getInstance().vrSettings.seated && !KeyboardHandler.Showing)
-+            		this.fontRenderer.drawStringWithShadow("Click to open keyboard", (float)l, (float)i1, this.disabledColor);
++            		this.fontRenderer.func_238405_a_(p_230431_1_,"Click to open keyboard", (float)l, (float)i1, this.disabledColor);
              }
 +            //
  

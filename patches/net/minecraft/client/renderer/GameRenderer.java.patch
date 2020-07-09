@@ -706,7 +706,7 @@
              matrixstack.scale(f7, -f7, f7);
              matrixstack.rotate(Vec3f.YP.rotationDegrees(900.0F * MathHelper.abs(MathHelper.sin(f4))));
              matrixstack.rotate(Vec3f.XP.rotationDegrees(6.0F * MathHelper.cos(f * 8.0F)));
-@@ -1319,4 +1347,2160 @@
+@@ -1319,4 +1347,2161 @@
      {
          return this.overlayTexture;
      }
@@ -1115,133 +1115,134 @@
 +  			RenderSystem.ortho(0.0D, (double)mainwindow.getWidth() / mainwindow.getGuiScaleFactor(), (double)mainwindow.getHeight() / mainwindow.getGuiScaleFactor(), 0.0D, 1000.0D, 3000.0D);
 +  			RenderSystem.matrixMode(5888);
 +  			RenderSystem.pushMatrix();
-+	  			RenderSystem.loadIdentity();
-+	  			RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
-+	  			RenderHelper.setupGui3DDiffuseLighting();
-+	  			RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE);
-+	  			RenderSystem.alphaFunc(GL11.GL_GREATER, 0.01F);
-+	
-+	  			if (this.lightmapTexture.isCustom())
-+	  			{
-+	  				this.lightmapTexture.setAllowed(false);
-+	  			}
-+	  			
-+	  	        //Vivecraft pumkinface off
-+	  	        mc.pumpkineffect=0;
-+	
-+	  			if (renderWorldIn && this.mc.world != null)
-+	  			{
-+	  				if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null)
-+	  				{
-+	  					//RenderSystem.defaultAlphaFunc();
-+	  					//this.renderItemActivation(this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), partialTicks);
++  			RenderSystem.loadIdentity();
++  			RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
++  			RenderHelper.setupGui3DDiffuseLighting();
++  			RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE);
++  			RenderSystem.alphaFunc(GL11.GL_GREATER, 0.01F);
 +
-+                        if (Reflector.ForgeIngameGui.exists()) {
-+                            // ensure all this forge crap is disabled
-+                            Reflector.ForgeIngameGui_renderVignette.setValue(false);
-+                            Reflector.ForgeIngameGui_renderHelmet.setValue(false);
-+                            Reflector.ForgeIngameGui_renderPortal.setValue(false);
-+                            Reflector.ForgeIngameGui_renderCrosshairs.setValue(false);
-+                        }
++  			if (this.lightmapTexture.isCustom())
++  			{
++  				this.lightmapTexture.setAllowed(false);
++  			}
 +
-+	  					if(!Main.viewonly)
-+	  						this.mc.ingameGUI.renderGameOverlay(matrixstack, partialTicks);
-+	
-+	  					if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo)
-+	  					{
-+	  						Config.drawFps(matrixstack);
-+	  					}
-+	
-+	  					if (this.mc.gameSettings.showDebugInfo)
-+	  					{
-+                	        Lagometer.showLagometer(matrixstack, (int)this.mc.getMainWindow().getGuiScaleFactor());
-+	  					}
-+	
-+	  					RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
-+	  				}
-+	
-+	  			}
-+	
-+	  			RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
-+	
-+            if (this.guiLoadingVisible != (this.mc.loadingGui != null))
-+            {
-+                if (this.mc.loadingGui != null)
-+                {
-+                    this.mc.getTextureManager().deleteTexture(Config.LOCATION_MOJANG_LOGO);
++  			//Vivecraft pumkinface off
++  			mc.pumpkineffect=0;
 +
-+                    if (this.mc.loadingGui instanceof ResourceLoadProgressGui)
-+                    {
-+                        ResourceLoadProgressGui resourceloadprogressgui = (ResourceLoadProgressGui)this.mc.loadingGui;
-+                        resourceloadprogressgui.update();
-+                    }
-+                }
++  			if (renderWorldIn && this.mc.world != null)
++  			{
++  				if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null)
++  				{
++  					//RenderSystem.defaultAlphaFunc();
++  					//this.renderItemActivation(this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), partialTicks);
 +
-+                this.guiLoadingVisible = this.mc.loadingGui != null;
-+            }
-+	
-+	  			if (this.mc.loadingGui != null)
-+	  			{
-+	  				try
-+	  				{
-+       		             this.mc.loadingGui.render(matrixstack, i, j, this.mc.getTickLength());
-+	  				}
-+	  				catch (Throwable throwable1)
-+	  				{
-+	  					CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Rendering overlay");
-+	  					CrashReportCategory crashreportcategory = crashreport.makeCategory("Overlay render details");
-+	  					crashreportcategory.addDetail("Overlay name", () ->
-+	  					{
-+	  						return this.mc.loadingGui.getClass().getCanonicalName();
-+	  					});
-+	  					throw new ReportedException(crashreport);
-+	  				}
-+	  			}
-+	  			else if (this.mc.currentScreen != null)
-+            {
-+                try
-+                {
-+                    if (Reflector.ForgeHooksClient_drawScreen.exists())
-+                    {
-+                        Reflector.callVoid(Reflector.ForgeHooksClient_drawScreen, this.mc.currentScreen, matrixstack, i, j, this.mc.getTickLength());
-+                    }
-+                    else
-+                    {
-+                        this.mc.currentScreen.render(matrixstack, i, j, this.mc.getTickLength());
-+                    }
-+                }
-+                catch (Throwable throwable1)
-+                {
-+                    CrashReport crashreport1 = CrashReport.makeCrashReport(throwable1, "Rendering screen");
-+                    CrashReportCategory crashreportcategory1 = crashreport1.makeCategory("Screen render details");
-+                    crashreportcategory1.addDetail("Screen name", () ->
-+                    {
-+                        return this.mc.currentScreen.getClass().getCanonicalName();
-+                    });
-+                    crashreportcategory1.addDetail("Mouse location", () ->
-+                    {
-+                        return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%f, %f)", i, j, this.mc.mouseHelper.getMouseX(), this.mc.mouseHelper.getMouseY());
-+                    });
-+                    crashreportcategory1.addDetail("Screen size", () ->
-+                    {
-+                        return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %f", this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight(), this.mc.getMainWindow().getGuiScaleFactor());
-+                    });
-+                    throw new ReportedException(crashreport1);
-+                }
-+            }	  			
-+	  			//TODO - evaulate this block
-+	            RenderSystem.enableColorMaterial();
-+	            RenderSystem.disableBlend();
-+	            RenderSystem.disableLighting();
-+	            RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE);
-+	            //
-+	            
-+	  	  		mc.getProfiler().startSection("toasts");
-+	  	  		mc.getToastGui().func_238541_a_(new MatrixStack());
-+	  	  		mc.getProfiler().endSection();
-+	  			
-+	  			this.lightmapTexture.setAllowed(true);
-+	  		} //end !skipRenderWorld
++  					if (Reflector.ForgeIngameGui.exists()) {
++  						// ensure all this forge crap is disabled
++  						Reflector.ForgeIngameGui_renderVignette.setValue(false);
++  						Reflector.ForgeIngameGui_renderHelmet.setValue(false);
++  						Reflector.ForgeIngameGui_renderPortal.setValue(false);
++  						Reflector.ForgeIngameGui_renderCrosshairs.setValue(false);
++  					}
++
++  					if(!Main.viewonly)
++  						this.mc.ingameGUI.renderGameOverlay(matrixstack, partialTicks);
++
++  					if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo)
++  					{
++  						Config.drawFps(matrixstack);
++  					}
++
++  					if (this.mc.gameSettings.showDebugInfo)
++  					{
++  						Lagometer.showLagometer(matrixstack, (int)this.mc.getMainWindow().getGuiScaleFactor());
++  					}
++
++  					RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
++  				}
++
++  			}
++
++  			RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
++
++  			if (this.guiLoadingVisible != (this.mc.loadingGui != null))
++  			{
++  				if (this.mc.loadingGui != null)
++  				{
++  					this.mc.getTextureManager().deleteTexture(Config.LOCATION_MOJANG_LOGO);
++
++  					if (this.mc.loadingGui instanceof ResourceLoadProgressGui)
++  					{
++  						ResourceLoadProgressGui resourceloadprogressgui = (ResourceLoadProgressGui)this.mc.loadingGui;
++  						resourceloadprogressgui.update();
++  					}
++  				}
++
++  				this.guiLoadingVisible = this.mc.loadingGui != null;
++  			}
++
++  			if (this.mc.loadingGui != null)
++  			{
++  				try
++  				{
++  					this.mc.loadingGui.render(matrixstack, i, j, this.mc.getTickLength());
++  				}
++  				catch (Throwable throwable1)
++  				{
++  					CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Rendering overlay");
++  					CrashReportCategory crashreportcategory = crashreport.makeCategory("Overlay render details");
++  					crashreportcategory.addDetail("Overlay name", () ->
++  					{
++  						return this.mc.loadingGui.getClass().getCanonicalName();
++  					});
++  					throw new ReportedException(crashreport);
++  				}
++  			}
++  			else if (this.mc.currentScreen != null)
++  			{
++  				try
++  				{
++  					if (Reflector.ForgeHooksClient_drawScreen.exists())
++  					{
++  						Reflector.callVoid(Reflector.ForgeHooksClient_drawScreen, this.mc.currentScreen, matrixstack, i, j, this.mc.getTickLength());
++  					}
++  					else
++  					{
++  						this.mc.currentScreen.render(matrixstack, i, j, this.mc.getTickLength());
++  					}
++  					mc.ingameGUI.drawMouseMenuQuad(i, j);
++  				}
++  				catch (Throwable throwable1)
++  				{
++  					CrashReport crashreport1 = CrashReport.makeCrashReport(throwable1, "Rendering screen");
++  					CrashReportCategory crashreportcategory1 = crashreport1.makeCategory("Screen render details");
++  					crashreportcategory1.addDetail("Screen name", () ->
++  					{
++  						return this.mc.currentScreen.getClass().getCanonicalName();
++  					});
++  					crashreportcategory1.addDetail("Mouse location", () ->
++  					{
++  						return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%f, %f)", i, j, this.mc.mouseHelper.getMouseX(), this.mc.mouseHelper.getMouseY());
++  					});
++  					crashreportcategory1.addDetail("Screen size", () ->
++  					{
++  						return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %f", this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight(), this.mc.getMainWindow().getGuiScaleFactor());
++  					});
++  					throw new ReportedException(crashreport1);
++  				}
++  			}	  			
++  			//TODO - evaulate this block
++  			RenderSystem.enableColorMaterial();
++  			RenderSystem.disableBlend();
++  			RenderSystem.disableLighting();
++  			RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE);
++  			//
++
++  			mc.getProfiler().startSection("toasts");
++  			mc.getToastGui().func_238541_a_(new MatrixStack());
++  			mc.getProfiler().endSection();
++
++  			this.lightmapTexture.setAllowed(true);
++  		} //end !skipRenderWorld
 +	
 +	  		// VIVE added debug info to HUD
 +	  		if (mc.gameSettings.showDebugProfilerChart && !mc.gameSettings.hideGUI)
@@ -2350,18 +2351,18 @@
 +    	GL11.glRotatef(180f, 0.0F, 1.0F, 0.0F);
 +    	float textScale = (float) Math.sqrt((x * x + y * y + z * z));
 +    	GL11.glScalef(-INITIAL_TEXT_SCALE * textScale, -INITIAL_TEXT_SCALE * textScale, -INITIAL_TEXT_SCALE * textScale);
-+    	
++    	MatrixStack matrixstack = new MatrixStack();
 +    	if (prefix != null)
-+    		mc.fontRenderer.drawStringWithShadow(prefix, -mc.fontRenderer.getStringWidth(prefix) / 2, -8, /*white*/16777215);
++    		mc.fontRenderer.func_238405_a_(matrixstack, prefix, -mc.fontRenderer.getStringWidth(prefix) / 2, -8, /*white*/16777215);
 +
 +    	for (String line : wrapped)
 +    	{
-+    		mc.fontRenderer.drawStringWithShadow(line, -mc.fontRenderer.getStringWidth(line) / 2, column, /*white*/16777215);
++    		mc.fontRenderer.func_238405_a_(matrixstack, line, -mc.fontRenderer.getStringWidth(line) / 2, column, /*white*/16777215);
 +    		column += COLUMN_GAP;
 +    	}
 +    	column += COLUMN_GAP;
 +    	if (suffix != null)
-+    		mc.fontRenderer.drawStringWithShadow(suffix, -mc.fontRenderer.getStringWidth(suffix) / 2, column, /*white*/16777215);
++    		mc.fontRenderer.func_238405_a_(matrixstack, suffix, -mc.fontRenderer.getStringWidth(suffix) / 2, column, /*white*/16777215);
 +
 +    	if(d)	GlStateManager.enableDepthTest();
 +    	GL11.glMatrixMode(GL11.GL_PROJECTION);

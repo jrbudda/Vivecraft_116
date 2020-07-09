@@ -71,6 +71,15 @@
          this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 96 + -16, 98, 20, new TranslationTextComponent("menu.options"), (p_213071_1_) ->
          {
              this.minecraft.displayGuiScreen(new OptionsScreen(this, this.minecraft.gameSettings));
+@@ -75,7 +81,7 @@
+             this.minecraft.displayGuiScreen(new ShareToLanScreen(this));
+         }));
+         button.active = this.minecraft.isSingleplayer() && !this.minecraft.getIntegratedServer().getPublic();
+-        Button button1 = this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 204, 20, new TranslationTextComponent("menu.returnToMenu"), (p_213067_1_) ->
++        Button button1 = this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 168 + -16, 204, 20, new TranslationTextComponent("menu.returnToMenu"), (p_213067_1_) ->
+         {
+             boolean flag = this.minecraft.isIntegratedServerRunning();
+             boolean flag1 = this.minecraft.isConnectedToRealms();
 @@ -108,6 +114,58 @@
          {
              button1.setMessage(new TranslationTextComponent("menu.disconnect"));
