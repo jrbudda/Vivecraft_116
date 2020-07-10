@@ -65,8 +65,9 @@ def applychanges(mcp_dir, patch_dir = "patches", applyPatches=True, backup = Tru
     if backup and os.path.exists(mod_src_dir):
         print("Backing up src/minecraft to src/minecraft-bak")
         #fuck python and the horse it rode in on.
-        shutil.move(mod_bak_dir, tmp)
-        reallyrmtree(tmp)
+        if os.path.exists(mod_bak_dir):       
+           shutil.move(mod_bak_dir, tmp)
+           reallyrmtree(tmp)
         shutil.move( mod_src_dir, mod_bak_dir )
         
     if copyOriginal:
