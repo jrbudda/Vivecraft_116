@@ -23,7 +23,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class NetworkHelper {
 
@@ -133,7 +133,7 @@ public class NetworkHelper {
 			Matrix4f matrix = new Matrix4f();
 			matrix.load(buffer);
 
-			Vec3d headPosition = player.vrdata_world_post.getHeadPivot();
+			Vector3d headPosition = player.vrdata_world_post.getHeadPivot();
 			Quaternion headRotation = new Quaternion(matrix);
 			
 			ByteBuf payload = Unpooled.buffer();
@@ -154,7 +154,7 @@ public class NetworkHelper {
 		}	
 		
 		for (int i = 0; i < 2; i++) {
-			Vec3d controllerPosition = player.vrdata_world_post.getController(i).getPosition();
+			Vector3d controllerPosition = player.vrdata_world_post.getController(i).getPosition();
 			FloatBuffer buffer = player.vrdata_world_post.getController(i).getMatrix().toFloatBuffer();
 			buffer.rewind();
 			Matrix4f matrix = new Matrix4f();

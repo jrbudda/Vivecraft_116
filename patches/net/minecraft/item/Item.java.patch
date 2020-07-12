@@ -23,14 +23,14 @@
 @@ -301,6 +305,18 @@
          float f = player.rotationPitch;
          float f1 = player.rotationYaw;
-         Vec3d vec3d = player.getEyePosition(1.0F);
+         Vector3d vector3d = player.getEyePosition(1.0F);
 +        
 +        //Vivecraft - Good Luck keeping this viable with Forge!
 +    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(player.getUniqueID());
 +    	if (vp !=null && vp.isVR())
 +    	{
-+    		vec3d = vp.getControllerPos(0);
-+    		Vec3d aim = vp.getControllerDir(0);
++    		vector3d = vp.getControllerPos(0);
++    		Vector3d aim = vp.getControllerDir(0);
 +    		f = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 +    		f1 = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		       		
 +    	}           	         	

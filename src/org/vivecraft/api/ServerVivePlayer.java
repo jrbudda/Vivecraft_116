@@ -11,7 +11,7 @@ import org.vivecraft.utils.math.Vector3;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class ServerVivePlayer {
 
@@ -54,7 +54,7 @@ public class ServerVivePlayer {
 
 	final Vector3 forward = new Vector3(0,0,-1);
 	
-	public Vec3d getControllerVectorCustom(int controller, Vector3 direction){
+	public Vector3d getControllerVectorCustom(int controller, Vector3 direction){
 		byte[] data = controller0data;
 		if(controller == 1) data = controller1data;
 		if(this.isSeated()) controller = 0;
@@ -79,7 +79,7 @@ public class ServerVivePlayer {
 				Vector3 out = q.multiply(direction);
 
 				da.close(); //needed?
-				return new Vec3d(out.getX(), out.getY(), out.getZ());
+				return new Vector3d(out.getX(), out.getY(), out.getZ());
 			} catch (IOException e) {
 				return player.getLookVec();
 			}
@@ -88,11 +88,11 @@ public class ServerVivePlayer {
 		return player.getLookVec();
 	}
 	
-	public Vec3d getControllerDir(int controller){
+	public Vector3d getControllerDir(int controller){
 		return getControllerVectorCustom(controller, forward);
 	}
 	
-	public Vec3d getHMDDir(){
+	public Vector3d getHMDDir(){
 		try {
 			if(hmdData != null){
 
@@ -114,7 +114,7 @@ public class ServerVivePlayer {
 
 				//System.out.println("("+out.getX()+","+out.getY()+","+out.getZ()+")" + " : W:" + w + " X: "+x + " Y:" + y+ " Z:" + z);
 				da.close(); //needed?
-				return new Vec3d(out.getX(), out.getY(), out.getZ());
+				return new Vector3d(out.getX(), out.getY(), out.getZ());
 			}else{
 			}
 		} catch (IOException e) {
@@ -124,7 +124,7 @@ public class ServerVivePlayer {
 		return player.getLookVec();
 	}
 	
-	public Vec3d getHMDPos() {
+	public Vector3d getHMDPos() {
 		try {
 			if(hmdData!=null){
 				
@@ -138,7 +138,7 @@ public class ServerVivePlayer {
 				
 				da.close(); 
 								
-				return new Vec3d(x, y, z);
+				return new Vector3d(x, y, z);
 			}else{
 			}
 		} catch (IOException e) {
@@ -150,7 +150,7 @@ public class ServerVivePlayer {
 	}
 	
 	
-	public Vec3d getControllerPos(int c) {
+	public Vector3d getControllerPos(int c) {
 		try {
 			if(controller0data != null && controller0data != null){
 				
@@ -165,17 +165,17 @@ public class ServerVivePlayer {
 				da.close(); //needed?
 				
 				if (this.isSeated()){
-					Vec3d dir = this.getHMDDir();
+					Vector3d dir = this.getHMDDir();
 					dir = dir.rotateYaw((float) Math.toRadians(c==0?-35:35));
-					dir = new Vec3d(dir.x, 0, dir.z);
+					dir = new Vector3d(dir.x, 0, dir.z);
 					dir = dir.normalize();
-					Vec3d out = this.getHMDPos().add(dir.x * 0.3 * worldScale, -0.4* worldScale ,dir.z*0.3* worldScale);
+					Vector3d out = this.getHMDPos().add(dir.x * 0.3 * worldScale, -0.4* worldScale ,dir.z*0.3* worldScale);
 					x = (float) out.x;
 					y = (float) out.y;
 					z = (float) out.z;
 				}
 				
-				return new Vec3d(x, y, z);
+				return new Vector3d(x, y, z);
 			}else{
 			}
 		} catch (IOException e) {

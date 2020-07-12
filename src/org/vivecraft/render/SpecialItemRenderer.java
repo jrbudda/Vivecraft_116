@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -23,7 +23,7 @@ public class SpecialItemRenderer {
         int[] aint = buffer.isMultiTexture() ? quadIn.getVertexDataSingle() : quadIn.getVertexData();
         buffer.putSprite(quadIn.getSprite());
         boolean flag = BlockModelRenderer.isSeparateAoLightValue();
-        Vec3i vec3i = quadIn.getFace().getDirectionVec();
+        Vector3i vec3i = quadIn.getFace().getDirectionVec();
         float f = (float)vec3i.getX();
         float f1 = (float)vec3i.getY();
         float f2 = (float)vec3i.getZ();

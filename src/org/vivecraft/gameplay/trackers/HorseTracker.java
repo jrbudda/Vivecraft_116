@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.passive.horse.HorseEntity;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class HorseTracker extends Tracker {
 
@@ -65,8 +65,8 @@ public class HorseTracker extends Tracker {
 		float absYaw = (horse.rotationYaw + 360) % 360;
 		float absYawOffset = (horse.renderYawOffset + 360) % 360;
 
-		Vec3d speedLeft = MCOpenVR.controllerHistory[1].netMovement(0.1).scale(1 / 0.1);
-		Vec3d speedRight = MCOpenVR.controllerHistory[0].netMovement(0.1).scale(1 / 0.1);
+		Vector3d speedLeft = MCOpenVR.controllerHistory[1].netMovement(0.1).scale(1 / 0.1);
+		Vector3d speedRight = MCOpenVR.controllerHistory[0].netMovement(0.1).scale(1 / 0.1);
 		double speedDown = Math.min(-speedLeft.y, -speedRight.y);
 
 		if (speedDown > boostTrigger) {
@@ -74,14 +74,14 @@ public class HorseTracker extends Tracker {
 		}
 
 		Quaternion horseRot = new Quaternion(0, -horse.renderYawOffset, 0);
-		Vec3d back = horseRot.multiply(new Vec3d(0, 0, -1));
-		Vec3d left = horseRot.multiply(new Vec3d(1, 0, 0));
-		Vec3d right = horseRot.multiply(new Vec3d(-1, 0, 0));
+		Vector3d back = horseRot.multiply(new Vector3d(0, 0, -1));
+		Vector3d left = horseRot.multiply(new Vector3d(1, 0, 0));
+		Vector3d right = horseRot.multiply(new Vector3d(-1, 0, 0));
 
 		Quaternion worldRot = new Quaternion(0, VRSettings.inst.vrWorldRotation, 0);
 
-		Vec3d posL = OpenVRPlayer.get().roomOrigin.add(worldRot.multiply(MCOpenVR.controllerHistory[1].latest()));
-		Vec3d posR = OpenVRPlayer.get().roomOrigin.add(worldRot.multiply(MCOpenVR.controllerHistory[0].latest()));
+		Vector3d posL = OpenVRPlayer.get().roomOrigin.add(worldRot.multiply(MCOpenVR.controllerHistory[1].latest()));
+		Vector3d posR = OpenVRPlayer.get().roomOrigin.add(worldRot.multiply(MCOpenVR.controllerHistory[0].latest()));
 
 		double distanceL = posL.subtract(info.leftReinPos).dotProduct(back) + posL.subtract(info.leftReinPos).dotProduct(left);
 		double distanceR = posR.subtract(info.rightReinPos).dotProduct(back) + posR.subtract(info.rightReinPos).dotProduct(right);
@@ -112,7 +112,7 @@ public class HorseTracker extends Tracker {
 	horse.renderYawOffset=(float)Utils.lerpMod(absYawOffset,absYaw,bodyturnspeed,360);
 	horse.rotationYawHead=absYaw;
 
-	Vec3d movement = horseRot.multiply(new Vec3d(0, 0, speedLevel * baseSpeed));
+	Vector3d movement = horseRot.multiply(new Vector3d(0, 0, speedLevel * baseSpeed));
 
 	horse.setMotion(movement.x, horse.getMotion().y, movement.z);
 }
@@ -152,7 +152,7 @@ public class HorseTracker extends Tracker {
 	}
 
 public class ModelInfo {
-	public Vec3d leftReinPos = Vec3d.ZERO;
-	public Vec3d rightReinPos = Vec3d.ZERO;
+	public Vector3d leftReinPos = Vector3d.ZERO;
+	public Vector3d rightReinPos = Vector3d.ZERO;
 }
 }

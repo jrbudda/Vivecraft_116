@@ -8,47 +8,47 @@ import org.vivecraft.utils.math.Matrix4f;
 import org.vivecraft.utils.math.Vector3;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class VRData{
 	public class VRDevicePose{
 		final VRData data;
-		final Vec3d pos;
-		final Vec3d dir;
+		final Vector3d pos;
+		final Vector3d dir;
 		final Matrix4f matrix;
 		
-		public VRDevicePose(VRData data, Matrix4f matrix, Vec3d pos, Vec3d dir) {
+		public VRDevicePose(VRData data, Matrix4f matrix, Vector3d pos, Vector3d dir) {
 			this.data = data;
 			this.matrix = matrix.transposed().transposed(); //poor mans copy.
-			this.pos = new Vec3d(pos.x, pos.y, pos.z);
-			this.dir = new Vec3d(dir.x, dir.y, dir.z);
+			this.pos = new Vector3d(pos.x, pos.y, pos.z);
+			this.dir = new Vector3d(dir.x, dir.y, dir.z);
 		}	
 		
 		
-		public Vec3d getPosition(){
-			Vec3d out = pos.scale(worldScale);
+		public Vector3d getPosition(){
+			Vector3d out = pos.scale(worldScale);
 			out = out.rotateYaw(data.rotation_radians);
 			return out.add(data.origin.x, data.origin.y, data.origin.z);
 		}
 	
-		public Vec3d getDirection() {
-			Vec3d out = new Vec3d(dir.x, dir.y, dir.z).rotateYaw(data.rotation_radians);
+		public Vector3d getDirection() {
+			Vector3d out = new Vector3d(dir.x, dir.y, dir.z).rotateYaw(data.rotation_radians);
 			return out;
 		}
 		
-		public Vec3d getCustomVector(Vec3d axis) {
+		public Vector3d getCustomVector(Vector3d axis) {
 			Vector3 v3 = matrix.transform(new Vector3((float)axis.x, (float)axis.y,(float) axis.z));
-			Vec3d out =  v3.toVec3d().rotateYaw(data.rotation_radians);
+			Vector3d out =  v3.toVector3d().rotateYaw(data.rotation_radians);
 			return out;
 		}
 		
 		public float getYaw() {
-			Vec3d dir = getDirection();
+			Vector3d dir = getDirection();
 			return (float)Math.toDegrees(Math.atan2(-dir.x, dir.z)); 
 		}
 
 		public float getPitch() {
-			Vec3d dir = getDirection();
+			Vector3d dir = getDirection();
 			return (float)Math.toDegrees(Math.asin(dir.y/dir.length())); 
 		}
 		
@@ -79,19 +79,19 @@ public class VRData{
 	public VRDevicePose t0;
 	public VRDevicePose t1;
 	
-	public Vec3d origin;
+	public Vector3d origin;
 	public float rotation_radians;
 	public float worldScale;
 	
-	public VRData(Vec3d origin, float walkMul,float worldScale, float rotation) {
+	public VRData(Vector3d origin, float walkMul,float worldScale, float rotation) {
 		//ok this is where it gets ugly, gonna go straight to mcopenvr and grab shit for copying.
 		
 		this.origin = origin;
 		this.worldScale =worldScale;
 		this.rotation_radians = rotation;
 		
-		Vec3d hmd_raw = MCOpenVR.getCenterEyePosition();
-		Vec3d scaledPos = new Vec3d(hmd_raw.x * walkMul, hmd_raw.y, hmd_raw.z * walkMul);
+		Vector3d hmd_raw = MCOpenVR.getCenterEyePosition();
+		Vector3d scaledPos = new Vector3d(hmd_raw.x * walkMul, hmd_raw.y, hmd_raw.z * walkMul);
 		
 		hmd = new VRDevicePose(this, MCOpenVR.hmdRotation, scaledPos, MCOpenVR.getHmdVector()); 
 		
@@ -111,17 +111,17 @@ public class VRData{
 		else {
 			VRSettings settings = Minecraft.getInstance().vrSettings;
 			Matrix4f rot = new Matrix4f(settings.vrFixedCamrotQuat).transposed();
-			Vec3d pos = new Vec3d(settings.vrFixedCamposX, settings.vrFixedCamposY, settings.vrFixedCamposZ);
-			Vec3d dir = rot.transform(Vector3.forward()).toVec3d();
+			Vector3d pos = new Vector3d(settings.vrFixedCamposX, settings.vrFixedCamposY, settings.vrFixedCamposZ);
+			Vector3d dir = rot.transform(Vector3.forward()).toVector3d();
 			c2 = new VRDevicePose(this, rot, pos.subtract(hmd_raw).add(scaledPos), dir);
 		}
 	}
 	
 	private Matrix4f getSmoothedRotation(int c, float lenSec) {
-		Vec3d pos = MCOpenVR.controllerHistory[c].averagePosition(lenSec);
-		Vec3d f = MCOpenVR.controllerForwardHistory[c].averagePosition(lenSec);
-		Vec3d u = MCOpenVR.controllerUpHistory[c].averagePosition(lenSec);
-		Vec3d r = f.crossProduct(u);	
+		Vector3d pos = MCOpenVR.controllerHistory[c].averagePosition(lenSec);
+		Vector3d f = MCOpenVR.controllerForwardHistory[c].averagePosition(lenSec);
+		Vector3d u = MCOpenVR.controllerUpHistory[c].averagePosition(lenSec);
+		Vector3d r = f.crossProduct(u);	
 		return new Matrix4f((float)r.x, (float)u.x, (float)-f.x, (float)r.y, (float)u.y, (float)-f.y, (float)r.z, (float)u.z, (float)-f.z);
 	}
 	
@@ -137,7 +137,7 @@ public class VRData{
 		if(Minecraft.getInstance().vrSettings.seated)
 			return hmd.getYaw();
 		
-		Vec3d v = (c1.getPosition().subtract(c0.getPosition())).normalize().rotateYaw((float) (-Math.PI/2));
+		Vector3d v = (c1.getPosition().subtract(c0.getPosition())).normalize().rotateYaw((float) (-Math.PI/2));
 		
 		if(Minecraft.getInstance().vrSettings.vrReverseHands)
 			v = v.scale(-1);
@@ -151,7 +151,7 @@ public class VRData{
 		if(Minecraft.getInstance().vrSettings.seated)
 			return hmd.getYaw();
 		
-		Vec3d v = (c1.getPosition().subtract(c0.getPosition())).normalize().rotateYaw((float) (-Math.PI/2));
+		Vector3d v = (c1.getPosition().subtract(c0.getPosition())).normalize().rotateYaw((float) (-Math.PI/2));
 	
 		if(Minecraft.getInstance().vrSettings.vrReverseHands)
 			return(float) Math.toDegrees(Math.atan2(v.x, -v.z)); 
@@ -159,16 +159,16 @@ public class VRData{
 			return(float) Math.toDegrees(Math.atan2(-v.x, v.z)); 
 		}
 	
-	public Vec3d getHeadPivot() {
-		Vec3d eye = hmd.getPosition();
+	public Vector3d getHeadPivot() {
+		Vector3d eye = hmd.getPosition();
 		Vector3 v3 = hmd.getMatrix().transform(new Vector3(0,-.1f, .1f));
-		return (new Vec3d(v3.getX()+eye.x, v3.getY()+eye.y, v3.getZ()+eye.z));
+		return (new Vector3d(v3.getX()+eye.x, v3.getY()+eye.y, v3.getZ()+eye.z));
 	}
 	
-	public Vec3d getHeadRear() {
-		Vec3d eye = hmd.getPosition();
+	public Vector3d getHeadRear() {
+		Vector3d eye = hmd.getPosition();
 		Vector3 v3 = hmd.getMatrix().transform(new Vector3(0,-.2f, .2f));
-		return (new Vec3d(v3.getX()+eye.x, v3.getY()+eye.y, v3.getZ()+eye.z));
+		return (new Vector3d(v3.getX()+eye.x, v3.getY()+eye.y, v3.getZ()+eye.z));
 	}
 	
 	public VRDevicePose getEye(RenderPass pass){
@@ -202,8 +202,8 @@ public class VRData{
 				"\r\n \t\t c2 " + this.c2 ;	
 	}
 	
-	protected Vec3d vecMult(Vec3d in, float factor){
-		return new Vec3d(in.x * factor,	in.y * factor, in.z*factor);
+	protected Vector3d vecMult(Vector3d in, float factor){
+		return new Vector3d(in.x * factor,	in.y * factor, in.z*factor);
 	}
 	
 }

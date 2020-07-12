@@ -48,19 +48,18 @@
              if (!modelIn.isBuiltInRenderer() && (itemStackIn.getItem() != Items.TRIDENT || flag))
              {
                  boolean flag1;
-@@ -166,7 +186,10 @@
- 
-                 RenderType rendertype = RenderTypeLookup.func_239219_a_(itemStackIn, flag1);
-                 IVertexBuilder ivertexbuilder;
--
+@@ -172,6 +192,10 @@
+                 {
+                     RenderType rendertype = RenderTypeLookup.func_239219_a_(itemStackIn, flag1);
+                     IVertexBuilder ivertexbuilder;
 +                //Vivecraft �\_(?)_/� pick one? make a better one?
 +                if(isfphand && fade < 1)
-+                	rendertype = Atlases.getTranslucentCullBlockType();
++                	rendertype = Atlases.func_239280_i_();
 +                //
-                 if (itemStackIn.getItem() == Items.COMPASS && itemStackIn.hasEffect())
-                 {
-                     matrixStackIn.push();
-@@ -303,7 +326,19 @@
+ 
+                     if (itemStackIn.getItem() == Items.COMPASS && itemStackIn.hasEffect())
+                     {
+@@ -310,7 +334,19 @@
              {
                  k = this.itemColors.getColor(itemStackIn, bakedquad.getTintIndex());
              }
@@ -81,7 +80,7 @@
              float f = (float)(k >> 16 & 255) / 255.0F;
              float f1 = (float)(k >> 8 & 255) / 255.0F;
              float f2 = (float)(k & 255) / 255.0F;
-@@ -314,7 +349,7 @@
+@@ -321,7 +357,7 @@
              }
              else
              {
@@ -90,7 +89,7 @@
              }
          }
      }
-@@ -371,10 +406,15 @@
+@@ -378,10 +414,15 @@
          this.textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
          this.textureManager.getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
          RenderSystem.enableRescaleNormal();
@@ -107,7 +106,7 @@
          RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
          RenderSystem.translatef((float)x, (float)y, 100.0F + this.zLevel);
          RenderSystem.translatef(8.0F, 8.0F, 0.0F);
-@@ -388,7 +428,6 @@
+@@ -395,7 +436,6 @@
          {
              RenderHelper.setupGuiFlatDiffuseLighting();
          }
@@ -115,7 +114,7 @@
          this.renderItem(stack, ItemCameraTransforms.TransformType.GUI, false, matrixstack, irendertypebuffer$impl, 15728880, OverlayTexture.NO_OVERLAY, bakedmodel);
          irendertypebuffer$impl.finish();
          RenderSystem.enableDepthTest();
-@@ -552,4 +591,21 @@
+@@ -559,4 +599,21 @@
      {
          return VanillaResourceType.MODELS;
      }

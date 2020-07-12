@@ -11,7 +11,7 @@
  import net.minecraft.entity.EntityType;
 @@ -15,6 +18,7 @@
  import net.minecraft.util.math.RayTraceResult;
- import net.minecraft.util.math.vector.Vec3d;
+ import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
 +import net.optifine.reflect.Reflector;
  
@@ -25,8 +25,8 @@
 +        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i3867_2_.getUniqueID());
 +        if (vp !=null && vp.isVR())
 +        {
-+        	Vec3d aimSource = vp.getControllerPos(vp.activeHand);
-+        	Vec3d aimDir = vp.getControllerDir(vp.activeHand).scale(0.6f);
++        	Vector3d aimSource = vp.getControllerPos(vp.activeHand);
++        	Vector3d aimDir = vp.getControllerDir(vp.activeHand).scale(0.6f);
 +        	this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        } 
 +        ///

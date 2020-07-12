@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/entity/layers/CapeLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/CapeLayer.java
+@@ -37,6 +37,7 @@
+                 double d1 = MathHelper.lerp((double)partialTicks, entitylivingbaseIn.prevChasingPosY, entitylivingbaseIn.chasingPosY) - MathHelper.lerp((double)partialTicks, entitylivingbaseIn.prevPosY, entitylivingbaseIn.getPosY());
+                 double d2 = MathHelper.lerp((double)partialTicks, entitylivingbaseIn.prevChasingPosZ, entitylivingbaseIn.chasingPosZ) - MathHelper.lerp((double)partialTicks, entitylivingbaseIn.prevPosZ, entitylivingbaseIn.getPosZ());
+                 float f = entitylivingbaseIn.prevRenderYawOffset + (entitylivingbaseIn.renderYawOffset - entitylivingbaseIn.prevRenderYawOffset);
++         
+                 double d3 = (double)MathHelper.sin(f * ((float)Math.PI / 180F));
+                 double d4 = (double)(-MathHelper.cos(f * ((float)Math.PI / 180F)));
+                 float f1 = (float)d1 * 10.0F;

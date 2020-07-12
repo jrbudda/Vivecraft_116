@@ -80,8 +80,8 @@
 +import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.util.math.shapes.ISelectionContext;
  import net.minecraft.util.math.shapes.VoxelShape;
- import net.minecraft.util.math.vector.Vec2f;
- import net.minecraft.util.math.vector.Vec3d;
+ import net.minecraft.util.math.vector.Vector2f;
+ import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.util.text.ITextComponent;
 +import net.minecraft.world.World;
 +import net.minecraft.world.DimensionType;
@@ -370,9 +370,9 @@
          return super.removeActivePotionEffect(potioneffectin);
      }
  
-+    private Vec3d  moveMulIn;
++    private Vector3d  moveMulIn;
 +    
-     public void move(MoverType typeIn, Vec3d pos)
+     public void move(MoverType typeIn, Vector3d pos)
      {
 -        double d0 = this.getPosX();
 -        double d1 = this.getPosZ();
@@ -384,7 +384,7 @@
 +    	boolean freemove = OpenVRPlayer.get().getFreeMove();
 +    	boolean doY = freemove || (Minecraft.getInstance().vrSettings.simulateFalling && !this.isOnLadder()) && !this.isSneaking();
 +    	if(mc.climbTracker.isActive(this) && (freemove || mc.climbTracker.isGrabbingLadder())) doY = true;
-+    	Vec3d roomOrigin = OpenVRPlayer.get().roomOrigin;
++    	Vector3d roomOrigin = OpenVRPlayer.get().roomOrigin;
 +    	//   	Vec3 camloc = Minecraft.getInstance().vrPlayer.getHMDPos_World();
 +
 +    	if ( (mc.climbTracker.isGrabbingLadder() || freemove || mc.swimTracker.isActive(this)) && 
@@ -408,7 +408,7 @@
 +    				getPosZ()  + oz, false);
 +    	} else {
 +    		if(doY) {      	 
-+    			super.move(typeIn,new Vec3d(0,pos.y,0));
++    			super.move(typeIn,new Vector3d(0,pos.y,0));
 +    			OpenVRPlayer.get().setRoomOrigin(
 +    					OpenVRPlayer.get().roomOrigin.x, 
 +    					this.getPosY() + this.getRoomYOffsetFromPos(),
@@ -431,23 +431,23 @@
      public boolean isAutoJumpEnabled()
 @@ -1056,13 +1301,17 @@
              float f = this.getAIMoveSpeed();
-             float f1 = (float)vec3d2.lengthSquared();
+             float f1 = (float)vector3d2.lengthSquared();
  
 +            //VIVE
 +            float yaw = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getBodyYaw();
 +               
              if (f1 <= 0.001F)
              {
-                 Vec2f vec2f = this.movementInput.getMoveVector();
-                 float f2 = f * vec2f.x;
-                 float f3 = f * vec2f.y;
+                 Vector2f vector2f = this.movementInput.getMoveVector();
+                 float f2 = f * vector2f.x;
+                 float f3 = f * vector2f.y;
 -                float f4 = MathHelper.sin(this.rotationYaw * ((float)Math.PI / 180F));
 -                float f5 = MathHelper.cos(this.rotationYaw * ((float)Math.PI / 180F));
 +                        float f4 = MathHelper.sin(yaw * 0.017453292F);
 +                        float f5 = MathHelper.cos(yaw * 0.017453292F);
 +                        //END VIVE
-                 vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
-                 f1 = (float)vec3d2.lengthSquared();
+                 vector3d2 = new Vector3d((double)(f2 * f5 - f3 * f4), vector3d2.y, (double)(f3 * f5 + f2 * f4));
+                 f1 = (float)vector3d2.lengthSquared();
  
 @@ -1248,4 +1497,406 @@
              return this.eyesInWaterPlayer;
@@ -505,7 +505,7 @@
 +    		Entity mount = this.getRidingEntity();
 +    				
 +            if (isPassenger()){          	
-+    			Vec3d offset = mc.vehicleTracker.Premount_Pos_Room;
++    			Vector3d offset = mc.vehicleTracker.Premount_Pos_Room;
 +    			offset = offset.rotateYaw(mc.vrPlayer.vrdata_world_pre.rotation_radians);    			
 +    			Entity e= mount;
 +    			x = x - offset.x;
@@ -513,7 +513,7 @@
 +    			z = z - offset.z;
 +    			mc.vrPlayer.setRoomOrigin(x, y, z, false);   		
 +            } else {
-+        		Vec3d roomOrigin = Minecraft.getInstance().vrPlayer.roomOrigin;
++        		Vector3d roomOrigin = Minecraft.getInstance().vrPlayer.roomOrigin;
 +          		OpenVRPlayer.get().setRoomOrigin(
 +          				roomOrigin.x + (ax - bx),
 +          				roomOrigin.y + (ay - by),
@@ -574,7 +574,7 @@
 +    }
 +           
 +    @Override
-+    public void moveRelative(float friction, Vec3d move) 
++    public void moveRelative(float friction, Vector3d move) 
 +    {
 +    	//   	super.moveFlying(strafe, forward, friction);
 +
@@ -605,14 +605,14 @@
 +    		speed = friction / speed;
 +    		strafe *= speed;
 +    		forward *= speed;
-+    		Vec3d directionVec = new Vec3d(strafe, 0,forward);
++    		Vector3d directionVec = new Vector3d(strafe, 0,forward);
 +    		OpenVRPlayer con = mc.vrPlayer;
 +
 +    		if(Main.katvr){
 +    			jkatvr.query();
 +
 +    			speed =  jkatvr.getSpeed() * jkatvr.walkDirection() * mc.vrSettings.movementSpeedMultiplier;
-+    			directionVec = new Vec3d(0, 0,speed);
++    			directionVec = new Vector3d(0, 0,speed);
 +    			directionVec=directionVec.rotateYaw(-jkatvr.getYaw()* PIOVER180 + mc.vrPlayer.vrdata_world_pre.rotation_radians);	    		
 +
 +    			if(this.abilities.isFlying || this.inWater){
@@ -625,7 +625,7 @@
 +    			jinfinadeck.query();
 +
 +    			speed =  jinfinadeck.getSpeed() * jinfinadeck.walkDirection() * mc.vrSettings.movementSpeedMultiplier;
-+    			directionVec = new Vec3d(0, 0,speed);
++    			directionVec = new Vector3d(0, 0,speed);
 +    			directionVec=directionVec.rotateYaw(-jinfinadeck.getYaw()* PIOVER180 + mc.vrPlayer.vrdata_world_pre.rotation_radians);	    		
 +
 +    			if(this.abilities.isFlying || this.inWater){
@@ -728,23 +728,23 @@
 +
 +            for (int i = 0; i < count; ++i)
 +            {
-+                Vec3d vec3d = new Vec3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
-+                vec3d = vec3d.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
-+                vec3d = vec3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++                Vector3d vector3d = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
++                vector3d = vector3d.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++                vector3d = vector3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
 +                double d0 = (double)(-this.rand.nextFloat()) * 0.6D - 0.3D;
-+                Vec3d vec3d1 = new Vec3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
++                Vector3d vector3d1 = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
 +    			//VIVE
 +    			Hand hand = getActiveHand();
 +    			if(hand == Hand.MAIN_HAND){
-+    				vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
++    				vector3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
 +    			} else {
-+    				vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();                 	
++    				vector3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();                 	
 +    			}
-+                // vec3d1 = vec3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
-+                // vec3d1 = vec3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
-+                // vec3d1 = vec3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
++                // vector3d1 = vector3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++                // vector3d1 = vector3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++                // vector3d1 = vector3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
 +    			//
-+                this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vec3d1.x, vec3d1.y, vec3d1.z, vec3d.x, vec3d.y + 0.05D, vec3d.z);
++                this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vector3d1.x, vector3d1.y, vector3d1.z, vector3d.x, vector3d.y + 0.05D, vector3d.z);
 +            }
 +        }
 +
@@ -786,7 +786,7 @@
 +        	
 +        }
 +    	
-+        public void stepSound(BlockPos blockforNoise, Vec3d soundPos){
++        public void stepSound(BlockPos blockforNoise, Vector3d soundPos){
 +        	BlockState bs = this.world.getBlockState(blockforNoise);
 +        	Block b = bs.getBlock();
 +            SoundType soundtype = b.getSoundType(bs);

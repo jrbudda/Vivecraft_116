@@ -21,7 +21,7 @@
 +    	if (vp !=null && vp.isVR())
 +    	{ 
 +    		//Trident and throwables
-+    		Vec3d aim = vp.getControllerDir(vp.activeHand);
++    		Vector3d aim = vp.getControllerDir(vp.activeHand);
 +    		
 +    		//Roomscale Bow
 +    		if (this instanceof AbstractArrowEntity && !(this instanceof TridentEntity)) {

@@ -33,7 +33,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 
 // VIVE
@@ -60,10 +60,10 @@ public class OpenVRPlayer
 	}
 
 	public OpenVRPlayer() {
-		this.vrdata_room_pre = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
-		this.vrdata_room_post = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
-		this.vrdata_world_post = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
-		this.vrdata_world_pre = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
+		this.vrdata_room_pre = new VRData(new Vector3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
+		this.vrdata_room_post = new VRData(new Vector3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
+		this.vrdata_world_post = new VRData(new Vector3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
+		this.vrdata_world_pre = new VRData(new Vector3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
 	}
 	
 	public VRData getVRDataWorld(){
@@ -78,7 +78,7 @@ public class OpenVRPlayer
 	private boolean teleportOverride = false;
 	public int teleportWarningTimer = -1;
 
-	public Vec3d roomOrigin = new Vec3d(0,0,0);
+	public Vector3d roomOrigin = new Vector3d(0,0,0);
 	private boolean isFreeMoveCurrent = true; // based on a heuristic of which locomotion type was last used
 	
 	//for overriding the world scale settings with wonder foods.
@@ -95,20 +95,20 @@ public class OpenVRPlayer
 		return Minecraft.getInstance().vrPlayer;
 	}
 
-	public static Vec3d room_to_world_pos(Vec3d pos, VRData data){
-		Vec3d out = new Vec3d(pos.x*data.worldScale, pos.y*data.worldScale, pos.z*data.worldScale);
+	public static Vector3d room_to_world_pos(Vector3d pos, VRData data){
+		Vector3d out = new Vector3d(pos.x*data.worldScale, pos.y*data.worldScale, pos.z*data.worldScale);
 		out =out.rotateYaw(data.rotation_radians);
 		return out.add(data.origin.x, data.origin.y, data.origin.z);
 	}
 
-	public static Vec3d world_to_room_pos(Vec3d pos, VRData data){
-		Vec3d out = pos.add(-data.origin.x, -data.origin.y, -data.origin.z);
-		out = new Vec3d(out.x/data.worldScale, out.y/data.worldScale, out.z/data.worldScale);
+	public static Vector3d world_to_room_pos(Vector3d pos, VRData data){
+		Vector3d out = pos.add(-data.origin.x, -data.origin.y, -data.origin.z);
+		out = new Vector3d(out.x/data.worldScale, out.y/data.worldScale, out.z/data.worldScale);
 		return out.rotateYaw(-data.rotation_radians);
 	}
 
 	public void postPoll(){
-		this.vrdata_room_pre = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
+		this.vrdata_room_pre = new VRData(new Vector3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
 		GuiHandler.processGui();
 		KeyboardHandler.processGui();
 		RadialHandler.processGui();
@@ -161,7 +161,7 @@ public class OpenVRPlayer
 		//translational position change due only to scale. - move room to fix entity in place during scale changes.
 		VRData tempps = new VRData(vrdata_world_pre.origin, mc.vrSettings.walkMultiplier, vrdata_world_pre.worldScale, vrdata_world_pre.rotation_radians);		
 		VRData temps = new VRData(vrdata_world_pre.origin, mc.vrSettings.walkMultiplier, worldScale, vrdata_world_pre.rotation_radians);	
-		Vec3d scaleOffset = temps.hmd.getPosition().subtract(tempps.hmd.getPosition());
+		Vector3d scaleOffset = temps.hmd.getPosition().subtract(tempps.hmd.getPosition());
 	    this.roomOrigin = this.roomOrigin.subtract(scaleOffset);
 		//
 		
@@ -172,7 +172,7 @@ public class OpenVRPlayer
 		rotateOriginAround(-end+start, temp.getHeadPivot());
 		//
 
-		this.vrdata_room_post = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
+		this.vrdata_room_post = new VRData(new Vector3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
 		this.vrdata_world_post = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
 		//Vivecraft - setup the player entity with the correct view for the logic tick.
@@ -203,7 +203,7 @@ public class OpenVRPlayer
 
 		float interpolatedWorldRotation_Radians = (float) (end*par1 + start*(1-par1));
 	
-		Vec3d interPolatedRoomOrigin = new Vec3d(
+		Vector3d interPolatedRoomOrigin = new Vector3d(
 				vrdata_world_pre.origin.x + (vrdata_world_post.origin.x - vrdata_world_pre.origin.x) * (double)par1,
 				vrdata_world_pre.origin.y + (vrdata_world_post.origin.y - vrdata_world_pre.origin.y) * (double)par1,
 				vrdata_world_pre.origin.z + (vrdata_world_post.origin.z - vrdata_world_pre.origin.z) * (double)par1
@@ -248,9 +248,9 @@ public class OpenVRPlayer
 
 		if (reset){
 			if(vrdata_world_pre!=null)
-				vrdata_world_pre.origin = new Vec3d(x, y, z);
+				vrdata_world_pre.origin = new Vector3d(x, y, z);
 		}
-		roomOrigin = new Vec3d(x, y, z);
+		roomOrigin = new Vector3d(x, y, z);
 	} 
 
 	//set room 
@@ -259,7 +259,7 @@ public class OpenVRPlayer
 		if (Thread.currentThread().getName().equals("Server thread"))
 			return;
 
-		if(player.getPositionVec() ==  Vec3d.ZERO) return;
+		if(player.getPositionVec() ==  Vector3d.ZERO) return;
 		
 		Minecraft mc = Minecraft.getInstance();
 		
@@ -269,7 +269,7 @@ public class OpenVRPlayer
 
 		if(instant) temp = new VRData(roomOrigin, mc.vrSettings.walkMultiplier, this.worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
-		Vec3d campos = temp.getHeadPivot().subtract(temp.origin);
+		Vector3d campos = temp.getHeadPivot().subtract(temp.origin);
 
 		double x,y,z;
 
@@ -289,8 +289,8 @@ public class OpenVRPlayer
 		return (float) Math.toDegrees((Math.atan2(Math.sin(x-y), Math.cos(x - y))));
 	}
 
-	public void rotateOriginAround(float degrees, Vec3d o){
-		Vec3d pt = roomOrigin;
+	public void rotateOriginAround(float degrees, Vector3d o){
+		Vector3d pt = roomOrigin;
 
 		float rads = (float) Math.toRadians(degrees); //reverse rotate.
 
@@ -303,8 +303,8 @@ public class OpenVRPlayer
 
 	//	VRData test = new VRData(roomOrigin, mc.vrSettings.walkMultiplier, this.worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
-	//	Vec3d b = vrdata_world_pre.hmd.getPosition();
-	//	Vec3d a = test.hmd.getPosition();
+	//	Vector3d b = vrdata_world_pre.hmd.getPosition();
+	//	Vector3d a = test.hmd.getPosition();
 	//	double dist = b.distanceTo(a); //should always be 0 (unless in a vehicle)   		
 	}
 
@@ -387,8 +387,8 @@ public class OpenVRPlayer
 		if(!player.isAlive()) return; //
 		
 		if(mc.vehicleTracker.canRoomscaleDismount(mc.player)) {
-			Vec3d mountpos = mc.player.getRidingEntity().getPositionVec();
-			Vec3d tp = vrdata_world_pre.getHeadPivot();
+			Vector3d mountpos = mc.player.getRidingEntity().getPositionVec();
+			Vector3d tp = vrdata_world_pre.getHeadPivot();
 			double dist = Math.sqrt((tp.x - mountpos.x) * (tp.x - mountpos.x) + (tp.z - mountpos.z) *(tp.z - mountpos.z));
 			if (dist > 0.85) {
 				mc.sneakTracker.sneakCounter = 5;
@@ -407,7 +407,7 @@ public class OpenVRPlayer
 
 		//OK this is the first place I've found where we reallly need to update the VR data before doing this calculation.
 
-		Vec3d eyePos = temp.getHeadPivot();
+		Vector3d eyePos = temp.getHeadPivot();
 
 		double x = eyePos.x;
 		double y = player.getPosY();
@@ -422,7 +422,7 @@ public class OpenVRPlayer
 				y + (double) playerHeight,
 				z + (double) playerHalfWidth);
 
-		Vec3d torso = null;
+		Vector3d torso = null;
 
 		// valid place to move player to?
 		float var27 = 0.0625F;
@@ -485,12 +485,12 @@ public class OpenVRPlayer
 
 						player.setBoundingBox(new AxisAlignedBB(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ));
 
-						Vec3d dest  = roomOrigin.add(xOffset, 0.1f*i, zOffset);
+						Vector3d dest  = roomOrigin.add(xOffset, 0.1f*i, zOffset);
 
 						setRoomOrigin(dest.x, dest.y, dest.z, false);
 
-						Vec3d look = player.getLookVec();
-						Vec3d forward = new Vec3d(look.x,0,look.z).normalize();
+						Vector3d look = player.getLookVec();
+						Vector3d forward = new Vector3d(look.x,0,look.z).normalize();
 						player.fallDistance = 0.0F;
 						mc.player.stepSound(new BlockPos(player.getPositionVec()), player.getPositionVec());
 
@@ -505,13 +505,13 @@ public class OpenVRPlayer
 
 
 	// use simple neck modeling to estimate torso location
-	public Vec3d getEstimatedTorsoPosition(double x, double y, double z)
+	public Vector3d getEstimatedTorsoPosition(double x, double y, double z)
 	{
 		Entity player = Minecraft.getInstance().player;
-		Vec3d look = player.getLookVec();
-		Vec3d forward = new Vec3d(look.x, 0, look.z).normalize();
+		Vector3d look = player.getLookVec();
+		Vector3d forward = new Vector3d(look.x, 0, look.z).normalize();
 		float factor = (float)look.y * 0.25f;
-		Vec3d torso = new Vec3d(
+		Vector3d torso = new Vector3d(
 				x + forward.x * factor,
 				y + forward.y * factor,
 				z + forward.z * factor);
@@ -569,13 +569,13 @@ public class OpenVRPlayer
 
 
 
-	//	public Vec3d getWalkMultOffset(){
+	//	public Vector3d getWalkMultOffset(){
 	//		ClientPlayerEntity player = Minecraft.getInstance().player;
 	//		if(player==null || !player.initFromServer)
-	//			return Vec3d.ZERO;
+	//			return Vector3d.ZERO;
 	//		float walkmult=Minecraft.getInstance().vrSettings.walkMultiplier;
-	//		Vec3d pos=vecMult(MCOpenVR.getCenterEyePosition(),interpolatedWorldScale);
-	//		return new Vec3d(pos.x*walkmult,pos.y,pos.z*walkmult).subtract(pos);
+	//		Vector3d pos=vecMult(MCOpenVR.getCenterEyePosition(),interpolatedWorldScale);
+	//		return new Vector3d(pos.x*walkmult,pos.y,pos.z*walkmult).subtract(pos);
 	//	}
 
 
@@ -636,7 +636,7 @@ public class OpenVRPlayer
 			//entity.rotationPitch = (float)mc.vrPlayer.getHMDPitch_World();
 		} else { //default to looking 'at' the crosshair position.
 			if(mc.gameRenderer.crossVec != null){
-				Vec3d playerToCrosshair = entity.getEyePosition(1).subtract(mc.gameRenderer.crossVec); //backwards
+				Vector3d playerToCrosshair = entity.getEyePosition(1).subtract(mc.gameRenderer.crossVec); //backwards
 				double what = playerToCrosshair.y/playerToCrosshair.length();
 				if(what > 1) what = 1;
 				if(what < -1) what = -1;
@@ -669,7 +669,7 @@ public class OpenVRPlayer
 			entity.rotationPitch = -data.getController(0).getPitch();
 		} else if (BowTracker.isHoldingBowEither(entity) && mc.bowTracker.isNotched()){
 			//use bow aim
-			Vec3d aim = mc.bowTracker.getAimVector(); //this is actually reversed
+			Vector3d aim = mc.bowTracker.getAimVector(); //this is actually reversed
 			if (aim != null && aim.lengthSquared() > 0) {
 				float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 				float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   		
@@ -680,14 +680,14 @@ public class OpenVRPlayer
 		}	
 
 		if(mc.swingTracker.shouldIlookatMyHand[0]){
-			Vec3d playerToMain = entity.getEyePosition(1).subtract(data.getController(0).getPosition()); //backwards
+			Vector3d playerToMain = entity.getEyePosition(1).subtract(data.getController(0).getPosition()); //backwards
 			float pitch =(float)Math.toDegrees(Math.asin(playerToMain.y/playerToMain.length()));
 			float yaw = (float)Math.toDegrees(Math.atan2(playerToMain.x,-playerToMain.z));    
 			entity.rotationYawHead  = entity.rotationYaw = yaw;
 			entity.rotationPitch = pitch;
 		}
 		else if(mc.swingTracker.shouldIlookatMyHand[1]){
-			Vec3d playerToMain = entity.getEyePosition(1).subtract(data.getController(1).getPosition()); //backwards
+			Vector3d playerToMain = entity.getEyePosition(1).subtract(data.getController(1).getPosition()); //backwards
 			float pitch = (float)Math.toDegrees(Math.asin(playerToMain.y/playerToMain.length()));
 			float yaw = (float)Math.toDegrees(Math.atan2(playerToMain.x, -playerToMain.z));    
 			entity.rotationYawHead  = entity.rotationYaw = yaw;
@@ -695,16 +695,16 @@ public class OpenVRPlayer
 		}
 	}
 
-	public Vec3d AimedPointAtDistance(VRData source, int controller, double distance) {
-        Vec3d vec3d = source.getController(controller).getPosition();
-        Vec3d vec3d1 = source.getController(controller).getDirection();
+	public Vector3d AimedPointAtDistance(VRData source, int controller, double distance) {
+        Vector3d vec3d = source.getController(controller).getPosition();
+        Vector3d vec3d1 = source.getController(controller).getDirection();
         return vec3d.add(vec3d1.x * distance, vec3d1.y * distance, vec3d1.z * distance);
 	}
 	
     public RayTraceResult rayTraceBlocksVR(VRData source, int controller, double blockReachDistance, boolean p_174822_4_)
     {
-        Vec3d vec3d = source.getController(controller).getPosition();
-        Vec3d vec3d2 = AimedPointAtDistance(source, controller, blockReachDistance);
+        Vector3d vec3d = source.getController(controller).getPosition();
+        Vector3d vec3d2 = AimedPointAtDistance(source, controller, blockReachDistance);
         return mc.world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d2, RayTraceContext.BlockMode.OUTLINE, p_174822_4_ ? RayTraceContext.FluidMode.ANY : RayTraceContext.FluidMode.NONE, mc.player));
     }
     	public boolean isTeleportSupported() {

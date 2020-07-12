@@ -17,15 +17,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class Slider implements Interactable{
 	public boolean enabled=true;
 	ModelSlider slider=new ModelSlider(80);
 
-	public Vec3d position=Vec3d.ZERO;
+	public Vector3d position=Vector3d.ZERO;
 	public Quaternion rotation=new Quaternion();
-	Vec3d anchorPos=Vec3d.ZERO;
+	Vector3d anchorPos=Vector3d.ZERO;
 	Quaternion anchorRotation=new Quaternion();
 	Minecraft mc=Minecraft.getInstance();
 	public float scale=0.005f;
@@ -54,17 +54,17 @@ public class Slider implements Interactable{
 			data=OpenVRPlayer.get().vrdata_world_pre;
 
 		int mainhand = (mc.gameSettings.mainHand == HandSide.RIGHT) ? 0 : 1;
-		Vec3d ctrPos=data.getController(mainhand).getPosition();
+		Vector3d ctrPos=data.getController(mainhand).getPosition();
 
-		Vec3d sliderPos=getAnchorPos(partialTicks).add(getAnchorRotation(partialTicks).multiply(getPosition(partialTicks)));
-		Vec3d dir=getAnchorRotation(partialTicks).multiply(getRotation(partialTicks).multiply(new Vec3d(0,0,-1)));
+		Vector3d sliderPos=getAnchorPos(partialTicks).add(getAnchorRotation(partialTicks).multiply(getPosition(partialTicks)));
+		Vector3d dir=getAnchorRotation(partialTicks).multiply(getRotation(partialTicks).multiply(new Vector3d(0,0,-1)));
 
 		double projected=sliderPos.subtract(ctrPos).dotProduct(dir);
 		return projected/((slider.length-15)*scale)+0.5;
 	}
 
 	@Override
-	public Vec3d getPosition(double partialTicks) {
+	public Vector3d getPosition(double partialTicks) {
 		return position;
 	}
 
@@ -74,7 +74,7 @@ public class Slider implements Interactable{
 	}
 
 	@Override
-	public Vec3d getAnchorPos(double partialTicks) {
+	public Vector3d getAnchorPos(double partialTicks) {
 		return anchorPos;
 	}
 

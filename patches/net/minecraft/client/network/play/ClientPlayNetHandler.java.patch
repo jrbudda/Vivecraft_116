@@ -122,7 +122,7 @@
 +
 +    		if (mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_SOUND ||
 +    				mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_BOTH) {
-+    			Vec3d p = mc.vrPlayer.vrdata_world_pre.getController(1).getPosition();
++    			Vector3d p = mc.vrPlayer.vrdata_world_pre.getController(1).getPosition();
 +    			mc.world.playSound(p.getX(), p.getY(), p.getZ(), 
 +    					Registry.SOUND_EVENT.getOrDefault(new ResourceLocation(mc.vrSettings.chatNotificationSound)), SoundCategory.NEUTRAL, 
 +    					0.3f, 0.1f, false);

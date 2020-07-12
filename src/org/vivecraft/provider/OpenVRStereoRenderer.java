@@ -34,7 +34,7 @@ import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DimensionType;
 import net.optifine.Config;
 import net.optifine.shaders.Shaders;
@@ -710,7 +710,15 @@ public class OpenVRStereoRenderer
 				VRShaders.setupFOVReduction();
 				ShaderHelper.checkGLError("init FOV shader");		
 		        mc.worldRenderer.makeEntityOutlineShader();
-		        mc.gameRenderer.loadEntityShader(mc.getRenderViewEntity());
+	            if (Minecraft.func_238218_y_())
+	            {
+	            	mc.worldRenderer.func_239233_v_();
+	            }
+	            else
+	            {
+	            	mc.worldRenderer.func_239234_w_();
+	            }		        
+	            mc.gameRenderer.loadEntityShader(mc.getRenderViewEntity());
 		       } catch (Exception e) {
 				System.out.println(e.getMessage());
 				System.exit(-1);

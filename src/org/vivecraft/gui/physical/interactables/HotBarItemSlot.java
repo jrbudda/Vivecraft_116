@@ -5,7 +5,7 @@ import org.vivecraft.gui.physical.WindowCoordinator;
 import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.inventory.container.ClickType;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class HotBarItemSlot extends PhysicalItemSlot {
 	PhysicalInventory.Hotbar gui;
@@ -25,7 +25,7 @@ public class HotBarItemSlot extends PhysicalItemSlot {
 	}
 
 	@Override
-	public Vec3d getAnchorPos(double partialTicks) {
+	public Vector3d getAnchorPos(double partialTicks) {
 		return gui.getAnchorPos(partialTicks);
 	}
 

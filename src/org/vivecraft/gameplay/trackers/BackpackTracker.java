@@ -8,7 +8,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.network.play.client.CPlayerDiggingPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ChatType;
 
 
@@ -34,18 +34,18 @@ public class BackpackTracker extends Tracker {
 	}
 
 	
-	private Vec3d down = new Vec3d(0, -1, 0);
+	private Vector3d down = new Vector3d(0, -1, 0);
 	
 	public void doProcess(ClientPlayerEntity player){
 		OpenVRPlayer provider = mc.vrPlayer;
 
-		Vec3d hmdPos=provider.vrdata_room_pre.getHeadRear();
+		Vector3d hmdPos=provider.vrdata_room_pre.getHeadRear();
 
 		for(int c=0; c<2; c++) {
-			Vec3d controllerPos = provider.vrdata_room_pre.getController(c).getPosition();//.add(provider.getCustomControllerVector(c, new Vec3(0, 0, -0.1)));
-			Vec3d controllerDir = provider.vrdata_room_pre.getHand(c).getDirection();
-			Vec3d hmddir = provider.vrdata_room_pre.hmd.getDirection();
-			Vec3d delta = hmdPos.subtract(controllerPos);
+			Vector3d controllerPos = provider.vrdata_room_pre.getController(c).getPosition();//.add(provider.getCustomControllerVector(c, new Vec3(0, 0, -0.1)));
+			Vector3d controllerDir = provider.vrdata_room_pre.getHand(c).getDirection();
+			Vector3d hmddir = provider.vrdata_room_pre.hmd.getDirection();
+			Vector3d delta = hmdPos.subtract(controllerPos);
 			double dot = controllerDir.dotProduct(down);
 			double dotDelta = delta.dotProduct(hmddir);
 			

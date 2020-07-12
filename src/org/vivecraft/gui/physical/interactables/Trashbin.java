@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class Trashbin extends CreativeItemSlot {
 	ModelResourceLocation binLoc;
@@ -35,7 +35,7 @@ public class Trashbin extends CreativeItemSlot {
 		double binScale=0.4;
 
 
-		Vec3d offset=new Vec3d(-0.21,-0.03,-0.21);
+		Vector3d offset=new Vector3d(-0.21,-0.03,-0.21);
 		double spin=((lastCharge+(charge-lastCharge)*partialTicks)*5*360)%360;
 		
 		Utils.glRotate(new Quaternion(-90,0,0));
@@ -57,10 +57,10 @@ public class Trashbin extends CreativeItemSlot {
 			charge*=chargeMultPerTick;
 			if(charge>=1){
 				charging=false;
-				Vec3d offset=new Vec3d(-0.3,-0.3,0);
-				Vec3d bagCenter=getAnchorPos(0).add(getAnchorRotation(0).multiply(offset));
+				Vector3d offset=new Vector3d(-0.3,-0.3,0);
+				Vector3d bagCenter=getAnchorPos(0).add(getAnchorRotation(0).multiply(offset));
 
-				Utils.spawnParticles(ParticleTypes.EXPLOSION,100,bagCenter,new Vec3d(0.1,0.1,0.1),0);
+				Utils.spawnParticles(ParticleTypes.EXPLOSION,100,bagCenter,new Vector3d(0.1,0.1,0.1),0);
 				mc.physicalGuiManager.windowCoordinator.enqueueOperation(new WindowCoordinator.ClearInventoryOperation());
 			}
 		}else{

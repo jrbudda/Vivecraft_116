@@ -8,6 +8,7 @@ import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.reflection.MCReflection.ReflectionMethod;
 import org.vivecraft.render.VRFirstPersonArmSwing;
 
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -25,7 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
@@ -91,17 +92,19 @@ public class InteractTracker extends Tracker{
 				}
 			}
 			rightClickable.remove(Block.class);
+			rightClickable.remove(AbstractBlock.class);
+			rightClickable.remove(AbstractBlock.AbstractBlockState.class);
 		}
 		
-		Vec3d forward = new Vec3d(0,0,-1);
+		Vector3d forward = new Vector3d(0,0,-1);
 
 		reset(player);
 		
 		for(int c =0 ;c<2;c++){
 		
-			Vec3d hmdPos = mc.vrPlayer.vrdata_world_pre.getHeadPivot();
-			Vec3d handPos = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
-			Vec3d handDirection = mc.vrPlayer.vrdata_world_pre.getHand(c).getCustomVector(forward);
+			Vector3d hmdPos = mc.vrPlayer.vrdata_world_pre.getHeadPivot();
+			Vector3d handPos = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
+			Vector3d handDirection = mc.vrPlayer.vrdata_world_pre.getHand(c).getCustomVector(forward);
 
 			ItemStack is = player.getHeldItem(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);
 			Item item = null;
@@ -113,7 +116,7 @@ public class InteractTracker extends Tracker{
 			boolean inAnEntity = false;
 			boolean insolidBlock = false;
 
-			Vec3d extWeapon = new Vec3d(
+			Vector3d extWeapon = new Vector3d(
 					handPos.x + handDirection.x * (-.1),
 					handPos.y + handDirection.y * (-.1),
 					handPos.z + handDirection.z * (-.1));
@@ -146,7 +149,7 @@ public class InteractTracker extends Tracker{
 				BlockState block = mc.world.getBlockState(bp);
 				//	Material material = block.getMaterial();
 
-				BlockRayTraceResult hit = block.getRenderShape(mc.world, bp).rayTrace(hmdPos, handPos, bp);
+				BlockRayTraceResult hit = block.func_235754_c_(mc.world, bp).rayTrace(hmdPos, handPos, bp);
 				inBlockPos[c] = bp;
 				inBlockHit[c] = hit;		     
 

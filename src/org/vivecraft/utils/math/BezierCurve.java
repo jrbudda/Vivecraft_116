@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class BezierCurve {
 	public BezierCurve(Node[] nodes, boolean circular){
@@ -29,11 +29,11 @@ public class BezierCurve {
 	boolean circular;
 
 
-	Vec3d getIntermediate(Node n1, Node n2, double perc){
-		Vec3d p0=n1.vertex;
-		Vec3d p1=n1.controlOut;
-		Vec3d p2=n2.controlIn;
-		Vec3d p3=n2.vertex;
+	Vector3d getIntermediate(Node n1, Node n2, double perc){
+		Vector3d p0=n1.vertex;
+		Vector3d p1=n1.controlOut;
+		Vector3d p2=n2.controlIn;
+		Vector3d p3=n2.vertex;
 
 		return p0.scale(Math.pow(1-perc,3))
 				.add( p1.scale(3*Math.pow(1-perc,2)*perc) )
@@ -48,7 +48,7 @@ public class BezierCurve {
 	 *
 	 * @param perc position on Path in interval [0,1] (inclusive interval)
 	 * */
-	public Vec3d getPointOnPath(double perc){
+	public Vector3d getPointOnPath(double perc){
 		//first node is counted as another virtual node if we are circular
 		int nodeCount=circular? nodes.size() : nodes.size()-1;
 
@@ -66,13 +66,13 @@ public class BezierCurve {
 		return getIntermediate(node1,node2,exactIndex-lowerIndex);
 	}
 
-	public Vec3d[] getLinearInterpolation(int verticesPerNode){
+	public Vector3d[] getLinearInterpolation(int verticesPerNode){
 		if (nodes.size()==0)
-			return new Vec3d[0];
+			return new Vector3d[0];
 
 		int totalVertices=verticesPerNode * (circular? nodes.size():nodes.size()-1) +1;
 
-		Vec3d[] out=new Vec3d[totalVertices];
+		Vector3d[] out=new Vector3d[totalVertices];
 		for (int i = 0; i < totalVertices; i++) {
 			double perc=(((double) i)/Math.max(1,totalVertices-1));
 			out[i]=getPointOnPath(perc);
@@ -99,7 +99,7 @@ public class BezierCurve {
 
 		bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
 
-		Vec3d[] vertices=getLinearInterpolation(vertexCount/nodes.size());
+		Vector3d[] vertices=getLinearInterpolation(vertexCount/nodes.size());
 
 		for (int i = 0; i < vertices.length; i++) {
 			renderVertex(bufferbuilder,vertices[i],c,d0,d1,d2);
@@ -112,25 +112,25 @@ public class BezierCurve {
 		//GlStateManager.enableCull();
 	}
 
-	void renderVertex(BufferBuilder buffer, Vec3d vert, Color color, double offX, double offY, double offZ){
+	void renderVertex(BufferBuilder buffer, Vector3d vert, Color color, double offX, double offY, double offZ){
 		buffer.pos(vert.x-offX,vert.y-offY,vert.z-offZ).color(color.getRed(),color.getGreen(),color.getBlue(),color.getAlpha()).endVertex();
 	}
 
 	public static class Node{
-		public Node(Vec3d vertex, Vec3d controlIn, Vec3d controlOut){
+		public Node(Vector3d vertex, Vector3d controlIn, Vector3d controlOut){
 			this.vertex=vertex;
 			this.controlIn=controlIn;
 			this.controlOut=controlOut;
 		}
 
-		public Node(Vec3d vertex, Vec3d controlDir, double controlLenIn, double controlLenOut ){
+		public Node(Vector3d vertex, Vector3d controlDir, double controlLenIn, double controlLenOut ){
 			this(vertex,
 					vertex.add(controlDir.normalize().scale(-controlLenIn)),
 					vertex.add(controlDir.normalize().scale(controlLenOut)));
 		}
 
-		Vec3d vertex;
-		Vec3d controlIn;
-		Vec3d controlOut;
+		Vector3d vertex;
+		Vector3d controlIn;
+		Vector3d controlOut;
 	}
 }

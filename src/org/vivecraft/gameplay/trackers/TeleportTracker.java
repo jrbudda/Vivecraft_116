@@ -28,15 +28,15 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class TeleportTracker extends Tracker{
     private float teleportEnergy;
-    private Vec3d movementTeleportDestination = new Vec3d(0.0,0.0,0.0);
+    private Vector3d movementTeleportDestination = new Vector3d(0.0,0.0,0.0);
     private Direction movementTeleportDestinationSideHit;
     public double movementTeleportProgress;
     public double movementTeleportDistance;
-    private Vec3d[] movementTeleportArc = new Vec3d[50];
+    private Vector3d[] movementTeleportArc = new Vector3d[50];
     public int movementTeleportArcSteps = 0;
     public double lastTeleportArcDisplayOffset = 0;
     public VRMovementStyle vrMovementStyle = new VRMovementStyle();
@@ -51,7 +51,7 @@ public class TeleportTracker extends Tracker{
     	return movementTeleportProgress > 0;
     }
     
-    public Vec3d getDestination(){
+    public Vector3d getDestination(){
     	return movementTeleportDestination;
     }
     
@@ -66,7 +66,7 @@ public class TeleportTracker extends Tracker{
 
 	@Override
 	public void reset(ClientPlayerEntity player) {
-		movementTeleportDestination=new Vec3d(0,0,0);
+		movementTeleportDestination=new Vector3d(0,0,0);
 		movementTeleportArcSteps = 0;
 		movementTeleportProgress = 0;
 	}
@@ -79,7 +79,7 @@ public class TeleportTracker extends Tracker{
         if (teleportEnergy < 100) { teleportEnergy++;}
         
         boolean doTeleport = false;
-        Vec3d dest = null;
+        Vector3d dest = null;
 
         boolean bindingTeleport = MCOpenVR.keyTeleport.isKeyDown() && mc.vrPlayer.isTeleportEnabled();
         boolean seatedTeleport = mc.vrSettings.seated && !mc.vrPlayer.getFreeMove() && (player.movementInput.moveForward != 0 || player.movementInput.moveStrafe != 0);
@@ -110,16 +110,16 @@ public class TeleportTracker extends Tracker{
 
                     if (dest.x != 0 || dest.y != 0 || dest.z != 0)
                     {
-                        Vec3d eyeCenterPos = mc.vrPlayer.vrdata_world_pre.hmd.getPosition();
+                        Vector3d eyeCenterPos = mc.vrPlayer.vrdata_world_pre.hmd.getPosition();
 
                         // cloud of sparks moving past you
-                        Vec3d motionDir = dest.add(-eyeCenterPos.x, -eyeCenterPos.y, -eyeCenterPos.z).normalize();
-                        Vec3d forward;
+                        Vector3d motionDir = dest.add(-eyeCenterPos.x, -eyeCenterPos.y, -eyeCenterPos.z).normalize();
+                        Vector3d forward;
 						
 						forward	= player.getLookVec();
 
-                        Vec3d right = forward.crossProduct(new Vec3d(0, 1, 0));
-                        Vec3d up = right.crossProduct(forward);
+                        Vector3d right = forward.crossProduct(new Vector3d(0, 1, 0));
+                        Vector3d up = right.crossProduct(forward);
 
                         if (vrMovementStyle.airSparkles)
                         {
@@ -129,7 +129,7 @@ public class TeleportTracker extends Tracker{
                                 double upDist = rand.nextDouble() * 2.5;
                                 double rightDist = rand.nextDouble() * 4.0 - 2.0;
 
-                                Vec3d sparkPos = new Vec3d(eyeCenterPos.x + forward.x * forwardDist,
+                                Vector3d sparkPos = new Vector3d(eyeCenterPos.x + forward.x * forwardDist,
                                         eyeCenterPos.y + forward.y * forwardDist,
                                         eyeCenterPos.z + forward.z * forwardDist);
                                 sparkPos = sparkPos.add(right.x * rightDist, right.y * rightDist, right.z * rightDist);
@@ -162,7 +162,7 @@ public class TeleportTracker extends Tracker{
                     }
                     player.movementTeleportTimer++;
 
-                    Vec3d playerPos = player.getPositionVec();
+                    Vector3d playerPos = player.getPositionVec();
                     double dist = dest.distanceTo(playerPos);
                     double progress = (player.movementTeleportTimer * 1.0) / (dist + 3.0);
 
@@ -177,10 +177,10 @@ public class TeleportTracker extends Tracker{
                         }
 
                         // cloud of sparks moving past you
-                        Vec3d motionDir = dest.add(-player.getPosX(), -player.getPosY(), -player.getPosZ()).normalize();
-                        Vec3d forward = player.getLookVec();
-                        Vec3d right = forward.crossProduct(new Vec3d(0, 1, 0));
-                        Vec3d up = right.crossProduct(forward);
+                        Vector3d motionDir = dest.add(-player.getPosX(), -player.getPosY(), -player.getPosZ()).normalize();
+                        Vector3d forward = player.getLookVec();
+                        Vector3d right = forward.crossProduct(new Vector3d(0, 1, 0));
+                        Vector3d up = right.crossProduct(forward);
 
                         if (vrMovementStyle.airSparkles)
                         {
@@ -189,7 +189,7 @@ public class TeleportTracker extends Tracker{
                                 double forwardDist = rand.nextDouble() * 1.0 + 3.5;
                                 double upDist = rand.nextDouble() * 2.5;
                                 double rightDist = rand.nextDouble() * 4.0 - 2.0;
-                                Vec3d sparkPos = new Vec3d(player.getPosX() + forward.x * forwardDist,
+                                Vector3d sparkPos = new Vector3d(player.getPosX() + forward.x * forwardDist,
                                         player.getPosY() + forward.y * forwardDist,
                                         player.getPosZ() + forward.z * forwardDist);
                                 sparkPos = sparkPos.add(right.x * rightDist, right.y * rightDist, right.z * rightDist);
@@ -257,7 +257,7 @@ public class TeleportTracker extends Tracker{
 
         if (vrMovementStyle.arcAiming)
         {
-            movementTeleportDestination=new Vec3d(0,0,0);
+            movementTeleportDestination=new Vector3d(0,0,0);
 
             if (movementTeleportProgress>0.0f)
             {
@@ -266,18 +266,18 @@ public class TeleportTracker extends Tracker{
         }
         else //non-arc modes.
         {
-//            Vec3d start = mc.gameRenderer.getControllerRenderPos(1);
-//            Vec3d aimDir = mc.vrPlayer.vrdata_world_render.getController(1).getDirection();
+//            Vector3d start = mc.gameRenderer.getControllerRenderPos(1);
+//            Vector3d aimDir = mc.vrPlayer.vrdata_world_render.getController(1).getDirection();
 //            
 //            // setup teleport forwards to the mouse cursor
 //            double movementTeleportDistance = 250.0;
-//            Vec3d movementTeleportPos = start.addVector(
+//            Vector3d movementTeleportPos = start.addVector(
 //                    aimDir.x * movementTeleportDistance,
 //                    aimDir.y * movementTeleportDistance,
 //                    aimDir.z * movementTeleportDistance);
 //            RayTraceResult collision = mc.world.rayTraceBlocks(start, movementTeleportPos, !mc.player.isInWater(), true, false);
-//            Vec3d traceDir = start.subtract(movementTeleportPos).normalize();
-//            Vec3d reverseEpsilon = new Vec3d(-traceDir.x * 0.02, -traceDir.y * 0.02, -traceDir.z * 0.02);
+//            Vector3d traceDir = start.subtract(movementTeleportPos).normalize();
+//            Vector3d reverseEpsilon = new Vector3d(-traceDir.x * 0.02, -traceDir.y * 0.02, -traceDir.z * 0.02);
 //
 //            // don't update while charging up a teleport
 //            if (movementTeleportProgress != 0)
@@ -293,8 +293,8 @@ public class TeleportTracker extends Tracker{
 
     private void updateTeleportArc(Minecraft mc, ClientPlayerEntity player)
     {
-        Vec3d start = mc.vrPlayer.vrdata_world_render.getController(1).getPosition(); //and here i was just thinking there was never a need to use the render positions for logic.
-        Vec3d tiltedAim = mc.vrPlayer.vrdata_world_render.getController(1).getDirection(); 
+        Vector3d start = mc.vrPlayer.vrdata_world_render.getController(1).getPosition(); //and here i was just thinking there was never a need to use the render positions for logic.
+        Vector3d tiltedAim = mc.vrPlayer.vrdata_world_render.getController(1).getDirection(); 
         Matrix4f handRotation = MCOpenVR.getAimRotation(1);
         
         if(mc.vrSettings.seated){
@@ -312,7 +312,7 @@ public class TeleportTracker extends Tracker{
         //TODO: use vrdata for this
         
         int maxSteps = 50;
-        movementTeleportArc[0] = new Vec3d(
+        movementTeleportArc[0] = new Vector3d(
         		start.x,
         		start.y,
         		start.z);
@@ -327,7 +327,7 @@ public class TeleportTracker extends Tracker{
         
         Vector3 forward = new Vector3(0,1,0);
         Vector3 gravityDirection = gravityRotation.transform(forward);
-        Vec3d gravity = gravityDirection.negate().toVec3d();
+        Vector3d gravity = gravityDirection.negate().toVector3d();
         
         gravity = gravity.scale(gravityAcceleration);
 
@@ -336,13 +336,13 @@ public class TeleportTracker extends Tracker{
 
         // calculate initial move step	
         float speed = 0.5f;
-        Vec3d velocity = new Vec3d(
+        Vector3d velocity = new Vector3d(
                 tiltedAim.x * speed,
                 tiltedAim.y * speed,
                 tiltedAim.z * speed);
 
-        Vec3d pos = new Vec3d(start.x, start.y, start.z);
-        Vec3d newPos;
+        Vector3d pos = new Vector3d(start.x, start.y, start.z);
+        Vector3d newPos;
 
         // trace arc
         for (int i=movementTeleportArcSteps;i<maxSteps;i++)
@@ -350,7 +350,7 @@ public class TeleportTracker extends Tracker{
         	if (i*4 > teleportEnergy) {
         		break;
         		}
-        	newPos = new Vec3d(
+        	newPos = new Vector3d(
             pos.x + velocity.x,
             pos.y + velocity.y,
             pos.z + velocity.z);
@@ -380,12 +380,12 @@ public class TeleportTracker extends Tracker{
 
                 movementTeleportArcSteps = i + 1;
 
-                Vec3d traceDir = pos.subtract(newPos).normalize();
-                Vec3d reverseEpsilon = new Vec3d(-traceDir.x * 0.02, -traceDir.y * 0.02, -traceDir.z * 0.02);
+                Vector3d traceDir = pos.subtract(newPos).normalize();
+                Vector3d reverseEpsilon = new Vector3d(-traceDir.x * 0.02, -traceDir.y * 0.02, -traceDir.z * 0.02);
 
                 checkAndSetTeleportDestination(mc, player, start, collision, reverseEpsilon);
                                         
-    			Vec3d diff = mc.player.getPositionVec().subtract(movementTeleportDestination);
+    			Vector3d diff = mc.player.getPositionVec().subtract(movementTeleportDestination);
        
         		double yDiff = diff.y;
         		movementTeleportDistance = diff.length();
@@ -408,17 +408,17 @@ public class TeleportTracker extends Tracker{
             	}
                 
             	if(!ok) { //u fail.
-            		movementTeleportDestination = new Vec3d(0, 0, 0);
+            		movementTeleportDestination = new Vector3d(0, 0, 0);
             		movementTeleportDistance = 0;
             	}
             	
                 break;
             }
 
-            pos = new Vec3d(newPos.x, newPos.y, newPos.z);
+            pos = new Vector3d(newPos.x, newPos.y, newPos.z);
 
 
-            movementTeleportArc[i] = new Vec3d(
+            movementTeleportArc[i] = new Vector3d(
             		newPos.x,
             		newPos.y,
             		newPos.z);
@@ -451,7 +451,7 @@ public class TeleportTracker extends Tracker{
     }
 	
     // look for a valid place to stand on the block that the trace collided with
-    private boolean checkAndSetTeleportDestination(Minecraft mc, ClientPlayerEntity player, Vec3d start, BlockRayTraceResult collision, Vec3d reverseEpsilon)
+    private boolean checkAndSetTeleportDestination(Minecraft mc, ClientPlayerEntity player, Vector3d start, BlockRayTraceResult collision, Vector3d reverseEpsilon)
     {
 
     	BlockPos bp = ((BlockRayTraceResult)collision).getPos();
@@ -459,14 +459,14 @@ public class TeleportTracker extends Tracker{
     	BlockState testClimb = player.world.getBlockState(bp); 	
     	
     	if (!mc.world.getFluidState(bp).isEmpty()){
-    		Vec3d hitVec = new Vec3d(collision.getHitVec().x, bp.getY(), collision.getHitVec().z );
+    		Vector3d hitVec = new Vector3d(collision.getHitVec().x, bp.getY(), collision.getHitVec().z );
 
-    		Vec3d offset = hitVec.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
+    		Vector3d offset = hitVec.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     		AxisAlignedBB bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     		boolean emptySpotReq = mc.world.hasNoCollisions(player,bb);
 
     		if(!emptySpotReq){
-    			Vec3d center = Vec3d.fromBlockPosMiddleBottom(bp);
+    			Vector3d center = Vector3d.fromBlockPosMiddleBottom(bp);
     			offset = center.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     			bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     			emptySpotReq = mc.world.hasNoCollisions(player,bb);	
@@ -474,7 +474,7 @@ public class TeleportTracker extends Tracker{
     		float ex = 0;
     		if(mc.vrSettings.seated)ex = 0.5f;
     		if(emptySpotReq){
-    			movementTeleportDestination = new Vec3d(bb.getCenter().x,bb.minY+ex, bb.getCenter().z);
+    			movementTeleportDestination = new Vector3d(bb.getCenter().x,bb.minY+ex, bb.getCenter().z);
     			movementTeleportDestinationSideHit = collision.getFace();
     			return true;
     		}
@@ -484,7 +484,7 @@ public class TeleportTracker extends Tracker{
     		//jrbudda require arc hitting top of block.	unless ladder or vine or creative or limits off.
 
     		if (testClimb.getBlock() instanceof LadderBlock|| testClimb.getBlock() instanceof VineBlock) {
-    			Vec3d dest = new Vec3d(bp.getX()+0.5, bp.getY() + 0.5, bp.getZ()+0.5);
+    			Vector3d dest = new Vector3d(bp.getX()+0.5, bp.getY() + 0.5, bp.getZ()+0.5);
 
     			Block playerblock = mc.world.getBlockState(bp.down()).getBlock();
     			if(playerblock == testClimb.getBlock()) dest = dest.add(0,-1,0);
@@ -512,8 +512,8 @@ public class TeleportTracker extends Tracker{
     		
     		double height = testClimb.getCollisionShape(mc.world, hitBlock).getEnd(Axis.Y);
     		
-    		Vec3d hitVec = new Vec3d(collision.getHitVec().x, hitBlock.getY() + height, collision.getHitVec().z );
-    		Vec3d offset = hitVec.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
+    		Vector3d hitVec = new Vector3d(collision.getHitVec().x, hitBlock.getY() + height, collision.getHitVec().z );
+    		Vector3d offset = hitVec.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     		AxisAlignedBB bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     		double ex = 0;
     		if (testClimb.getBlock() == Blocks.SOUL_SAND || testClimb.getBlock() == Blocks.HONEY_BLOCK) ex = 0.05;
@@ -522,7 +522,7 @@ public class TeleportTracker extends Tracker{
     				!mc.world.hasNoCollisions(player,bb.grow(0, .125 + ex, 0));     
 
     		if(!emptySpotReq){
-    			Vec3d center = Vec3d.fromBlockPosMiddleWithOffset(hitBlock, height);
+    			Vector3d center = Vector3d.fromBlockPosMiddleWithOffset(hitBlock, height);
     			offset = center.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     			bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     			emptySpotReq = mc.world.hasNoCollisions(player,bb) &&
@@ -530,7 +530,7 @@ public class TeleportTracker extends Tracker{
     		}
 
     		if(emptySpotReq){
-    			Vec3d dest = new Vec3d(bb.getCenter().x, hitBlock.getY() + height, bb.getCenter().z);
+    			Vector3d dest = new Vector3d(bb.getCenter().x, hitBlock.getY() + height, bb.getCenter().z);
 
     			movementTeleportDestination = dest.scale(1);
     			
@@ -544,12 +544,12 @@ public class TeleportTracker extends Tracker{
     }
 
     // rough interpolation between arc locations
-    public Vec3d getInterpolatedArcPosition(float progress)
+    public Vector3d getInterpolatedArcPosition(float progress)
     {
         // not enough points to interpolate or before start
         if (movementTeleportArcSteps == 1 || progress <= 0.0f)
         {
-            return new Vec3d(
+            return new Vector3d(
                     movementTeleportArc[0].x,
                     movementTeleportArc[0].y,
                     movementTeleportArc[0].z);
@@ -558,7 +558,7 @@ public class TeleportTracker extends Tracker{
         // past end of arc
         if (progress>=1.0f)
         {
-            return new Vec3d(
+            return new Vector3d(
                     movementTeleportArc[movementTeleportArcSteps-1].x,
                     movementTeleportArc[movementTeleportArcSteps-1].y,
                     movementTeleportArc[movementTeleportArcSteps-1].z);
@@ -574,7 +574,7 @@ public class TeleportTracker extends Tracker{
 
         float stepProgress = stepFloat - step;
 
-        return new Vec3d(
+        return new Vector3d(
                 movementTeleportArc[step].x + deltaX * stepProgress,
                 movementTeleportArc[step].y + deltaY * stepProgress,
                 movementTeleportArc[step].z + deltaZ * stepProgress);

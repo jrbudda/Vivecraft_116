@@ -15,7 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public abstract class Button implements Interactable {
 	public boolean enabled=true;
@@ -32,7 +32,7 @@ public abstract class Button implements Interactable {
 		this.model=new ModelButton(displayItem);
 	}
 
-	public Vec3d position=Vec3d.ZERO;
+	public Vector3d position=Vector3d.ZERO;
 	public Quaternion rotation=new Quaternion();
 
 	@Override
@@ -46,12 +46,12 @@ public abstract class Button implements Interactable {
 	}
 
 	@Override
-	public Vec3d getPosition(double partialTicks) {
-		Vec3d pos=position;
+	public Vector3d getPosition(double partialTicks) {
+		Vector3d pos=position;
 		if (isDown){
-			pos=pos.add(rotation.multiply(new Vec3d(0,-0.015,0)));
+			pos=pos.add(rotation.multiply(new Vector3d(0,-0.015,0)));
 		}else if(isTouched){
-			pos=pos.add(rotation.multiply(new Vec3d(0,0.01,0)));
+			pos=pos.add(rotation.multiply(new Vector3d(0,0.01,0)));
 		}
 		return pos;
 	}

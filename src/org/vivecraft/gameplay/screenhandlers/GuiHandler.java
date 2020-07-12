@@ -39,8 +39,8 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vec2f;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class GuiHandler {
 	public static Minecraft mc = Minecraft.getInstance();
@@ -62,13 +62,13 @@ public class GuiHandler {
 
 	public static float guiScale = 1.0f;
 	public static float guiScaleApplied = 1.0f;
-	public static Vec3d IPoint = new Vec3d(0, 0, 0);
+	public static Vector3d IPoint = new Vector3d(0, 0, 0);
 
-	public static Vec3d guiPos_room = new Vec3d(0,0,0);
+	public static Vector3d guiPos_room = new Vector3d(0,0,0);
 	public static Matrix4f guiRotation_room = new Matrix4f();
 
 	public static float hudScale = 1.0f;
-	public static Vec3d hudPos_room = new Vec3d(0,0,0);
+	public static Vector3d hudPos_room = new Vector3d(0,0,0);
 	public static Matrix4f hudRotation_room = new Matrix4f();
 
 	public static final KeyBinding keyLeftClick = new KeyBinding("vivecraft.key.guiLeftClick", GLFW.GLFW_KEY_UNKNOWN, "vivecraft.key.category.gui");
@@ -109,7 +109,7 @@ public class GuiHandler {
 		if(mc.vrSettings.seated) return;
 		if(guiRotation_room == null) return;
 
-		Vec2f tex = getTexCoordsForCursor(guiPos_room, guiRotation_room, mc.currentScreen, guiScale, mc.vrPlayer.vrdata_room_pre.getController(0));
+		Vector2f tex = getTexCoordsForCursor(guiPos_room, guiRotation_room, mc.currentScreen, guiScale, mc.vrPlayer.vrdata_room_pre.getController(0));
 
 		float u = tex.x;
 		float v = tex.y;
@@ -156,12 +156,12 @@ public class GuiHandler {
 		}
 	}
 
-	public static Vec2f getTexCoordsForCursor(Vec3d guiPos_room, Matrix4f guiRotation_room, Screen screen, float guiScale, VRDevicePose controller) {
+	public static Vector2f getTexCoordsForCursor(Vector3d guiPos_room, Matrix4f guiRotation_room, Screen screen, float guiScale, VRDevicePose controller) {
 	
-		Vec3d con = controller.getPosition();
+		Vector3d con = controller.getPosition();
 		Vector3 controllerPos = new Vector3(con);
 
-		Vec3d controllerdir = controller.getDirection();
+		Vector3d controllerdir = controller.getDirection();
 		Vector3 cdir = new Vector3((float)controllerdir.x,(float) controllerdir.y,(float) controllerdir.z);
 		Vector3 forward = new Vector3(0,0,1);
 
@@ -199,10 +199,10 @@ public class GuiHandler {
 
 				v = 1 - v;
 
-				return new Vec2f(u, v);
+				return new Vector2f(u, v);
 			}
 		}
-		return new Vec2f(-1, -1);
+		return new Vector2f(-1, -1);
 	}
 
 	public static void processBindingsGui() {
@@ -408,7 +408,7 @@ public class GuiHandler {
 			//TODO reset scale things
 			guiScale = 2.0f;
 			float[] playArea = MCOpenVR.getPlayAreaSize();
-			guiPos_room = new Vec3d(
+			guiPos_room = new Vector3d(
 					(float) (0),
 					(float) (1.3f),
 					(float) -Math.max(playArea != null ? playArea[1] / 2f : 0, 1.5f));
@@ -440,18 +440,18 @@ public class GuiHandler {
 			if(appearOverBlock && mc.vrSettings.guiAppearOverBlock && mc.objectMouseOver != null && mc.objectMouseOver.getType() == RayTraceResult.Type.BLOCK){
 				//appear over block.
 				BlockRayTraceResult hit = (BlockRayTraceResult) mc.objectMouseOver;
-				Vec3d temp =new Vec3d(hit.getPos().getX() + 0.5f,
+				Vector3d temp =new Vector3d(hit.getPos().getX() + 0.5f,
 						hit.getPos().getY(),
 						hit.getPos().getZ() + 0.5f);
 
-				Vec3d temp_room = mc.vrPlayer.world_to_room_pos(temp, mc.vrPlayer.vrdata_world_pre);			
-				Vec3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
+				Vector3d temp_room = mc.vrPlayer.world_to_room_pos(temp, mc.vrPlayer.vrdata_world_pre);			
+				Vector3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
 
 				double dist = temp_room.subtract(pos).length();
 				guiScale = (float) Math.sqrt(dist);
 
 				//idk it works.
-				Vec3d guiPosWorld = new Vec3d(temp.x, hit.getPos().getY() + 1.1 + (0.5f * guiScale/2), temp.z);
+				Vector3d guiPosWorld = new Vector3d(temp.x, hit.getPos().getY() + 1.1 + (0.5f * guiScale/2), temp.z);
 
 				guiPos_room = mc.vrPlayer.world_to_room_pos(guiPosWorld, mc.vrPlayer.vrdata_world_pre);	
 
@@ -469,23 +469,23 @@ public class GuiHandler {
 			}				
 			else{
 				//static screens like menu, inventory, and dead.
-				Vec3d adj = new Vec3d(0,0,-2);
+				Vector3d adj = new Vector3d(0,0,-2);
 				if (newScreen instanceof ChatScreen){
-					adj = new Vec3d(0,0.5,-2);
+					adj = new Vector3d(0,0.5,-2);
 				} else if (newScreen instanceof EditBookScreen || newScreen instanceof EditSignScreen) {
-					adj = new Vec3d(0,0.25,-2);
+					adj = new Vector3d(0,0.25,-2);
 				}
 
-				Vec3d v = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
-				Vec3d e = mc.vrPlayer.vrdata_room_pre.hmd.getCustomVector(adj);
-				guiPos_room = new Vec3d(
+				Vector3d v = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
+				Vector3d e = mc.vrPlayer.vrdata_room_pre.hmd.getCustomVector(adj);
+				guiPos_room = new Vector3d(
 						(e.x  / 2 + v.x),
 						(e.y / 2 + v.y),
 						(e.z / 2 + v.z));
 				if (mc.vrSettings.physicalKeyboard && KeyboardHandler.Showing && guiPos_room.y < v.y + 0.2)
-					guiPos_room = new Vec3d(guiPos_room.x, v.y + 0.2, guiPos_room.z);
+					guiPos_room = new Vector3d(guiPos_room.x, v.y + 0.2, guiPos_room.z);
 
-				Vec3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
+				Vector3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
 				Vector3 look = new Vector3();
 				look.setX((float) (guiPos_room.x - pos.x));
 				look.setY((float) (guiPos_room.y - pos.y));
@@ -504,20 +504,20 @@ public class GuiHandler {
 
 	}
 
-  	public static Vec3d applyGUIModelView(RenderPass currentPass)
+  	public static Vector3d applyGUIModelView(RenderPass currentPass)
   	{
   		mc.getProfiler().startSection("applyGUIModelView");
 
-  		Vec3d eye =mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition();
+  		Vector3d eye =mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition();
 
   		if(mc.currentScreen != null && GuiHandler.guiPos_room == null){
   			//naughty mods!
   			GuiHandler.onScreenChanged(null, mc.currentScreen, false);			
   		}
 
-  		Vec3d guipos = GuiHandler.guiPos_room;
+  		Vector3d guipos = GuiHandler.guiPos_room;
   		Matrix4f guirot = GuiHandler.guiRotation_room;
-  		Vec3d guiLocal = new Vec3d(0, 0, 0);		
+  		Vector3d guiLocal = new Vector3d(0, 0, 0);		
   		float scale = GuiHandler.guiScale;
 
   		if(guipos == null){
@@ -532,15 +532,15 @@ public class GuiHandler {
   					Matrix4f rot = Matrix4f.rotationY((float)mc.vrPlayer.vrdata_world_render.rotation_radians);
   					Matrix4f max = Matrix4f.multiply(rot, MCOpenVR.hmdRotation);
 
-  					Vec3d v = mc.vrPlayer.vrdata_world_render.hmd.getPosition();
-  					Vec3d d = mc.vrPlayer.vrdata_world_render.hmd.getDirection();
+  					Vector3d v = mc.vrPlayer.vrdata_world_render.hmd.getPosition();
+  					Vector3d d = mc.vrPlayer.vrdata_world_render.hmd.getDirection();
 
   					if(mc.vrSettings.seated && mc.vrSettings.seatedHudAltMode){
   						d = mc.vrPlayer.vrdata_world_render.getController(0).getDirection();
   						max = Matrix4f.multiply(rot, MCOpenVR.getAimRotation(0));
   					}
 
-  					guipos = new Vec3d((v.x + d.x*mc.vrPlayer.vrdata_world_render.worldScale*mc.vrSettings.hudDistance),
+  					guipos = new Vector3d((v.x + d.x*mc.vrPlayer.vrdata_world_render.worldScale*mc.vrSettings.hudDistance),
   							(v.y + d.y*mc.vrPlayer.vrdata_world_render.worldScale*mc.vrSettings.hudDistance),
   							(v.z + d.z*mc.vrPlayer.vrdata_world_render.worldScale*mc.vrSettings.hudDistance));
 
@@ -557,7 +557,7 @@ public class GuiHandler {
   					guirot = Matrix4f.multiply(MguiRotationPose, OpenVRUtil.rotationXMatrix((float) Math.PI * -0.2F));
   					guirot = Matrix4f.multiply(guirot, Matrix4f.rotationY((float) Math.PI * 0.1F * i));
   					scale = 1/1.7f;
-  					guiLocal = new Vec3d(guiLocal.x, 0.32*mc.vrPlayer.vrdata_world_render.worldScale,guiLocal.z);
+  					guiLocal = new Vector3d(guiLocal.x, 0.32*mc.vrPlayer.vrdata_world_render.worldScale,guiLocal.z);
 
   					guipos = mc.gameRenderer.getControllerRenderPos(1);
 
@@ -579,7 +579,7 @@ public class GuiHandler {
 
                     boolean slim = mc.player.getSkinType().equals("slim");
   						scale = 0.4f;
-  						guiLocal = new Vec3d(
+  						guiLocal = new Vector3d(
   								i*-0.136f*mc.vrPlayer.vrdata_world_render.worldScale,
 								(slim ? 0.130 : 0.120)*mc.vrPlayer.vrdata_world_render.worldScale,
                                 0.06*mc.vrPlayer.vrdata_world_render.worldScale);
@@ -600,11 +600,11 @@ public class GuiHandler {
   			//main menu slow yaw tracking thing
   			scale = 2;
 
-  			Vec3d posAvg = new Vec3d(0, 0, 0);
-  			for (Vec3d vec : MCOpenVR.hmdPosSamples) {
-  				posAvg = new Vec3d(posAvg.x + vec.x, posAvg.y + vec.y, posAvg.z + vec.z);
+  			Vector3d posAvg = new Vector3d(0, 0, 0);
+  			for (Vector3d vec : MCOpenVR.hmdPosSamples) {
+  				posAvg = new Vector3d(posAvg.x + vec.x, posAvg.y + vec.y, posAvg.z + vec.z);
   			}
-  			posAvg = new Vec3d(posAvg.x / MCOpenVR.hmdPosSamples.size(), posAvg.y / MCOpenVR.hmdPosSamples.size(), posAvg.z / MCOpenVR.hmdPosSamples.size());
+  			posAvg = new Vector3d(posAvg.x / MCOpenVR.hmdPosSamples.size(), posAvg.y / MCOpenVR.hmdPosSamples.size(), posAvg.z / MCOpenVR.hmdPosSamples.size());
 
   			float yawAvg = 0;
   			for (float f : MCOpenVR.hmdYawSamples) {
@@ -613,10 +613,10 @@ public class GuiHandler {
   			yawAvg /= MCOpenVR.hmdYawSamples.size();
   			yawAvg = (float)Math.toRadians(yawAvg);
 
-  			Vec3d dir = new Vec3d(-Math.sin(yawAvg), 0, Math.cos(yawAvg));
+  			Vector3d dir = new Vector3d(-Math.sin(yawAvg), 0, Math.cos(yawAvg));
   			float dist = mc.gameRenderer.isInMenuRoom() ? 2.5F*mc.vrPlayer.vrdata_world_render.worldScale: mc.vrSettings.hudDistance;
-  			Vec3d pos = posAvg.add(new Vec3d(dir.x * dist, dir.y * dist, dir.z * dist));
-  			Vec3d gpr = new Vec3d(pos.x, pos.y, pos.z);
+  			Vector3d pos = posAvg.add(new Vector3d(dir.x * dist, dir.y * dist, dir.z * dist));
+  			Vector3d gpr = new Vector3d(pos.x, pos.y, pos.z);
 
   			Matrix4f gr = Matrix4f.rotationY(135-yawAvg); // don't ask
 
@@ -632,7 +632,7 @@ public class GuiHandler {
   		// counter head rotation
   		GL11.glMultMatrixf(mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().toFloatBuffer());
 
-  		Vec3d tran = guipos.subtract(eye);
+  		Vector3d tran = guipos.subtract(eye);
   		RenderSystem.translated(tran.x, tran.y, tran.z);;
 
   		// offset from eye to gui pos

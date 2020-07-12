@@ -35,7 +35,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private static final long serialVersionUID = -562178983462626162L;
 	private String tempDir = System.getProperty("java.io.tmpdir");
 
-	private static final boolean ALLOW_FORGE_INSTALL = false; 
+	private static final boolean ALLOW_FORGE_INSTALL = true; 
 	private static final boolean DEFAULT_FORGE_INSTALL = false; 
 	private static final boolean ALLOW_HYDRA_INSTALL = false; 
 	private static final boolean ALLOW_KATVR_INSTALL = true; 
@@ -59,10 +59,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MC_VERSION        = "1.16.1";
     private static final String MC_MD5            = "9b94beec05c9580343f663165fa53d3f";
 	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.16.1_HD_U_G2_pre2";
-    private static final String OF_MD5            = "54b6aabdb8406360a1aa21a108138bdf";
+    private static final String OF_FILE_NAME      = "1.16.1_HD_U_G2_pre3";
+    private static final String OF_MD5            = "e93ad02cc2a06ddbfb5843d9fba7c0a2";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "32.0.47";
+    private static String FORGE_VERSION     = "32.0.63";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "Vivecraft " + MINECRAFT_VERSION;

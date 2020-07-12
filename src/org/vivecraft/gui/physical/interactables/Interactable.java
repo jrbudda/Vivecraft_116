@@ -3,14 +3,14 @@ package org.vivecraft.gui.physical.interactables;
 import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public interface Interactable{
 	void render(double partialTicks, int renderLayer);
-	Vec3d getPosition(double partialTicks);
+	Vector3d getPosition(double partialTicks);
 	Quaternion getRotation(double partialTicks);
 
-	Vec3d getAnchorPos(double partialTicks);
+	Vector3d getAnchorPos(double partialTicks);
 	Quaternion getAnchorRotation(double partialTicks);
 
 	boolean isEnabled();

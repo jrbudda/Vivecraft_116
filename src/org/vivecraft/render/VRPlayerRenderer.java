@@ -11,7 +11,7 @@ import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.util.math.vector.Vec3f;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.ArrowLayer;
 import net.minecraft.client.renderer.entity.layers.BeeStingerLayer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
+import net.minecraft.client.renderer.entity.layers.CapeLayer;
 import net.minecraft.client.renderer.entity.layers.ElytraLayer;
 import net.minecraft.client.renderer.entity.layers.HeadLayer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
@@ -41,7 +42,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity, VRPlayerModel<AbstractClientPlayerEntity>>
 {
@@ -55,7 +56,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
         this.addLayer(new HeldItemLayer<>(this));
         this.addLayer(new ArrowLayer(this));
     //    this.addLayer(new Deadmau5HeadLayer(this));
-   //     this.addLayer(new CapeLayer(this));
+        this.addLayer(new VRCapeLayer(this));
         this.addLayer(new HeadLayer<>(this));
         this.addLayer(new ElytraLayer<>(this));
         this.addLayer(new ParrotVariantLayer(this));
@@ -69,12 +70,12 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
     	if (Minecraft.getInstance().currentPass == RenderPass.GUI && entityIn.isUser()) {
     		//smile for the camera. 		
     		Matrix4f mat = matrixStackIn.getLast().getMatrix();
-    		double scale = new Vec3d(mat.m00, mat.m01, mat.m02).length();
+    		double scale = new Vector3d(mat.m00, mat.m01, mat.m02).length();
     		matrixStackIn.getLast().getMatrix().setIdentity();
     		matrixStackIn.translate(0.0D, 0.0D, 1000.0D);
     		matrixStackIn.scale((float)scale, (float)scale, (float)scale);
-    		matrixStackIn.rotate(Vec3f.ZP.rotationDegrees(180.0F));
-    		matrixStackIn.rotate(Vec3f.YP.rotationDegrees(180 + Minecraft.getInstance().vrPlayer.vrdata_world_pre.getBodyYaw()));
+    		matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180.0F));
+    		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180 + Minecraft.getInstance().vrPlayer.vrdata_world_pre.getBodyYaw()));
     	} 
     	
     	PlayerModelController.RotInfo rotInfo = PlayerModelController.getInstance().getRotationsForPlayer(((PlayerEntity)entityIn).getUniqueID());
@@ -88,9 +89,9 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
 
     }
 
-    public Vec3d getRenderOffset(AbstractClientPlayerEntity entityIn, float partialTicks)
+    public Vector3d getRenderOffset(AbstractClientPlayerEntity entityIn, float partialTicks)
     {
-        return entityIn.isCrouching() ? new Vec3d(0.0D, -0.125D, 0.0D) : super.getRenderOffset(entityIn, partialTicks);
+        return entityIn.isCrouching() ? new Vector3d(0.0D, -0.125D, 0.0D) : super.getRenderOffset(entityIn, partialTicks);
     }
 
     private void setModelVisibilities(AbstractClientPlayerEntity clientPlayer)
@@ -105,9 +106,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
         }
         else
         {
-            ItemStack itemstack = clientPlayer.getHeldItemMainhand();
-            ItemStack itemstack1 = clientPlayer.getHeldItemOffhand();
-          
+         
             playermodel.setVisible(true);
             playermodel.bipedHeadwear.showModel = clientPlayer.isWearing(PlayerModelPart.HAT);
             playermodel.bipedBodyWear.showModel = clientPlayer.isWearing(PlayerModelPart.JACKET);
@@ -116,9 +115,13 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             playermodel.bipedLeftArmwear.showModel = clientPlayer.isWearing(PlayerModelPart.LEFT_SLEEVE);
             playermodel.bipedRightArmwear.showModel = clientPlayer.isWearing(PlayerModelPart.RIGHT_SLEEVE);
             playermodel.isSneak = clientPlayer.isCrouching();
-            BipedModel.ArmPose bipedmodel$armpose = this.getArmPose(clientPlayer, itemstack, itemstack1, Hand.MAIN_HAND);
-            BipedModel.ArmPose bipedmodel$armpose1 = this.getArmPose(clientPlayer, itemstack, itemstack1, Hand.OFF_HAND);
+            BipedModel.ArmPose bipedmodel$armpose = func_241741_a_(clientPlayer, Hand.MAIN_HAND);
+            BipedModel.ArmPose bipedmodel$armpose1 = func_241741_a_(clientPlayer, Hand.OFF_HAND);
 
+            if (bipedmodel$armpose.func_241657_a_())
+            {
+                bipedmodel$armpose1 = clientPlayer.getHeldItemOffhand().isEmpty() ? BipedModel.ArmPose.EMPTY : BipedModel.ArmPose.ITEM;
+            }
             if (clientPlayer.getPrimaryHand() == HandSide.RIGHT)
             {
                 playermodel.rightArmPose = bipedmodel$armpose;
@@ -132,56 +135,47 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
         }
     }
 
-    private BipedModel.ArmPose getArmPose(AbstractClientPlayerEntity playerIn, ItemStack itemStackMain, ItemStack itemStackOff, Hand handIn)
+    private static BipedModel.ArmPose func_241741_a_(AbstractClientPlayerEntity p_241741_0_, Hand p_241741_1_)
     {
-        BipedModel.ArmPose bipedmodel$armpose = BipedModel.ArmPose.EMPTY;
-        ItemStack itemstack = handIn == Hand.MAIN_HAND ? itemStackMain : itemStackOff;
+        ItemStack itemstack = p_241741_0_.getHeldItem(p_241741_1_);
 
-        if (!itemstack.isEmpty())
+        if (itemstack.isEmpty())
         {
-            bipedmodel$armpose = BipedModel.ArmPose.ITEM;
-
-            if (playerIn.getItemInUseCount() > 0)
+            return BipedModel.ArmPose.EMPTY;
+        }
+        else
+        {
+            if (p_241741_0_.getActiveHand() == p_241741_1_ && p_241741_0_.getItemInUseCount() > 0)
             {
                 UseAction useaction = itemstack.getUseAction();
 
                 if (useaction == UseAction.BLOCK)
                 {
-                    bipedmodel$armpose = BipedModel.ArmPose.BLOCK;
+                    return BipedModel.ArmPose.BLOCK;
                 }
-                else if (useaction == UseAction.BOW)
+
+                if (useaction == UseAction.BOW)
                 {
-                    bipedmodel$armpose = BipedModel.ArmPose.BOW_AND_ARROW;
+                    return BipedModel.ArmPose.BOW_AND_ARROW;
                 }
-                else if (useaction == UseAction.SPEAR)
+
+                if (useaction == UseAction.SPEAR)
                 {
-                    bipedmodel$armpose = BipedModel.ArmPose.THROW_SPEAR;
+                    return BipedModel.ArmPose.THROW_SPEAR;
                 }
-                else if (useaction == UseAction.CROSSBOW && handIn == playerIn.getActiveHand())
+
+                if (useaction == UseAction.CROSSBOW && p_241741_1_ == p_241741_0_.getActiveHand())
                 {
-                    bipedmodel$armpose = BipedModel.ArmPose.CROSSBOW_CHARGE;
+                    return BipedModel.ArmPose.CROSSBOW_CHARGE;
                 }
             }
-            else
+            else if (!p_241741_0_.isSwingInProgress && itemstack.getItem() == Items.CROSSBOW && CrossbowItem.isCharged(itemstack))
             {
-                boolean flag3 = itemStackMain.getItem() == Items.CROSSBOW;
-                boolean flag = CrossbowItem.isCharged(itemStackMain);
-                boolean flag1 = itemStackOff.getItem() == Items.CROSSBOW;
-                boolean flag2 = CrossbowItem.isCharged(itemStackOff);
-
-                if (flag3 && flag)
-                {
-                    bipedmodel$armpose = BipedModel.ArmPose.CROSSBOW_HOLD;
-                }
-
-                if (flag1 && flag2 && itemStackMain.getItem().getUseAction(itemStackMain) == UseAction.NONE)
-                {
-                    bipedmodel$armpose = BipedModel.ArmPose.CROSSBOW_HOLD;
-                }
+                return BipedModel.ArmPose.CROSSBOW_HOLD;
             }
-        }
 
-        return bipedmodel$armpose;
+            return BipedModel.ArmPose.ITEM;
+        }
     }
 
     public ResourceLocation getEntityTexture(AbstractClientPlayerEntity entity)
@@ -251,7 +245,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
         	double d3 = entityLiving.lastTickPosX + (entityLiving.getPosX() - entityLiving.lastTickPosX) * (double)partialTicks;
         	double d4 = entityLiving.lastTickPosY + (entityLiving.getPosY() - entityLiving.lastTickPosY) * (double)partialTicks;
         	double d5 = entityLiving.lastTickPosZ + (entityLiving.getPosZ() - entityLiving.lastTickPosZ) * (double)partialTicks;
-        	mp.renderPos = new Vec3d(d3, d4, d5);
+        	mp.renderPos = new Vector3d(d3, d4, d5);
         	if(PlayerModelController.getInstance().isTracked(uuid)){
         		PlayerModelController.RotInfo rotInfo=PlayerModelController.getInstance().getRotationsForPlayer(uuid);	
         		rotationYaw = (float) Math.toDegrees(rotInfo.getBodyYawRadians());
@@ -270,11 +264,11 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
 
             if (!entityLiving.isSpinAttacking())
             {
-                matrixStackIn.rotate(Vec3f.XP.rotationDegrees(f2 * (-90.0F - entityLiving.rotationPitch)));
+                matrixStackIn.rotate(Vector3f.XP.rotationDegrees(f2 * (-90.0F - entityLiving.rotationPitch)));
             }
 
-            Vec3d vec3d = entityLiving.getLook(partialTicks);
-            Vec3d vec3d1 = entityLiving.getMotion();
+            Vector3d vec3d = entityLiving.getLook(partialTicks);
+            Vector3d vec3d1 = entityLiving.getMotion();
             double d0 = Entity.horizontalMag(vec3d1);
             double d1 = Entity.horizontalMag(vec3d);
 
@@ -282,7 +276,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             {
                 double d2 = (vec3d1.x * vec3d.x + vec3d1.z * vec3d.z) / (Math.sqrt(d0) * Math.sqrt(d1));
                 double d3 = vec3d1.x * vec3d.z - vec3d1.z * vec3d.x;
-                matrixStackIn.rotate(Vec3f.YP.rotation((float)(Math.signum(d3) * Math.acos(d2))));
+                matrixStackIn.rotate(Vector3f.YP.rotation((float)(Math.signum(d3) * Math.acos(d2))));
             }
         }
         else if (f > 0.0F)
@@ -290,7 +284,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             super.applyRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
             float f3 = entityLiving.isInWater() ? -90.0F - entityLiving.rotationPitch : -90.0F;
             float f4 = MathHelper.lerp(f, 0.0F, f3);
-            matrixStackIn.rotate(Vec3f.XP.rotationDegrees(f4));
+            matrixStackIn.rotate(Vector3f.XP.rotationDegrees(f4));
 
             if (entityLiving.isActualySwimming())
             {

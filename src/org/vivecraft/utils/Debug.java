@@ -17,10 +17,10 @@ import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class Debug {
-	Vec3d root;
+	Vector3d root;
 	Quaternion rotation;
 	public static boolean isEnabled=true;
 
@@ -28,46 +28,46 @@ public class Debug {
 	static Polygon arrowHead=new Polygon(8);
 	static {
 		cross.colors[0]=new Color(0,0,0,0);
-		cross.vertices[0]=new Vec3d(0,-0.1,0);
-		cross.vertices[1]=new Vec3d(0,0.1,0);
+		cross.vertices[0]=new Vector3d(0,-0.1,0);
+		cross.vertices[1]=new Vector3d(0,0.1,0);
 		cross.colors[2]=new Color(0,0,0,0);
 
-		cross.vertices[2]=new Vec3d(0,0,-0.1);
-		cross.vertices[3]=new Vec3d(0,0,0.1);
+		cross.vertices[2]=new Vector3d(0,0,-0.1);
+		cross.vertices[3]=new Vector3d(0,0,0.1);
 		cross.colors[4]=new Color(0,0,0,0);
 
-		cross.vertices[4]=new Vec3d(-0.1,0,0);
-		cross.vertices[5]=new Vec3d(0.1,0,0);
+		cross.vertices[4]=new Vector3d(-0.1,0,0);
+		cross.vertices[5]=new Vector3d(0.1,0,0);
 
 		arrowHead.colors[0]=new Color(0,0,0,0);
-		arrowHead.vertices[0]=new Vec3d(0,0,0);
-		arrowHead.vertices[1]=new Vec3d(-0.05,-0.05,0);
+		arrowHead.vertices[0]=new Vector3d(0,0,0);
+		arrowHead.vertices[1]=new Vector3d(-0.05,-0.05,0);
 
 		arrowHead.colors[2]=new Color(0,0,0,0);
-		arrowHead.vertices[2]=new Vec3d(0,0,0);
-		arrowHead.vertices[3]=new Vec3d(0.05,-0.05,0);
+		arrowHead.vertices[2]=new Vector3d(0,0,0);
+		arrowHead.vertices[3]=new Vector3d(0.05,-0.05,0);
 
 		arrowHead.colors[4]=new Color(0,0,0,0);
-		arrowHead.vertices[4]=new Vec3d(0,0,0);
-		arrowHead.vertices[5]=new Vec3d(0,-0.05,-0.05);
+		arrowHead.vertices[4]=new Vector3d(0,0,0);
+		arrowHead.vertices[5]=new Vector3d(0,-0.05,-0.05);
 
 		arrowHead.colors[6]=new Color(0,0,0,0);
-		arrowHead.vertices[6]=new Vec3d(0,0,0);
-		arrowHead.vertices[7]=new Vec3d(0,-0.05,0.05);
+		arrowHead.vertices[6]=new Vector3d(0,0,0);
+		arrowHead.vertices[7]=new Vector3d(0,-0.05,0.05);
 	}
 
-	public Debug(Vec3d root){
+	public Debug(Vector3d root){
 		this.root=root;
 		this.rotation=new Quaternion();
 	}
-	public Debug(Vec3d root, Quaternion rotation){
+	public Debug(Vector3d root, Quaternion rotation){
 		this.root=root;
 		this.rotation=rotation;
 	}
 
-	public void drawPoint(Vec3d point, Color color){
+	public void drawPoint(Vector3d point, Color color){
 		point=rotation.multiply(point);
-		Vec3d global=root.add(point);
+		Vector3d global=root.add(point);
 		Polygon poly=cross.offset(global);
 		for (int i = 0; i < poly.colors.length; i++) {
 			if(poly.colors[i]==null)
@@ -76,7 +76,7 @@ public class Debug {
 		renderer.toDraw.add(poly);
 	}
 
-	public void drawVector(Vec3d start, Vec3d direction, Color color){
+	public void drawVector(Vector3d start, Vector3d direction, Color color){
 		Polygon poly=new Polygon(2);
 		
 		start=rotation.multiply(start);
@@ -100,7 +100,7 @@ public class Debug {
 		renderer.toDraw.add(arrow);
 	}
 
-	public void drawLine(Vec3d start, Vec3d end, Color color){
+	public void drawLine(Vector3d start, Vector3d end, Color color){
 		start=rotation.multiply(start);
 		end=rotation.multiply(end);
 		
@@ -117,19 +117,19 @@ public class Debug {
 	
 	public void drawBoundingBox(AxisAlignedBB box, Color color){
 		Polygon poly=new Polygon(16);
-		Vec3d[] lower=new Vec3d[4];
-		Vec3d[] upper=new Vec3d[4];
+		Vector3d[] lower=new Vector3d[4];
+		Vector3d[] upper=new Vector3d[4];
 		int index=0;
 		
-		lower[0]=new Vec3d(box.minX,box.minY,box.minZ);
-		lower[1]=new Vec3d(box.minX,box.minY,box.maxZ);
-		lower[2]=new Vec3d(box.maxX,box.minY,box.maxZ);
-		lower[3]=new Vec3d(box.maxX,box.minY,box.minZ);
+		lower[0]=new Vector3d(box.minX,box.minY,box.minZ);
+		lower[1]=new Vector3d(box.minX,box.minY,box.maxZ);
+		lower[2]=new Vector3d(box.maxX,box.minY,box.maxZ);
+		lower[3]=new Vector3d(box.maxX,box.minY,box.minZ);
 		
-		upper[0]=new Vec3d(box.minX,box.maxY,box.minZ);
-		upper[1]=new Vec3d(box.minX,box.maxY,box.maxZ);
-		upper[2]=new Vec3d(box.maxX,box.maxY,box.maxZ);
-		upper[3]=new Vec3d(box.maxX,box.maxY,box.minZ);
+		upper[0]=new Vector3d(box.minX,box.maxY,box.minZ);
+		upper[1]=new Vector3d(box.minX,box.maxY,box.maxZ);
+		upper[2]=new Vector3d(box.maxX,box.maxY,box.maxZ);
+		upper[3]=new Vector3d(box.maxX,box.maxY,box.minZ);
 		
 		
 		for (int i = 0; i < 4; i++) {
@@ -165,13 +165,13 @@ public class Debug {
 
 	static class Polygon{
 		public Polygon(int size){
-			vertices=new Vec3d[size];
+			vertices=new Vector3d[size];
 			colors=new Color[size];
 		}
-		Vec3d [] vertices;
+		Vector3d [] vertices;
 		Color [] colors;
 
-		public Polygon offset(Vec3d offset){
+		public Polygon offset(Vector3d offset){
 			Polygon pol=new Polygon(vertices.length);
 			for (int i = 0; i < vertices.length; i++) {
 				pol.vertices[i]=vertices[i].add(offset);
@@ -183,7 +183,7 @@ public class Debug {
 		public Polygon rotated(Quaternion quat){
 			Polygon pol=new Polygon(vertices.length);
 			for (int i = 0; i < vertices.length; i++) {
-				pol.vertices[i]=quat.multiply(new Vector3(vertices[i])).toVec3d();
+				pol.vertices[i]=quat.multiply(new Vector3(vertices[i])).toVector3d();
 				pol.colors[i]=colors[i];
 			}
 			return pol;
@@ -244,7 +244,7 @@ public class Debug {
 			toDraw.clear();
 		}
 
-		void renderVertex(BufferBuilder buffer, Vec3d vert, Color color, double offX, double offY, double offZ){
+		void renderVertex(BufferBuilder buffer, Vector3d vert, Color color, double offX, double offY, double offZ){
 			buffer.pos(vert.x-offX,vert.y-offY,vert.z-offZ).color(color.getRed(),color.getGreen(),color.getBlue(),color.getAlpha()).endVertex();
 		}
 

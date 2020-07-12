@@ -12,7 +12,15 @@
  import java.util.Collection;
  import java.util.List;
  import java.util.Map;
-@@ -29,10 +33,15 @@
+@@ -24,15 +28,22 @@
+     public ResourcePackList(ResourcePackInfo.IFactory<T> p_i1983_1_, IPackFinder... p_i1983_2_)
+     {
+         this.packInfoFactory = p_i1983_1_;
+-        this.packFinders = ImmutableSet.copyOf(p_i1983_2_);
++        //Forge
++        this.packFinders = new java.util.HashSet<>(java.util.Arrays.asList(p_i1983_2_));
++        //
+     }
  
      public void reloadPacksFromFinders()
      {
@@ -28,7 +36,7 @@
      }
  
      private Map<String, T> func_232624_g_()
-@@ -52,7 +61,13 @@
+@@ -52,7 +63,13 @@
  
      public void setEnabledPacks(Collection<String> p_198985_1_)
      {
@@ -42,3 +50,15 @@
      }
  
      private List<T> func_232618_b_(Collection<String> p_232618_1_)
+@@ -115,4 +132,11 @@
+     {
+         return this.enabled.stream().map(ResourcePackInfo::getResourcePack).collect(ImmutableList.toImmutableList());
+     }
++    
++    //Forge
++    public void addPackFinder(IPackFinder packFinder) {
++        this.packFinders.add(packFinder);
++    }
++    //
++    
+ }

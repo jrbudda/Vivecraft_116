@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class RowTracker extends Tracker{
 
@@ -35,7 +35,7 @@ public class RowTracker extends Tracker{
 	}
 
 
-	Vec3d[] lastUWPs=new Vec3d[2];
+	Vector3d[] lastUWPs=new Vector3d[2];
 	public double[] forces= new double[]{0,0};
 
 	double transmissionEfficiency=0.9;
@@ -80,16 +80,16 @@ public class RowTracker extends Tracker{
 
 		for (int paddle = 0; paddle <= 1 ; paddle++) {
 			if(isPaddleUnderWater(paddle,boat)){
-				Vec3d arm2Pad=getArmToPaddleVector(paddle,boat);
-				Vec3d attach=getAttachmentPoint(paddle,boat);
+				Vector3d arm2Pad=getArmToPaddleVector(paddle,boat);
+				Vector3d attach=getAttachmentPoint(paddle,boat);
 
-				Vec3d underWaterPoint=attach.add(arm2Pad.normalize()).subtract(boat.getPositionVec());
+				Vector3d underWaterPoint=attach.add(arm2Pad.normalize()).subtract(boat.getPositionVec());
 
 
 				if(lastUWPs[paddle]!=null){
-					Vec3d forceVector=lastUWPs[paddle].subtract(underWaterPoint); //intentionally reverse
+					Vector3d forceVector=lastUWPs[paddle].subtract(underWaterPoint); //intentionally reverse
 					forceVector=forceVector.subtract(boat.getMotion());
-					Vec3d forward= boatRot.multiply(new Vec3d(0,0,1));
+					Vector3d forward= boatRot.multiply(new Vector3d(0,0,1));
 
 					//scalar projection onto forward vector
 					double force=forceVector.dotProduct(forward)*transmissionEfficiency/5;
@@ -109,24 +109,24 @@ public class RowTracker extends Tracker{
 		
 	}
 
-	Vec3d getArmToPaddleVector(int paddle, BoatEntity boat){
+	Vector3d getArmToPaddleVector(int paddle, BoatEntity boat){
 
-		Vec3d attachAbs=getAttachmentPoint(paddle,boat);
-		Vec3d armAbs = getAbsArmPos(paddle==0? 1 : 0);
+		Vector3d attachAbs=getAttachmentPoint(paddle,boat);
+		Vector3d armAbs = getAbsArmPos(paddle==0? 1 : 0);
 
 		return attachAbs.subtract(armAbs);
 	}
 
 
-	Vec3d getAttachmentPoint(int paddle, BoatEntity boat){
-		Vec3d attachmentPoint = new Vec3d((paddle==0? 9f: -9f) / 16f, (-5 + 15) / 16f, 3 / 16f); //values from ModelBoat
+	Vector3d getAttachmentPoint(int paddle, BoatEntity boat){
+		Vector3d attachmentPoint = new Vector3d((paddle==0? 9f: -9f) / 16f, (-5 + 15) / 16f, 3 / 16f); //values from ModelBoat
 		Quaternion boatRot = new Quaternion(boat.rotationPitch, -(boat.rotationYaw % 360f), 0).normalized();
 
 		return boat.getPositionVec().add(boatRot.multiply(attachmentPoint));
 	}
 
-	Vec3d getAbsArmPos(int side){
-		Vec3d arm = MCOpenVR.controllerHistory[side].averagePosition(0.1);
+	Vector3d getAbsArmPos(int side){
+		Vector3d arm = MCOpenVR.controllerHistory[side].averagePosition(0.1);
 		Quaternion worldRot = new Quaternion(0, VRSettings.inst.vrWorldRotation, 0);
 
 		return OpenVRPlayer.get().roomOrigin.add(worldRot.multiply(arm));
@@ -134,8 +134,8 @@ public class RowTracker extends Tracker{
 
 	boolean isPaddleUnderWater(int paddle, BoatEntity boat){
 
-		Vec3d attachAbs=getAttachmentPoint(paddle,boat);
-		Vec3d armToPaddle = getArmToPaddleVector(paddle,boat).normalize();
+		Vector3d attachAbs=getAttachmentPoint(paddle,boat);
+		Vector3d armToPaddle = getArmToPaddleVector(paddle,boat).normalize();
 
 		BlockPos blockPos=new BlockPos(attachAbs.add(armToPaddle));
 

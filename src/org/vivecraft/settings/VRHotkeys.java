@@ -26,7 +26,7 @@ import com.google.common.util.concurrent.Runnables;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.WinGameScreen;
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 
 public class VRHotkeys {
@@ -307,7 +307,7 @@ public class VRHotkeys {
 	
 	public static void snapMRCam(int controller) {
 		Minecraft mc = Minecraft.getInstance();
-		Vec3d c = mc.vrPlayer.vrdata_room_pre.getController(controller).getPosition();
+		Vector3d c = mc.vrPlayer.vrdata_room_pre.getController(controller).getPosition();
 		mc.vrSettings.vrFixedCamposX =(float) c.x;
 		mc.vrSettings.vrFixedCamposY =(float) c.y;
 		mc.vrSettings.vrFixedCamposZ =(float) c.z;
@@ -321,8 +321,8 @@ public class VRHotkeys {
 
 		if (startControllerPose != null) {
 			VRData.VRDevicePose controllerPose = mc.vrPlayer.vrdata_room_pre.getController(startController);
-			Vec3d startPos = startControllerPose.getPosition();
-			Vec3d deltaPos = controllerPose.getPosition().subtract(startPos);
+			Vector3d startPos = startControllerPose.getPosition();
+			Vector3d deltaPos = controllerPose.getPosition().subtract(startPos);
 
 			Matrix4f deltaMatrix = Matrix4f.multiply(controllerPose.getMatrix(), startControllerPose.getMatrix().inverted());
 			Vector3 offset = new Vector3(startCamposX - (float)startPos.x, startCamposY - (float)startPos.y, startCamposZ - (float)startPos.z);

@@ -9,7 +9,7 @@ import org.vivecraft.api.ServerVivePlayer;
 import org.vivecraft.provider.MCOpenVR;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class AutoCalibration {
 	

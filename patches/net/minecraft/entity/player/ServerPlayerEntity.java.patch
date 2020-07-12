@@ -154,13 +154,13 @@
 +		} else {
 +			// VIVECRAFT USE CONTROLLER - which controller? have to assume 0.
 +
-+			Vec3d aim = vp.getControllerDir(0);
++			Vector3d aim = vp.getControllerDir(0);
 +			float yaw = (float) Math.toDegrees(Math.atan2(aim.x, -aim.z));
 +
 +			double d0 = (double) (-MathHelper.sin(yaw * 0.017453292F));
 +			double d1 = (double) MathHelper.cos(yaw * 0.017453292F);
 +
-+			Vec3d pos = vp.getControllerPos(0);
++			Vector3d pos = vp.getControllerPos(0);
 +
 +			if (this.world instanceof ServerWorld) // has to be
 +			{
@@ -195,28 +195,28 @@
 +
 +        for (int i = 0; i < count; ++i)
 +        {
-+            Vec3d vec3d = new Vec3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
-+            vec3d = vec3d.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
-+            vec3d = vec3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++            Vector3d vector3d = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
++            vector3d = vector3d.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++            vector3d = vector3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
 +            double d0 = (double)(-this.rand.nextFloat()) * 0.6D - 0.3D;
-+            Vec3d vec3d1 = new Vec3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
++            Vector3d vector3d1 = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
 +		
 +            if(this.isUser()) { 
 +            	//TODO: wait what
 +	            //VIVE
 +				Hand hand = getActiveHand();
 +				if(hand == Hand.MAIN_HAND){
-+					vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
++					vector3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
 +				} else {
-+					vec3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();      
++					vector3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();      
 +				}
 +			}
 +               
-+            // vec3d1 = vec3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
-+            // vec3d1 = vec3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
-+            // vec3d1 = vec3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
++            // vector3d1 = vector3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++            // vector3d1 = vector3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++            // vector3d1 = vector3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
 +			//
-+            this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vec3d1.x, vec3d1.y, vec3d1.z, vec3d.x, vec3d.y + 0.05D, vec3d.z);
++            this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vector3d1.x, vector3d1.y, vector3d1.z, vector3d.x, vector3d.y + 0.05D, vector3d.z);
          }
      }
  
@@ -235,8 +235,8 @@
 +        	//Vivecraft, set spwanpos of dropped item.
 +            ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());    
 +            if (vp != null && vp.isVR() && !dropAround) {
-+    			Vec3d pos = vp.getControllerPos(0);    	
-+    			Vec3d aim = vp.getControllerDir(0);
++    			Vector3d pos = vp.getControllerPos(0);    	
++    			Vector3d aim = vp.getControllerDir(0);
 +    			float f2 = 0.3F;
 +    			itementity.setMotion(aim.x * f2, aim.y * f2, aim.z * f2);
 +    			itementity.setPosition(pos.getX() + itementity.getMotion().getX(), 

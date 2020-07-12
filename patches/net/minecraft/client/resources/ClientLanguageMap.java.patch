@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/resources/ClientLanguageMap.java
++++ b/net/minecraft/client/resources/ClientLanguageMap.java
+@@ -12,6 +12,9 @@
+ import java.util.Map;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
++
++import org.vivecraft.utils.LangHelper;
++
+ import net.minecraft.resources.IResource;
+ import net.minecraft.resources.IResourceManager;
+ import net.minecraft.util.ResourceLocation;
+@@ -50,6 +53,7 @@
+                     ResourceLocation resourcelocation = new ResourceLocation(s1, s);
+                     func_239498_a_(p_239497_0_.getAllResources(resourcelocation), map);
+                     Lang.loadResources(p_239497_0_, language.getCode(), map);
++                    LangHelper.loadLocaleData(language.getCode(), map); // VIVECRAFT
+                 }
+                 catch (FileNotFoundException filenotfoundexception)
+                 {

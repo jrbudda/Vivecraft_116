@@ -5,7 +5,7 @@ import java.nio.FloatBuffer;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 import org.vivecraft.utils.lwjgl.Quaternion;
 
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 /**
  * With thanks to 'Exemplos de LWJGL', by fabcam...@hotmail.com
@@ -36,7 +36,7 @@ public class QuaternionHelper
     {
         Quaternion input = QuaternionHelper.clone(q1);
         float inputMagnitude = QuaternionHelper.magnitude(input);
-        Vec3d nHat = new Vec3d(input.x, input.y, input.z).normalize();
+        Vector3d nHat = new Vector3d(input.x, input.y, input.z).normalize();
         Quaternion vectorBit = QuaternionHelper.exp(QuaternionHelper.scalarMultiply(new Quaternion((float)nHat.x, (float)nHat.y, (float)nHat.z, 0), (float)(power * Math.acos(input.w / inputMagnitude))));
         return QuaternionHelper.scalarMultiply(vectorBit, (float)Math.pow(inputMagnitude, power));
     }
@@ -51,9 +51,9 @@ public class QuaternionHelper
     public static Quaternion exp(Quaternion input)
     {
         float inputA = input.w;
-        Vec3d inputV = new Vec3d(input.x, input.y, input.z);
+        Vector3d inputV = new Vector3d(input.x, input.y, input.z);
         float outputA = (float)(Math.exp(inputA) * Math.cos(inputV.length()));
-        Vec3d outputV = new Vec3d(
+        Vector3d outputV = new Vector3d(
         Math.exp(inputA) * (inputV.normalize().x * (float)Math.sin(inputV.length())),
         Math.exp(inputA) * (inputV.normalize().y * (float)Math.sin(inputV.length())),
         Math.exp(inputA) * (inputV.normalize().z * (float)Math.sin(inputV.length())));

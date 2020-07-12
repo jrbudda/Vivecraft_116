@@ -11,7 +11,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class MiniCrafting implements Interactable {
 	Minecraft mc;
@@ -44,8 +44,8 @@ public class MiniCrafting implements Interactable {
 				int slotId=y*2+x+inventory.metaData.craftingOffset +1;
 				PhysicalItemSlot slot=new PhysicalItemSlot(inventory,slotId){
 					@Override
-					public Vec3d getAnchorPos(double partialTicks) {
-						Vec3d pos= MiniCrafting.this.getAnchorPos(partialTicks);
+					public Vector3d getAnchorPos(double partialTicks) {
+						Vector3d pos= MiniCrafting.this.getAnchorPos(partialTicks);
 						pos=pos.add(MiniCrafting.this.getAnchorRotation(partialTicks).multiply(
 								MiniCrafting.this.getPosition(partialTicks)
 						));
@@ -66,9 +66,9 @@ public class MiniCrafting implements Interactable {
 				};
 				slot.slot=inventory.container.inventorySlots.get(slotId);
 				slot.enabled=false;
-				Vec3d anchor=new Vec3d(-0.15,0.12,0.07);
+				Vector3d anchor=new Vector3d(-0.15,0.12,0.07);
 				double spacing=0.15;
-				slot.position=anchor.add(new Vec3d(-x*spacing,0,-y*spacing));
+				slot.position=anchor.add(new Vector3d(-x*spacing,0,-y*spacing));
 				slot.rotation=new Quaternion(90,0,0);
 				slot.scale=0.15;
 				craftingSlots.add(slot);
@@ -77,8 +77,8 @@ public class MiniCrafting implements Interactable {
 
 		PhysicalItemSlot result=new PhysicalItemSlot(inventory,inventory.metaData.craftingOffset){
 			@Override
-			public Vec3d getAnchorPos(double partialTicks) {
-				Vec3d pos= MiniCrafting.this.getAnchorPos(partialTicks);
+			public Vector3d getAnchorPos(double partialTicks) {
+				Vector3d pos= MiniCrafting.this.getAnchorPos(partialTicks);
 				pos=pos.add(MiniCrafting.this.getAnchorRotation(partialTicks).multiply(
 						MiniCrafting.this.getPosition(partialTicks)
 				));
@@ -98,16 +98,16 @@ public class MiniCrafting implements Interactable {
 		};
 		result.slot=inventory.container.inventorySlots.get(result.slotId);
 		result.enabled=false;
-		result.position=new Vec3d(-0.2,0.4,0);
+		result.position=new Vector3d(-0.2,0.4,0);
 		result.fullBlockRotation = new Quaternion();
 		result.scale=0.15;
 		result.preview=false;
 		craftingSlots.add(result);
 	}
 
-	public Vec3d position=Vec3d.ZERO;
+	public Vector3d position=Vector3d.ZERO;
 	@Override
-	public Vec3d getPosition(double partialTicks) {
+	public Vector3d getPosition(double partialTicks) {
 		return position;
 	}
 
@@ -122,7 +122,7 @@ public class MiniCrafting implements Interactable {
 	}
 
 	@Override
-	public Vec3d getAnchorPos(double partialTicks) {
+	public Vector3d getAnchorPos(double partialTicks) {
 		return inventory.getAnchorPos(partialTicks);
 	}
 

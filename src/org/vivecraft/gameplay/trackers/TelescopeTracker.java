@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class TelescopeTracker extends Tracker {
 	
@@ -43,13 +43,13 @@ public class TelescopeTracker extends Tracker {
 		return i.getDisplayName().getString().equals("Eye of the Farseer");
 	}
 	
-	public static Vec3d getLensOrigin( int controller){
+	public static Vector3d getLensOrigin( int controller){
 		VRDevicePose con = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(controller);
 		return con.getPosition().add((getViewVector(controller).scale(-0.2)).add(con.getDirection().scale(0.05f)));
 	}
 	
-	public static Vec3d getViewVector(int controller){
-		return Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(controller).getCustomVector(new Vec3d(0,-1,0));
+	public static Vector3d getViewVector(int controller){
+		return Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(controller).getCustomVector(new Vector3d(0,-1,0));
 	}
 	
 	private final static double lensDistMax = 0.05; // :shrug:
@@ -76,7 +76,7 @@ public class TelescopeTracker extends Tracker {
 		if(e == -1) return 0;
 		VRDevicePose eye = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getEye(RenderPass.values()[e]);	
 		double dist = eye.getPosition().subtract(getLensOrigin(controller)).length();	
-		Vec3d look = eye.getDirection();
+		Vector3d look = eye.getDirection();
 		double dot = Math.abs(look.dotProduct(getViewVector(controller)));
 
 		double dfact = 0;

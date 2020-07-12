@@ -10,7 +10,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class PhysicalChest extends PhysicalItemSlotGui {
 	boolean wasOpen=false;
@@ -22,8 +22,8 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 	}
 
 	public boolean isDouble() {
-		Vec3d posVec = getAnchorPos(0);
-		Vec3d right = new Vec3d(-1, 0, 0);
+		Vector3d posVec = getAnchorPos(0);
+		Vector3d right = new Vector3d(-1, 0, 0);
 		Quaternion rot = getAnchorRotation();
 		BlockPos neighborPos = new BlockPos(posVec.add(rot.multiply(right)));
 
@@ -47,7 +47,7 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 		boolean isNeighbor = false;
 		if (this.blockState.getBlock().equals(Blocks.CHEST) && block.getBlock().equals(Blocks.CHEST) ||
 				this.blockState.getBlock().equals(Blocks.TRAPPED_CHEST) && block.getBlock().equals(Blocks.TRAPPED_CHEST)) {
-//			Vec3d offset = new Vec3d(pos).subtract(new Vec3d(this.blockPos));
+//			Vector3d offset = new Vector3d(pos).subtract(new Vector3d(this.blockPos));
 //			int x = Math.abs((int) Math.round(getAnchorRotation(partialTicks).inverse().multiply(offset).x));
 //			isNeighbor = (x == 1);
 		}
@@ -73,26 +73,26 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 
 		double[] lidDist = new double[2];
 		
-		Vec3d basePos = getAnchorPos();
+		Vector3d basePos = getAnchorPos();
 		Quaternion rot = getAnchorRotation().multiply(new Quaternion(0, 180, 0)); // rotation facing you
 
-		basePos = basePos.add(rot.multiply(new Vec3d(0, 0.1, -0.4)));
+		basePos = basePos.add(rot.multiply(new Vector3d(0, 0.1, -0.4)));
 		
 
 		if (isDouble()) {
-			basePos = basePos.add(rot.multiply(new Vec3d(0.5, 0, 0)));
+			basePos = basePos.add(rot.multiply(new Vector3d(0.5, 0, 0)));
 		}
 		
 
 		Quaternion lidRot = new Quaternion((float) (-lidAngle), 0, 0);
 
-		Vec3d lidMiddle = basePos.add(rot.multiply(lidRot.multiply(new Vec3d(0, 0, 0.4))));
+		Vector3d lidMiddle = basePos.add(rot.multiply(lidRot.multiply(new Vector3d(0, 0, 0.4))));
 
 		for (int i = 0; i < 2; i++) {
-			Vec3d handPos = mc.vrPlayer.vrdata_world_pre.getController(i).getPosition();
+			Vector3d handPos = mc.vrPlayer.vrdata_world_pre.getController(i).getPosition();
 
 			//get the position relative to the lid
-			Vec3d offsetLid = lidRot.inverse().multiply(rot.inverse().multiply(handPos.subtract(lidMiddle)));
+			Vector3d offsetLid = lidRot.inverse().multiply(rot.inverse().multiply(handPos.subtract(lidMiddle)));
 
 			double xRange = isDouble() ? 1.0 : 0.5;
 			double zRange = 0.5;
@@ -113,11 +113,11 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 			if (!isOpen && !mc.physicalGuiManager.isIntercepting())
 				tryOpenWindow();
 			this.handOnLid=handOnLid;
-			Vec3d handPos = mc.vrPlayer.vrdata_world_pre.getController(handOnLid).getPosition();
-			Vec3d dir = handPos.subtract(basePos).normalize();
+			Vector3d handPos = mc.vrPlayer.vrdata_world_pre.getController(handOnLid).getPosition();
+			Vector3d dir = handPos.subtract(basePos).normalize();
 			
 			dir = rot.inverse().multiply(dir);
-			dir = new Vec3d(0, dir.y, dir.z);
+			dir = new Vector3d(0, dir.y, dir.z);
 			
 			
 			
@@ -148,8 +148,8 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 		if (isOpen) {
 			if(isInRange()) {
 				int mainhand=(mc.gameSettings.mainHand==HandSide.RIGHT)? 0 : 1;
-				Vec3d handPos = mc.vrPlayer.vrdata_world_pre.getController(mainhand).getPosition();
-				Vec3d offset = getAnchorRotation().inverse().multiply(handPos.subtract(getAnchorPos()));
+				Vector3d handPos = mc.vrPlayer.vrdata_world_pre.getController(mainhand).getPosition();
+				Vector3d offset = getAnchorRotation().inverse().multiply(handPos.subtract(getAnchorPos()));
 				double height = offset.y + 0.3;
 				int layer = (int) (height / 0.4f * 2);
 				layer = Math.min(Math.max(0, layer), 2);
@@ -163,10 +163,10 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 	@Override
 	boolean isInRange() {
 		for (int i = 0; i < 2; i++) {
-			Vec3d handPos = mc.vrPlayer.vrdata_world_pre.getController(i).getPosition();
-			Vec3d offset = getAnchorRotation().inverse().multiply(handPos.subtract(getAnchorPos()));
+			Vector3d handPos = mc.vrPlayer.vrdata_world_pre.getController(i).getPosition();
+			Vector3d offset = getAnchorRotation().inverse().multiply(handPos.subtract(getAnchorPos()));
 			if (isDouble()) {
-				offset = offset.add(new Vec3d(0.5, 0, 0));
+				offset = offset.add(new Vector3d(0.5, 0, 0));
 			}
 
 			double rangeX = isDouble() ? 1 : 0.5;
@@ -208,7 +208,7 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 		this.interactables.clear();
 		
 
-		Vec3d anchor = new Vec3d(0.2, -0.375, 0.2);
+		Vector3d anchor = new Vector3d(0.2, -0.375, 0.2);
 		double spanX = isDouble() ? 0.8 : 0.6;
 		double spanY = 0.6;
 		double spanZ = 0.6;
@@ -227,8 +227,8 @@ public class PhysicalChest extends PhysicalItemSlotGui {
 					if (!dummy)
 						slot.slot = container.inventorySlots.get(slotId);
 
-					slot.position = anchor.add(new Vec3d(-spacingX * x, spacingY * level, -spacingZ * y))
-							.add(new Vec3d(-pack * (spanX + 0.07), 0, 0));
+					slot.position = anchor.add(new Vector3d(-spacingX * x, spacingY * level, -spacingZ * y))
+							.add(new Vector3d(-pack * (spanX + 0.07), 0, 0));
 					slot.rotation = new Quaternion(90, 0, 0);
 					slot.fullBlockScaleMult = 1.9;
 					slot.scale = 0.19;

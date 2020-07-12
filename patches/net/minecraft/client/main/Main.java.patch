@@ -24,6 +24,17 @@
          optionparser.accepts("fullscreen");
          optionparser.accepts("checkGlErrors");
          OptionSpec<String> optionspec = optionparser.accepts("server").withRequiredArg();
+@@ -63,8 +71,8 @@
+         OptionSpec<String> optionspec11 = optionparser.accepts("uuid").withRequiredArg();
+         OptionSpec<String> optionspec12 = optionparser.accepts("accessToken").withRequiredArg().required();
+         OptionSpec<String> optionspec13 = optionparser.accepts("version").withRequiredArg().required();
+-        OptionSpec<Integer> optionspec14 = optionparser.accepts("width").withRequiredArg().ofType(Integer.class).defaultsTo(854);
+-        OptionSpec<Integer> optionspec15 = optionparser.accepts("height").withRequiredArg().ofType(Integer.class).defaultsTo(480);
++        OptionSpec<Integer> optionspec14 = optionparser.accepts("width").withRequiredArg().ofType(Integer.class).defaultsTo(1280);
++        OptionSpec<Integer> optionspec15 = optionparser.accepts("height").withRequiredArg().ofType(Integer.class).defaultsTo(720);
+         OptionSpec<Integer> optionspec16 = optionparser.accepts("fullscreenWidth").withRequiredArg().ofType(Integer.class);
+         OptionSpec<Integer> optionspec17 = optionparser.accepts("fullscreenHeight").withRequiredArg().ofType(Integer.class);
+         OptionSpec<String> optionspec18 = optionparser.accepts("userProperties").withRequiredArg().defaultsTo("{}");
 @@ -115,6 +123,17 @@
          OptionalInt optionalint1 = toOptionalInt(getValue(optionset, optionspec17));
          boolean flag = optionset.has("fullscreen");

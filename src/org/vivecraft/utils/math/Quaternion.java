@@ -4,7 +4,7 @@ import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.lwjgl.Matrix3f;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 
 /**
@@ -330,8 +330,8 @@ public class Quaternion {
 	     return result;
 	 }
 
-	 public Vec3d multiply(Vec3d vec){
-		return multiply(new Vector3(vec)).toVec3d();
+	 public Vector3d multiply(Vector3d vec){
+		return multiply(new Vector3(vec)).toVector3d();
 	 }
 	
 	

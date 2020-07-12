@@ -10,13 +10,13 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class JumpTracker extends Tracker {
 
-	public Vec3d[] latchStart = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
-	public Vec3d[] latchStartOrigin = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
-	public Vec3d[] latchStartPlayer = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
+	public Vector3d[] latchStart = new Vector3d[]{new Vector3d(0,0,0), new Vector3d(0,0,0)};
+	public Vector3d[] latchStartOrigin = new Vector3d[]{new Vector3d(0,0,0), new Vector3d(0,0,0)};
+	public Vector3d[] latchStartPlayer = new Vector3d[]{new Vector3d(0,0,0), new Vector3d(0,0,0)};
 	private boolean c0Latched = false;
 	private boolean c1Latched = false;
 
@@ -84,9 +84,9 @@ public class JumpTracker extends Tracker {
 				jump = true;
 			}
 			
-			Vec3d rpos = mc.vrPlayer.vrdata_room_pre.getController(0).getPosition();
-			Vec3d lpos = mc.vrPlayer.vrdata_room_pre.getController(1).getPosition();
-			Vec3d now = rpos.add(lpos).scale(0.5);
+			Vector3d rpos = mc.vrPlayer.vrdata_room_pre.getController(0).getPosition();
+			Vector3d lpos = mc.vrPlayer.vrdata_room_pre.getController(1).getPosition();
+			Vector3d now = rpos.add(lpos).scale(0.5);
 
 			if(ok[0] && !c0Latched){ //grabbed right
 				latchStart[0] = now;
@@ -113,7 +113,7 @@ public class JumpTracker extends Tracker {
 			int c =0;
 
 
-			Vec3d delta= now.subtract(latchStart[c]);
+			Vector3d delta= now.subtract(latchStart[c]);
 
 			delta = delta.rotateYaw(mc.vrPlayer.vrdata_world_pre.rotation_radians);
 			
@@ -126,7 +126,7 @@ public class JumpTracker extends Tracker {
 			if(jump){
 				mc.climbTracker.forceActivate = true;
 
-				Vec3d m = (MCOpenVR.controllerHistory[0].netMovement(0.3)
+				Vector3d m = (MCOpenVR.controllerHistory[0].netMovement(0.3)
 						.add(MCOpenVR.controllerHistory[1].netMovement(0.3)));
 				
 				double sp =  (MCOpenVR.controllerHistory[0].averageSpeed(0.3) + MCOpenVR.controllerHistory[1].averageSpeed(0.3)) / 2 ;	
@@ -142,7 +142,7 @@ public class JumpTracker extends Tracker {
 				
 				m=m.rotateYaw(mc.vrPlayer.vrdata_world_pre.rotation_radians);
 				
-				Vec3d pl = mc.player.getPositionVec().subtract(delta);
+				Vector3d pl = mc.player.getPositionVec().subtract(delta);
 
 				if(delta.y < 0 && m.y < 0){
 
@@ -163,7 +163,7 @@ public class JumpTracker extends Tracker {
 					mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false, true);
 				}
 			}else if(isjumping()){
-				Vec3d thing = latchStartOrigin[0].subtract(latchStartPlayer[0]).add(mc.player.getPositionVec()).subtract(delta);
+				Vector3d thing = latchStartOrigin[0].subtract(latchStartPlayer[0]).add(mc.player.getPositionVec()).subtract(delta);
 				mc.vrPlayer.setRoomOrigin(thing.x, thing.y, thing.z, false);
 			}
 		}else {

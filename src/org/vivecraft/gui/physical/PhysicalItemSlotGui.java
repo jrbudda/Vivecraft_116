@@ -22,7 +22,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 
 public class PhysicalItemSlotGui extends PhysicalGui {
@@ -129,7 +129,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 
 
 		PlayerEntity player = Minecraft.getInstance().player;
-		Vec3d playerPos = new Vec3d(
+		Vector3d playerPos = new Vector3d(
 				player.lastTickPosX + (player.getPosX() - player.lastTickPosX) * partialTicks,
 				player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * partialTicks,
 				player.lastTickPosZ + (player.getPosZ() - player.lastTickPosZ) * partialTicks
@@ -150,7 +150,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 				//make sure we have the original depth function
 				GlStateManager.depthFunc(depthFun);
 
-				Vec3d origin = slot.getAnchorPos(partialTicks);
+				Vector3d origin = slot.getAnchorPos(partialTicks);
 								
 				Quaternion rotation=slot.getAnchorRotation(partialTicks);
 				origin = origin.subtract(playerPos);
@@ -158,7 +158,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 				GlStateManager.translated(origin.x, origin.y, origin.z);
 				Utils.glRotate(rotation);
 
-				Vec3d slotpos = slot.getPosition(partialTicks);
+				Vector3d slotpos = slot.getPosition(partialTicks);
 				GlStateManager.translated(slotpos.x, slotpos.y, slotpos.z);
 				Utils.glRotate(slot.getRotation(partialTicks));
 
@@ -207,11 +207,11 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 
 
 	@Override
-	public Vec3d getAnchorPos(double partialTicks) {
+	public Vector3d getAnchorPos(double partialTicks) {
 		if (isBlock) {
-			return new Vec3d(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5);
+			return new Vector3d(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5);
 		} else {
-			Vec3d prev=new Vec3d(entity.prevPosX,entity.prevPosY,entity.prevPosZ);
+			Vector3d prev=new Vector3d(entity.prevPosX,entity.prevPosY,entity.prevPosZ);
 			return prev.add((entity.getPositionVec().subtract(prev)).scale(partialTicks));
 		}
 	}
@@ -229,7 +229,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 	public boolean requestOpen() {
 		boolean success;
 		if (isBlock) {
-			success = (mc.playerController.func_217292_a(mc.player, mc.world, Hand.MAIN_HAND, new BlockRayTraceResult(Vec3d.ZERO, Direction.UP, blockPos, false))
+			success = (mc.playerController.func_217292_a(mc.player, mc.world, Hand.MAIN_HAND, new BlockRayTraceResult(Vector3d.ZERO, Direction.UP, blockPos, false))
 					== ActionResultType.SUCCESS);
 		} else {
 			success = mc.playerController.interactWithEntity(mc.player, entity, Hand.MAIN_HAND) == ActionResultType.SUCCESS;
@@ -256,7 +256,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 					int slotnum = i * 3 + j;
 
 					PhysicalItemSlot craft = new PhysicalItemSlot(this,slotnum);
-					craft.position = new Vec3d((2 - j) * 0.2, 0.5, (1 - i) * 0.2);
+					craft.position = new Vector3d((2 - j) * 0.2, 0.5, (1 - i) * 0.2);
 					craft.rotation = new Quaternion(90, 0, 0);
 					if (container != null)
 						craft.slot = container.inventorySlots.get(slotnum);
@@ -264,7 +264,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 				}
 			}
 			PhysicalItemSlot output = new PhysicalItemSlot(this,0);
-			output.position = new Vec3d(0, 1, 0);
+			output.position = new Vector3d(0, 1, 0);
 			output.fullBlockRotation = new Quaternion();
 			output.preview=false;
 			if (container != null)
@@ -332,7 +332,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 
 
 		int mainhand = (mc.gameSettings.mainHand == HandSide.RIGHT) ? 0 : 1;
-		Vec3d handPos = mc.vrPlayer.vrdata_world_pre.getController(mainhand).getPosition();
+		Vector3d handPos = mc.vrPlayer.vrdata_world_pre.getController(mainhand).getPosition();
 		handPos = handPos.add(mc.vrPlayer.vrdata_world_pre.getController(mainhand).getDirection().scale(0.1));
 
 
@@ -345,7 +345,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 		for (Interactable slot : interactables) {
 			if (!slot.isTouchable())
 				continue;
-			Vec3d relHand=slot.getAnchorRotation(0).inverse().multiply(handPos.subtract(slot.getAnchorPos(0)));
+			Vector3d relHand=slot.getAnchorRotation(0).inverse().multiply(handPos.subtract(slot.getAnchorPos(0)));
 			relHand=slot.getRotation(0).inverse().multiply(relHand.subtract(slot.getPosition(0)));
 			if(slot.getBoundingBox().contains(relHand))
 				touchingSlots.add(slot);
@@ -356,9 +356,9 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 		double currentSlotDistance=-1;
 
 		for (Interactable slot : touchingSlots) {
-			Vec3d basePos = slot.getAnchorPos(0);
+			Vector3d basePos = slot.getAnchorPos(0);
 			Quaternion rot=slot.getAnchorRotation(0);
-			Vec3d absSlotPos=basePos.add(rot.multiply(slot.getPosition(0)));
+			Vector3d absSlotPos=basePos.add(rot.multiply(slot.getPosition(0)));
 
 			double dist = absSlotPos.subtract(handPos).length();
 			if (shortestDist == -1 || shortestDist > dist) {

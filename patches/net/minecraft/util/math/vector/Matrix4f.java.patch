@@ -64,8 +64,8 @@
 +    	this.m33 = floatBufferIn.get(bufferIndex(3, 3));
 +    }
 +    
-+    public Vec3d translationComponent() {
-+    	return new Vec3d(this.m30, this.m31, this.m32);
++    public Vector3d translationComponent() {
++    	return new Vector3d(this.m30, this.m31, this.m32);
 +    }
 +
 +    public void setFromOpenVR(jopenvr.HmdMatrix44_t in) {

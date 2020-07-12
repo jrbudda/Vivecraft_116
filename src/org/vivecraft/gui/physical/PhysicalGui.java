@@ -19,7 +19,7 @@ import net.minecraft.inventory.container.CraftingResultSlot;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 
 public abstract class PhysicalGui{
@@ -55,11 +55,11 @@ public abstract class PhysicalGui{
 	/**
 	 * Returns the base position of this gui
 	 * */
-	public abstract Vec3d getAnchorPos(double partialTicks);
+	public abstract Vector3d getAnchorPos(double partialTicks);
 
 	public abstract Quaternion getAnchorRotation(double partialTicks);
 
-	public final Vec3d getAnchorPos(){
+	public final Vector3d getAnchorPos(){
 		return getAnchorPos(Minecraft.getInstance().getRenderPartialTicks());
 	}
 
@@ -114,8 +114,8 @@ public abstract class PhysicalGui{
 	static boolean isMainPart(PlayerEntity player, BlockState blockState, BlockPos pos){
 
 //		if(blockState.getBlock() instanceof ChestBlock){
-//			Vec3d posVec=new Vec3d(pos).add(new Vec3d(0.5,0.5,0.5));
-//			Vec3d left=new Vec3d(1,0,0);
+//			Vector3d posVec=new Vector3d(pos).add(new Vector3d(0.5,0.5,0.5));
+//			Vector3d left=new Vector3d(1,0,0);
 //			Quaternion rot=getBlockOrientation(pos);
 //			BlockPos neighborPos=new BlockPos(posVec.add(rot.multiply(left)));
 //
@@ -136,20 +136,20 @@ public abstract class PhysicalGui{
 	 */
 	public static Quaternion getBlockOrientation(BlockPos pos) {
 //		BlockState blockState = Minecraft.getInstance().world.getBlockState(pos);
-//	//	Debug d=new Debug(new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5));
-//		Vec3d dir;
+//	//	Debug d=new Debug(new Vector3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5));
+//		Vector3d dir;
 //		if (blockState.getProperties().contains(HorizontalBlock.HORIZONTAL_FACING)) {
 //			Direction facing = blockState.get(HorizontalBlock.HORIZONTAL_FACING);
 //
-//			dir = new Vec3d(facing.getDirectionVec()).scale(-1);
+//			dir = new Vector3d(facing.getDirectionVec()).scale(-1);
 //			
 //		} else {
 //			dir = Minecraft.getInstance().player.getLookVec();
 //
 //			if (Math.abs(dir.x) > Math.abs(dir.z)) {
-//				dir = new Vec3d(Math.signum(dir.x), 0, 0);
+//				dir = new Vector3d(Math.signum(dir.x), 0, 0);
 //			} else {
-//				dir = new Vec3d(0, 0, Math.signum(dir.z));
+//				dir = new Vector3d(0, 0, Math.signum(dir.z));
 //			}
 //		}
 //		
@@ -157,8 +157,8 @@ public abstract class PhysicalGui{
 //			return new Quaternion(0, 180, 0); //parallel vectors need special case		
 //		}
 //		
-//	//	d.drawVector(Vec3d.ZERO,dir, Color.green);
-//	//	d.drawVector(Vec3d.ZERO,new Vec3d(0,0,1),Color.red);
+//	//	d.drawVector(Vector3d.ZERO,dir, Color.green);
+//	//	d.drawVector(Vector3d.ZERO,new Vector3d(0,0,1),Color.red);
 //		
 //		return Quaternion.createFromToVector(new Vector3(0, 0, 1), new Vector3(dir));
 		return null;

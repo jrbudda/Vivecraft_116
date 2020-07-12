@@ -24,7 +24,7 @@ import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.shapes.VoxelShape;
 
 public class ClimbTracker extends Tracker{
@@ -41,9 +41,9 @@ public class ClimbTracker extends Tracker{
 	private boolean gravityOverride=false;
 	public boolean forceActivate = false;
 
-	public Vec3d[] latchStart = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
-	public Vec3d[] latchStart_room = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
-	public Vec3d[] latchStartBody  = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
+	public Vector3d[] latchStart = new Vector3d[]{new Vector3d(0,0,0), new Vector3d(0,0,0)};
+	public Vector3d[] latchStart_room = new Vector3d[]{new Vector3d(0,0,0), new Vector3d(0,0,0)};
+	public Vector3d[] latchStartBody  = new Vector3d[]{new Vector3d(0,0,0), new Vector3d(0,0,0)};
 
 	public int latchStartController = -1;
 	boolean wantjump = false;
@@ -171,7 +171,7 @@ public class ClimbTracker extends Tracker{
 
 		boolean[] allowed = new boolean [2];
 
-		Vec3d[] cpos = new Vec3d[2];
+		Vector3d[] cpos = new Vector3d[2];
 
 		boolean nope = false;
 
@@ -181,7 +181,7 @@ public class ClimbTracker extends Tracker{
 		boolean ladder = false;
 		for(int c=0;c<2;c++){	
 			cpos[c] = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
-			Vec3d controllerDir = mc.vrPlayer.vrdata_world_pre.getController(c).getDirection();
+			Vector3d controllerDir = mc.vrPlayer.vrdata_world_pre.getController(c).getDirection();
 			inblock[c] = false;
 
 			BlockPos bp = new BlockPos(cpos[c]);
@@ -197,7 +197,7 @@ public class ClimbTracker extends Tracker{
 
 			if(!mc.climbTracker.isClimbeyClimb()){	
 
-				Vec3d controllerPosNear = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition().subtract(controllerDir.scale(0.2));
+				Vector3d controllerPosNear = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition().subtract(controllerDir.scale(0.2));
 
 				AxisAlignedBB conBB = new AxisAlignedBB(cpos[c], controllerPosNear);
 
@@ -300,7 +300,7 @@ public class ClimbTracker extends Tracker{
 					} 
 				} 
 				else {
-					Vec3d hdel = latchStart[c].subtract(cpos[c] );
+					Vector3d hdel = latchStart[c].subtract(cpos[c] );
 					double dist = hdel.length();
 					if(dist > 0.5f) 
 						inblock[c] = false;
@@ -328,7 +328,7 @@ public class ClimbTracker extends Tracker{
 				inblock[c] = box[c] != null && box[c].offset(bp).contains(cpos[c]);
 
 				if(!inblock[c]){
-					Vec3d hdel = latchStart[c].subtract(cpos[c] );
+					Vector3d hdel = latchStart[c].subtract(cpos[c] );
 					double dist = hdel.length();
 					if(dist > 0.5f) 
 						button[c] = false;
@@ -441,10 +441,10 @@ public class ClimbTracker extends Tracker{
 		}
 
 
-		Vec3d now = mc.vrPlayer.vrdata_world_pre.getController(latchStartController).getPosition();
-		Vec3d start = mc.vrPlayer.room_to_world_pos(latchStart_room[latchStartController], mc.vrPlayer.vrdata_world_pre);
+		Vector3d now = mc.vrPlayer.vrdata_world_pre.getController(latchStartController).getPosition();
+		Vector3d start = mc.vrPlayer.room_to_world_pos(latchStart_room[latchStartController], mc.vrPlayer.vrdata_world_pre);
 
-		Vec3d delta= now.subtract(start);
+		Vector3d delta= now.subtract(start);
 
 		latchStart_room[latchStartController] = mc.vrPlayer.vrdata_room_pre.getController(latchStartController).getPosition();
 
@@ -453,7 +453,7 @@ public class ClimbTracker extends Tracker{
 
 		if(!jump){
 
-			Vec3d grab = latchStart[latchStartController];
+			Vector3d grab = latchStart[latchStartController];
 	
 			if(grabbed) 
 				player.setMotion(0, 0, 0);
@@ -501,8 +501,8 @@ public class ClimbTracker extends Tracker{
 					&& con <= hmd/2  // hands down below waist
 					&&	latchStart[latchStartController].y > latchbox[latchStartController].maxY*0.8 + b.getY() // latched onto top 20% of block 
 					){		
-				Vec3d dir = mc.vrPlayer.vrdata_world_pre.hmd.getDirection().scale(0.1f);
-				Vec3d hdir = new Vec3d(dir.x, 0, dir.z).normalize().scale(0.1); //check if free spot
+				Vector3d dir = mc.vrPlayer.vrdata_world_pre.hmd.getDirection().scale(0.1f);
+				Vector3d hdir = new Vector3d(dir.x, 0, dir.z).normalize().scale(0.1); //check if free spot
 
 
 				boolean ok = mc.world.hasNoCollisions(player, player.getBoundingBox()
@@ -585,9 +585,9 @@ public class ClimbTracker extends Tracker{
 
 		} else { //jump!
 			wantjump = false;
-			Vec3d pl = player.getPositionVec().subtract(delta);
+			Vector3d pl = player.getPositionVec().subtract(delta);
 
-			Vec3d m = MCOpenVR.controllerHistory[latchStartController].netMovement(0.3);
+			Vector3d m = MCOpenVR.controllerHistory[latchStartController].netMovement(0.3);
 			double s = MCOpenVR.controllerHistory[latchStartController].averageSpeed(0.3f);
 			m = m.scale(0.66 * s);
 			float limit = 0.66f;

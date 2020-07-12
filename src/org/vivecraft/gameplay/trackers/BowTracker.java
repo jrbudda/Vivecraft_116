@@ -23,7 +23,7 @@ import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
 
@@ -44,13 +44,13 @@ public class BowTracker extends Tracker {
 	private double maxDraw ;
 	private long maxDrawMillis=1100;
 
-	private Vec3d aim;
+	private Vector3d aim;
 
 	public BowTracker(Minecraft mc) {
 		super(mc);
 	}
 
-	public Vec3d getAimVector(){
+	public Vector3d getAimVector(){
 		return aim;
 //		if(isDrawing)return aim;
 //		return leftHandAim;
@@ -119,7 +119,7 @@ public class BowTracker extends Tracker {
 		OpenVRPlayer provider = mc.vrPlayer;
 
 		if(mc.vrSettings.seated){
-			aim = vrData.getController(0).getCustomVector(new Vec3d(0,0,1));
+			aim = vrData.getController(0).getCustomVector(new Vector3d(0,0,1));
 			return;
 		}
 		
@@ -131,24 +131,24 @@ public class BowTracker extends Tracker {
 		maxDraw = mc.player.getHeight() * 0.22;
 
 		//these are wrong since this is called every frame but should be fine so long as they're only compared to each other.
-		Vec3d rightPos = vrData.getController(0).getPosition();
-		Vec3d leftPos = vrData.getController(1).getPosition();
+		Vector3d rightPos = vrData.getController(0).getPosition();
+		Vector3d leftPos = vrData.getController(1).getPosition();
 		//
 			
 		controllersDist = leftPos.distanceTo(rightPos);
 
-		Vec3d up = new Vec3d(0,1,0);
+		Vector3d up = new Vector3d(0,1,0);
 
-		Vec3d stringPos=vrData.getHand(1).getCustomVector(up).scale(maxDraw*0.5).add(leftPos);
+		Vector3d stringPos=vrData.getHand(1).getCustomVector(up).scale(maxDraw*0.5).add(leftPos);
 		double notchDist=rightPos.distanceTo(stringPos);
 
 		aim = rightPos.subtract(leftPos).normalize();
 
-		Vec3d rightaim3 = vrData.getController(0).getCustomVector(new Vec3d(0,0,-1));
+		Vector3d rightaim3 = vrData.getController(0).getCustomVector(new Vector3d(0,0,-1));
 
 		Vector3 rightAim = new Vector3((float)rightaim3.x, (float) rightaim3.y, (float) rightaim3.z);
 
-		Vec3d leftGripDown = vrData.getHand(1).getCustomVector(new Vec3d(0, -1, 0));
+		Vector3d leftGripDown = vrData.getHand(1).getCustomVector(new Vector3d(0, -1, 0));
 		 
 		Vector3 leftAim = new Vector3((float)leftGripDown.x, (float) leftGripDown.y, (float) leftGripDown.z);
 		

@@ -11,7 +11,7 @@
  import net.minecraft.entity.LivingEntity;
 @@ -15,6 +18,7 @@
  import net.minecraft.util.math.RayTraceResult;
- import net.minecraft.util.math.vector.Vec3d;
+ import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
 +import net.optifine.reflect.Reflector;
  
@@ -35,14 +35,14 @@
 @@ -181,6 +191,13 @@
              if (entity != null)
              {
-                 Vec3d vec3d = entity.getLookVec();
+                 Vector3d vector3d = entity.getLookVec();
 +                //Vivecraft.
 +            	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(source.getTrueSource().getUniqueID());
 +            	if (vp !=null && vp.isVR())
 +            	{ 
-+            		vec3d = vp.getHMDDir();
++            		vector3d = vp.getHMDDir();
 +            	}               
 +            	//
-                 this.setMotion(vec3d);
-                 this.accelerationX = vec3d.x * 0.1D;
-                 this.accelerationY = vec3d.y * 0.1D;
+                 this.setMotion(vector3d);
+                 this.accelerationX = vector3d.x * 0.1D;
+                 this.accelerationY = vector3d.y * 0.1D;

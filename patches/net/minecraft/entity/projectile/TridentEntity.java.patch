@@ -15,17 +15,17 @@
              else if (i > 0)
              {
                  this.setNoClip(true);
--                Vec3d vec3d = new Vec3d(entity.getPosX() - this.getPosX(), entity.getPosYEye() - this.getPosY(), entity.getPosZ() - this.getPosZ());
+-                Vector3d vector3d = new Vector3d(entity.getPosX() - this.getPosX(), entity.getPosYEye() - this.getPosY(), entity.getPosZ() - this.getPosZ());
 +                //Vivecraft       
-+                Vec3d pos = new Vec3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());
++                Vector3d pos = new Vector3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());
 +            	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(entity.getUniqueID());
 +            	if (vp !=null && vp.isVR())
 +            	{
 +            		pos = vp.getControllerPos(0);
 +            	}           	         	
-+                Vec3d vec3d = new Vec3d(pos.x - this.getPosX(), pos.y- this.getPosY(), pos.z - this.getPosZ());
++                Vector3d vector3d = new Vector3d(pos.x - this.getPosX(), pos.y- this.getPosY(), pos.z - this.getPosZ());
 +                //
-+               // Vec3d vec3d = new Vec3d(entity.getPosX() - this.getPosX(), entity.getPosYEye() - this.getPosY(), entity.getPosZ() - this.getPosZ());
-                 this.setRawPosition(this.getPosX(), this.getPosY() + vec3d.y * 0.015D * (double)i, this.getPosZ());
++               // Vector3d vector3d = new Vector3d(entity.getPosX() - this.getPosX(), entity.getPosYEye() - this.getPosY(), entity.getPosZ() - this.getPosZ());
+                 this.setRawPosition(this.getPosX(), this.getPosY() + vector3d.y * 0.015D * (double)i, this.getPosZ());
  
                  if (this.world.isRemote)

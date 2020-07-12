@@ -8,15 +8,17 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.StandingSignBlock;
  import net.minecraft.client.gui.DialogTexts;
-@@ -53,6 +54,7 @@
+@@ -53,6 +54,9 @@
              this.close();
          }));
          this.tileSign.setEditable(false);
++        //Vivecraft
 +        KeyboardHandler.setOverlayShowing(true);
++        //
          this.textInputUtil = new TextInputUtil(() ->
          {
              return this.field_238846_r_[this.editLine];
-@@ -77,6 +79,7 @@
+@@ -77,6 +81,7 @@
          }
  
          this.tileSign.setEditable(true);

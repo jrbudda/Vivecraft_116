@@ -14,7 +14,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
 {
@@ -23,7 +23,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     public ModelRenderer leftShoulder;
     public ModelRenderer rightShoulder;
     public ModelRenderer vrHMD;
-    public Vec3d renderPos;
+    public Vector3d renderPos;
     ResourceLocation DIAMOND_HMD = new ResourceLocation("vivecraft:textures/diamond_hmd.png");
     ResourceLocation GOLD_HMD = new ResourceLocation("vivecraft:textures/gold_hmd.png");
     ResourceLocation BLACK_HMD = new ResourceLocation("vivecraft:textures/black_hmd.png");
@@ -134,7 +134,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     		//
     		
     		//Left Arm
-    		Vec3d larm = rotInfo.leftArmPos.subtract(renderPos).add(0,handsYOffset,0);
+    		Vector3d larm = rotInfo.leftArmPos.subtract(renderPos).add(0,handsYOffset,0);
     		larm = larm.rotateYaw((float)(-Math.PI + bodyYaw));     		      		        		
     		larm = larm.scale(16/rotInfo.heightScale);
     		this.bipedLeftArm.setRotationPoint((float)-larm.x, (float)-larm.y, (float)larm.z);          
@@ -149,7 +149,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     		//
     		
     		//Left Shoulder
-    		Vec3d lsh = new Vec3d(leftShoulder.rotationPointX + larm.x, 
+    		Vector3d lsh = new Vector3d(leftShoulder.rotationPointX + larm.x, 
     				leftShoulder.rotationPointY + larm.y,
     				leftShoulder.rotationPointZ - larm.z);
     		
@@ -164,7 +164,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     		//
     		
     		//Right arm
-    		Vec3d rarm = rotInfo.rightArmPos.subtract(renderPos).add(0,handsYOffset,0);
+    		Vector3d rarm = rotInfo.rightArmPos.subtract(renderPos).add(0,handsYOffset,0);
         	rarm = rarm.rotateYaw((float)(-Math.PI + bodyYaw));      
     	
         	rarm = rarm.scale(16/rotInfo.heightScale); //because.
@@ -180,7 +180,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     		//
     		
     		//Right shoulder
-    		Vec3d rsh = new Vec3d(rightShoulder.rotationPointX + rarm.x, 
+    		Vector3d rsh = new Vector3d(rightShoulder.rotationPointX + rarm.x, 
     				rightShoulder.rotationPointY + rarm.y,
     				rightShoulder.rotationPointZ - rarm.z);
 

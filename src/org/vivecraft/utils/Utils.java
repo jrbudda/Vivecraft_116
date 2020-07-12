@@ -55,7 +55,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import jopenvr.HmdMatrix34_t;
 import net.minecraft.client.Minecraft;
 import net.minecraft.particles.IParticleData;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class Utils
 {
@@ -87,7 +87,7 @@ public class Utils
 		return new Vector3(vector.x, vector.y, vector.z);
 	}
 
-	public static org.vivecraft.utils.math.Vector3 convertToOVRVector(Vec3d vector) {
+	public static org.vivecraft.utils.math.Vector3 convertToOVRVector(Vector3d vector) {
 		return new Vector3((float)vector.x, (float)vector.y, (float)vector.z);
 	}
 	
@@ -249,20 +249,20 @@ public class Utils
 		return new Vector3(vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public static Vector3 convertVector(Vec3d vector) {
+	public static Vector3 convertVector(Vector3d vector) {
 		return new Vector3((float)vector.x, (float)vector.y, (float)vector.z);
 	}
 
-	public static Vector3f convertToVector3f(Vec3d vector) {
+	public static Vector3f convertToVector3f(Vector3d vector) {
 		return new Vector3f((float)vector.x, (float)vector.y, (float)vector.z);
 	}
 
-	public static Vec3d convertToVec3d(Vector3 vector) {
-		return new Vec3d(vector.getX(), vector.getY(), vector.getZ());
+	public static Vector3d convertToVector3d(Vector3 vector) {
+		return new Vector3d(vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public static Vec3d convertToVec3d(Vector3f vector) {
-		return new Vec3d(vector.x, vector.y, vector.z);
+	public static Vector3d convertToVector3d(Vector3f vector) {
+		return new Vector3d(vector.x, vector.y, vector.z);
 	}
 
 	public static Vector3f transformVector(Matrix4f matrix, Vector3f vector, boolean point) {
@@ -669,11 +669,11 @@ public class Utils
 		// Return the interpolated quaternion
 		return new Quaternion(w, x, y, z);
 	}
-	public static Vec3d vecLerp(Vec3d start, Vec3d end, double fraction) {
+	public static Vector3d vecLerp(Vector3d start, Vector3d end, double fraction) {
 		double x = start.x + (end.x - start.x) * fraction;
 		double y = start.y + (end.y - start.y) * fraction;
 		double z = start.z + (end.z - start.z) * fraction;
-		return new Vec3d(x, y, z);
+		return new Vector3d(x, y, z);
 	}
 
 	public static float applyDeadzone(float axis, float deadzone) {
@@ -685,7 +685,7 @@ public class Utils
 	}
 	
 	private static final Random avRandomizer = new Random();
-	public static void spawnParticles(IParticleData type, int count, Vec3d position, Vec3d size, double speed ){
+	public static void spawnParticles(IParticleData type, int count, Vector3d position, Vector3d size, double speed ){
 		Minecraft mc=Minecraft.getInstance();
 		for (int k = 0; k < count; ++k)
 		{

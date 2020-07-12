@@ -21,7 +21,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.BlockRayTraceResult;
 @@ -42,6 +48,7 @@
- import net.minecraft.util.math.vector.Vec3d;
+ import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
 +import net.optifine.reflect.Reflector;
@@ -41,8 +41,8 @@
 +    	
 +    	if (vp !=null && vp.isVR())
 +    	{
-+    		Vec3d aim = vp.getControllerDir(vp.activeHand);
-+    		Vec3d aimSource = vp.getControllerPos(vp.activeHand);
++    		Vector3d aim = vp.getControllerDir(vp.activeHand);
++    		Vector3d aimSource = vp.getControllerPos(vp.activeHand);
 +    		float pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 +    		float yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
 +    		this.setLocationAndAngles(aimSource.x + aim.x*0.6f, aimSource.y+aim.y*0.6f, aimSource.z+aim.z*0.6f, yaw, pitch);
@@ -60,9 +60,9 @@
 +    	}
 +    	//END VIVE
 + 
-         Vec3d vec3d = new Vec3d((double)(-f3), (double)MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
-         double d3 = vec3d.length();
-         vec3d = vec3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
+         Vector3d vector3d = new Vector3d((double)(-f3), (double)MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
+         double d3 = vector3d.length();
+         vector3d = vector3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
 @@ -275,6 +302,19 @@
              this.setMotion(this.getMotion().scale(0.92D));
              this.recenterBoundingBox();

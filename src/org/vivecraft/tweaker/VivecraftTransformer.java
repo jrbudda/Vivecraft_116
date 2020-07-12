@@ -32,7 +32,8 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
             "net/minecraft/item/Item",
             "net/minecraft/item/Item$Properties",
             "net/minecraft/client/gui/screen/inventory/ContainerScreen",
-            "net/minecraft/client/gui/screen/inventory/CreativeScreen"
+            "net/minecraft/client/gui/screen/inventory/CreativeScreen",
+            "net/minecraft/fluid/FluidState"
     );
     
     public VivecraftTransformer(ZipFile ZipFile)

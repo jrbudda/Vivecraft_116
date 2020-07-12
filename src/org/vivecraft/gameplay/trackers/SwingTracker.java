@@ -41,15 +41,15 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
 import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class SwingTracker extends Tracker{
 
 	//VIVECRAFT SWINGING SUPPORT
-	private Vec3d[] lastWeaponEndAir = new Vec3d[]{new Vec3d(0, 0, 0), new Vec3d(0,0,0)};
+	private Vector3d[] lastWeaponEndAir = new Vector3d[]{new Vector3d(0, 0, 0), new Vector3d(0,0,0)};
 	private boolean[] lastWeaponSolid = new boolean[2];
-	private Vec3d[] weaponEnd= new Vec3d[2];
-	private Vec3d[] weaponEndlast= new Vec3d[]{new Vec3d(0, 0, 0), new Vec3d(0,0,0)};
+	private Vector3d[] weaponEnd= new Vector3d[2];
+	private Vector3d[] weaponEndlast= new Vector3d[]{new Vector3d(0, 0, 0), new Vector3d(0,0,0)};
 
 	public boolean[] shouldIlookatMyHand= new boolean[2];
 	public boolean[] IAmLookingAtMyHand= new boolean[2];
@@ -108,14 +108,14 @@ public class SwingTracker extends Tracker{
        
         mc.getProfiler().startSection("updateSwingAttack");
         
-        Vec3d forward = new Vec3d(0,0,-1);
+        Vector3d forward = new Vector3d(0,0,-1);
         
         for(int c =0 ;c<2;c++){
         	
         	if (mc.climbTracker.isGrabbingLadder(c)) continue;
         	
-        	Vec3d handPos = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
-        	Vec3d handDirection = mc.vrPlayer.vrdata_world_pre.getHand(c).getCustomVector(forward);
+        	Vector3d handPos = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
+        	Vector3d handDirection = mc.vrPlayer.vrdata_world_pre.getHand(c).getCustomVector(forward);
 
         	ItemStack is = player.getHeldItem(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);
         	Item item = null;
@@ -165,7 +165,7 @@ public class SwingTracker extends Tracker{
 
         	weaponLength *= mc.vrPlayer.vrdata_world_pre.worldScale;
 
-        	weaponEnd[c] = new Vec3d(
+        	weaponEnd[c] = new Vector3d(
         			handPos.x + handDirection.x * weaponLength,
         			handPos.y + handDirection.y * weaponLength,
         			handPos.z + handDirection.z * weaponLength);     
@@ -173,13 +173,13 @@ public class SwingTracker extends Tracker{
         	if (disableSwing > 0 ) {
         		disableSwing--;
         		if(disableSwing<0)disableSwing = 0;
-        		weaponEndlast[c] = new Vec3d(weaponEnd[c].x,	 weaponEnd[c].y, 	 weaponEnd[c].z);
+        		weaponEndlast[c] = new Vector3d(weaponEnd[c].x,	 weaponEnd[c].y, 	 weaponEnd[c].z);
         		return;
         	}
 
         	float speed = (float) MCOpenVR.controllerHistory[c].averageSpeed(0.1);
 
-        	weaponEndlast[c] = new Vec3d(weaponEnd[c].x, weaponEnd[c].y, weaponEnd[c].z);
+        	weaponEndlast[c] = new Vector3d(weaponEnd[c].x, weaponEnd[c].y, weaponEnd[c].z);
 
         	boolean inAnEntity = false;
         	boolean insolidBlock = false;
@@ -215,7 +215,7 @@ public class SwingTracker extends Tracker{
         	
         	if(!inAnEntity) { //extended check vs non players.   
         		
-        		Vec3d extWeapon = new Vec3d(
+        		Vector3d extWeapon = new Vector3d(
     			handPos.x + handDirection.x * (weaponLength + entityReachAdd),
     			handPos.y + handDirection.y * (weaponLength + entityReachAdd),
     			handPos.z + handDirection.z * (weaponLength + entityReachAdd));
@@ -347,7 +347,7 @@ public class SwingTracker extends Tracker{
         	
             if ((!inAnEntity && !insolidBlock ) || lastWeaponEndAir[c].length() ==0)
         	{
-        		this.lastWeaponEndAir[c] = new Vec3d(
+        		this.lastWeaponEndAir[c] = new Vector3d(
         				weaponEnd[c].x,
         				weaponEnd[c].y,
         				weaponEnd[c].z

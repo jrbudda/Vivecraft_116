@@ -19,7 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 /**
@@ -51,16 +51,16 @@ public class PlayerModelController {
 		public boolean seated, reverse;
 		public int hmd = 0;
 		public Quaternion leftArmQuat, rightArmQuat, headQuat; 
-		public Vec3d leftArmRot, rightArmRot, headRot; 
-		public Vec3d leftArmPos, rightArmPos, Headpos;
+		public Vector3d leftArmRot, rightArmRot, headRot; 
+		public Vector3d leftArmPos, rightArmPos, Headpos;
 		public float worldScale;
 		public float heightScale;
 		
 		public double getBodyYawRadians() {
-			Vec3d diff = leftArmPos.subtract(rightArmPos).rotateYaw((float)-Math.PI/2);
+			Vector3d diff = leftArmPos.subtract(rightArmPos).rotateYaw((float)-Math.PI/2);
     		if(reverse) diff = diff.scale(-1);
     		if(seated) diff = rightArmRot;    		
-    		Vec3d avg = Utils.vecLerp(diff, headRot, 0.5); 		
+    		Vector3d avg = Utils.vecLerp(diff, headRot, 0.5); 		
     		double ltor = Math.atan2(-avg.x, avg.z);
     		return ltor;
 		}
@@ -72,7 +72,7 @@ public class PlayerModelController {
 		if (!localPlayer && mc.player.getUniqueID().equals(uuid))
 			return; // Don't update local player from server packet
 	
-		Vec3d hmdpos = null, c0pos = null, c1pos = null;
+		Vector3d hmdpos = null, c0pos = null, c1pos = null;
 		Quaternion hmdq = null, c0q = null, c1q = null;
 		boolean seated=false, reverse = false;
 		for (int i = 0; i <= 2; i++) {
@@ -109,21 +109,21 @@ public class PlayerModelController {
 					if(bool){ //seated
 						seated = true;
 					}
-					hmdpos = new Vec3d(posx, posy, posz);
+					hmdpos = new Vector3d(posx, posy, posz);
 					hmdq = new Quaternion(rotw, rotx, roty, rotz);
 					break;
 				case 1: 
 					if(bool){ //reverse
 						reverse = true;
 					}
-					c0pos = new Vec3d(posx, posy, posz);
+					c0pos = new Vector3d(posx, posy, posz);
 					c0q = new Quaternion(rotw, rotx, roty, rotz);
 					break;
 				case 2: 
 					if(bool){ //reverse
 						reverse = true;
 					}
-					c1pos = new Vec3d(posx, posy, posz);
+					c1pos = new Vector3d(posx, posy, posz);
 					c1q = new Quaternion(rotw, rotx, roty, rotz);
 					break;
 				}
@@ -143,9 +143,9 @@ public class PlayerModelController {
 		out.reverse =reverse;
 		out.seated = seated;
 		if(donors.containsKey(uuid))out.hmd = donors.get(uuid);
-		out.leftArmRot=new Vec3d(dir3.getX(), dir3.getY(), dir3.getZ());
-		out.rightArmRot=new Vec3d(dir2.getX(), dir2.getY(), dir2.getZ());
-		out.headRot = new Vec3d(dir.getX(), dir.getY(), dir.getZ());
+		out.leftArmRot=new Vector3d(dir3.getX(), dir3.getY(), dir3.getZ());
+		out.rightArmRot=new Vector3d(dir2.getX(), dir2.getY(), dir2.getZ());
+		out.headRot = new Vector3d(dir.getX(), dir.getY(), dir.getZ());
 		out.Headpos = hmdpos;
 		out.leftArmPos = c1pos;
 		out.rightArmPos = c0pos;
@@ -196,7 +196,7 @@ public class PlayerModelController {
 					if (donors.getOrDefault(player.getUniqueID(), 0) > 3) {		
 						if (rand.nextInt(10) < 4) {
 							RotInfo rotInfo = vivePlayers.get(player.getUniqueID());
-							Vec3d derp = player.getLookVec();
+							Vector3d derp = player.getLookVec();
 							if (rotInfo != null) {
 								derp = rotInfo.leftArmPos.subtract(rotInfo.rightArmPos).rotateYaw((float)-Math.PI / 2);
 								if (rotInfo.reverse)
@@ -211,7 +211,7 @@ public class PlayerModelController {
 							derp = derp.scale(0.1f);
 
 							// Use hmd pos for self so we don't have butt sparkles in face
-							Vec3d pos = rotInfo != null && player == mc.player ? rotInfo.Headpos : player.getEyePosition(1);
+							Vector3d pos = rotInfo != null && player == mc.player ? rotInfo.Headpos : player.getEyePosition(1);
 							Particle particle = mc.particles.addParticle(ParticleTypes.FIREWORK,
 									pos.x + (player.isSneaking() ? -derp.x * 3 : 0) + ((double) this.rand.nextFloat() - 0.5D) * .02f,
 									pos.y - (player.isSneaking() ? 1.0f : 0.8f) + ((double) this.rand.nextFloat() - 0.5D) * .02f,
@@ -252,9 +252,9 @@ public class PlayerModelController {
 			rotLerp.rightArmQuat =rot.rightArmQuat;//Utils.slerp(rotLast.rightArmQuat, rot.rightArmQuat, pt);
 			rotLerp.headQuat = rot.headQuat;//Utils.slerp(rotLast.headQuat, rot.headQuat, pt);
 			Vector3 forward = new Vector3(0,0,-1);
-			rotLerp.leftArmRot = Utils.vecLerp(rotLast.leftArmRot,Utils.convertToVec3d(rotLerp.leftArmQuat.multiply(forward)), pt);
-			rotLerp.rightArmRot = Utils.vecLerp(rotLast.rightArmRot, Utils.convertToVec3d(rotLerp.rightArmQuat.multiply(forward)), pt);
-			rotLerp.headRot = Utils.vecLerp(rotLast.headRot,Utils.convertToVec3d(rotLerp.headQuat.multiply(forward)), pt);
+			rotLerp.leftArmRot = Utils.vecLerp(rotLast.leftArmRot,Utils.convertToVector3d(rotLerp.leftArmQuat.multiply(forward)), pt);
+			rotLerp.rightArmRot = Utils.vecLerp(rotLast.rightArmRot, Utils.convertToVector3d(rotLerp.rightArmQuat.multiply(forward)), pt);
+			rotLerp.headRot = Utils.vecLerp(rotLast.headRot,Utils.convertToVector3d(rotLerp.headQuat.multiply(forward)), pt);
 			rotLerp.heightScale = rot.heightScale;
 			rotLerp.worldScale = rot.worldScale;
 			return rotLerp;
@@ -309,14 +309,14 @@ public class PlayerModelController {
 	 * Simplified: Takes hmd-forward when looking at horizon, takes hmd-up when looking at ground.
 	 * */
 	public static float getFacingYaw(RotInfo rotInfo){
-		Vec3d facingVec=getOrientVec(rotInfo.headQuat);
+		Vector3d facingVec=getOrientVec(rotInfo.headQuat);
 		float yaw=(float)Math.toDegrees( Math.atan2(facingVec.x,facingVec.z));
 		return yaw;
 	}
 	
-	public static Vec3d getOrientVec(Quaternion quat){
-		Vec3d facingPlaneNormal=quat.multiply(new Vec3d(0,0,-1))
-				.crossProduct(quat.multiply(new Vec3d(0,1,0))).normalize();
-		return new Vec3d(0,1,0).crossProduct(facingPlaneNormal).normalize();
+	public static Vector3d getOrientVec(Quaternion quat){
+		Vector3d facingPlaneNormal=quat.multiply(new Vector3d(0,0,-1))
+				.crossProduct(quat.multiply(new Vector3d(0,1,0))).normalize();
+		return new Vector3d(0,1,0).crossProduct(facingPlaneNormal).normalize();
 	}	
 }

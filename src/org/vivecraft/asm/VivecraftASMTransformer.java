@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 
 import org.vivecraft.asm.handler.ASMHandlerContainerScreen;
 import org.vivecraft.asm.handler.ASMHandlerCreativeScreen;
+import org.vivecraft.asm.handler.ASMHandlerFluidState;
 
 import cpw.mods.modlauncher.api.ITransformer;
 import cpw.mods.modlauncher.api.ITransformerVotingContext;
@@ -21,6 +22,7 @@ public class VivecraftASMTransformer implements ITransformer<ClassNode> {
 	public VivecraftASMTransformer() {
 		asmHandlers.add(new ASMHandlerContainerScreen());
 		asmHandlers.add(new ASMHandlerCreativeScreen());
+		asmHandlers.add(new ASMHandlerFluidState());
 	}
 
 	@Override

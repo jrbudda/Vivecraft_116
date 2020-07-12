@@ -11,8 +11,8 @@ import org.vivecraft.utils.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.Main;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.util.math.vector.Vec2f;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class KeyboardHandler {
 	//keyboard
@@ -20,7 +20,7 @@ public class KeyboardHandler {
 	public static boolean Showing = false;
 	public static GuiKeyboard UI = new GuiKeyboard();
 	public static PhysicalKeyboard physicalKeyboard = new PhysicalKeyboard();
-	public static Vec3d Pos_room = new Vec3d(0,0,0);
+	public static Vector3d Pos_room = new Vector3d(0,0,0);
 	public static Matrix4f Rotation_room = new Matrix4f();
 	private static boolean lpl, lps, PointedL, PointedR;
 	public static boolean keyboardForGui;
@@ -65,8 +65,8 @@ public class KeyboardHandler {
 			return; // Skip the rest of this
 		}
 		
-		Vec2f tex1 = GuiHandler.getTexCoordsForCursor(Pos_room, Rotation_room, mc.currentScreen, GuiHandler.guiScale, mc.vrPlayer.vrdata_room_pre.getController(1));
-		Vec2f tex2 = GuiHandler.getTexCoordsForCursor(Pos_room, Rotation_room, mc.currentScreen, GuiHandler.guiScale, mc.vrPlayer.vrdata_room_pre.getController(0));
+		Vector2f tex1 = GuiHandler.getTexCoordsForCursor(Pos_room, Rotation_room, mc.currentScreen, GuiHandler.guiScale, mc.vrPlayer.vrdata_room_pre.getController(1));
+		Vector2f tex2 = GuiHandler.getTexCoordsForCursor(Pos_room, Rotation_room, mc.currentScreen, GuiHandler.guiScale, mc.vrPlayer.vrdata_room_pre.getController(0));
 	
 		float u = tex2.x;
 		float v = tex2.y;
@@ -130,39 +130,39 @@ public class KeyboardHandler {
 		
 		org.vivecraft.utils.lwjgl.Matrix4f matrix = new org.vivecraft.utils.lwjgl.Matrix4f();
 		if (mc.vrSettings.physicalKeyboard) {
-			Vec3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
-			Vec3d offset = new Vec3d(0, -0.5, 0.3);
+			Vector3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
+			Vector3d offset = new Vector3d(0, -0.5, 0.3);
 			offset = offset.rotateYaw((float)Math.toRadians(-mc.vrPlayer.vrdata_room_pre.hmd.getYaw()));
-			Pos_room = new Vec3d(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
+			Pos_room = new Vector3d(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 
 			float yaw = (float)Math.PI + (float)Math.toRadians(-mc.vrPlayer.vrdata_room_pre.hmd.getYaw());
 			Rotation_room = Matrix4f.rotationY(yaw);
 			Rotation_room = Matrix4f.multiply(Rotation_room, OpenVRUtil.rotationXMatrix((float)Math.PI * 0.8f));
 		} else if (guiRelative && GuiHandler.guiRotation_room != null) {
 			org.vivecraft.utils.lwjgl.Matrix4f guiRot = Utils.convertOVRMatrix(GuiHandler.guiRotation_room);
-			Vec3d guiUp = new Vec3d(guiRot.m10, guiRot.m11, guiRot.m12);
-			Vec3d guiFwd = new Vec3d(guiRot.m20, guiRot.m21, guiRot.m22).scale(0.25f);
+			Vector3d guiUp = new Vector3d(guiRot.m10, guiRot.m11, guiRot.m12);
+			Vector3d guiFwd = new Vector3d(guiRot.m20, guiRot.m21, guiRot.m22).scale(0.25f);
 			guiUp = guiUp.scale(0.80f);
 			matrix.translate(new org.vivecraft.utils.lwjgl.Vector3f((float)(GuiHandler.guiPos_room.x - guiUp.x), (float)(GuiHandler.guiPos_room.y - guiUp.y), (float)(GuiHandler.guiPos_room.z - guiUp.z)));
 			matrix.translate(new org.vivecraft.utils.lwjgl.Vector3f((float)(guiFwd.x), (float)(guiFwd.y), (float)(guiFwd.z)));
 			org.vivecraft.utils.lwjgl.Matrix4f.mul(matrix, guiRot, matrix);
 			matrix.rotate((float)Math.toRadians(30), new org.vivecraft.utils.lwjgl.Vector3f(-1, 0, 0)); // tilt it a bit
 			Rotation_room =   Utils.convertToOVRMatrix(matrix);
-			Pos_room = new Vec3d(Rotation_room.M[0][3],Rotation_room.M[1][3],Rotation_room.M[2][3]);
+			Pos_room = new Vector3d(Rotation_room.M[0][3],Rotation_room.M[1][3],Rotation_room.M[2][3]);
 			Rotation_room.M[0][3] = 0;
 			Rotation_room.M[1][3] = 0;
 			Rotation_room.M[2][3] = 0;
 
 		} else { //copied from vrplayer.onguiuscreenchanged
-			Vec3d v = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
-			Vec3d adj = new Vec3d(0,-0.5,-2);
-			Vec3d e = mc.vrPlayer.vrdata_room_pre.hmd.getCustomVector(adj);
-			Pos_room = new Vec3d(
+			Vector3d v = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
+			Vector3d adj = new Vector3d(0,-0.5,-2);
+			Vector3d e = mc.vrPlayer.vrdata_room_pre.hmd.getCustomVector(adj);
+			Pos_room = new Vector3d(
 					(e.x  / 2 + v.x),
 					(e.y / 2 + v.y),
 					(e.z / 2 + v.z));
 
-			Vec3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
+			Vector3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
 			Vector3 look = new Vector3();
 			look.setX((float) (Pos_room.x - pos.x));
 			look.setY((float) (Pos_room.y - pos.y));

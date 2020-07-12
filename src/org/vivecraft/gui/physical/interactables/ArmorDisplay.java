@@ -9,7 +9,7 @@ import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class ArmorDisplay extends PhysicalItemSlotGui{
 	//TODO better Model
@@ -68,12 +68,12 @@ public class ArmorDisplay extends PhysicalItemSlotGui{
 		int offset=inventory.metaData.armorOffset;
 		ArmorItemSlot helmet=new ArmorItemSlot(this,offset);
 		helmet.feetBound=false;
-		helmet.position=new Vec3d(0,0,0);
+		helmet.position=new Vector3d(0,0,0);
 		helmet.slot=inventory.container.getSlot(helmet.slotId);
 		armorSlots.add(helmet);
 
 		ArmorItemSlot chest=new ArmorItemSlot(this,offset+1);
-		chest.position=new Vec3d(0,-0.4,0);
+		chest.position=new Vector3d(0,-0.4,0);
 		chest.feetBound=false;
 		chest.slot=inventory.container.getSlot(chest.slotId);
 		armorSlots.add(chest);
@@ -81,11 +81,11 @@ public class ArmorDisplay extends PhysicalItemSlotGui{
 		ArmorItemSlot pants=new ArmorItemSlot(this,offset+2);
 		pants.slot=inventory.container.getSlot(pants.slotId);
 		pants.feetBound=true;
-		pants.position=new Vec3d(0,0.7,0);
+		pants.position=new Vector3d(0,0.7,0);
 		armorSlots.add(pants);
 
 		ArmorItemSlot boots=new ArmorItemSlot(this,offset+3);
-		boots.position=new Vec3d(0,0.1,0);
+		boots.position=new Vector3d(0,0.1,0);
 		boots.feetBound=true;
 		boots.slot=inventory.container.getSlot(boots.slotId);
 		armorSlots.add(boots);
@@ -147,7 +147,7 @@ public class ArmorDisplay extends PhysicalItemSlotGui{
 		}
 
 		@Override
-		public Vec3d getAnchorPos(double partialTicks) {
+		public Vector3d getAnchorPos(double partialTicks) {
 			if(feetBound)
 				return ArmorDisplay.this.getAnchorPos(partialTicks);
 			else{
@@ -158,8 +158,8 @@ public class ArmorDisplay extends PhysicalItemSlotGui{
 	}
 
 	@Override
-	public Vec3d getAnchorPos(double partialTicks) {
-		return new Vec3d(mc.gameRenderer.rveX,mc.gameRenderer.rveY,mc.gameRenderer.rveZ);
+	public Vector3d getAnchorPos(double partialTicks) {
+		return new Vector3d(mc.gameRenderer.rveX,mc.gameRenderer.rveY,mc.gameRenderer.rveZ);
 	}
 
 	@Override

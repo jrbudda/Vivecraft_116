@@ -11,15 +11,15 @@ import org.vivecraft.utils.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.Main;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.util.math.vector.Vec2f;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class RadialHandler {
 	//
 	public static Minecraft mc = Minecraft.getInstance();
 	private static boolean Showing = false;
 	public static GuiRadial UI = new GuiRadial();
-	public static Vec3d Pos_room = new Vec3d(0,0,0);
+	public static Vector3d Pos_room = new Vector3d(0,0,0);
 	public static Matrix4f Rotation_room = new Matrix4f();
 	private static boolean lpl, lps, PointedL, PointedR;
 
@@ -58,8 +58,8 @@ public class RadialHandler {
 		if(mc.vrSettings.seated) return;
 		if(Rotation_room == null) return;
 		
-		Vec2f tex1 = GuiHandler.getTexCoordsForCursor(Pos_room, Rotation_room, mc.currentScreen, GuiHandler.guiScale, mc.vrPlayer.vrdata_room_pre.getController(1));
-		Vec2f tex2 = GuiHandler.getTexCoordsForCursor(Pos_room, Rotation_room, mc.currentScreen, GuiHandler.guiScale, mc.vrPlayer.vrdata_room_pre.getController(0));
+		Vector2f tex1 = GuiHandler.getTexCoordsForCursor(Pos_room, Rotation_room, mc.currentScreen, GuiHandler.guiScale, mc.vrPlayer.vrdata_room_pre.getController(1));
+		Vector2f tex2 = GuiHandler.getTexCoordsForCursor(Pos_room, Rotation_room, mc.currentScreen, GuiHandler.guiScale, mc.vrPlayer.vrdata_room_pre.getController(0));
 	
 		float u = tex2.x;
 		float v = tex2.y;
@@ -132,10 +132,10 @@ public class RadialHandler {
 
 		Matrix4f matrix = new Matrix4f();
 
-		Vec3d v = pose.getPosition();
-		Vec3d adj = new Vec3d(0,0,-dist);
-		Vec3d e = pose.getCustomVector(adj);
-		Pos_room = new Vec3d(
+		Vector3d v = pose.getPosition();
+		Vector3d adj = new Vector3d(0,0,-dist);
+		Vector3d e = pose.getCustomVector(adj);
+		Pos_room = new Vector3d(
 				(e.x / 2 + v.x),
 				(e.y / 2 + v.y),
 				(e.z / 2 + v.z));

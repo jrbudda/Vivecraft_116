@@ -35,7 +35,7 @@
 -            int k = MathHelper.floor(zIn);
 +            
 +            //Vivecraft - fix which block column doesnt get rain.
-+            Vec3d me = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition();
++            Vector3d me = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition();
 +            if(mc.currentPass == RenderPass.THIRD)
 +                 me = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.THIRD).getPosition();           
 +            int i = MathHelper.floor(me.x);
@@ -46,7 +46,7 @@
              Tessellator tessellator = Tessellator.getInstance();
              BufferBuilder bufferbuilder = tessellator.getBuffer();
              RenderSystem.enableAlphaTest();
-@@ -527,7 +539,8 @@
+@@ -527,12 +539,13 @@
          RenderSystem.texParameter(3553, 10242, 10497);
          RenderSystem.texParameter(3553, 10243, 10497);
          RenderSystem.bindTexture(0);
@@ -54,8 +54,17 @@
 +        mc.stereoProvider.reinitFrameBuffers("Resource Reload");
 +       // this.makeEntityOutlineShader();
  
-         if (Minecraft.func_238218_y_())
-         {
+-        if (Minecraft.func_238218_y_())
+-        {
+-            this.func_239233_v_();
+-        }
++//        if (Minecraft.func_238218_y_())
++//        {
++//            this.func_239233_v_();
++//        }
+     }
+ 
+     public void makeEntityOutlineShader()
 @@ -545,7 +558,7 @@
          ResourceLocation resourcelocation = new ResourceLocation("shaders/post/entity_outline.json");
  
@@ -65,16 +74,34 @@
              this.entityOutlineShader = new ShaderGroup(this.mc.getTextureManager(), this.mc.getResourceManager(), this.mc.getFramebuffer(), resourcelocation);
              this.entityOutlineShader.createBindFramebuffers(this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
              this.entityOutlineFramebuffer = this.entityOutlineShader.getFramebufferRaw("final");
+@@ -564,7 +577,7 @@
+         }
+     }
+ 
+-    private void func_239233_v_()
++    public void func_239233_v_()
+     {
+         this.func_239234_w_();
+         ResourceLocation resourcelocation = new ResourceLocation("shaders/post/transparency.json");
+@@ -595,7 +608,7 @@
+         }
+     }
+ 
+-    private void func_239234_w_()
++    public void func_239234_w_()
+     {
+         if (this.field_239227_K_ != null)
+         {
 @@ -970,7 +983,8 @@
-         BlockPos blockpos1 = new BlockPos(MathHelper.floor(vec3d.x / 16.0D) * 16, MathHelper.floor(vec3d.y / 16.0D) * 16, MathHelper.floor(vec3d.z / 16.0D) * 16);
+         BlockPos blockpos1 = new BlockPos(MathHelper.floor(vector3d.x / 16.0D) * 16, MathHelper.floor(vector3d.y / 16.0D) * 16, MathHelper.floor(vector3d.z / 16.0D) * 16);
          float f = activeRenderInfoIn.getPitch();
          float f1 = activeRenderInfoIn.getYaw();
--        this.displayListEntitiesDirty = this.displayListEntitiesDirty || !this.chunksToUpdate.isEmpty() || vec3d.x != this.lastViewEntityX || vec3d.y != this.lastViewEntityY || vec3d.z != this.lastViewEntityZ || (double)f != this.lastViewEntityPitch || (double)f1 != this.lastViewEntityYaw;
+-        this.displayListEntitiesDirty = this.displayListEntitiesDirty || !this.chunksToUpdate.isEmpty() || vector3d.x != this.lastViewEntityX || vector3d.y != this.lastViewEntityY || vector3d.z != this.lastViewEntityZ || (double)f != this.lastViewEntityPitch || (double)f1 != this.lastViewEntityYaw;
 +        // VIVECRAFT: Always update culling because different camera positions
-+        this.displayListEntitiesDirty = true; //this.displayListEntitiesDirty || !this.chunksToUpdate.isEmpty() || vec3d.x != this.lastViewEntityX || vec3d.y != this.lastViewEntityY || vec3d.z != this.lastViewEntityZ || (double)f != this.lastViewEntityPitch || (double)f1 != this.lastViewEntityYaw;
-         this.lastViewEntityX = vec3d.x;
-         this.lastViewEntityY = vec3d.y;
-         this.lastViewEntityZ = vec3d.z;
++        this.displayListEntitiesDirty = true; //this.displayListEntitiesDirty || !this.chunksToUpdate.isEmpty() || vector3d.x != this.lastViewEntityX || vector3d.y != this.lastViewEntityY || vector3d.z != this.lastViewEntityZ || (double)f != this.lastViewEntityPitch || (double)f1 != this.lastViewEntityYaw;
+         this.lastViewEntityX = vector3d.x;
+         this.lastViewEntityY = vector3d.y;
+         this.lastViewEntityZ = vector3d.z;
 @@ -1264,8 +1278,14 @@
          TileEntityRendererDispatcher.instance.prepare(this.world, this.mc.getTextureManager(), this.mc.fontRenderer, activeRenderInfoIn, this.mc.objectMouseOver);
          this.renderManager.cacheActiveRenderInfo(this.world, activeRenderInfoIn, this.mc.pointedEntity);
@@ -89,9 +116,9 @@
 +    	}
 +    	//
 +    	   	
-         Vec3d vec3d = activeRenderInfoIn.getProjectedView();
-         double d0 = vec3d.getX();
-         double d1 = vec3d.getY();
+         Vector3d vector3d = activeRenderInfoIn.getProjectedView();
+         double d0 = vector3d.getX();
+         double d1 = vector3d.getY();
 @@ -1313,7 +1333,12 @@
          {
              Shaders.clearRenderBuffer();

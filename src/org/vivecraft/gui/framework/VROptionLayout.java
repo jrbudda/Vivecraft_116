@@ -6,7 +6,7 @@ import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.math.vector.Vec2f;
+import net.minecraft.util.math.vector.Vector2f;
 
 public class VROptionLayout
 {
@@ -40,9 +40,9 @@ public class VROptionLayout
     int _incrementi;
 
     Class<? extends Screen> screen;
-    BiFunction<GuiVROptionButton, Vec2f, Boolean> customHandler;
+    BiFunction<GuiVROptionButton, Vector2f, Boolean> customHandler;
 
-    public VROptionLayout(VRSettings.VrOptions e, BiFunction<GuiVROptionButton, Vec2f, Boolean> handler, Position pos, float row, boolean enabled, String title)
+    public VROptionLayout(VRSettings.VrOptions e, BiFunction<GuiVROptionButton, Vector2f, Boolean> handler, Position pos, float row, boolean enabled, String title)
     {
         _e = e;
         _pos = pos;
@@ -63,7 +63,7 @@ public class VROptionLayout
         _enabled = enabled;
     }
 
-    public VROptionLayout(Class<? extends Screen> screen, BiFunction<GuiVROptionButton, Vec2f, Boolean> handler, Position pos, float row, boolean enabled, String title)
+    public VROptionLayout(Class<? extends Screen> screen, BiFunction<GuiVROptionButton, Vector2f, Boolean> handler, Position pos, float row, boolean enabled, String title)
     {
         _pos = pos;
         _row = row;
@@ -84,7 +84,7 @@ public class VROptionLayout
         this.screen = screen;
     }
 
-    public VROptionLayout(BiFunction<GuiVROptionButton, Vec2f, Boolean> handler, Position pos, float row, boolean enabled, String title)
+    public VROptionLayout(BiFunction<GuiVROptionButton, Vector2f, Boolean> handler, Position pos, float row, boolean enabled, String title)
     {
         _pos = pos;
         _row = row;
@@ -139,7 +139,7 @@ public class VROptionLayout
     	return screen;
     }
 
-    public BiFunction<GuiVROptionButton, Vec2f, Boolean> getCustomHandler()
+    public BiFunction<GuiVROptionButton, Vector2f, Boolean> getCustomHandler()
     {
         return customHandler;
     }

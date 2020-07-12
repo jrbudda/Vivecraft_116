@@ -2,14 +2,14 @@ package org.vivecraft.gameplay.trackers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 /**
  * Created by Hendrik on 02-Aug-16.
  */
 public class SwimTracker extends Tracker {
 
-	Vec3d motion=Vec3d.ZERO;
+	Vector3d motion=Vector3d.ZERO;
 	double friction=0.9f;
 
 	double lastDist;
@@ -44,10 +44,10 @@ public class SwimTracker extends Tracker {
 
 //		{//float
 //			//remove bouyancy for now.
-//			Vec3d face = mc.vrPlayer.vrdata_world_pre.hmd.getPosition();
+//			Vector3d face = mc.vrPlayer.vrdata_world_pre.hmd.getPosition();
 //			float height = (float) (mc.vrPlayer.vrdata_room_pre.hmd.getPosition().y * 0.9);
 //			if(height > 1.6)height = 1.6f;
-//			Vec3d feets = face.subtract(0,height, 0);
+//			Vector3d feets = face.subtract(0,height, 0);
 //			double waterLine=256;
 //
 //			BlockPos bp = new BlockPos(feets);
@@ -87,25 +87,25 @@ public class SwimTracker extends Tracker {
 //		}
 		{//swim
 
-			Vec3d controllerR= mc.vrPlayer.vrdata_world_pre.getController(0).getPosition();
-			Vec3d controllerL= mc.vrPlayer.vrdata_world_pre.getController(1).getPosition();
+			Vector3d controllerR= mc.vrPlayer.vrdata_world_pre.getController(0).getPosition();
+			Vector3d controllerL= mc.vrPlayer.vrdata_world_pre.getController(1).getPosition();
 			
-			Vec3d middle= controllerL.subtract(controllerR).scale(0.5).add(controllerR);
+			Vector3d middle= controllerL.subtract(controllerR).scale(0.5).add(controllerR);
 
-			Vec3d hmdPos=mc.vrPlayer.vrdata_world_pre.getHeadPivot().subtract(0,0.3,0);
+			Vector3d hmdPos=mc.vrPlayer.vrdata_world_pre.getHeadPivot().subtract(0,0.3,0);
 
-			Vec3d movedir=middle.subtract(hmdPos).normalize().add(
+			Vector3d movedir=middle.subtract(hmdPos).normalize().add(
 					mc.vrPlayer.vrdata_world_pre.hmd.getDirection()).scale(0.5);
 
-			Vec3d contollerDir= mc.vrPlayer.vrdata_world_pre.getController(0).getCustomVector(new Vec3d(0,0,-1)).add(
-					mc.vrPlayer.vrdata_world_pre.getController(1).getCustomVector(new Vec3d(0,0,-1))).scale(0.5);
+			Vector3d contollerDir= mc.vrPlayer.vrdata_world_pre.getController(0).getCustomVector(new Vector3d(0,0,-1)).add(
+					mc.vrPlayer.vrdata_world_pre.getController(1).getCustomVector(new Vector3d(0,0,-1))).scale(0.5);
 			double dirfactor=contollerDir.add(movedir).length()/2;
 
 			double distance= hmdPos.distanceTo(middle);
 			double distDelta=lastDist-distance;
 
 			if(distDelta>0){
-				Vec3d velo=movedir.scale(distDelta*swimspeed*dirfactor);
+				Vector3d velo=movedir.scale(distDelta*swimspeed*dirfactor);
 				motion=motion.add(velo.scale(0.15));
 			}
 

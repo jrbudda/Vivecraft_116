@@ -4,10 +4,10 @@ import org.vivecraft.api.VRData.VRDevicePose;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.util.math.vector.Vec3f;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.client.shader.Shader;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.optifine.shaders.Shaders;
 
@@ -35,18 +35,18 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 	
 		//These are used for the soundsystem.
 		this.look.set((float)src.getDirection().x,(float)src.getDirection().y, (float)src.getDirection().z);
-		Vec3d up = src.getCustomVector(new Vec3d(0, 1, 0));
+		Vector3d up = src.getCustomVector(new Vector3d(0, 1, 0));
 		this.up.set((float)up.x,(float) up.y,(float) up.z);
 		//
 		
 		//what even are you
-		Vec3d left = src.getCustomVector(new Vec3d(1, 0, 0));
+		Vector3d left = src.getCustomVector(new Vector3d(1, 0, 0));
 		this.left.set((float)up.x,(float) up.y,(float) up.z);
 
 		//This is used for rendering sprites normal to the camera dir, which is terrible and needs to change.
         this.rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-        this.rotation.multiply(Vec3f.YP.rotationDegrees(-yaw));
-        this.rotation.multiply(Vec3f.XP.rotationDegrees(pitch));
+        this.rotation.multiply(Vector3f.YP.rotationDegrees(-yaw));
+        this.rotation.multiply(Vector3f.XP.rotationDegrees(pitch));
 	}
 
 	@Override

@@ -35,7 +35,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class PhysicalInventory extends PhysicalItemSlotGui {
 	public Hotbar hotbar;
@@ -135,7 +135,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 		if (metaData == null || metaData.inventoryOffset == -1)
 			return;
 		
-		Vec3d anchor = new Vec3d(-0.25, -0.65, 0.2);
+		Vector3d anchor = new Vector3d(-0.25, -0.65, 0.2);
 		double spanX = 0.5;
 		double spanY = 0.4;
 		double spanZ = 0.5;
@@ -160,7 +160,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 				int y = (slotIndex % 9) / 3;
 				int x = (slotIndex % 9) % 3;
 				
-				slot.position = anchor.add(new Vec3d(-spacingX * x, spacingY * row, -spacingZ * y));
+				slot.position = anchor.add(new Vector3d(-spacingX * x, spacingY * row, -spacingZ * y));
 				slot.rotation = new Quaternion(90, 0, 0);
 				slot.fullBlockScaleMult = 1.8;
 				slot.scale = 0.15;
@@ -179,11 +179,11 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 				}
 				
 				@Override
-				public Vec3d getAnchorPos(double partialTicks) {
+				public Vector3d getAnchorPos(double partialTicks) {
 					return PhysicalInventory.this.getAnchorPos(partialTicks);
 				}
 			};
-			slider.position = new Vec3d(-0.712, 0.02, 0);
+			slider.position = new Vector3d(-0.712, 0.02, 0);
 			slider.registerScrollListener(new Slider.ScrollListener() {
 				@Override
 				public void onScroll(double perc) {
@@ -194,7 +194,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 			miscInteractables.add(slider);
 			
 			Trashbin bin = new Trashbin(this);
-			bin.position = new Vec3d(-0.1, 0.03, 0.3);
+			bin.position = new Vector3d(-0.1, 0.03, 0.3);
 			bin.rotation = new Quaternion(90, 0, 0);
 			bin.scale = 0.1;
 			
@@ -203,7 +203,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 		
 		Button armorButton = new Button(new ItemStack(Items.CHAINMAIL_CHESTPLATE)) {
 			@Override
-			public Vec3d getAnchorPos(double partialTicks) {
+			public Vector3d getAnchorPos(double partialTicks) {
 				return PhysicalInventory.this.getAnchorPos(partialTicks);
 			}
 			
@@ -225,7 +225,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 		};
 		armorButton.toggle = true;
 		armorButton.rotation = new Quaternion(-90, -90, 0);
-		armorButton.position = new Vec3d(-0.07, -0.5, 0);
+		armorButton.position = new Vector3d(-0.07, -0.5, 0);
 		
 		miscInteractables.add(armorButton);
 		
@@ -260,11 +260,11 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 				}
 			};
 			offhand.slot = container.getSlot(offhand.slotId);
-			offhand.position = new Vec3d(0, 0, 0.1);
+			offhand.position = new Vector3d(0, 0, 0.1);
 			interactables.add(offhand);
 			
 		}
-		miniCrafting.position = new Vec3d(-0.75, -0.1, 0);
+		miniCrafting.position = new Vector3d(-0.75, -0.1, 0);
 		miscInteractables.add(miniCrafting);
 		
 		miniCrafting.loadSlots();
@@ -294,7 +294,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 		int columnsNorm = (int) (tabcount / Math.sqrt(tabcount));
 		int columnsRest = tabcount % columnsNorm;
 		
-		Vec3d base = new Vec3d(-0.4, -0.9, -0.3);
+		Vector3d base = new Vector3d(-0.4, -0.9, -0.3);
 		
 		for (int i = 0; i < cTabs.size(); i++) {
 			ItemGroup tab = cTabs.get(i);
@@ -313,7 +313,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 			double offsetX = ((double) (column + 0.5) / cColumns) * cSpanX - cSpanX / 2;
 			
 			
-			button.position = base.add(new Vec3d(offsetX, offsetY, 0));
+			button.position = base.add(new Vector3d(offsetX, offsetY, 0));
 			button.rotation = new Quaternion(-90, 0, 0);
 			button.sticky = true;
 			creativeTabButtons.add(button);
@@ -357,8 +357,8 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 				for (int i = metaData.inventoryOffset; i < metaData.inventoryOffset + 27; i++) {
 					itemSlots.add(new PhysicalItemSlot(this, i) {
 						@Override
-						public Vec3d getPosition(double partialTicks) {
-							return super.getPosition(partialTicks).add(new Vec3d(0, slotOffset, 0));
+						public Vector3d getPosition(double partialTicks) {
+							return super.getPosition(partialTicks).add(new Vector3d(0, slotOffset, 0));
 						}
 						
 						@Override
@@ -378,8 +378,8 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 				for (int i = 0; i < items.size(); i++) {
 					CreativeItemSlot slot = new CreativeItemSlot(this, items.get(i), i + metaData.inventoryOffset) {
 						@Override
-						public Vec3d getPosition(double partialTicks) {
-							return super.getPosition(partialTicks).add(new Vec3d(0, slotOffset, 0));
+						public Vector3d getPosition(double partialTicks) {
+							return super.getPosition(partialTicks).add(new Vector3d(0, slotOffset, 0));
 						}
 					};
 					itemSlots.add(slot);
@@ -469,7 +469,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 		}
 		
 		int offhand = mc.gameSettings.mainHand == HandSide.RIGHT ? 1 : 0;
-		Vec3d up = mc.vrPlayer.vrdata_world_pre.getController(offhand).getCustomVector(new Vec3d(0, 1, 0));
+		Vector3d up = mc.vrPlayer.vrdata_world_pre.getController(offhand).getCustomVector(new Vector3d(0, 1, 0));
 		if (up.y < 0.2 && isOpen) {
 			close();
 		}
@@ -530,7 +530,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 	}
 	
 	@Override
-	public Vec3d getAnchorPos(double partialTicks) {
+	public Vector3d getAnchorPos(double partialTicks) {
 		int offhand = mc.gameSettings.mainHand == HandSide.RIGHT ? 1 : 0;
 		VRData data = mc.vrPlayer.vrdata_world_render;
 		if (data == null)
@@ -596,13 +596,13 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 		
 		GlStateManager.enableLighting();
 		PlayerEntity player = Minecraft.getInstance().player;
-		Vec3d playerPos = new Vec3d(
+		Vector3d playerPos = new Vector3d(
 				player.lastTickPosX + (player.getPosX() - player.lastTickPosX) * partialTicks,
 				player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * partialTicks,
 				player.lastTickPosZ + (player.getPosZ() - player.lastTickPosZ) * partialTicks
 		);
 		
-		Vec3d origin = getAnchorPos(partialTicks);
+		Vector3d origin = getAnchorPos(partialTicks);
 		Quaternion rotation = getAnchorRotation(partialTicks);
 		
 		
@@ -705,7 +705,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 			metaData = analyseInventory(container);
 			int hotbarOffset = metaData.hotbarOffset;
 			
-			Vec3d offset = new Vec3d(0, -0.6, -0.1);
+			Vector3d offset = new Vector3d(0, -0.6, -0.1);
 			
 			interactables.clear();
 			
@@ -725,7 +725,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 						}
 					};
 					
-					slot.position = offset.add(new Vec3d(sign * 0.2, 0, 0));
+					slot.position = offset.add(new Vector3d(sign * 0.2, 0, 0));
 					slot.rotation = new Quaternion(180, -90 * sign, 0);
 					slot.scale = 0.4;
 					slot.counterRot = new Quaternion(-90, sign * -90, 0);
@@ -743,12 +743,12 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 					};
 					slot.scale = 0.1;
 					slot.rotation = new Quaternion(90, 0, 0);
-					slot.position = offset.add(new Vec3d(0, 0, 0.1));
+					slot.position = offset.add(new Vector3d(0, 0, 0.1));
 				} else {
 					//Wrist slots
 					slot = new HotBarItemSlot(this, hotbarOffset + i) {
 						@Override
-						public Vec3d getAnchorPos(double partialTicks) {
+						public Vector3d getAnchorPos(double partialTicks) {
 							int offhand = mc.gameSettings.mainHand == HandSide.RIGHT ? 1 : 0;
 							VRData data = mc.vrPlayer.vrdata_world_render;
 							if (data == null)
@@ -777,7 +777,7 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 					slot.rotation = new Quaternion(0, 90, 180);
 					int sign = (i < 4) ? 1 : -1;
 					int row = (i < 4) ? i : i - 5;
-					slot.position = new Vec3d(-0.1, 0.06 * sign, -0.05 + 0.1 * row);
+					slot.position = new Vector3d(-0.1, 0.06 * sign, -0.05 + 0.1 * row);
 				}
 				slot.slot = container.inventorySlots.get(hotbarOffset + i);
 				if (mc.physicalGuiManager.isHoldingHotbarSlot && mc.player.inventory.currentItem == i) {
@@ -809,12 +809,12 @@ public class PhysicalInventory extends PhysicalItemSlotGui {
 		}
 		
 		@Override
-		public Vec3d getAnchorPos(double partialTicks) {
+		public Vector3d getAnchorPos(double partialTicks) {
 			VRData data = mc.vrPlayer.vrdata_world_render;
 			if (data == null)
 				data = mc.vrPlayer.vrdata_world_pre;
-			//Vec3d prev=new Vec3d(mc.gameRenderer.rveprevX,mc.gameRenderer.rveprevY,mc.gameRenderer.rveprevZ);
-			//Vec3d current=new Vec3d(mc.gameRenderer.rveX,mc.gameRenderer.rveY,mc.gameRenderer.rveZ);
+			//Vector3d prev=new Vector3d(mc.gameRenderer.rveprevX,mc.gameRenderer.rveprevY,mc.gameRenderer.rveprevZ);
+			//Vector3d current=new Vector3d(mc.gameRenderer.rveX,mc.gameRenderer.rveY,mc.gameRenderer.rveZ);
 			return data.hmd.getPosition();//prev.add((current.subtract(prev)).scale(partialTicks));
 		}
 		

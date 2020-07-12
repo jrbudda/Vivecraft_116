@@ -73,9 +73,9 @@
  import net.minecraft.util.math.RayTraceResult;
 +import net.minecraft.util.math.RayTraceResult.Type;
  import net.minecraft.util.math.vector.Matrix4f;
- import net.minecraft.util.math.vector.Vec3d;
- import net.minecraft.util.math.vector.Vec3f;
-+import net.minecraft.util.math.vector.Vec3i;
+ import net.minecraft.util.math.vector.Vector3d;
+ import net.minecraft.util.math.vector.Vector3f;
++import net.minecraft.util.math.vector.Vector3i;
  import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.util.text.Style;
  import net.minecraft.util.text.event.ClickEvent;
@@ -141,7 +141,7 @@
      private boolean guiLoadingVisible = false;
 +    /** MINECRIFT */
 +    public float minClipDistance = 0.05f;
-+    public Vec3d crossVec;
++    public Vector3d crossVec;
 +    private FloatBuffer matrixBuffer = GLAllocation.createDirectFloatBuffer(16);
 +    
 +    public Matrix4f thirdPassProjectionMatrix = new Matrix4f();
@@ -168,9 +168,9 @@
 +  	private boolean polyblend, polytex, polylight, polycull;
 +  	
 +  	//Teleporter
-+  	Vec3i tpUnlimitedColor = new Vec3i((byte)173, (byte)216, (byte)230);
-+  	Vec3i tpLimitedColor = new Vec3i((byte)205, (byte)169, (byte)205);
-+  	Vec3i tpInvalidColor = new Vec3i((byte)83, (byte)83, (byte)83);
++  	Vector3i tpUnlimitedColor = new Vector3i((byte)173, (byte)216, (byte)230);
++  	Vector3i tpLimitedColor = new Vector3i((byte)205, (byte)169, (byte)205);
++  	Vector3i tpInvalidColor = new Vector3i((byte)83, (byte)83, (byte)83);
 +    /** END MINECRIFT */
  
      public GameRenderer(Minecraft p_i174_1_, IResourceManager p_i174_2_, RenderTypeBuffers p_i174_3_)
@@ -208,29 +208,29 @@
              this.mc.pointedEntity = null;
              double d0 = (double)this.mc.playerController.getBlockReachDistance();
 -            this.mc.objectMouseOver = entity.pick(d0, partialTicks, false);
--            Vec3d vec3d = entity.getEyePosition(partialTicks);
+-            Vector3d vector3d = entity.getEyePosition(partialTicks);
 +            //Vivecraft override raytrace
 +            this.mc.objectMouseOver = mc.vrPlayer.rayTraceBlocksVR(mc.vrPlayer.vrdata_world_render, 0 ,d0, false);
 +            this.crossVec = mc.vrPlayer.AimedPointAtDistance(mc.vrPlayer.vrdata_world_render, 0, d0);
-+            Vec3d vec3d = mc.vrPlayer.vrdata_world_render.getController(0).getPosition(); // entity.getEyePosition(partialTicks);
-+            //TODO: Test how to handle vec3d for best server-side compatibility
++            Vector3d vector3d = mc.vrPlayer.vrdata_world_render.getController(0).getPosition(); // entity.getEyePosition(partialTicks);
++            //TODO: Test how to handle vector3d for best server-side compatibility
 +            //this.mc.objectMouseOver = entity.pick(d0, partialTicks, false);
-+            //Vec3d vec3d = entity.getEyePosition(partialTicks);
++            //Vector3d vector3d = entity.getEyePosition(partialTicks);
              boolean flag = false;
              int i = 3;
              double d1 = d0;
 @@ -330,8 +430,9 @@
              {
-                 d1 = this.mc.objectMouseOver.getHitVec().squareDistanceTo(vec3d);
+                 d1 = this.mc.objectMouseOver.getHitVec().squareDistanceTo(vector3d);
              }
 -
--            Vec3d vec3d1 = entity.getLook(1.0F);
+-            Vector3d vector3d1 = entity.getLook(1.0F);
 +            //Vivecraft
-+            Vec3d vec3d1 =  mc.vrPlayer.vrdata_world_render.getController(0).getDirection(); // entity.getLook(1.0F);
++            Vector3d vector3d1 =  mc.vrPlayer.vrdata_world_render.getController(0).getDirection(); // entity.getLook(1.0F);
 +            //
-             Vec3d vec3d2 = vec3d.add(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0);
+             Vector3d vector3d2 = vector3d.add(vector3d1.x * d0, vector3d1.y * d0, vector3d1.z * d0);
              float f = 1.0F;
-             AxisAlignedBB axisalignedbb = entity.getBoundingBox().expand(vec3d1.scale(d0)).grow(1.0D, 1.0D, 1.0D);
+             AxisAlignedBB axisalignedbb = entity.getBoundingBox().expand(vector3d1.scale(d0)).grow(1.0D, 1.0D, 1.0D);
 @@ -391,6 +492,10 @@
  
      private double getFOVModifier(ActiveRenderInfo activeRenderInfoIn, float partialTicks, boolean useFOVSetting)
@@ -243,7 +243,7 @@
          {
              return 90.0D;
 @@ -494,7 +599,9 @@
-             matrixStackIn.rotate(Vec3f.XP.rotationDegrees(Math.abs(MathHelper.cos(f1 * (float)Math.PI - 0.2F) * f2) * 5.0F));
+             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(Math.abs(MathHelper.cos(f1 * (float)Math.PI - 0.2F) * f2) * 5.0F));
          }
      }
 +      
@@ -599,19 +599,19 @@
 +            i = i / 5;
 +            f1 = 1.1f;
 +            //
-             Vec3f vec3f = new Vec3f(0.0F, MathHelper.SQRT_2 / 2.0F, MathHelper.SQRT_2 / 2.0F);
--            matrixstack.rotate(vec3f.rotationDegrees(((float)this.rendererUpdateCount + partialTicks) * (float)i));
+             Vector3f vector3f = new Vector3f(0.0F, MathHelper.SQRT_2 / 2.0F, MathHelper.SQRT_2 / 2.0F);
+-            matrixstack.rotate(vector3f.rotationDegrees(((float)this.rendererUpdateCount + partialTicks) * (float)i));
 -            matrixstack.scale(1.0F / f1, 1.0F, 1.0F);
-+            viewModel.rotate(vec3f.rotationDegrees(((float)this.rendererUpdateCount + partialTicks) * (float)i));
++            viewModel.rotate(vector3f.rotationDegrees(((float)this.rendererUpdateCount + partialTicks) * (float)i));
 +            viewModel.scale(1.0F / f1, 1.0F, 1.0F);
              float f2 = -((float)this.rendererUpdateCount + partialTicks) * (float)i;
--            matrixstack.rotate(vec3f.rotationDegrees(f2));
+-            matrixstack.rotate(vector3f.rotationDegrees(f2));
 -        }
 -
 -        if (Shaders.isEffectsModelView())
 -        {
 -            matrixstack = matrixstack1;
-+            viewModel.rotate(vec3f.rotationDegrees(f2));
++            viewModel.rotate(vector3f.rotationDegrees(f2));
          }
 +        
 +        MatrixStack projectionBuilder = new MatrixStack();
@@ -631,13 +631,13 @@
 -            float f5 = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_CameraSetup_getPitch);
 -            float f3 = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_CameraSetup_getRoll);
 -            activerenderinfo.setAnglesInternal(f4, f5);
--            matrixStackIn.rotate(Vec3f.ZP.rotationDegrees(f3));
+-            matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(f3));
 -        }
 +        applyVRModelView(mc.currentPass, viewModel); //this is just rotation.
 +     //   applystereo(mc.currentPass, viewModel);
  
--        matrixStackIn.rotate(Vec3f.XP.rotationDegrees(activerenderinfo.getPitch()));
--        matrixStackIn.rotate(Vec3f.YP.rotationDegrees(activerenderinfo.getYaw() + 180.0F));
+-        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(activerenderinfo.getPitch()));
+-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(activerenderinfo.getYaw() + 180.0F));
 -        this.mc.worldRenderer.updateCameraAndRender(matrixStackIn, partialTicks, finishTimeNano, flag1, activerenderinfo, this, this.lightmapTexture, matrix4f);
 +        this.mc.worldRenderer.updateCameraAndRender(viewModel, partialTicks, finishTimeNano, flag1, activerenderinfo, this, this.lightmapTexture, projection);
  
@@ -704,8 +704,8 @@
 +            //edit scale
 +            float f7 = 0.0F + -1.2f * MathHelper.sin(f4);
              matrixstack.scale(f7, -f7, f7);
-             matrixstack.rotate(Vec3f.YP.rotationDegrees(900.0F * MathHelper.abs(MathHelper.sin(f4))));
-             matrixstack.rotate(Vec3f.XP.rotationDegrees(6.0F * MathHelper.cos(f * 8.0F)));
+             matrixstack.rotate(Vector3f.YP.rotationDegrees(900.0F * MathHelper.abs(MathHelper.sin(f4))));
+             matrixstack.rotate(Vector3f.XP.rotationDegrees(6.0F * MathHelper.cos(f * 8.0F)));
 @@ -1319,4 +1347,2161 @@
      {
          return this.overlayTexture;
@@ -838,7 +838,7 @@
 +  	/** Renders the pre-generated 2-d framebuffer into the world at the appropriate location..
 +  	 * @param par1
 +  	 */
-+  	void render2D(float par1, Framebuffer framebuffer, Vec3d pos, org.vivecraft.utils.math.Matrix4f rot)
++  	void render2D(float par1, Framebuffer framebuffer, Vector3d pos, org.vivecraft.utils.math.Matrix4f rot)
 +  	{
 +
 +      	if(mc.bowTracker.isDrawing) return;	
@@ -853,7 +853,7 @@
 +  				applyVRModelViewLegacy(this.mc.currentPass);
 +  						
 +  					GlStateManager.loadIdentity();
-+  					Vec3d guipos = apply2DModelView(this.mc.currentPass, pos, rot);
++  					Vector3d guipos = apply2DModelView(this.mc.currentPass, pos, rot);
 +  					
 +  					framebuffer.bindFramebufferTexture();
 +
@@ -958,26 +958,26 @@
 +  		///MAIN MENU ENVIRONMENT
 +  		if(inMenuRoom){
 +  			applystereoLegacy(mc.currentPass);
-+  	  		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
++  	  		Vector3d eye = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
 +  	  		RenderSystem.translated((mc.vrPlayer.vrdata_world_render.origin.x - eye.x), (mc.vrPlayer.vrdata_world_render.origin.y - eye.y), (mc.vrPlayer.vrdata_world_render.origin.z - eye.z));
 +
-+//  			if (mc.menuWorldRenderer != null && mc.menuWorldRenderer.isReady()) {
-+//  			    try {
-+//                    renderTechjarsAwesomeMainMenuRoom();
-+//                } catch (Exception e) {
-+//  			        System.out.println("Error rendering main menu world, unloading to prevent more errors");
-+//  			        e.printStackTrace();
-+//  			        mc.menuWorldRenderer.destroy();
-+//                }
-+//  			} else {
++  			if (mc.menuWorldRenderer != null && mc.menuWorldRenderer.isReady()) {
++  			    try {
++                    renderTechjarsAwesomeMainMenuRoom();
++                } catch (Exception e) {
++  			        System.out.println("Error rendering main menu world, unloading to prevent more errors");
++  			        e.printStackTrace();
++  			        mc.menuWorldRenderer.destroy();
++                }
++  			} else {
 +  				renderJrbuddasAwesomeMainMenuRoom();
-+//  			}
++  			}
 +  		}	
 +  		//END AWESOME MAIN MENU ENVIRONMENT
 +  		
 +	  		RenderSystem.pushMatrix();
 +		  		RenderSystem.loadIdentity();
-+		  		Vec3d guipos = GuiHandler.applyGUIModelView(this.mc.currentPass);
++		  		Vector3d guipos = GuiHandler.applyGUIModelView(this.mc.currentPass);
 +		
 +		  		GuiHandler.guiFramebuffer.bindFramebufferTexture();
 +		
@@ -1061,10 +1061,10 @@
 +        setupPolyRendering(true);
 +        // Shaders goes crazy without this
 +        mc.getTextureManager().bindTexture(new ResourceLocation("vivecraft:textures/white.png"));
-+  		renderCircle(new Vec3d(0, 0, 0), (float) radius, 32, r, g, b	, 255, 0);
-+  		renderCircle(new Vec3d(0, .01, 0), (float) radius * .75f, 32, r, g, b	, 255, 0);
-+  		renderCircle(new Vec3d(0,0.02, 0), (float) radius * .25f, 32, r, g, b	, 255, 0);
-+  		renderCircle(new Vec3d(0, 0, .15), (float) radius *.5f, 32, r, g, b	, 255, 2);
++  		renderCircle(new Vector3d(0, 0, 0), (float) radius, 32, r, g, b	, 255, 0);
++  		renderCircle(new Vector3d(0, .01, 0), (float) radius * .75f, 32, r, g, b	, 255, 0);
++  		renderCircle(new Vector3d(0,0.02, 0), (float) radius * .25f, 32, r, g, b	, 255, 0);
++  		renderCircle(new Vector3d(0, 0, .15), (float) radius *.5f, 32, r, g, b	, 255, 2);
 +        setupPolyRendering(false);
 +  	}
 +
@@ -1288,20 +1288,20 @@
 +  			tes.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_NORMAL);
 +  			
 +  				double VOffset = mc.teleportTracker.lastTeleportArcDisplayOffset;
-+  				Vec3d dest = mc.teleportTracker.getDestination();
++  				Vector3d dest = mc.teleportTracker.getDestination();
 +  				
 +  				boolean validLocation = (dest.x != 0
 +  						|| dest.y != 0
 +  						|| dest.z != 0);
 +  	
 +  				
-+  				Vec3i color;
++  				Vector3i color;
 +  				byte alpha = (byte) 255;
 +  		
 +  				if (!validLocation)
 +  				{
 +  					// invalid location
-+  					color = new Vec3i(83, 75, 83);
++  					color = new Vector3i(83, 75, 83);
 +  					alpha = (byte) 128;
 +  				}
 +  				else
@@ -1323,7 +1323,7 @@
 +  				}
 +  				double segmentProgress = 1.0 / (double) segments;
 +  	
-+  				Vec3d up = new Vec3d(0,1,0);
++  				Vector3d up = new Vector3d(0,1,0);
 +  	
 +  				for (int i=0;i<segments;i++)
 +  				{
@@ -1331,11 +1331,11 @@
 +  					int progressBase = (int)MathHelper.floor(progress);
 +  					progress -= (float) progressBase;
 +  	
-+  					Vec3d start = mc.teleportTracker.getInterpolatedArcPosition((float)(progress - segmentProgress * 0.4f))
++  					Vector3d start = mc.teleportTracker.getInterpolatedArcPosition((float)(progress - segmentProgress * 0.4f))
 +  							.subtract(mc.getRenderViewEntity().getPositionVec());
 +
 +  	
-+  					Vec3d end = mc.teleportTracker.getInterpolatedArcPosition((float)progress)
++  					Vector3d end = mc.teleportTracker.getInterpolatedArcPosition((float)progress)
 +  							.subtract(mc.getRenderViewEntity().getPositionVec());
 +  	
 +  					float shift = (float)progress * 2.0f;
@@ -1346,7 +1346,7 @@
 +            GlStateManager.disableCull();
 +
 +  			if (validLocation && mc.teleportTracker.movementTeleportProgress >=1){ //draw landing splash
-+  				Vec3d circlePos = new Vec3d(dest.x, dest.y, dest.z) 
++  				Vector3d circlePos = new Vector3d(dest.x, dest.y, dest.z) 
 +  						.subtract(mc.getRenderViewEntity().getPositionVec());
 +
 +  				int side = 1; //vrPlayer.movementTeleportDestinationSideHit;
@@ -1384,7 +1384,7 @@
 +  		}
 +  	}
 +  	public void SetupRenderingAtController(int controller, MatrixStack matrix){
-+  		Vec3d aimSource = getControllerRenderPos(controller);
++  		Vector3d aimSource = getControllerRenderPos(controller);
 +  		aimSource = aimSource.subtract(mc.vrPlayer.getVRDataWorld().getEye(mc.currentPass).getPosition());  		
 +  		if (aimSource!=null)
 +  		{ //move from head to hand origin.
@@ -1401,7 +1401,7 @@
 +  	//please push your matrix first. and pop after.
 +  	public void SetupRenderingAtControllerLegacy(int controller){
 +  		
-+  		Vec3d aimSource = getControllerRenderPos(controller);
++  		Vector3d aimSource = getControllerRenderPos(controller);
 +  		aimSource = aimSource.subtract(mc.vrPlayer.getVRDataWorld().getEye(mc.currentPass).getPosition());
 +  		
 +  		if (aimSource!=null)
@@ -1424,16 +1424,16 @@
 +  	    		GL11.glMultMatrixf(buf);       	    	
 +  	}
 +  	
-+  	public void renderFlatQuad(Vec3d pos, float width, float height,float yaw, int r, int g, int b, int a)
++  	public void renderFlatQuad(Vector3d pos, float width, float height,float yaw, int r, int g, int b, int a)
 +  	{
 +  		Tessellator tes = Tessellator.getInstance();
 +
 +  		tes.getBuffer().begin(GL11.GL_QUADS,DefaultVertexFormats.POSITION_COLOR_NORMAL);
 +
-+  		Vec3d lr = new Vec3d(-width/2,0, height/2).rotateYaw((float) Math.toRadians(-yaw));
-+  		Vec3d ls = new Vec3d(-width/2,0, -height/2).rotateYaw((float) Math.toRadians(-yaw));
-+  		Vec3d lt = new Vec3d(width/2,0, -height/2).rotateYaw((float) Math.toRadians(-yaw));
-+  		Vec3d lu = new Vec3d(width/2,0, height/2).rotateYaw((float) Math.toRadians(-yaw));
++  		Vector3d lr = new Vector3d(-width/2,0, height/2).rotateYaw((float) Math.toRadians(-yaw));
++  		Vector3d ls = new Vector3d(-width/2,0, -height/2).rotateYaw((float) Math.toRadians(-yaw));
++  		Vector3d lt = new Vector3d(width/2,0, -height/2).rotateYaw((float) Math.toRadians(-yaw));
++  		Vector3d lu = new Vector3d(width/2,0, height/2).rotateYaw((float) Math.toRadians(-yaw));
 +
 +  		tes.getBuffer().pos(pos.x + lr.x, pos.y, pos.z + lr.z).color(r, g, b, a).normal(0, 1, 0).endVertex();
 +  		tes.getBuffer().pos(pos.x + ls.x, pos.y, pos.z + ls.z).color(r, g, b, a).normal(0, 1, 0).endVertex();
@@ -1443,7 +1443,7 @@
 +  		tes.draw();  
 +  	}
 +  	
-+  	public void renderCircle(Vec3d pos, float radius, int edges, int r, int g, int b, int a, int side)
++  	public void renderCircle(Vector3d pos, float radius, int edges, int r, int g, int b, int a, int side)
 +  	{
 +  		Tessellator tes = Tessellator.getInstance();
 +  		
@@ -1479,13 +1479,13 @@
 +
 +  	}
 +
-+  	private void renderBox(Tessellator tes, Vec3d start, Vec3d end, float minX, float maxX, float minY, float maxY, Vec3d up, Vec3i color, byte alpha)
++  	private void renderBox(Tessellator tes, Vector3d start, Vector3d end, float minX, float maxX, float minY, float maxY, Vector3d up, Vector3i color, byte alpha)
 +  	{
-+  		Vec3d forward = start.subtract(end).normalize();
-+  		Vec3d right = forward.crossProduct(up);
++  		Vector3d forward = start.subtract(end).normalize();
++  		Vector3d right = forward.crossProduct(up);
 +  		up = right.crossProduct(forward);
 +  	
-+  		Vec3d left = new Vec3d(
++  		Vector3d left = new Vector3d(
 +  				right.x * minX,
 +  				right.y * minX,
 +  				right.z * minX);
@@ -1493,7 +1493,7 @@
 +  		right = right.scale(maxX);
 +  		
 +  	
-+  		Vec3d down = new Vec3d(
++  		Vector3d down = new Vector3d(
 +  				up.x * minY,
 +  				up.y * minY,
 +  				up.z * minY);
@@ -1505,14 +1505,14 @@
 +        org.vivecraft.utils.lwjgl.Vector3f rightNormal = Utils.convertToVector3f(right.normalize());
 +
 +  	
-+  		Vec3d backRightBottom    = start.add(   right.x+down.x,   right.y+down.y,   right.z+down.z);
-+  		Vec3d backRightTop       = start.add(   right.x+up.x,     right.y+up.y,     right.z+up.z);
-+  		Vec3d backLeftBottom     = start.add(   left.x+down.x,    left.y+down.y,    left.z+down.z);
-+  		Vec3d backLeftTop        = start.add(   left.x+up.x,      left.y+up.y,      left.z+up.z);
-+  		Vec3d frontRightBottom   = end.add(     right.x+down.x,   right.y+down.y,   right.z+down.z);
-+  		Vec3d frontRightTop      = end.add(     right.x+up.x,     right.y+up.y,     right.z+up.z);
-+  		Vec3d frontLeftBottom    = end.add(     left.x+down.x,    left.y+down.y,    left.z+down.z);
-+  		Vec3d frontLeftTop       = end.add(     left.x+up.x,      left.y+up.y,      left.z+up.z);
++  		Vector3d backRightBottom    = start.add(   right.x+down.x,   right.y+down.y,   right.z+down.z);
++  		Vector3d backRightTop       = start.add(   right.x+up.x,     right.y+up.y,     right.z+up.z);
++  		Vector3d backLeftBottom     = start.add(   left.x+down.x,    left.y+down.y,    left.z+down.z);
++  		Vector3d backLeftTop        = start.add(   left.x+up.x,      left.y+up.y,      left.z+up.z);
++  		Vector3d frontRightBottom   = end.add(     right.x+down.x,   right.y+down.y,   right.z+down.z);
++  		Vector3d frontRightTop      = end.add(     right.x+up.x,     right.y+up.y,     right.z+up.z);
++  		Vector3d frontLeftBottom    = end.add(     left.x+down.x,    left.y+down.y,    left.z+down.z);
++  		Vector3d frontLeftTop       = end.add(     left.x+up.x,      left.y+up.y,      left.z+up.z);
 +  	
 +  		BufferBuilder b = tes.getBuffer();
 +  		
@@ -1658,73 +1658,73 @@
 +  	}
 +
 +  	private void renderTechjarsAwesomeMainMenuRoom() {
-+//  		GlStateManager.color4f(1f, 1f, 1f, 1f);
-+//
-+//  		GlStateManager.enableDepthTest();
-+//  		GlStateManager.enableTexture();
-+//  		GlStateManager.enableBlend();
-+//  		GlStateManager.enableAlphaTest();
-+//  		GlStateManager.enableCull();
-+//        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-+//
-+//  		RenderSystem.pushMatrix();
-+//
-+//  		int tzOffset = Calendar.getInstance().get(Calendar.ZONE_OFFSET);
-+//  		mc.menuWorldRenderer.time = menuWorldFastTime ? (long)((this.mc.tickCounter * 10) + 10 * mc.getRenderPartialTicks()) : (long)((System.currentTimeMillis() + tzOffset - 21600000) / 86400000D * 24000D);
-+//  		Vec3d eyePos = mc.menuWorldRenderer.getEyePos();
-+//  		float posX = (float) eyePos.x;
-+//  		float posY = (float) eyePos.y;
-+//  		float posZ = (float) eyePos.z;
-+//
-+//        mc.menuWorldRenderer.fogRenderer.updateFogColor();
-+//        mc.menuWorldRenderer.fogRenderer.setupFog(-1);
-+//        GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-+//
-+//        mc.menuWorldRenderer.renderSky(posX, posY, posZ, 2);
-+//
-+//        mc.menuWorldRenderer.fogRenderer.setupFog(0);
-+//
-+//  		if (posY < 128.0D + (double)(this.mc.gameSettings.ofCloudsHeight * 128.0F)) {
-+//          	mc.menuWorldRenderer.renderClouds(2, posX, posY, posZ);
-+//  		}
-+//
-+//  		RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-+//  		GlStateManager.enableBlend();
-+//
-+//  		mc.menuWorldRenderer.updateLightmap();
-+//        mc.menuWorldRenderer.fogRenderer.setupFog(0);
-+//  		mc.menuWorldRenderer.render();
-+//
-+//  		if (posY >= 128.0D + (double)(this.mc.gameSettings.ofCloudsHeight * 128.0F)) {
-+//          	mc.menuWorldRenderer.renderClouds(2, posX, posY, posZ);
-+//      		RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-+//      		GlStateManager.enableBlend();
-+//        }
-+//
-+//  		float[] area = MCOpenVR.getPlayAreaSize();
-+//  		if (area != null) {
-+//  			float width = (float)Math.ceil(area[0]);
-+//  			float length = (float)Math.ceil(area[1]);
-+//
-+//  			Minecraft.getInstance().getTextureManager().bindTexture(Screen.BACKGROUND_LOCATION);
-+//  			float sun = mc.menuWorldRenderer.getSunBrightness();
-+//  			GlStateManager.color4f(sun, sun, sun, 0.3f);
-+//  			GL11.glTranslatef(-width / 2, 0, -length / 2);
-+//  			GL11.glBegin(GL11.GL_QUADS);
-+//  				GL11.glNormal3f(0, 1, 0);
-+//  				GL11.glTexCoord2f(0, 0);
-+//  				GL11.glVertex3f(0, 0.001f, 0);
-+//  				GL11.glTexCoord2f(0, length);
-+//  				GL11.glVertex3f(0, 0.001f, length);
-+//  				GL11.glTexCoord2f(width, length);
-+//  				GL11.glVertex3f(width, 0.001f, length);
-+//  				GL11.glTexCoord2f(width, 0);
-+//  				GL11.glVertex3f(width, 0.001f, 0);
-+//  			GL11.glEnd();
-+//  		}
-+//
-+//  		GlStateManager.popMatrix();
-+//  		GlStateManager.disableFog();
++  		GlStateManager.color4f(1f, 1f, 1f, 1f);
++
++  		GlStateManager.enableDepthTest();
++  		GlStateManager.enableTexture();
++  		GlStateManager.enableBlend();
++  		GlStateManager.enableAlphaTest();
++  		GlStateManager.enableCull();
++        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
++
++  		RenderSystem.pushMatrix();
++
++  		int tzOffset = Calendar.getInstance().get(Calendar.ZONE_OFFSET);
++  		mc.menuWorldRenderer.time = menuWorldFastTime ? (long)((this.mc.tickCounter * 10) + 10 * mc.getRenderPartialTicks()) : (long)((System.currentTimeMillis() + tzOffset - 21600000) / 86400000D * 24000D);
++  		Vector3d eyePos = mc.menuWorldRenderer.getEyePos();
++  		float posX = (float) eyePos.x;
++  		float posY = (float) eyePos.y;
++  		float posZ = (float) eyePos.z;
++
++        mc.menuWorldRenderer.fogRenderer.updateFogColor();
++        mc.menuWorldRenderer.fogRenderer.setupFog(-1);
++        GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
++
++        mc.menuWorldRenderer.renderSky(posX, posY, posZ, 2);
++
++        mc.menuWorldRenderer.fogRenderer.setupFog(0);
++
++  		if (posY < 128.0D + (double)(this.mc.gameSettings.ofCloudsHeight * 128.0F)) {
++          	mc.menuWorldRenderer.renderClouds(2, posX, posY, posZ);
++  		}
++
++  		RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
++  		GlStateManager.enableBlend();
++
++  		mc.menuWorldRenderer.updateLightmap();
++        mc.menuWorldRenderer.fogRenderer.setupFog(0);
++  		mc.menuWorldRenderer.render();
++
++  		if (posY >= 128.0D + (double)(this.mc.gameSettings.ofCloudsHeight * 128.0F)) {
++          	mc.menuWorldRenderer.renderClouds(2, posX, posY, posZ);
++      		RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
++      		GlStateManager.enableBlend();
++        }
++
++  		float[] area = MCOpenVR.getPlayAreaSize();
++  		if (area != null) {
++  			float width = (float)Math.ceil(area[0]);
++  			float length = (float)Math.ceil(area[1]);
++
++  			Minecraft.getInstance().getTextureManager().bindTexture(Screen.BACKGROUND_LOCATION);
++  			float sun = mc.menuWorldRenderer.getSunBrightness();
++  			GlStateManager.color4f(sun, sun, sun, 0.3f);
++  			GL11.glTranslatef(-width / 2, 0, -length / 2);
++  			GL11.glBegin(GL11.GL_QUADS);
++  				GL11.glNormal3f(0, 1, 0);
++  				GL11.glTexCoord2f(0, 0);
++  				GL11.glVertex3f(0, 0.001f, 0);
++  				GL11.glTexCoord2f(0, length);
++  				GL11.glVertex3f(0, 0.001f, length);
++  				GL11.glTexCoord2f(width, length);
++  				GL11.glVertex3f(width, 0.001f, length);
++  				GL11.glTexCoord2f(width, 0);
++  				GL11.glVertex3f(width, 0.001f, 0);
++  			GL11.glEnd();
++  		}
++
++  		GlStateManager.popMatrix();
++  		GlStateManager.disableFog();
 +  	}
 +  	
 +  	public boolean shouldRenderCrosshair() {
@@ -1787,9 +1787,9 @@
 +
 +  		RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f); //white crosshair, with blending
 +
-+  		Vec3d crosshairRenderPos = crossVec;
++  		Vector3d crosshairRenderPos = crossVec;
 +  		  		
-+  		Vec3d aim = crosshairRenderPos.subtract(mc.vrPlayer.vrdata_world_render.getController(0).getPosition());
++  		Vector3d aim = crosshairRenderPos.subtract(mc.vrPlayer.vrdata_world_render.getController(0).getPosition());
 +  		
 +  		float crossDepth =(float)aim.length();
 +  		
@@ -1803,7 +1803,7 @@
 +  			RenderSystem.loadIdentity();
 +  			applyVRModelViewLegacy(mc.currentPass);
 +  			
-+  			Vec3d translate = crosshairRenderPos.subtract(mc.getRenderViewEntity().getPositionVec());
++  			Vector3d translate = crosshairRenderPos.subtract(mc.getRenderViewEntity().getPositionVec());
 +	  		GL11.glTranslated(translate.x , translate.y , translate.z );
 +	
 +	  		if(mc.objectMouseOver == null || mc.objectMouseOver.getType() != RayTraceResult.Type.BLOCK ) {
@@ -1906,20 +1906,20 @@
 +  		renderFadeBlend(r, g, b, fadeAlpha, 0, this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight(), 0);
 +  	}
 +
-+  	public Vec3d getControllerRenderPos(int c){
-+  		Vec3d out ;
++  	public Vector3d getControllerRenderPos(int c){
++  		Vector3d out ;
 +  		if(mc.vrSettings.seated){	
 +  			if(mc.getRenderViewEntity() != null && mc.world != null){
-+  				Vec3d dir = mc.vrPlayer.vrdata_world_render.hmd.getDirection();
++  				Vector3d dir = mc.vrPlayer.vrdata_world_render.hmd.getDirection();
 +  				dir = dir.rotateYaw((float) Math.toRadians(c==0?-35:35));
-+  				dir = new Vec3d(dir.x, 0, dir.z);
++  				dir = new Vector3d(dir.x, 0, dir.z);
 +  				dir = dir.normalize();
 +  				RenderPass p = RenderPass.CENTER;
 +  				out = mc.vrPlayer.vrdata_world_render.getEye(p).getPosition().add(dir.x*0.3 * mc.vrPlayer.vrdata_world_render.worldScale, -0.4* mc.vrPlayer.vrdata_world_render.worldScale ,dir.z*0.3* mc.vrPlayer.vrdata_world_render.worldScale);
 +  			} else { //main menu
-+  				Vec3d dir = mc.vrPlayer.vrdata_world_render.hmd.getDirection();
++  				Vector3d dir = mc.vrPlayer.vrdata_world_render.hmd.getDirection();
 +  				dir = dir.rotateYaw((float) Math.toRadians(c==0?-35:35));
-+  				dir = new Vec3d(dir.x, 0, dir.z);
++  				dir = new Vector3d(dir.x, 0, dir.z);
 +  				dir = dir.normalize();
 +  				out = mc.vrPlayer.vrdata_world_render.hmd.getPosition().add(dir.x*0.3 , -0.4 ,dir.z*0.3);
 +  			}
@@ -1930,12 +1930,12 @@
 +  	}
 +        	
 +
-+	private Vec3d apply2DModelView(RenderPass currentPass, Vec3d guipos, org.vivecraft.utils.math.Matrix4f guirot) {
++	private Vector3d apply2DModelView(RenderPass currentPass, Vector3d guipos, org.vivecraft.utils.math.Matrix4f guirot) {
 +		mc.getProfiler().startSection("applyKeyboardModelView");
 +
-+		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition();
++		Vector3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition();
 +
-+		Vec3d guiLocal = new Vec3d(0, 0, 0);
++		Vector3d guiLocal = new Vector3d(0, 0, 0);
 +
 +		float scale = GuiHandler.guiScale;
 +
@@ -1960,10 +1960,10 @@
 +		return guipos;
 +	}
 +
-+	private Vec3d applyPhysicalKeyboardModelView(RenderPass currentPass, Vec3d guipos, org.vivecraft.utils.math.Matrix4f guirot) {
++	private Vector3d applyPhysicalKeyboardModelView(RenderPass currentPass, Vector3d guipos, org.vivecraft.utils.math.Matrix4f guirot) {
 +		mc.getProfiler().startSection("applyPhysicalKeyboardModelView");
 +
-+		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition();
++		Vector3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition();
 +
 +		//convert previously calculated coords to world coords
 +		guipos = mc.vrPlayer.room_to_world_pos(guipos, mc.vrPlayer.vrdata_world_render);
@@ -1990,7 +1990,7 @@
 +  	private void applyVRModelView(RenderPass currentPass, MatrixStack matrix)
 +  	{
 + 		if (mc.currentPass == RenderPass.SCOPEL || mc.currentPass == RenderPass.SCOPER) {
-+ 	 		matrix.rotate(Vec3f.XP.rotationDegrees(90));
++ 	 		matrix.rotate(Vector3f.XP.rotationDegrees(90));
 + 		}
 + 		matrix.getLast().getMatrix().mul(mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().transposed().toMCMatrix());
 +  	}  	 	
@@ -1998,13 +1998,13 @@
 +  	public void applystereo(RenderPass currentPass, MatrixStack matrix)
 +  	{
 +  		if(currentPass == RenderPass.THIRD || currentPass == RenderPass.CENTER) return;
-+  		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
++  		Vector3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
 +  		matrix.translate((float)-eye.x, (float)-eye.y, (float)-eye.z);
 +  	}	
 + 	public void removeStereo(RenderPass currentPass, MatrixStack matrix)
 +  	{
 +  		if(currentPass == RenderPass.THIRD || currentPass == RenderPass.CENTER) return;
-+  		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
++  		Vector3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
 +  		matrix.translate((float)eye.x, (float)eye.y, (float)eye.z);
 +  	}
 + 	 	
@@ -2019,14 +2019,14 @@
 +  	private void applystereoLegacy(RenderPass currentPass)
 +  	{
 +  		if(currentPass == RenderPass.THIRD || currentPass == RenderPass.CENTER) return;
-+  		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
++  		Vector3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
 +  		GL11.glTranslatef((float)eye.x, (float)eye.y, (float)eye.z);
 +  	}
 +  	
 +  	private void removeStereoLegacy(RenderPass currentPass)
 +  	{
 +  		if(currentPass == RenderPass.THIRD || currentPass == RenderPass.CENTER) return;
-+  		Vec3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
++  		Vector3d eye = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getPosition().subtract(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
 +  		GL11.glTranslatef((float)-eye.x, (float)-eye.y, (float)-eye.z);
 +  	}
 +    //      
@@ -2071,7 +2071,7 @@
 +  		
 +  		VRDevicePose data;
 +  		
-+  		Vec3d f;
++  		Vector3d f;
 +//  		if(mc.currentPass == RenderPass.THIRD){
 +//  			data = mc.vrPlayer.vrdata_world_render.c2;
 +//  		}
@@ -2142,7 +2142,7 @@
 +  		onfire = false;
 +  		if (!this.mc.player.isSpectator() && !isInMenuRoom())
 +  		{
-+  			Vec3d pos = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
++  			Vector3d pos = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
 +  			inblock = itemRenderer.isInsideOpaqueBlock(pos, true); 	
 +  			inwater =  this.mc.player.areEyesInFluid(FluidTags.WATER) && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderWaterOverlay, this.mc.player, partialTicks);
 +  			onfire = mc.currentPass != RenderPass.THIRD && this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, this.mc.player, partialTicks);
@@ -2171,19 +2171,19 @@
 +  				
 +  				applyVRModelViewLegacy(mc.currentPass);
 +  				
-+  					Vec3d o = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
++  					Vector3d o = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
 +  					if (mc.currentPass == RenderPass.THIRD)
 +  						o=mc.vrPlayer.vrdata_world_render.getEye(RenderPass.THIRD).getPosition();
 +  	
 +  					ClientPlayerEntity player = mc.player;
 +  					
-+  			    	Vec3d interpolatedPlayerPos = new Vec3d(
++  			    	Vector3d interpolatedPlayerPos = new Vector3d(
 +  			    			rvelastX + (rveX - rvelastX) * (double)par1,
 +  			    			rvelastY + (rveY - rvelastY) * (double)par1,
 +  			    			rvelastZ + (rveZ - rvelastZ) * (double)par1
 +  			    			);
 +  			    	
-+  					Vec3d pos = interpolatedPlayerPos.subtract(o).add(0, 0.005, 0);
++  					Vector3d pos = interpolatedPlayerPos.subtract(o).add(0, 0.005, 0);
 +                    setupPolyRendering(true);
 +                    RenderSystem.disableDepthTest();
 +                    // Shaders goes crazy without this
@@ -2208,9 +2208,9 @@
 +
 +  				applyVRModelViewLegacy(mc.currentPass);
 +
-+  				Vec3d cam = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.THIRD).getPosition();
-+  				Vec3d o = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
-+  				Vec3d pos = cam.subtract(o);
++  				Vector3d cam = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.THIRD).getPosition();
++  				Vector3d o = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
++  				Vector3d pos = cam.subtract(o);
 +
 +  				RenderSystem.translated(pos.x, pos.y, pos.z);	
 +  				RenderSystem.multMatrix(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.THIRD).getMatrix().toMCMatrix());
@@ -2286,7 +2286,7 @@
 +  	}
 +
 +    private boolean shouldOccludeGui() {
-+  	    Vec3d pos = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
++  	    Vector3d pos = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
 +        if (isInMenuRoom() || mc.currentScreen != null ||
 +                !this.mc.vrSettings.hudOcclusion
 +                || itemRenderer.isInsideOpaqueBlock(pos, false))
@@ -2317,7 +2317,7 @@
 +    	final int COLUMN_GAP = 12;
 +
 +    	float fade = isGuiOrtho ? 0.85f : 0.80f;
-+    	Vec3d rgb = new Vec3d(0f, 0f, 0f);
++    	Vector3d rgb = new Vector3d(0f, 0f, 0f);
 +
 +    	if (isStereo)
 +    	{
@@ -2577,7 +2577,7 @@
 + 				RenderSystem.pushMatrix();
 + 				removeStereoLegacy(mc.currentPass);
 + 				SetupRenderingAtControllerLegacy(1);	//does not push
-+ 				Vec3d start = new Vec3d(0,0.005,.03);
++ 				Vector3d start = new Vector3d(0,0.005,.03);
 +
 + 				float r;
 + 				float max = .03f;
@@ -2651,27 +2651,27 @@
 +  				for (int c=0;c<2;c++)
 +  				{
 +  		
-+  					Vec3i color = new Vec3i((byte)(255 - 127 * c), (byte)(255 - 127 * c), (byte)(255 - 127 * c));
++  					Vector3i color = new Vector3i((byte)(255 - 127 * c), (byte)(255 - 127 * c), (byte)(255 - 127 * c));
 +  					byte alpha = (byte) 255;
 +  					
 +  					RenderSystem.pushMatrix();
 +	  										
 +  						SetupRenderingAtControllerLegacy(c);
 +	  									
-+	  						Vec3d start = new Vec3d(0,0,0);
++	  						Vector3d start = new Vector3d(0,0,0);
 +	  			
 +	//  						Matrix4f controllerRotation = mc.lookaimController.getAimRotation(c);
 +	//  						Vector3f forward = new Vector3f(0,0,-0.17f);
 +	//  						Vector3f dir = controllerRotation.transform(forward);
-+	  						Vec3d dir = mc.vrPlayer.vrdata_world_render.getController(c).getDirection();
-+	  						Vec3d up = mc.vrPlayer.vrdata_world_render.getController(c).getCustomVector(new Vec3d(0, 1, 0));
++	  						Vector3d dir = mc.vrPlayer.vrdata_world_render.getController(c).getDirection();
++	  						Vector3d up = mc.vrPlayer.vrdata_world_render.getController(c).getCustomVector(new Vector3d(0, 1, 0));
 +	  				
 +	  						float sc = mc.vrPlayer.vrdata_world_render.worldScale;
 +	  					
-+	  						up = new Vec3d(0,1,0);
-+	  						dir = new Vec3d(0,0,-1);
++	  						up = new Vector3d(0,1,0);
++	  						dir = new Vector3d(0,0,-1);
 +	  						
-+	  						Vec3d end = new Vec3d(
++	  						Vector3d end = new Vector3d(
 +	  								start.x - dir.x*.18*sc,
 +	  								start.y - dir.y*.18*sc,
 +	  								start.z - dir.z*.18*sc);
@@ -2848,7 +2848,7 @@
 +    	{
 +    		matrixStackIn.push();
 +    		
-+	    		matrixStackIn.rotate(Vec3f.YP.rotationDegrees(i * 90.0F - mc.vrPlayer.vrdata_world_render.getBodyYaw()));
++	    		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(i * 90.0F - mc.vrPlayer.vrdata_world_render.getBodyYaw()));
 +	            matrixStackIn.translate(0, -b, 0.0F);
 +	            
 +	    		Matrix4f matrix4f = matrixStackIn.getLast().getMatrix();

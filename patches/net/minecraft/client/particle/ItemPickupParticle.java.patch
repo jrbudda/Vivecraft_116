@@ -17,7 +17,7 @@
 -        double d1 = MathHelper.lerp((double)partialTicks, this.target.lastTickPosY, this.target.getPosY()) + 0.5D;
 -        double d2 = MathHelper.lerp((double)partialTicks, this.target.lastTickPosZ, this.target.getPosZ());
 +        
-+        Vec3d pos = this.target.getPositionVec().add(0, 0.5f, 0);
++        Vector3d pos = this.target.getPositionVec().add(0, 0.5f, 0);
 +   
 +        //Vivecraft
 +        Minecraft mc = Minecraft.getInstance();
@@ -34,10 +34,10 @@
          double d4 = MathHelper.lerp((double)f, this.item.getPosY(), d1);
          double d5 = MathHelper.lerp((double)f, this.item.getPosZ(), d2);
          IRenderTypeBuffer.Impl irendertypebuffer$impl = this.renderTypeBuffers.getBufferSource();
-         Vec3d vec3d = renderInfo.getProjectedView();
+         Vector3d vector3d = renderInfo.getProjectedView();
 +     
 +
 +        
-         this.renderManager.renderEntityStatic(this.item, d3 - vec3d.getX(), d4 - vec3d.getY(), d5 - vec3d.getZ(), this.item.rotationYaw, partialTicks, new MatrixStack(), irendertypebuffer$impl, this.renderManager.getPackedLight(this.item, partialTicks));
+         this.renderManager.renderEntityStatic(this.item, d3 - vector3d.getX(), d4 - vector3d.getY(), d5 - vector3d.getZ(), this.item.rotationYaw, partialTicks, new MatrixStack(), irendertypebuffer$impl, this.renderManager.getPackedLight(this.item, partialTicks));
          irendertypebuffer$impl.finish();
  

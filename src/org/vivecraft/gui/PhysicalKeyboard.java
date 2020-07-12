@@ -28,7 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class PhysicalKeyboard {
 	private final Minecraft mc = Minecraft.getInstance();
@@ -274,7 +274,7 @@ public class PhysicalKeyboard {
 		matrix.translate(getCenterPos());
 		Matrix4f.mul(matrix, (Matrix4f)Utils.convertOVRMatrix(KeyboardHandler.Rotation_room).invert(), matrix);
 		matrix.translate((Vector3f)Utils.convertToVector3f(KeyboardHandler.Pos_room).negate());
-		Vec3d pos = Utils.convertToVec3d(Utils.transformVector(matrix, Utils.convertToVector3f(mc.vrPlayer.vrdata_room_pre.getController(controller.ordinal()).getPosition()), true));
+		Vector3d pos = Utils.convertToVector3d(Utils.transformVector(matrix, Utils.convertToVector3f(mc.vrPlayer.vrdata_room_pre.getController(controller.ordinal()).getPosition()), true));
 
 		// Do intersection checks
 		for (KeyButton key : keys) {

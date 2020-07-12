@@ -9,7 +9,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class PhysicalItemSlot implements Interactable {
 	public PhysicalItemSlotGui gui;
@@ -80,7 +80,7 @@ public class PhysicalItemSlot implements Interactable {
 			}
 	//		GlStateManager.multMatrixf(Convert.matrix(this.counterRot).toMCMatrix4f());
 
-			Vec3d counterpos = new Vec3d(-itemWidth * 0.5, -itemWidth * 0.5, -itemHeight * 0.5 - 0.05);
+			Vector3d counterpos = new Vector3d(-itemWidth * 0.5, -itemWidth * 0.5, -itemHeight * 0.5 - 0.05);
 			counterpos = counterpos.add(this.counterPos);
 
 			GlStateManager.translated(counterpos.x,counterpos.y,counterpos.z);
@@ -119,9 +119,9 @@ public class PhysicalItemSlot implements Interactable {
 	 * <br>
 	 * Example: (0.5,0.5,-0.5) is on the front face, in the top left corner
 	 */
-	public Vec3d position = new Vec3d(0, 0, -0.5);
+	public Vector3d position = new Vector3d(0, 0, -0.5);
 
-	public Vec3d getPosition(double partialTicks) {
+	public Vector3d getPosition(double partialTicks) {
 		return position;
 	}
 
@@ -133,7 +133,7 @@ public class PhysicalItemSlot implements Interactable {
 		return gui.getAnchorRotation(partialTicks);
 	}
 
-	public Vec3d getAnchorPos(double partialTicks){
+	public Vector3d getAnchorPos(double partialTicks){
 		return gui.getAnchorPos(partialTicks);
 	}
 
@@ -152,7 +152,7 @@ public class PhysicalItemSlot implements Interactable {
 	 * The position of the counter relative to {@link PhysicalItemSlot#position} and aligned with {@link PhysicalItemSlot#rotation}
 	 * originated at the lower right corner of the items top face. In short: this is an offset from the counters normal position
 	 */
-	public Vec3d counterPos = new Vec3d(0, 0, 0);
+	public Vector3d counterPos = new Vector3d(0, 0, 0);
 
 	/**
 	 * The rotation of the counter relative to {@link PhysicalItemSlot#rotation}

@@ -15,7 +15,7 @@ import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.math.vector.Vec2f;
+import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.StringTextComponent;
 import net.optifine.gui.TooltipManager;
 
@@ -85,7 +85,7 @@ public abstract class GuiVROptionsBase extends Screen
 			{ // Option Slider
 				this.addButton(new GuiVROptionSlider(layout.getOrdinal(), layout.getX(this.width),layout.getY(this.height), layout.getOption(), layout.getOption().getValueMin(), layout.getOption().getValueMax()) {
 					public void onClick(double mouseX, double mouseY) {
-						if (layout.getCustomHandler() != null && layout.getCustomHandler().apply(this, new Vec2f((float)mouseX, (float)mouseY)))
+						if (layout.getCustomHandler() != null && layout.getCustomHandler().apply(this, new Vector2f((float)mouseX, (float)mouseY)))
 							return;
 						super.onClick(mouseX, mouseY);
 					}
@@ -95,7 +95,7 @@ public abstract class GuiVROptionsBase extends Screen
 			{ // Option Button
 				this.addButton(
 						new GuiVROptionButton(layout.getOrdinal(), layout.getX(this.width), layout.getY(this.height), layout.getOption(), layout.getButtonText(), (p) -> {
-						if (layout.getCustomHandler() != null && layout.getCustomHandler().apply((GuiVROptionButton) p, new Vec2f((float)0, (float)0)))
+						if (layout.getCustomHandler() != null && layout.getCustomHandler().apply((GuiVROptionButton) p, new Vector2f((float)0, (float)0)))
 							return;
 						GuiVROptionsBase.this.settings.setOptionValue(((GuiVROptionButton)p).getOption());
 						p.setMessage(new StringTextComponent(layout.getButtonText()));
@@ -105,7 +105,7 @@ public abstract class GuiVROptionsBase extends Screen
 			{ // Screen button
 				this.addButton(new GuiVROptionButton(layout.getOrdinal(), layout.getX(this.width), layout.getY(this.height), layout.getButtonText(), (p) -> {
 						try {
-							if (layout.getCustomHandler() != null && layout.getCustomHandler().apply((GuiVROptionButton) p, new Vec2f((float)0, (float)0)))
+							if (layout.getCustomHandler() != null && layout.getCustomHandler().apply((GuiVROptionButton) p, new Vector2f((float)0, (float)0)))
 								return;
 							GuiVROptionsBase.this.settings.saveOptions();
 							GuiVROptionsBase.this.minecraft.displayGuiScreen(layout.getScreen().getConstructor(Screen.class).newInstance(GuiVROptionsBase.this));
@@ -117,7 +117,7 @@ public abstract class GuiVROptionsBase extends Screen
 			else if (layout.getCustomHandler() != null)
 			{ // Custom click handler button
 				this.addButton(new GuiVROptionButton(layout.getOrdinal(), layout.getX(this.width), layout.getY(this.height), layout.getButtonText(), (p) -> {
-						layout.getCustomHandler().apply((GuiVROptionButton) p, new Vec2f((float)0, (float)0));
+						layout.getCustomHandler().apply((GuiVROptionButton) p, new Vector2f((float)0, (float)0));
 				}));
 			}
 			else { //just a button, do something with it on your own time.

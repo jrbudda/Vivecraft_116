@@ -13,20 +13,20 @@
  import net.minecraft.client.util.ITooltipFlag;
  import net.minecraft.enchantment.EnchantmentHelper;
 @@ -259,6 +264,14 @@
-                 Vec3d vec3d1 = shooter.getUpVector(1.0F);
-                 Quaternion quaternion = new Quaternion(new Vec3f(vec3d1), projectileAngle, true);
-                 Vec3d vec3d = shooter.getLook(1.0F);
+                 Vector3d vector3d1 = shooter.getUpVector(1.0F);
+                 Quaternion quaternion = new Quaternion(new Vector3f(vector3d1), projectileAngle, true);
+                 Vector3d vector3d = shooter.getLook(1.0F);
 +            	//VIVE SET AIM AND SPEED
 +            	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
 +            	if (vp !=null && vp.isVR())
 +            	{ 
-+            		vec3d = vp.getControllerDir(vp.activeHand);	
-+            		vec3d1 = vp.getControllerVectorCustom(vp.activeHand, new Vector3(0, 1, 0));
++            		vector3d = vp.getControllerDir(vp.activeHand);	
++            		vector3d1 = vp.getControllerVectorCustom(vp.activeHand, new Vector3(0, 1, 0));
 +            	}
 +            	///
-                 Vec3f vec3f = new Vec3f(vec3d);
-                 vec3f.transform(quaternion);
-                 projectileentity.shoot((double)vec3f.getX(), (double)vec3f.getY(), (double)vec3f.getZ(), velocity, inaccuracy);
+                 Vector3f vector3f = new Vector3f(vector3d);
+                 vector3f.transform(quaternion);
+                 projectileentity.shoot((double)vector3f.getX(), (double)vector3f.getY(), (double)vector3f.getZ(), velocity, inaccuracy);
 @@ -417,7 +430,7 @@
          }
      }

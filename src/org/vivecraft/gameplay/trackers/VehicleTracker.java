@@ -8,7 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.minecart.MinecartEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 
 public class VehicleTracker extends Tracker {
@@ -18,7 +18,7 @@ public class VehicleTracker extends Tracker {
 	}
 	
     private float PreMount_World_Rotation;
-    public Vec3d Premount_Pos_Room = new Vec3d(0, 0, 0);
+    public Vector3d Premount_Pos_Room = new Vector3d(0, 0, 0);
 	public float vehicleInitialRotation = 0;
 
 	@Override
@@ -37,10 +37,10 @@ public class VehicleTracker extends Tracker {
 	}
 
 	public double getVehicleFloor(Entity vehicle, double original) {
-		if(vehicle instanceof AbstractHorseEntity)
+	//	if(vehicle instanceof AbstractHorseEntity)
 			return original; //horses are fine.
 		
-		return vehicle.getPosY();
+//		return vehicle.getPosY();
 	}
 	
 	public int rotationCooldown = 0; 
@@ -135,8 +135,8 @@ public class VehicleTracker extends Tracker {
 		Minecraft mc = Minecraft.getInstance();
 		
 		PreMount_World_Rotation = mc.vrPlayer.vrdata_world_pre.rotation_radians;
-		Vec3d campos = mc.vrPlayer.vrdata_room_pre.getHeadPivot();
-		Premount_Pos_Room = new Vec3d(campos.x, 0, campos.z);
+		Vector3d campos = mc.vrPlayer.vrdata_room_pre.getHeadPivot();
+		Premount_Pos_Room = new Vector3d(campos.x, 0, campos.z);
 		dismountCooldown = 5;
 		//mc.vrPlayer.snapRoomOriginToPlayerEntity(this, false);
 		if(mc.vrSettings.vehicleRotation){
@@ -172,7 +172,7 @@ public class VehicleTracker extends Tracker {
 	private int minecartStupidityCounter;
 	
 	private float getMinecartRenderYaw(MinecartEntity entity){	
-		Vec3d spd = new Vec3d(entity.getPosX() - entity.lastTickPosX, entity.getPosY() - entity.lastTickPosY, entity.getPosZ() - entity.lastTickPosZ);
+		Vector3d spd = new Vector3d(entity.getPosX() - entity.lastTickPosX, entity.getPosY() - entity.lastTickPosY, entity.getPosZ() - entity.lastTickPosZ);
 		float spdyaw = (float)Math.toDegrees((Math.atan2(-spd.x, spd.z)));
 		if(shouldMinecartTurnView(entity))
 			return -180+spdyaw;
@@ -181,12 +181,12 @@ public class VehicleTracker extends Tracker {
 	}
 	
 	private double mineCartSpeed(MinecartEntity entity) {
-		Vec3d spd = new Vec3d(entity.getMotion().x, 0, entity.getMotion().z);
+		Vector3d spd = new Vector3d(entity.getMotion().x, 0, entity.getMotion().z);
 		return spd.length();
 	}
 	
 	private boolean shouldMinecartTurnView(MinecartEntity entity){	
-		Vec3d spd = new Vec3d(entity.getPosX() - entity.lastTickPosX, entity.getPosY() - entity.lastTickPosY, entity.getPosZ() - entity.lastTickPosZ);
+		Vector3d spd = new Vector3d(entity.getPosX() - entity.lastTickPosX, entity.getPosY() - entity.lastTickPosY, entity.getPosZ() - entity.lastTickPosZ);
 		return spd.length() > 0.001;
 	}
 	

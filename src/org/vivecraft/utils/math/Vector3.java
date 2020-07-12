@@ -4,7 +4,7 @@ import org.vivecraft.utils.lwjgl.Matrix3f;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 import org.vivecraft.utils.lwjgl.Vector3f;
 
-import net.minecraft.util.math.vector.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 /**
  *
@@ -18,7 +18,7 @@ public class Vector3 {
 	public Vector3() {
 	}
 
-	public Vector3(Vec3d vec3d){
+	public Vector3(Vector3d vec3d){
 		this.x=(float) vec3d.x;
 		this.y=(float) vec3d.y;
 		this.z=(float) vec3d.z;
@@ -42,8 +42,8 @@ public class Vector3 {
 		this.z = other.z;
 	}
 
-	public Vec3d toVec3d(){
-		return new Vec3d(x,y,z);
+	public Vector3d toVector3d(){
+		return new Vector3d(x,y,z);
 	}
 
 	public Vector3 copy() {
