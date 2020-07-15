@@ -234,7 +234,7 @@ public class FakeBlockAccess implements IWorldReader {
 
 	@Override
 	public boolean chunkExists(int x, int z) {
-		return checkCoords(new BlockPos(x * 16, 0, z * 16)); // Uh?
+		return checkCoords(x * 16, 0, z * 16); // :thonk:
 	}
 
 	@Override
@@ -269,7 +269,7 @@ public class FakeBlockAccess implements IWorldReader {
 
 	@Override
 	public Stream<VoxelShape> func_230318_c_(@Nullable Entity p_230318_1_, AxisAlignedBB p_230318_2_, Predicate<Entity> p_230318_3_) {
-		return null;
+		return null; // nani
 	}
 
 	@Override
@@ -278,25 +278,14 @@ public class FakeBlockAccess implements IWorldReader {
 	}
 
 	@Override
-	public Biome getBiome(BlockPos pos) {
-		if (version == 2)
-			return getNoiseBiome(pos.getX(), 0, pos.getZ());
-		else
-			return this.biomeManager.getBiome(pos);
-	}
-
-	@Override
 	public Biome getNoiseBiome(int x, int y, int z) {
-		if (!checkCoords(x, y, z)) {
-			x = MathHelper.clamp(x, 0, xSize - 1);
-			y = MathHelper.clamp(y, 0, ySize - 1);
-			z = MathHelper.clamp(z, 0, zSize - 1);
+		if (!checkCoords(x * 4, y * 4, z * 4)) {
+			x = MathHelper.clamp(x, 0, xSize / 4 - 1);
+			y = MathHelper.clamp(y, 0, ySize / 4 - 1);
+			z = MathHelper.clamp(z, 0, zSize / 4 - 1);
 		}
 
-		if (version == 2)
-			return biomemap[encodeCoords(x, z)];
-		else
-			return biomemap[((y / 4) * (zSize / 4) + (z / 4)) * (xSize / 4) + (x / 4)];
+		return biomemap[(y * (zSize / 4) + z) * (xSize / 4) + x];
 	}
 
 	@Override

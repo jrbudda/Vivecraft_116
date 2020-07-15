@@ -23,7 +23,6 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     public ModelRenderer leftShoulder;
     public ModelRenderer rightShoulder;
     public ModelRenderer vrHMD;
-    public Vector3d renderPos;
     ResourceLocation DIAMOND_HMD = new ResourceLocation("vivecraft:textures/diamond_hmd.png");
     ResourceLocation GOLD_HMD = new ResourceLocation("vivecraft:textures/gold_hmd.png");
     ResourceLocation BLACK_HMD = new ResourceLocation("vivecraft:textures/black_hmd.png");
@@ -119,7 +118,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     	this.bipedHead.rotateAngleY = (float) (Math.PI - hmdYaw - bodyYaw);
     	//
    	   	
-    	if(renderPos !=null && !seated){
+    	if(!seated){
         	rightShoulder.showModel = true;
         	leftShoulder.showModel = true;
         	      	
@@ -134,7 +133,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     		//
     		
     		//Left Arm
-    		Vector3d larm = rotInfo.leftArmPos.subtract(renderPos).add(0,handsYOffset,0);
+    		Vector3d larm = rotInfo.leftArmPos.add(0,handsYOffset,0);
     		larm = larm.rotateYaw((float)(-Math.PI + bodyYaw));     		      		        		
     		larm = larm.scale(16/rotInfo.heightScale);
     		this.bipedLeftArm.setRotationPoint((float)-larm.x, (float)-larm.y, (float)larm.z);          
@@ -164,7 +163,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     		//
     		
     		//Right arm
-    		Vector3d rarm = rotInfo.rightArmPos.subtract(renderPos).add(0,handsYOffset,0);
+    		Vector3d rarm = rotInfo.rightArmPos.add(0,handsYOffset,0);
         	rarm = rarm.rotateYaw((float)(-Math.PI + bodyYaw));      
     	
         	rarm = rarm.scale(16/rotInfo.heightScale); //because.

@@ -42,7 +42,7 @@
 +    	if (vp !=null && vp.isVR())
 +    	{
 +    		Vector3d aim = vp.getControllerDir(vp.activeHand);
-+    		Vector3d aimSource = vp.getControllerPos(vp.activeHand);
++    		Vector3d aimSource = vp.getControllerPos(vp.activeHand, p_i290_1_);
 +    		float pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 +    		float yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
 +    		this.setLocationAndAngles(aimSource.x + aim.x*0.6f, aimSource.y+aim.y*0.6f, aimSource.z+aim.z*0.6f, yaw, pitch);

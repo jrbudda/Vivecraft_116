@@ -85,9 +85,9 @@
                      double d1 = this.mouseX * (double)this.minecraft.getMainWindow().getScaledWidth() / (double)this.minecraft.getMainWindow().getWidth();
                      double d2 = this.mouseY * (double)this.minecraft.getMainWindow().getScaledHeight() / (double)this.minecraft.getMainWindow().getHeight();
 -                    this.minecraft.currentScreen.mouseScrolled(d1, d2, d0);
-+                    if (Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseScrollPre, this.minecraft.currentScreen, d0)) return;
++                    if (Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseScrollPre, this, this.minecraft.currentScreen, d0)) return;
 +                    if (this.minecraft.currentScreen.mouseScrolled(d1, d2, d0)) return;
-+                    Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseScrollPost, this.minecraft.currentScreen, d0); 
++                    Reflector.callBoolean(Reflector.ForgeHooksClient_onGuiMouseScrollPost, this, this.minecraft.currentScreen, d0); 
                  }
                  else if (this.minecraft.player != null)
                  {

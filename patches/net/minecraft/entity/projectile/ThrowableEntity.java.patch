@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/ThrowableEntity.java
 +++ b/net/minecraft/entity/projectile/ThrowableEntity.java
-@@ -1,5 +1,8 @@
+@@ -1,9 +1,13 @@
  package net.minecraft.entity.projectile;
  
 +import org.vivecraft.api.NetworkHelper;
@@ -9,7 +9,12 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
  import net.minecraft.entity.EntityType;
-@@ -15,6 +18,7 @@
+ import net.minecraft.entity.LivingEntity;
++import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.network.IPacket;
+ import net.minecraft.network.play.server.SSpawnObjectPacket;
+ import net.minecraft.particles.ParticleTypes;
+@@ -15,6 +19,7 @@
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
@@ -17,7 +22,7 @@
  
  public abstract class ThrowableEntity extends ProjectileEntity
  {
-@@ -33,6 +37,15 @@
+@@ -33,6 +38,15 @@
      {
          this(p_i3867_1_, p_i3867_2_.getPosX(), p_i3867_2_.getPosYEye() - (double)0.1F, p_i3867_2_.getPosZ(), p_i3867_3_);
          this.setShooter(p_i3867_2_);
@@ -25,7 +30,7 @@
 +        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i3867_2_.getUniqueID());
 +        if (vp !=null && vp.isVR())
 +        {
-+        	Vector3d aimSource = vp.getControllerPos(vp.activeHand);
++        	Vector3d aimSource = vp.getControllerPos(vp.activeHand, (PlayerEntity) p_i3867_2_);
 +        	Vector3d aimDir = vp.getControllerDir(vp.activeHand).scale(0.6f);
 +        	this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        } 
@@ -33,7 +38,7 @@
      }
  
      public boolean isInRangeToRenderDist(double distance)
-@@ -79,6 +92,11 @@
+@@ -79,6 +93,11 @@
  
          if (raytraceresult.getType() != RayTraceResult.Type.MISS && !flag)
          {

@@ -245,7 +245,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
         	double d3 = entityLiving.lastTickPosX + (entityLiving.getPosX() - entityLiving.lastTickPosX) * (double)partialTicks;
         	double d4 = entityLiving.lastTickPosY + (entityLiving.getPosY() - entityLiving.lastTickPosY) * (double)partialTicks;
         	double d5 = entityLiving.lastTickPosZ + (entityLiving.getPosZ() - entityLiving.lastTickPosZ) * (double)partialTicks;
-        	mp.renderPos = new Vector3d(d3, d4, d5);
+        //	mp.renderPos = new Vector3d(d3, d4, d5);
         	if(PlayerModelController.getInstance().isTracked(uuid)){
         		PlayerModelController.RotInfo rotInfo=PlayerModelController.getInstance().getRotationsForPlayer(uuid);	
         		rotationYaw = (float) Math.toDegrees(rotInfo.getBodyYawRadians());

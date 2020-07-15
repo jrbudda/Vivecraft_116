@@ -100,7 +100,7 @@
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
 -        this.client.ingameGUI.addChatMessage(packetIn.getType(), packetIn.getChatComponent(), packetIn.func_240810_e_());
 +   
-+        net.minecraft.util.text.ITextComponent message = (ITextComponent) Reflector.call(Reflector.ForgeEventFactory_onClientChat, packetIn.getType(), packetIn.getChatComponent());
++        net.minecraft.util.text.ITextComponent message = (ITextComponent) Reflector.call(Reflector.ForgeEventFactory_onClientChat, packetIn.getType(), packetIn.getChatComponent(), packetIn.func_240810_e_());
 +        if (message == null)     	
 +        	this.client.ingameGUI.addChatMessage(packetIn.getType(), packetIn.getChatComponent(), packetIn.func_240810_e_());
 +        else

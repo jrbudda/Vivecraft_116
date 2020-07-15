@@ -58,7 +58,8 @@ public class MenuWorldExporter {
 
 					if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
 						int indexBiome = ((y / 4) * (zSize / 4) + (zl / 4)) * (xSize / 4) + (xl / 4);
-						biomemap[indexBiome] = Registry.BIOME.getId(world.getNoiseBiome(x, y, z));
+						// getNoiseBiome expects pre-divided coordinates
+						biomemap[indexBiome] = Registry.BIOME.getId(world.getNoiseBiome(x / 4, y / 4, z / 4));
 					}
 				}
 			}
@@ -194,13 +195,25 @@ public class MenuWorldExporter {
 			blocklightmap[i] = (byte)(b >> 4);
 		}
 
-		Biome[] biomemap;
-		if (header.version == 2)
-			biomemap = new Biome[xSize * zSize];
-		else
-			biomemap = new Biome[(xSize * ySize * zSize) / 64];
-		for (int i = 0; i < biomemap.length; i++) {
-			biomemap[i] = getBiome(dis.readInt());
+		Biome[] biomemap = new Biome[(xSize * ySize * zSize) / 64];
+		if (header.version == 2) {
+			Biome[] tempBiomemap = new Biome[xSize * zSize];
+			for (int i = 0; i < tempBiomemap.length; i++) {
+				tempBiomemap[i] = getBiome(dis.readInt());
+			}
+			for (int x = 0; x < xSize / 4; x++) {
+				for (int z = 0; z < zSize / 4; z++) {
+					biomemap[z * (xSize / 4) + x] = tempBiomemap[(z * 4) * xSize + (x * 4)];
+				}
+			}
+			int yStride = (xSize / 4) * (zSize / 4);
+			for (int y = 1; y < ySize / 4; y++) {
+				System.arraycopy(biomemap, 0, biomemap, yStride * y, yStride);
+			}
+		} else {
+			for (int i = 0; i < biomemap.length; i++) {
+				biomemap[i] = getBiome(dis.readInt());
+			}
 		}
 		
 		return new FakeBlockAccess(header.version, seed, blocks, skylightmap, blocklightmap, biomemap, xSize, ySize, zSize, ground, dimensionType, isFlat);

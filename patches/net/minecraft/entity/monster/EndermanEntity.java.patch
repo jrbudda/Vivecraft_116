@@ -53,7 +53,7 @@
 +        	if (vr)
 +        	{
 +        		vector3d = vp.getHMDDir();
-+        		Vector3d hmdpos = vp.getHMDPos();
++        		Vector3d hmdpos = vp.getHMDPos(player);
 +        		vector3d1 = new Vector3d(this.getPosX() - hmdpos.x, this.getBoundingBox().minY + (double)this.getEyeHeight() - hmdpos.y, this.getPosZ() - hmdpos.z);
 +        	}
 +        	//          
@@ -61,7 +61,7 @@
 +        	vector3d1 = vector3d1.normalize();
 +        	double d1 = vector3d.dotProduct(vector3d1);
 +        	//Vivecraft
-+        	return d1 > 1.0D - 0.025D / d0 ? (vr ? canSee(vp.getHMDPos(), this.getEyePosition(1)): player.canEntityBeSeen(this)) : false;
++        	return d1 > 1.0D - 0.025D / d0 ? (vr ? canSee(vp.getHMDPos(player), this.getEyePosition(1)): player.canEntityBeSeen(this)) : false;
 +        	//
          }
      }

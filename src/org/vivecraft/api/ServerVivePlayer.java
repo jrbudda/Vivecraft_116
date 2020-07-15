@@ -9,6 +9,7 @@ import org.vivecraft.utils.math.Quaternion;
 import org.vivecraft.utils.math.Vector3;
 
 import io.netty.buffer.Unpooled;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.vector.Vector3d;
@@ -124,7 +125,7 @@ public class ServerVivePlayer {
 		return player.getLookVec();
 	}
 	
-	public Vector3d getHMDPos() {
+	public Vector3d getHMDPos(PlayerEntity player) {
 		try {
 			if(hmdData!=null){
 				
@@ -138,7 +139,7 @@ public class ServerVivePlayer {
 				
 				da.close(); 
 								
-				return new Vector3d(x, y, z);
+				return new Vector3d(x, y, z).add(player.getPositionVec());
 			}else{
 			}
 		} catch (IOException e) {
@@ -150,7 +151,7 @@ public class ServerVivePlayer {
 	}
 	
 	
-	public Vector3d getControllerPos(int c) {
+	public Vector3d getControllerPos(int c, PlayerEntity player) {
 		try {
 			if(controller0data != null && controller0data != null){
 				
@@ -169,13 +170,14 @@ public class ServerVivePlayer {
 					dir = dir.rotateYaw((float) Math.toRadians(c==0?-35:35));
 					dir = new Vector3d(dir.x, 0, dir.z);
 					dir = dir.normalize();
-					Vector3d out = this.getHMDPos().add(dir.x * 0.3 * worldScale, -0.4* worldScale ,dir.z*0.3* worldScale);
+					Vector3d out = this.getHMDPos(player).add(dir.x * 0.3 * worldScale, -0.4* worldScale ,dir.z*0.3* worldScale);
 					x = (float) out.x;
 					y = (float) out.y;
 					z = (float) out.z;
+					return new Vector3d(x, y, z);
 				}
 				
-				return new Vector3d(x, y, z);
+				return new Vector3d(x, y, z).add(player.getPositionVec());
 			}else{
 			}
 		} catch (IOException e) {

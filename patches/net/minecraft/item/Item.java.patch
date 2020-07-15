@@ -29,7 +29,7 @@
 +    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(player.getUniqueID());
 +    	if (vp !=null && vp.isVR())
 +    	{
-+    		vector3d = vp.getControllerPos(0);
++    		vector3d = vp.getControllerPos(0, player);
 +    		Vector3d aim = vp.getControllerDir(0);
 +    		f = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
 +    		f1 = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		       		

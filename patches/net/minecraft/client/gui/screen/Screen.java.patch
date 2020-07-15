@@ -18,7 +18,7 @@
 +    	Reflector.call(Reflector.GuiUtils_preItemToolTip, p_230457_2_);        
 +    	FontRenderer fon = (FontRenderer)Reflector.call(p_230457_2_.getItem(), Reflector.IForgeItem_getFontRenderer, p_230457_2_);
 +    	this.renderTooltip(p_230457_1_, this.renderTooltip(p_230457_2_), p_230457_3_, p_230457_4_, (fon == null ? this.font : fon));
-+    	Reflector.call(Reflector.GuiUtils_postItemToolTip, p_230457_2_);
++    	Reflector.call(Reflector.GuiUtils_postItemToolTip);
 +    	//Forge
      }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/EntityRendererManager.java
 +++ b/net/minecraft/client/renderer/entity/EntityRendererManager.java
-@@ -7,6 +7,11 @@
+@@ -7,6 +7,12 @@
  import java.util.Collections;
  import java.util.Map;
  import javax.annotation.Nullable;
@@ -8,11 +8,12 @@
 +import org.vivecraft.render.PlayerModelController;
 +import org.vivecraft.render.VRPlayerRenderer;
 +import org.vivecraft.render.PlayerModelController.RotInfo;
++import org.vivecraft.render.RenderPass;
 +
  import net.minecraft.block.BlockRenderType;
  import net.minecraft.block.BlockState;
  import net.minecraft.client.GameSettings;
-@@ -60,6 +65,12 @@
+@@ -60,6 +66,12 @@
      private final Map < EntityType, EntityRenderer> renderers = Maps.newHashMap();
      private final Map<String, PlayerRenderer> skinMap = Maps.newHashMap();
      private final PlayerRenderer playerRenderer;
@@ -25,7 +26,7 @@
      private final FontRenderer textRenderer;
      public final TextureManager textureManager;
      private World world;
-@@ -221,13 +232,49 @@
+@@ -221,13 +233,49 @@
          }
      }
  
@@ -79,3 +80,53 @@
          }
          else
          {
+@@ -561,9 +609,47 @@
+ 
+     public Quaternion getCameraOrientation()
+     {
+-        return this.cameraOrientation;
++    	//Vivecraft Hack time! This is only used to render sprites 'normal' to the camera, but, 
++    	//as you can see, doesn't work at all, how could it, using a fixed rotation for every sprite?
++    	//Lets do better.  	
++    	if(Minecraft.getInstance().currentPass == RenderPass.GUI)
++    		return info.getRotation();
++    	
++    	Entity renderedEntity = Minecraft.getInstance().worldRenderer.renderedEntity;
++    	if(renderedEntity == null) return info.getRotation(); //how did u get here, boo?
++    	
++    	Vector3d src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(RenderPass.CENTER).getPosition();    	
++    	if(Minecraft.getInstance().currentPass == RenderPass.THIRD)
++    		src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(RenderPass.THIRD).getPosition();
++   	
++    	//To not have sprite appear differently in 3rd person, let's have them always point at the player. 
++    	Vector3d dir = renderedEntity.getPositionVec().add(0,renderedEntity.getHeight()/2,0).subtract(src).normalize();
++    	//of course this wants a quaternion. Of course it does.
++        this.cameraOrientation.set(0.0F, 0.0F, 0.0F, 1.0F);   
++        this.cameraOrientation.multiply(Vector3f.YP.rotationDegrees((float)-Math.toDegrees(Math.atan2(-dir.x, dir.z))));
++        this.cameraOrientation.multiply(Vector3f.XP.rotationDegrees((float)-Math.toDegrees(Math.asin(dir.y/dir.length()))));
++        //
++        
++        return this.cameraOrientation;  	
++    }
++    
++    //Vivecraft same as above but for nameplates.
++    public Quaternion getCameraOrientationOffset(float offset)
++    { 	
++    	if(Minecraft.getInstance().currentPass == RenderPass.GUI)
++    		return info.getRotation();
++    	Entity renderedEntity = Minecraft.getInstance().worldRenderer.renderedEntity;
++    	if(renderedEntity == null) return info.getRotation(); //how did u get here, boo? 	
++    	Vector3d src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(RenderPass.CENTER).getPosition();    	
++    	if(Minecraft.getInstance().currentPass == RenderPass.THIRD)
++    		src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(RenderPass.THIRD).getPosition();	
++    	Vector3d dir = renderedEntity.getPositionVec().add(0,renderedEntity.getHeight() + offset ,0).subtract(src).normalize();
++        this.cameraOrientation.set(0.0F, 0.0F, 0.0F, 1.0F);   
++        this.cameraOrientation.multiply(Vector3f.YP.rotationDegrees((float)-Math.toDegrees(Math.atan2(-dir.x, dir.z))));
++        this.cameraOrientation.multiply(Vector3f.XP.rotationDegrees((float)-Math.toDegrees(Math.asin(dir.y/dir.length()))));        
++        return this.cameraOrientation;  	
+     }
+-
++    
+     public FontRenderer getFontRenderer()
+     {
+         return this.textRenderer;

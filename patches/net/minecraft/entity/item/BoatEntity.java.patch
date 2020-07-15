@@ -22,7 +22,7 @@
                              {
 +                                	//Forge
 +                                    if(Reflector.IForgeBlockState_getSlipperiness.exists())
-+                                        f += Reflector.callDouble(blockstate, Reflector.IForgeBlockState_getSlipperiness, this.world, blockpos$mutable, this);
++                                        f += Reflector.callFloat(blockstate, Reflector.IForgeBlockState_getSlipperiness, this.world, blockpos$mutable, this);
 +                                    else
 +                                    //
                                  f += blockstate.getBlock().getSlipperiness();

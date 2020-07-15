@@ -160,7 +160,7 @@
 +			double d0 = (double) (-MathHelper.sin(yaw * 0.017453292F));
 +			double d1 = (double) MathHelper.cos(yaw * 0.017453292F);
 +
-+			Vector3d pos = vp.getControllerPos(0);
++			Vector3d pos = vp.getControllerPos(0, this);
 +
 +			if (this.world instanceof ServerWorld) // has to be
 +			{
@@ -235,7 +235,7 @@
 +        	//Vivecraft, set spwanpos of dropped item.
 +            ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());    
 +            if (vp != null && vp.isVR() && !dropAround) {
-+    			Vector3d pos = vp.getControllerPos(0);    	
++    			Vector3d pos = vp.getControllerPos(0, this);    	
 +    			Vector3d aim = vp.getControllerDir(0);
 +    			float f2 = 0.3F;
 +    			itementity.setMotion(aim.x * f2, aim.y * f2, aim.z * f2);

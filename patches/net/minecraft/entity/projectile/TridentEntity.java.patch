@@ -21,7 +21,7 @@
 +            	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(entity.getUniqueID());
 +            	if (vp !=null && vp.isVR())
 +            	{
-+            		pos = vp.getControllerPos(0);
++            		pos = vp.getControllerPos(0, (PlayerEntity) entity);
 +            	}           	         	
 +                Vector3d vector3d = new Vector3d(pos.x - this.getPosX(), pos.y- this.getPosY(), pos.z - this.getPosZ());
 +                //

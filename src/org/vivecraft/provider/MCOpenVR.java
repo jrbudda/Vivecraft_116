@@ -171,7 +171,7 @@ public class MCOpenVR
 													 		0,1,0,1.62f,
 														 	0,0,1,.75f,
 														 	0,0,0,1);
-	private static final boolean TPose = false;
+	private static boolean TPose = false;
 	//
 	
 	

@@ -1,0 +1,60 @@
+--- a/net/minecraft/client/AbstractOption.java
++++ b/net/minecraft/client/AbstractOption.java
+@@ -178,7 +178,7 @@
+             return d0 == p_lambda$static$29_1_.getMaxValue() ? iformattabletextcomponent.func_230529_a_(new TranslationTextComponent("options.framerateLimit.max")) : iformattabletextcomponent.func_230529_a_(new TranslationTextComponent("options.framerate", (int)d0));
+         }
+     });
+-    public static final SliderPercentageOption GAMMA = new SliderPercentageOption("options.gamma", 0.0D, 1.0D, 0.0F, (p_lambda$static$30_0_) ->
++    public static final SliderPercentageOption GAMMA = new SliderPercentageOption("options.gamma", -0.5D, 1.0D, 0.0F, (p_lambda$static$30_0_) ->
+     {
+         return p_lambda$static$30_0_.gamma;
+     }, (p_lambda$static$31_0_, p_lambda$static$31_1_) ->
+@@ -189,12 +189,21 @@
+         double d0 = p_lambda$static$32_1_.normalizeValue(p_lambda$static$32_1_.get(p_lambda$static$32_0_));
+         IFormattableTextComponent iformattabletextcomponent = p_lambda$static$32_1_.func_238238_a_();
+ 
+-        if (d0 == 0.0D)
++        if (Math.abs(d0 - 1D / 3D) < 0.005)
+         {
+             return iformattabletextcomponent.func_230529_a_(new TranslationTextComponent("options.gamma.min"));
+         }
+-        else {
+-            return d0 == 1.0D ? iformattabletextcomponent.func_230529_a_(new TranslationTextComponent("options.gamma.max")) : iformattabletextcomponent.func_240702_b_("+" + (int)(d0 * 100.0D) + "%");
++        else if (d0 == 1.0D)
++        {
++            return iformattabletextcomponent.func_230529_a_(new TranslationTextComponent("options.gamma.max"));
++        }
++        else if (d0 == 0.0D)
++        {
++            return iformattabletextcomponent.func_230529_a_(new TranslationTextComponent("vivecraft.options.gamma.cantseeshitcaptain"));
++        }
++        else
++        {
++            return iformattabletextcomponent.func_240702_b_((d0 >= 1D / 3D ? "+" : "") + (int)((d0 * 1.5 - 0.5) * 100.0D) + "%");
+         }
+     });
+     public static final SliderPercentageOption MIPMAP_LEVELS = new SliderPercentageOption("options.mipmapLevels", 0.0D, 4.0D, 1.0F, (p_lambda$static$33_0_) ->
+@@ -338,6 +347,9 @@
+ 
+             p_lambda$static$59_0_.updateRenderClouds();
+             minecraft.worldRenderer.loadRenderers();
++            //Vivecraft
++            minecraft.stereoProvider.reinitFrameBuffers("gfx setting change");
++            //
+         }
+     }, (p_lambda$static$60_0_, p_lambda$static$60_1_) ->
+     {
+@@ -360,11 +372,11 @@
+     });
+     public static final IteratableOption GUI_SCALE = new IteratableOption("options.guiScale", (p_lambda$static$61_0_, p_lambda$static$61_1_) ->
+     {
+-        p_lambda$static$61_0_.guiScale = MathHelper.normalizeAngle(p_lambda$static$61_0_.guiScale + p_lambda$static$61_1_, Minecraft.getInstance().getMainWindow().calcGuiScale(0, Minecraft.getInstance().getForceUnicodeFont()) + 1);
++        p_lambda$static$61_0_.guiScaleUser = MathHelper.normalizeAngle(p_lambda$static$61_0_.guiScaleUser + p_lambda$static$61_1_, Minecraft.getInstance().getMainWindow().calcGuiScale(0, Minecraft.getInstance().getForceUnicodeFont()) + 1);
+     }, (p_lambda$static$62_0_, p_lambda$static$62_1_) ->
+     {
+         IFormattableTextComponent iformattabletextcomponent = p_lambda$static$62_1_.func_238238_a_();
+-        return p_lambda$static$62_0_.guiScale == 0 ? iformattabletextcomponent.func_230529_a_(new TranslationTextComponent("options.guiScale.auto")) : iformattabletextcomponent.func_240702_b_(Integer.toString(p_lambda$static$62_0_.guiScale));
++        return p_lambda$static$62_0_.guiScaleUser == 0 ? iformattabletextcomponent.func_230529_a_(new TranslationTextComponent("options.guiScale.auto")) : iformattabletextcomponent.func_240702_b_(Integer.toString(p_lambda$static$62_0_.guiScaleUser));
+     });
+     public static final IteratableOption MAIN_HAND = new IteratableOption("options.mainHand", (p_lambda$static$63_0_, p_lambda$static$63_1_) ->
+     {

@@ -36,11 +36,11 @@
 +        	if (vp !=null && vp.isVR())
 +        	{
 +         		//VIVE SET SPAWNPOS
-+        		Vector3d aimSource = vp.getControllerPos(vp.activeHand);
++        		Vector3d aimSource = vp.getControllerPos(vp.activeHand, (PlayerEntity)p_i3311_2_);
 +        		Vector3d aimDir = vp.getControllerDir(vp.activeHand);     
 +        		if (!vp.isSeated() && vp.getDraw() > 0) {
-+        			aimDir = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
-+        			aimSource = vp.getControllerPos(0);
++        			aimDir = vp.getControllerPos(1,(PlayerEntity)p_i3311_2_).subtract(vp.getControllerPos(0,(PlayerEntity)p_i3311_2_)).normalize();
++        			aimSource = vp.getControllerPos(0,(PlayerEntity)p_i3311_2_);
 +        		}   
 +        		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        		//

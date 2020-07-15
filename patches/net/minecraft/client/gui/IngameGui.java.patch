@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/IngameGui.java
 +++ b/net/minecraft/client/gui/IngameGui.java
-@@ -6,6 +6,8 @@
+@@ -6,8 +6,11 @@
  import com.google.common.collect.Ordering;
  import com.mojang.blaze3d.matrix.MatrixStack;
  import com.mojang.blaze3d.platform.GlStateManager;
@@ -8,8 +8,11 @@
 +import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
  import com.mojang.blaze3d.systems.RenderSystem;
  import com.mojang.datafixers.util.Pair;
++
  import java.util.Collection;
-@@ -16,6 +18,9 @@
+ import java.util.Iterator;
+ import java.util.List;
+@@ -16,6 +19,9 @@
  import java.util.UUID;
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
@@ -19,7 +22,7 @@
  import net.minecraft.block.Blocks;
  import net.minecraft.client.GameSettings;
  import net.minecraft.client.Minecraft;
-@@ -27,11 +32,13 @@
+@@ -27,11 +33,13 @@
  import net.minecraft.client.gui.overlay.DebugOverlayGui;
  import net.minecraft.client.gui.overlay.PlayerTabOverlayGui;
  import net.minecraft.client.gui.overlay.SubtitleOverlayGui;
@@ -33,7 +36,7 @@
  import net.minecraft.client.renderer.texture.AtlasTexture;
  import net.minecraft.client.renderer.texture.PotionSpriteUploader;
  import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-@@ -44,6 +51,7 @@
+@@ -44,6 +52,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.inventory.container.INamedContainerProvider;
  import net.minecraft.item.ItemStack;
@@ -41,7 +44,15 @@
  import net.minecraft.potion.Effect;
  import net.minecraft.potion.EffectInstance;
  import net.minecraft.potion.Effects;
-@@ -115,6 +123,8 @@
+@@ -67,6 +76,7 @@
+ import net.minecraft.util.text.IFormattableTextComponent;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.StringTextComponent;
++import net.minecraft.util.text.TextComponent;
+ import net.minecraft.util.text.TextFormatting;
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraft.world.GameType;
+@@ -115,6 +125,8 @@
      private int scaledWidth;
      private int scaledHeight;
      private final Map<ChatType, List<IChatListener>> chatListeners = Maps.newHashMap();
@@ -50,7 +61,7 @@
  
      public IngameGui(Minecraft p_i32_1_)
      {
-@@ -155,32 +165,40 @@
+@@ -155,32 +167,40 @@
          FontRenderer fontrenderer = this.getFontRenderer();
          RenderSystem.enableBlend();
  
@@ -108,7 +119,7 @@
  
          if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
          {
-@@ -197,9 +215,13 @@
+@@ -197,9 +217,13 @@
              this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
              RenderSystem.enableBlend();
              RenderSystem.enableAlphaTest();
@@ -124,7 +135,7 @@
              this.mc.getProfiler().startSection("bossHealth");
              this.overlayBoss.func_238484_a_(p_238445_1_);
              this.mc.getProfiler().endSection();
-@@ -285,7 +307,9 @@
+@@ -285,7 +309,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight - 68), 0.0F);
                      RenderSystem.enableBlend();
@@ -135,7 +146,7 @@
                      int k1 = 16777215;
  
                      if (this.animateOverlayMessageColor)
-@@ -328,7 +352,9 @@
+@@ -328,7 +354,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight / 2), 0.0F);
                      RenderSystem.enableBlend();
@@ -146,7 +157,7 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.scalef(4.0F, 4.0F, 4.0F);
                      int l1 = j1 << 24 & -16777216;
-@@ -375,9 +401,30 @@
+@@ -375,9 +403,30 @@
              {
                  this.renderScoreboard(p_238445_1_, scoreobjective1);
              }
@@ -178,7 +189,7 @@
              RenderSystem.disableAlphaTest();
              RenderSystem.pushMatrix();
              RenderSystem.translatef(0.0F, (float)(this.scaledHeight - 48), 0.0F);
-@@ -387,7 +434,7 @@
+@@ -387,7 +436,7 @@
              RenderSystem.popMatrix();
              scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
  
@@ -187,7 +198,16 @@
              {
                  this.overlayPlayerList.setVisible(true);
                  this.overlayPlayerList.func_238523_a_(p_238445_1_, this.scaledWidth, scoreboard, scoreobjective1);
-@@ -622,7 +669,9 @@
+@@ -582,7 +631,7 @@
+ 
+                     if (Reflector.IForgeEffectInstance_renderHUDEffect.exists())
+                     {
+-                        Reflector.call(effectinstance, Reflector.IForgeEffectInstance_renderHUDEffect, this, k, l, this.getBlitOffset(), f);
++                        Reflector.call(effectinstance, Reflector.IForgeEffectInstance_renderHUDEffect, this, p_238444_1_, k, l, this.getBlitOffset(), f);
+                     }
+                 }
+             }
+@@ -622,7 +671,9 @@
              this.setBlitOffset(j);
              RenderSystem.enableRescaleNormal();
              RenderSystem.enableBlend();
@@ -198,7 +218,7 @@
              CustomItems.setRenderOffHand(false);
  
              for (int i1 = 0; i1 < 9; ++i1)
-@@ -673,6 +722,10 @@
+@@ -673,6 +724,10 @@
  
              RenderSystem.disableRescaleNormal();
              RenderSystem.disableBlend();
@@ -209,7 +229,7 @@
          }
      }
  
-@@ -1212,6 +1265,7 @@
+@@ -1212,6 +1267,7 @@
          }
      }
  
@@ -217,7 +237,7 @@
      private void renderPumpkinOverlay()
      {
          RenderSystem.disableDepthTest();
-@@ -1243,6 +1297,8 @@
+@@ -1243,6 +1299,8 @@
          }
      }
  
@@ -226,7 +246,7 @@
      private void renderVignette(Entity entityIn)
      {
          if (!Config.isVignetteEnabled())
-@@ -1295,6 +1351,7 @@
+@@ -1295,6 +1353,7 @@
          }
      }
  
@@ -234,7 +254,18 @@
      private void renderPortal(float timeInPortal)
      {
          if (timeInPortal < 1.0F)
-@@ -1520,4 +1577,80 @@
+@@ -1393,8 +1452,8 @@
+ 
+             if (Reflector.IForgeItemStack_getHighlightTip.exists())
+             {
+-                String s = Reflector.callString(itemstack, Reflector.IForgeItemStack_getHighlightTip, itemstack.getDisplayName());
+-                String s1 = Reflector.callString(this.highlightingItemStack, Reflector.IForgeItemStack_getHighlightTip, this.highlightingItemStack.getDisplayName());
++                ITextComponent s = (ITextComponent) Reflector.call(itemstack, Reflector.IForgeItemStack_getHighlightTip, itemstack.getDisplayName());
++                ITextComponent s1 = (ITextComponent) Reflector.call(this.highlightingItemStack, Reflector.IForgeItemStack_getHighlightTip, this.highlightingItemStack.getDisplayName());
+                 flag = Config.equals(s, s1);
+             }
+ 
+@@ -1520,4 +1579,80 @@
      {
          this.overlayDebug.resetChunk();
      }

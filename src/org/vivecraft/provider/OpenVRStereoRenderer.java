@@ -1,7 +1,10 @@
 package org.vivecraft.provider;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
@@ -17,6 +20,7 @@ import org.vivecraft.render.VRShaders;
 import org.vivecraft.settings.VRSettings;
 import org.vivecraft.settings.VRSettings.VrOptions;
 
+import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.sun.jna.Memory;
@@ -31,7 +35,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
@@ -43,17 +49,20 @@ import net.optifine.shaders.Shaders;
  */
 public class OpenVRStereoRenderer 
 {
-	
+	//Render target fbs
 	public Framebuffer framebufferVrRender;
 	public Framebuffer framebufferMR;
 	public Framebuffer framebufferUndistorted;
-	public Framebuffer framebufferEye0;
-	public Framebuffer framebufferEye1;
-	public Framebuffer mirrorFB = null;
-	public Framebuffer fsaaFirstPassResultFBO;
-	public Framebuffer fsaaLastPassResultFBO;
 	public Framebuffer telescopeFramebufferR;
 	public Framebuffer telescopeFramebufferL;
+	
+	//intermediate fbs
+	public Framebuffer fsaaFirstPassResultFBO;
+	public Framebuffer fsaaLastPassResultFBO;
+	
+	//output fbs
+	public Framebuffer framebufferEye0;
+	public Framebuffer framebufferEye1;
 	
 	public Matrix4f[] eyeproj = new Matrix4f[2];
 	//public net.minecraft.client.renderer.Matrix4f[] cloudeyeproj = new net.minecraft.client.renderer.Matrix4f[2];
@@ -84,6 +93,9 @@ public class OpenVRStereoRenderer
 	private float[][] hiddenMesheVertecies = new float[2][];
 	private Tuple<Integer, Integer> resolution;
 	public float ss = -1;
+
+	public Map<String,ShaderGroup> alphaShaders = new HashMap<String, ShaderGroup>();
+	public Map<String,ShaderGroup> entityShaders = new HashMap<String, ShaderGroup>();
 
 	public Tuple<Integer, Integer> getRenderTextureSizes()
 	{
@@ -547,11 +559,6 @@ public class OpenVRStereoRenderer
 			//	loadingScreen.deleteFramebuffer();
 			//}
 
-			if (mirrorFB != null) {
-				mirrorFB.deleteFramebuffer();
-				mirrorFB = null;
-			}
-
 			deleteMirrorTexture(); 
 
 			if (fsaaFirstPassResultFBO != null) {
@@ -709,16 +716,47 @@ public class OpenVRStereoRenderer
 				ShaderHelper.checkGLError("init depth shader");
 				VRShaders.setupFOVReduction();
 				ShaderHelper.checkGLError("init FOV shader");		
-		        mc.worldRenderer.makeEntityOutlineShader();
+		       
+				//vanilla entity outline shader
+				for (ShaderGroup s : entityShaders.values()) {
+					s.close();
+				}
+	           	entityShaders.clear();            	
+		        ResourceLocation outline = new ResourceLocation("shaders/post/entity_outline.json");
+                entityShaders.put(framebufferVrRender.name, createShaderGroup(outline, framebufferVrRender));
+    			if (renderPasses.contains(RenderPass.THIRD)) 
+    				entityShaders.put(framebufferMR.name, createShaderGroup(outline, framebufferMR));
+    			if (renderPasses.contains(RenderPass.CENTER)) 
+    				entityShaders.put(framebufferUndistorted.name, createShaderGroup(outline, framebufferUndistorted));
+    			entityShaders.put(telescopeFramebufferL.name, createShaderGroup(outline, telescopeFramebufferL));
+    			entityShaders.put(telescopeFramebufferR.name, createShaderGroup(outline, telescopeFramebufferR));
+		        //
+    			
+    			//Vanilla alpha sort shader
+            	for (ShaderGroup s : alphaShaders.values()) {
+					s.close();
+				}
+            	alphaShaders.clear();
 	            if (Minecraft.func_238218_y_())
-	            {
-	            	mc.worldRenderer.func_239233_v_();
+	            { //Fabulous
+	                ResourceLocation resourcelocation = new ResourceLocation("shaders/post/vrtransparency.json");
+	                alphaShaders.put(framebufferVrRender.name, createShaderGroup(resourcelocation, framebufferVrRender));
+	    			if (renderPasses.contains(RenderPass.THIRD)) 
+	    				alphaShaders.put(framebufferMR.name, createShaderGroup(resourcelocation, framebufferMR));
+	    			if (renderPasses.contains(RenderPass.CENTER)) 
+	    				alphaShaders.put(framebufferUndistorted.name, createShaderGroup(resourcelocation, framebufferUndistorted));
+	                alphaShaders.put(telescopeFramebufferL.name, createShaderGroup(resourcelocation, telescopeFramebufferL));
+	                alphaShaders.put(telescopeFramebufferR.name, createShaderGroup(resourcelocation, telescopeFramebufferR));
 	            }
 	            else
-	            {
-	            	mc.worldRenderer.func_239234_w_();
-	            }		        
+	            {//not fabulous!
+
+	            }	
+	            //
+	            
+	            //Vanilla mob spectator shader
 	            mc.gameRenderer.loadEntityShader(mc.getRenderViewEntity());
+	            //
 		       } catch (Exception e) {
 				System.out.println(e.getMessage());
 				System.exit(-1);
@@ -755,6 +793,14 @@ public class OpenVRStereoRenderer
 	
 	}
 
+	private ShaderGroup createShaderGroup(ResourceLocation resource, Framebuffer fb) throws JsonSyntaxException, IOException
+	{
+		Minecraft mc = Minecraft.getInstance();
+        ShaderGroup shadergroup = new ShaderGroup(mc.getTextureManager(), mc.getResourceManager(), fb, resource);
+        shadergroup.createBindFramebuffers(fb.framebufferWidth, fb.framebufferHeight);
+        return shadergroup;
+	}
+	
 	public List<RenderPass> getRenderPasses() {
 		Minecraft mc = Minecraft.getInstance();
 		List<RenderPass> passes = new ArrayList<>();

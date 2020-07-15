@@ -591,7 +591,7 @@
          }
  
          float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
-@@ -929,68 +973,51 @@
+@@ -929,69 +973,51 @@
  
              float f1 = 5.0F / (f * f + 5.0F) - f * 0.04F;
              f1 = f1 * f1;
@@ -671,19 +671,20 @@
 -            else
 -            {
 -                this.renderHand(matrixStackIn, activerenderinfo, partialTicks);
-+            Shaders.endRender();
-             }
+-            }
 -        }
- 
+-
 -        if (flag)
 -        {
--            Shaders.endRender();
+             Shaders.endRender();
 -        }
-+        restoreRVEPos((LivingEntity) mc.getRenderViewEntity()); //unhack the RVE position.
++            }
  
++        restoreRVEPos((LivingEntity) mc.getRenderViewEntity()); //unhack the RVE position.
          this.mc.getProfiler().endSection();
      }
-@@ -1103,8 +1130,6 @@
+ 
+@@ -1103,8 +1129,6 @@
  
          if (!this.initialized)
          {
@@ -692,7 +693,7 @@
              if (Config.getBitsOs() == 64 && Config.getBitsJre() == 32)
              {
                  Config.setNotify64BitJava(true);
-@@ -1278,8 +1303,11 @@
+@@ -1278,8 +1302,11 @@
              RenderSystem.disableCull();
              MatrixStack matrixstack = new MatrixStack();
              matrixstack.push();
@@ -706,7 +707,7 @@
              matrixstack.scale(f7, -f7, f7);
              matrixstack.rotate(Vector3f.YP.rotationDegrees(900.0F * MathHelper.abs(MathHelper.sin(f4))));
              matrixstack.rotate(Vector3f.XP.rotationDegrees(6.0F * MathHelper.cos(f * 8.0F)));
-@@ -1319,4 +1347,2161 @@
+@@ -1319,4 +1346,2164 @@
      {
          return this.overlayTexture;
      }
@@ -1137,6 +1138,7 @@
 +  					//this.renderItemActivation(this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), partialTicks);
 +
 +  					if (Reflector.ForgeIngameGui.exists()) {
++  						RenderSystem.defaultAlphaFunc();
 +  						// ensure all this forge crap is disabled
 +  						Reflector.ForgeIngameGui_renderVignette.setValue(false);
 +  						Reflector.ForgeIngameGui_renderHelmet.setValue(false);
@@ -2198,6 +2200,8 @@
 +                    RenderSystem.matrixMode(GL11.GL_MODELVIEW);
 +  				RenderSystem.popMatrix();
 +  			}
++
++            GlStateManager.enableCull();
 +  		}
 +  		 		
 +  		if(mc.currentPass == RenderPass.LEFT || mc.currentPass == RenderPass.RIGHT){
@@ -2389,8 +2393,8 @@
 +    	
 +        boolean menuHands = KeyboardHandler.Showing && mc.vrSettings.physicalKeyboard;
 +        
-+        if (!menuHands && shouldRenderHands()) 
-+            	renderVRHands(false, partialTicks);
++        if (!menuHands && shouldRenderHands())
++        	renderVRHands(false, partialTicks);
 +
 +    	if (menuHands) 
 +    		renderMainMenuHands(partialTicks);
@@ -2820,7 +2824,7 @@
 +    	RenderSystem.enableBlend();
 +    	RenderSystem.defaultBlendFunc();
 +    	TextureAtlasSprite textureatlassprite = ModelBakery.LOCATION_FIRE_1.getSprite();
-+
++    	RenderSystem.enableDepthTest();
 +    	if (SmartAnimations.isActive())
 +    	{
 +    		SmartAnimations.spriteRendered(textureatlassprite);

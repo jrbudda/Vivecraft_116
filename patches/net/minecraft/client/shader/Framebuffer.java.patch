@@ -27,7 +27,7 @@
 +    public static final int NO_TEXTURE_ID = -1;
 + 	private boolean depthisTex; //this is always true now.
 + 	private int texid = NO_TEXTURE_ID;
-+ 	private String name = "Default";
++ 	public String name = "Default";
 + 	private boolean linearFilter;
 + 	//
  

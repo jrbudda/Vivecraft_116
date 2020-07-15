@@ -133,7 +133,7 @@ public class NetworkHelper {
 			Matrix4f matrix = new Matrix4f();
 			matrix.load(buffer);
 
-			Vector3d headPosition = player.vrdata_world_post.getHeadPivot();
+			Vector3d headPosition = player.vrdata_world_post.getHeadPivot().subtract(Minecraft.getInstance().player.getPositionVec());
 			Quaternion headRotation = new Quaternion(matrix);
 			
 			ByteBuf payload = Unpooled.buffer();
@@ -154,7 +154,7 @@ public class NetworkHelper {
 		}	
 		
 		for (int i = 0; i < 2; i++) {
-			Vector3d controllerPosition = player.vrdata_world_post.getController(i).getPosition();
+			Vector3d controllerPosition = player.vrdata_world_post.getController(i).getPosition().subtract(Minecraft.getInstance().player.getPositionVec());
 			FloatBuffer buffer = player.vrdata_world_post.getController(i).getMatrix().toFloatBuffer();
 			buffer.rewind();
 			Matrix4f matrix = new Matrix4f();

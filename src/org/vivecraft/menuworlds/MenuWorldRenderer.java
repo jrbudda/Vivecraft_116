@@ -929,8 +929,9 @@ public class MenuWorldRenderer {
 
 	public Vector3d getFogColor(Vector3d pos)
 	{
+		float f = MathHelper.clamp(MathHelper.cos(this.getCelestialAngle() * ((float)Math.PI * 2F)) * 2.0F + 0.5F, 0.0F, 1.0F);
 		Vector3d scaledPos = pos.subtract(2.0D, 2.0D, 2.0D).scale(0.25D);
-		return CubicSampler.func_240807_a_(scaledPos, (x, y, z) -> this.dimensionInfo.func_230494_a_(Vector3d.func_237487_a_(this.blockAccess.getBiomeManager().func_235199_a_(x, y, z).func_235080_i_()), 0));
+		return CubicSampler.func_240807_a_(scaledPos, (x, y, z) -> this.dimensionInfo.func_230494_a_(Vector3d.func_237487_a_(this.blockAccess.getBiomeManager().func_235199_a_(x, y, z).func_235080_i_()), f));
 	}
 
 	public Vector3d getCloudColour()
@@ -1592,7 +1593,7 @@ public class MenuWorldRenderer {
 
 		private void updateSurfaceFog()
 		{
-			float f = 0.25F + 0.75F * (float)this.mc.gameSettings.renderDistanceChunks / 32.0F;
+			float f = 0.25F + 0.75F * (float)this.menuWorldRenderer.renderDistanceChunks / 32.0F;
 			f = 1.0F - (float)Math.pow((double)f, 0.25D);
 			Vector3d eyePos = this.menuWorldRenderer.getEyePos();
 			Vector3d vec3d = this.menuWorldRenderer.getSkyColor(eyePos);

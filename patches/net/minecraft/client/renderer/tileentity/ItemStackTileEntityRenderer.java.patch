@@ -41,10 +41,10 @@
              p_renderRaw_2_.scale(1.0F, -1.0F, -1.0F);
              RenderMaterial rendermaterial = flag ? ModelBakery.LOCATION_SHIELD_BASE : ModelBakery.LOCATION_SHIELD_NO_PATTERN;
              IVertexBuilder ivertexbuilder1 = rendermaterial.getSprite().wrapBuffer(ItemRenderer.func_239391_c_(p_renderRaw_3_, this.modelShield.getRenderType(rendermaterial.getAtlasLocation()), true, p_renderRaw_1_.hasEffect()));
-+                //Vivecraft
-+                if(a<1)
-+                    ivertexbuilder1 = rendermaterial.getSprite().wrapBuffer(ItemRenderer.func_239391_c_(p_renderRaw_3_, RenderType.getEntityTranslucent(rendermaterial.getAtlasLocation()), true, p_renderRaw_1_.hasEffect()));
-+                //
++            //Vivecraft
++            if(a<1)
++            	ivertexbuilder1 = rendermaterial.getSprite().wrapBuffer(ItemRenderer.func_239391_c_(p_renderRaw_3_, RenderType.getEntityTranslucent(rendermaterial.getAtlasLocation()), true, p_renderRaw_1_.hasEffect()));
++            //
              this.modelShield.func_228294_b_().render(p_renderRaw_2_, ivertexbuilder1, p_renderRaw_4_, p_renderRaw_5_, 1.0F, 1.0F, 1.0F, 1.0F);
  
              if (flag)
