@@ -73,7 +73,7 @@
 +            	k = makeColor(1, 130, 0, 75);
 +            } else if (TelescopeTracker.isTelescope(itemStackIn))
 +            {
-+            	k = makeColor(1, 40, 20, 175);
++            	k = makeColor(1, 190, 110, 135);
 +            }
 +            //
 +		    	
@@ -101,8 +101,8 @@
          RenderSystem.enableBlend();
 -        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 +        //RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-+        // VIVECRAFT: DestFactor of ONE is really what we want here, because math
-+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
++        // VIVECRAFT: DestFactor of ONE_MINUS_SRC_ALPHA is really what we want here, because math
++        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
          RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
          RenderSystem.translatef((float)x, (float)y, 100.0F + this.zLevel);
          RenderSystem.translatef(8.0F, 8.0F, 0.0F);

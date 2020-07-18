@@ -53,7 +53,7 @@ public class TelescopeTracker extends Tracker {
 	}
 	
 	private final static double lensDistMax = 0.05; // :shrug:
-	private final static double lensDistMin = 0.085; // :shrug:
+	private final static double lensDistMin = 0.185; // :shrug:
 
 	private final static double lensDotMax = 0.9; // :shrug:
 	private final static double lensDotMin = 0.75; // :shrug:

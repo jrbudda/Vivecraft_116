@@ -103,8 +103,10 @@ public class VRData{
 		h0 = new VRDevicePose(this, MCOpenVR.getHandRotation(0),MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(0));
 		h1 = new VRDevicePose(this, MCOpenVR.getHandRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(1));
 	
-		t0 = new VRDevicePose(this, getSmoothedRotation(0,0.33f), MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(0));
-		t1 = new VRDevicePose(this, getSmoothedRotation(1,0.33f), MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(1));
+		Matrix4f s1 = getSmoothedRotation(0,0.33f);
+		Matrix4f s2 = getSmoothedRotation(1,0.33f);
+		t0 = new VRDevicePose(this, s1, MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), s1.transform(Vector3.forward()).toVector3d());
+		t1 = new VRDevicePose(this, s2, MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), s2.transform(Vector3.forward()).toVector3d());
 
 		if (MCOpenVR.mrMovingCamActive)
 			c2 = new VRDevicePose(this, MCOpenVR.getAimRotation(2),MCOpenVR.getAimSource(2).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(2));
@@ -119,10 +121,10 @@ public class VRData{
 	
 	private Matrix4f getSmoothedRotation(int c, float lenSec) {
 		Vector3d pos = MCOpenVR.controllerHistory[c].averagePosition(lenSec);
-		Vector3d f = MCOpenVR.controllerForwardHistory[c].averagePosition(lenSec);
-		Vector3d u = MCOpenVR.controllerUpHistory[c].averagePosition(lenSec);
-		Vector3d r = f.crossProduct(u);	
-		return new Matrix4f((float)r.x, (float)u.x, (float)-f.x, (float)r.y, (float)u.y, (float)-f.y, (float)r.z, (float)u.z, (float)-f.z);
+		Vector3d u = MCOpenVR.controllerForwardHistory[c].averagePosition(lenSec);
+		Vector3d f = MCOpenVR.controllerUpHistory[c].averagePosition(lenSec);
+		Vector3d r = u.crossProduct(f);	
+		return new Matrix4f((float)r.x, (float)u.x, (float)f.x, (float)r.y, (float)u.y, (float)f.y, (float)r.z, (float)u.z, (float)f.z);
 	}
 	
 	public VRDevicePose getController(int c){

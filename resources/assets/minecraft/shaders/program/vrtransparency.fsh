@@ -13,13 +13,22 @@ uniform sampler2D WeatherDepthSampler;
 uniform sampler2D CloudsSampler;
 uniform sampler2D CloudsDepthSampler;
 
+uniform sampler2D VrOccludedSampler;
+uniform sampler2D VrOccludedDepthSampler;
+uniform sampler2D VrUnoccludedSampler;
+uniform sampler2D VrUnoccludedDepthSampler;
+uniform sampler2D VrHandsSampler;
+uniform sampler2D VrHandsDepthSampler;
+
 varying vec2 texCoord;
 
-#define NUM_LAYERS 6
+#define NUM_LAYERS 9
 
 vec4 color_layers[NUM_LAYERS];
 float depth_layers[NUM_LAYERS];
 int active_layers = 0;
+float hdepth;
+float udepth;
 
 void try_insert( vec4 color, float depth ) {
     if ( color.a == 0.0 ) {
@@ -58,6 +67,15 @@ void main() {
     try_insert( texture2D( ParticlesSampler, texCoord ), texture2D( ParticlesDepthSampler, texCoord ).r );
     try_insert( texture2D( WeatherSampler, texCoord ), texture2D( WeatherDepthSampler, texCoord ).r );
     try_insert( texture2D( CloudsSampler, texCoord ), texture2D( CloudsDepthSampler, texCoord ).r );
+    try_insert( texture2D( VrOccludedSampler, texCoord ), texture2D( VrOccludedDepthSampler, texCoord ).r );
+	hdepth = texture2D( VrHandsDepthSampler, texCoord ).r;
+	udepth = texture2D( VrUnoccludedDepthSampler, texCoord ).r;
+	try_insert( texture2D( VrUnoccludedSampler, texCoord ), 0.0);
+	if (hdepth<udepth && udepth < 1.0)
+		try_insert( texture2D( VrHandsSampler, texCoord ), 0.0);
+	else
+		try_insert( texture2D( VrHandsSampler, texCoord ), hdepth);
+
 
     vec3 texelAccum = color_layers[0].rgb;
     for ( int ii = 1; ii < active_layers; ++ii ) {

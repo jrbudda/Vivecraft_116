@@ -28,17 +28,18 @@
  
  public class ClientPlayNetHandler implements IClientPlayNetHandler
  {
-@@ -339,6 +352,9 @@
+@@ -339,6 +352,10 @@
          this.profile = p_i3586_4_;
          this.advancementManager = new ClientAdvancementManager(p_i3586_1_);
          this.clientSuggestionProvider = new ClientSuggestionProvider(this, p_i3586_1_);
 +        //VIVECRAFT
 +        NetworkHelper.resetServerSettings();
++        NetworkHelper.displayedChatMessage = false;
 +        //
      }
  
      public ClientSuggestionProvider getSuggestionProvider()
-@@ -397,9 +413,14 @@
+@@ -397,9 +414,14 @@
  
          this.client.debugRenderer.clear();
          this.client.player.preparePlayerToSpawn();
@@ -54,7 +55,7 @@
          this.client.playerController.setPlayerCapabilities(this.client.player);
          this.client.renderViewEntity = this.client.player;
          this.client.displayGuiScreen(new DownloadTerrainScreen());
-@@ -408,9 +429,15 @@
+@@ -408,9 +430,15 @@
          this.client.player.setShowDeathScreen(packetIn.func_229743_k_());
          this.client.playerController.setGameType(packetIn.getGameType());
          this.client.playerController.func_241675_a_(packetIn.func_241786_f_());
@@ -70,7 +71,7 @@
      }
  
      public void handleSpawnObject(SSpawnObjectPacket packetIn)
-@@ -893,7 +920,10 @@
+@@ -893,7 +921,10 @@
  
              if (tileentity != null)
              {
@@ -82,7 +83,7 @@
              }
          }
  
-@@ -947,6 +977,11 @@
+@@ -947,6 +978,11 @@
      public void handleDisconnect(SDisconnectPacket packetIn)
      {
          this.netManager.closeChannel(packetIn.getReason());
@@ -94,7 +95,7 @@
      }
  
      public void onDisconnect(ITextComponent reason)
-@@ -1020,7 +1055,35 @@
+@@ -1020,7 +1056,35 @@
      public void handleChat(SChatPacket packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
@@ -131,7 +132,7 @@
      }
  
      public void handleAnimation(SAnimateHandPacket packetIn)
-@@ -1152,7 +1215,9 @@
+@@ -1152,7 +1216,9 @@
  
                      if (entity1 == this.client.player && !flag)
                      {
@@ -142,7 +143,7 @@
                      }
                  }
              }
-@@ -1249,6 +1314,10 @@
+@@ -1249,6 +1315,10 @@
              this.world.setScoreboard(scoreboard);
              this.client.loadWorld(this.world);
              this.client.displayGuiScreen(new DownloadTerrainScreen());
@@ -153,7 +154,7 @@
          }
  
          this.world.removeAllEntities();
-@@ -1273,9 +1342,14 @@
+@@ -1273,9 +1343,14 @@
  
          clientplayerentity1.preparePlayerToSpawn();
          clientplayerentity1.setServerBrand(s);
@@ -169,7 +170,7 @@
          this.client.playerController.setPlayerCapabilities(clientplayerentity1);
          clientplayerentity1.setReducedDebug(clientplayerentity.hasReducedDebug());
          clientplayerentity1.setShowDeathScreen(clientplayerentity.isShowDeathScreen());
-@@ -1373,7 +1447,7 @@
+@@ -1373,7 +1448,7 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
          Container container = null;
@@ -178,7 +179,7 @@
  
          if (packetIn.getWindowId() == 0)
          {
-@@ -1388,6 +1462,9 @@
+@@ -1388,6 +1463,9 @@
          {
              this.sendPacket(new CConfirmTransactionPacket(packetIn.getWindowId(), packetIn.getActionNumber(), true));
          }
@@ -188,7 +189,7 @@
      }
  
      public void handleWindowItems(SWindowItemsPacket packetIn)
-@@ -1430,7 +1507,15 @@
+@@ -1430,7 +1508,15 @@
          if (i == 1 && tileentity instanceof MobSpawnerTileEntity || flag || i == 3 && tileentity instanceof BeaconTileEntity || i == 4 && tileentity instanceof SkullTileEntity || i == 6 && tileentity instanceof BannerTileEntity || i == 7 && tileentity instanceof StructureBlockTileEntity || i == 8 && tileentity instanceof EndGatewayTileEntity || i == 9 && tileentity instanceof SignTileEntity || i == 11 && tileentity instanceof BedTileEntity || i == 5 && tileentity instanceof ConduitTileEntity || i == 12 && tileentity instanceof JigsawTileEntity || i == 13 && tileentity instanceof CampfireTileEntity || i == 14 && tileentity instanceof BeehiveTileEntity)
          {
              tileentity.func_230337_a_(this.client.world.getBlockState(blockpos), packetIn.getNbtCompound());
@@ -205,7 +206,7 @@
  
          if (flag && this.client.currentScreen instanceof CommandBlockScreen)
          {
-@@ -1670,6 +1755,9 @@
+@@ -1670,6 +1756,9 @@
          clientrecipebook.rebuildTable();
          clientrecipebook.getRecipes().forEach(imutablesearchtree::func_217872_a);
          imutablesearchtree.recalculate();
@@ -215,7 +216,7 @@
      }
  
      public void handlePlayerLook(SPlayerLookPacket packetIn)
-@@ -1773,7 +1861,7 @@
+@@ -1773,7 +1862,7 @@
  
          if (entity instanceof LivingEntity)
          {
@@ -224,7 +225,7 @@
  
              if (effect != null)
              {
-@@ -1795,6 +1883,9 @@
+@@ -1795,6 +1884,9 @@
          }
  
          this.client.getSearchTree(SearchTreeManager.TAGS).recalculate();
@@ -234,7 +235,7 @@
      }
  
      public void handleCombatEvent(SCombatPacket packetIn)
-@@ -2148,7 +2239,7 @@
+@@ -2148,7 +2240,7 @@
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
          ResourceLocation resourcelocation = packetIn.getChannelName();
          PacketBuffer packetbuffer = null;
@@ -243,7 +244,7 @@
          try
          {
              packetbuffer = packetIn.getBufferData();
-@@ -2421,14 +2512,119 @@
+@@ -2421,14 +2513,122 @@
                  int l5 = packetbuffer.readInt();
                  this.client.debugRenderer.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
              }
@@ -261,7 +262,10 @@
 +    					String v = packetbuffer.readString(1024);
 +    					this.client.vrPlayer.setTeleportSupported(true);
 +    					this.client.vrPlayer.teleportWarningTimer = -1;
-+    					this.client.printChatMessage("Vivecraft server mod detected: " +  v);
++    					if (!NetworkHelper.displayedChatMessage) {
++    					    NetworkHelper.displayedChatMessage = true;
++                            this.client.printChatMessage("Vivecraft server mod detected: " + v);
++                        }
 +    					if(Minecraft.getInstance().vrSettings.manualCalibration == -1 && ! Minecraft.getInstance().vrSettings.seated)
 +    						this.client.printChatMessage("Please calibrate your height in the pause menu.");
 +    					break;
@@ -365,7 +369,7 @@
              {
                  packetbuffer.release();
              }
-@@ -2788,4 +2984,14 @@
+@@ -2788,4 +2988,14 @@
      {
          return this.field_239163_t_;
      }

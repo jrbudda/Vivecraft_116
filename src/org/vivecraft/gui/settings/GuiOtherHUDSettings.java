@@ -46,7 +46,7 @@ public class GuiOtherHUDSettings extends GuiVROptionsBase
         this.settings.renderBlockOutlineMode = VRSettings.RENDER_BLOCK_OUTLINE_MODE_ALWAYS;
         this.settings.renderInGameCrosshairMode = VRSettings.RENDER_CROSSHAIR_MODE_ALWAYS;
         this.settings.menuCrosshairScale = 1f;
-        this.settings.useCrosshairOcclusion = false;
+        this.settings.useCrosshairOcclusion = true;
         this.settings.crosshairScalesWithDistance = false;
         this.settings.chatNotifications = VRSettings.CHAT_NOTIFICATIONS_NONE;
         this.settings.chatNotificationSound = "block.note_block.bell";

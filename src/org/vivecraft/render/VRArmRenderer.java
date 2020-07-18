@@ -60,7 +60,7 @@ public class VRArmRenderer extends PlayerRenderer
 		MCReflection.RenderPlayer_setModelVisibilities.invoke(this, playerIn);
         GlStateManager.enableBlend();
         GlStateManager.enableCull();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         
         playermodel.swingProgress = 0.0F;
         playermodel.isSneak = false;

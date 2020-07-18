@@ -300,16 +300,54 @@ public class PhysicalKeyboard {
 		}
 	}
 
+	private void drawBox(AxisAlignedBB box, GlStateManager.Color color) {
+		// Alright let's draw a box
+		Tessellator tess = Tessellator.getInstance();
+		BufferBuilder buf = tess.getBuffer();
+		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_NORMAL);
+
+		buf.pos(box.minX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
+		buf.pos(box.minX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
+		buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
+		buf.pos(box.maxX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
+
+		buf.pos(box.minX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, -1, 0).endVertex();
+		buf.pos(box.maxX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, -1, 0).endVertex();
+		buf.pos(box.maxX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, -1, 0).endVertex();
+		buf.pos(box.minX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, -1, 0).endVertex();
+
+		buf.pos(box.minX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(-1, 0, 0).endVertex();
+		buf.pos(box.minX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(-1, 0, 0).endVertex();
+		buf.pos(box.minX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(-1, 0, 0).endVertex();
+		buf.pos(box.minX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(-1, 0, 0).endVertex();
+
+		buf.pos(box.maxX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, 1).endVertex();
+		buf.pos(box.minX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, 1).endVertex();
+		buf.pos(box.minX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, 1).endVertex();
+		buf.pos(box.maxX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, 1).endVertex();
+
+		buf.pos(box.maxX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 1, 0).endVertex();
+		buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 1, 0).endVertex();
+		buf.pos(box.minX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 1, 0).endVertex();
+		buf.pos(box.minX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 1, 0).endVertex();
+
+		buf.pos(box.maxX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
+		buf.pos(box.maxX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
+		buf.pos(box.maxX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
+		buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
+
+		// Woo that was fun
+		tess.draw();
+	}
+
 	public void render() {
 		Vector3f center = getCenterPos();
 		GlStateManager.translatef(-center.x, -center.y, -center.z);
 		GlStateManager.disableTexture();
-		GlStateManager.depthMask(false);
 		GlStateManager.disableCull();
 		GlStateManager.enableAlphaTest();
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
 		GlStateManager.enableBlend();
-		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
 		if (easterEggActive) {
 			// https://qimg.techjargaming.com/i/UkG1cWAh.png
@@ -321,7 +359,7 @@ public class PhysicalKeyboard {
 			}
 		}
 
-		Tessellator tess = Tessellator.getInstance();
+		FontRenderer fontRenderer = mc.getRenderManager().getFontRenderer();
 		MatrixStack matrixstack = new MatrixStack();
 		for (KeyButton key : keys) {
 			AxisAlignedBB box = key.getRenderBoundingBox();
@@ -330,44 +368,14 @@ public class PhysicalKeyboard {
 			// Shaders goes crazy without this
 			mc.getTextureManager().bindTexture(new ResourceLocation("vivecraft:textures/white.png"));
 
-			// Alright let's draw a box
-			BufferBuilder buf = tess.getBuffer();
-			buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_NORMAL);
+			// We need to ignore depth so we can see the back faces and text
+			// Set up this crap every iteration cause FontRenderer screws with it
+			GlStateManager.depthFunc(GL11.GL_ALWAYS);
+			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
-			buf.pos(box.minX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
-			buf.pos(box.minX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
-			buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
-			buf.pos(box.maxX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
+			// Draw the key itself
+			drawBox(box, color);
 
-			buf.pos(box.minX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, -1, 0).endVertex();
-			buf.pos(box.maxX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, -1, 0).endVertex();
-			buf.pos(box.maxX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, -1, 0).endVertex();
-			buf.pos(box.minX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, -1, 0).endVertex();
-
-			buf.pos(box.minX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(-1, 0, 0).endVertex();
-			buf.pos(box.minX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(-1, 0, 0).endVertex();
-			buf.pos(box.minX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(-1, 0, 0).endVertex();
-			buf.pos(box.minX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(-1, 0, 0).endVertex();
-
-			buf.pos(box.maxX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, 1).endVertex();
-			buf.pos(box.minX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, 1).endVertex();
-			buf.pos(box.minX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, 1).endVertex();
-			buf.pos(box.maxX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, 1).endVertex();
-
-			buf.pos(box.maxX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 1, 0).endVertex();
-			buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 1, 0).endVertex();
-			buf.pos(box.minX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 1, 0).endVertex();
-			buf.pos(box.minX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 1, 0).endVertex();
-
-			buf.pos(box.maxX, box.maxY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
-			buf.pos(box.maxX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
-			buf.pos(box.maxX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
-			buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
-
-			// Woo that was fun
-			tess.draw();
-
-			FontRenderer fontRenderer = mc.getRenderManager().getFontRenderer();
 			GlStateManager.enableTexture();
 			GlStateManager.disableLighting();
 
@@ -389,10 +397,13 @@ public class PhysicalKeyboard {
 			GlStateManager.disableTexture();
 			GlStateManager.enableLighting();
 			GlStateManager.enableBlend(); // dammit FontRenderer
+			GlStateManager.enableDepthTest(); // aaaargh
 		}
 
 		GlStateManager.enableTexture();
 		GlStateManager.enableCull();
+		GlStateManager.depthFunc(GL11.GL_LEQUAL);
+		RenderSystem.defaultBlendFunc();
 	}
 
 	public void show() {

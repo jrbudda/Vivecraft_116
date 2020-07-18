@@ -49,9 +49,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
     public VRPlayerRenderer(EntityRendererManager p_i1296_1_, boolean p_i1296_2_, boolean seated)
     {
         super(p_i1296_1_, new VRPlayerModel<>(0.0F, p_i1296_2_, seated), 0.5F);       
-        BipedArmorLayer layer = new BipedArmorLayer(this, new VRArmorModel<>(0.5f), new VRArmorModel(1.0f));
-        this.addLayer(layer);
-        ((VRPlayerModel)this.entityModel).armor = layer;    
+        this.addLayer(new BipedArmorLayer<>(this, new BipedModel(0.5F), new BipedModel(1.0F)));
         this.addLayer(new VRHMDLayer(this));    
         this.addLayer(new HeldItemLayer<>(this));
         this.addLayer(new ArrowLayer(this));

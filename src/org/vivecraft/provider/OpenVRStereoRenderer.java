@@ -809,7 +809,7 @@ public class OpenVRStereoRenderer
 		passes.add(RenderPass.LEFT);
 		passes.add(RenderPass.RIGHT);
 
-		if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_FIRST_PERSON) {
+		if (mc.grabScreenShot || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_FIRST_PERSON) {
 			passes.add(RenderPass.CENTER);
 		} else if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY) {
 			if (mc.vrSettings.mixedRealityMRPlusUndistorted && mc.vrSettings.mixedRealityUnityLike)
@@ -829,7 +829,6 @@ public class OpenVRStereoRenderer
 					passes.add(RenderPass.SCOPEL);
 			}	
 		}
-		
 		return passes;
 	}
 	

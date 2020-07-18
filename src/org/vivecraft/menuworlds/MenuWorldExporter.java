@@ -80,7 +80,11 @@ public class MenuWorldExporter {
 			dos.writeBoolean((boolean)MCReflection.ClientWorldInfo_isFlat.get(world.getWorldInfo()));
 
 		dos.writeBoolean(world.getDimensionType().hasSkyLight()); // technically not needed now but keeping it just in case
-		dos.writeLong((long)MCReflection.BiomeManager_seed.get(world.getBiomeManager()));
+
+		if (world instanceof ServerWorld)
+			dos.writeLong(((ServerWorld)world).getSeed());
+		else
+			dos.writeLong((long)MCReflection.BiomeManager_seed.get(world.getBiomeManager())); // not really correct :/
 
 		mapper.writePalette(dos);
 

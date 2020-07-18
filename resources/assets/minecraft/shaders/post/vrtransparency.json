@@ -6,6 +6,9 @@
         "particles",
         "clouds",
         "weather",
+		"vroccluded",
+		"vrunoccluded",
+		"vrhands",
         "final"
     ],
     "passes": [
@@ -57,6 +60,30 @@
                 {
                     "name": "WeatherDepthSampler",
                     "id": "weather:depth"
+                },
+                {
+                    "name": "VrOccludedSampler",
+                    "id": "vroccluded"
+                },
+                {
+                    "name": "VrOccludedDepthSampler",
+                    "id": "vroccluded:depth"
+                },
+                {
+                    "name": "VrUnoccludedSampler",
+                    "id": "vrunoccluded"
+                },
+                {
+                    "name": "VrUnoccludedDepthSampler",
+                    "id": "vrunoccluded:depth"
+                },
+                {
+                    "name": "VrHandsSampler",
+                    "id": "vrhands"
+                },
+                {
+                    "name": "VrHandsDepthSampler",
+                    "id": "vrhands:depth"
                 }
             ]
         },

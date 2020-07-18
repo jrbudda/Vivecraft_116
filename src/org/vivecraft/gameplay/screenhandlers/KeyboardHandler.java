@@ -29,7 +29,7 @@ public class KeyboardHandler {
 
 	public static boolean setOverlayShowing(boolean showingState) {
 		if (Main.kiosk) return false;
-		//if(mc.vrSettings.seated) showingState = false;
+		if(mc.vrSettings.seated) showingState = false;
 		int ret = 1;
 		if (showingState) {		
             int i = mc.getMainWindow().getScaledWidth();

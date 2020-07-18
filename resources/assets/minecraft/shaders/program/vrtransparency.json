@@ -19,7 +19,13 @@
         { "name": "CloudsSampler" },
         { "name": "CloudsDepthSampler" },
         { "name": "WeatherSampler" },
-        { "name": "WeatherDepthSampler" }
+        { "name": "WeatherDepthSampler" },
+        { "name": "VrOccludedSampler" },
+        { "name": "VrOccludedDepthSampler" },
+        { "name": "VrUnoccludedSampler" },
+        { "name": "VrUnoccludedDepthSampler" },
+        { "name": "VrHandsSampler" },
+        { "name": "VrHandsDepthSampler" }
     ],
     "uniforms": [
         { "name": "ProjMat",    "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },

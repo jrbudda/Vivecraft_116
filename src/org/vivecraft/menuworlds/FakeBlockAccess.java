@@ -61,7 +61,7 @@ public class FakeBlockAccess implements IWorldReader {
 		this.dimensionType = dimensionType;
 		this.isFlat = isFlat;
 
-		this.biomeManager = new BiomeManager(this, seed, dimensionType.getMagnifier());
+		this.biomeManager = new BiomeManager(this, BiomeManager.func_235200_a_(seed), dimensionType.getMagnifier());
 		this.dimensionInfo = DimensionRenderInfo.func_239215_a_(IDynamicRegistries.func_239770_b_().func_230520_a_().func_230519_c_(dimensionType));
 	}
 	

@@ -223,7 +223,7 @@ public class VRSettings
     public float hudOpacity = 1f;
     public boolean menuBackground = false;
     public float   menuCrosshairScale = 1f;
-    public boolean useCrosshairOcclusion = false;
+    public boolean useCrosshairOcclusion = true;
 	public boolean seatedHudAltMode = true;
 	public boolean autoOpenKeyboard = false;
 	public int forceHardwareDetection = 0; // 0 = off, 1 = vive, 2 = oculus

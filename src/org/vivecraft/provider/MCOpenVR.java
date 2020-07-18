@@ -1788,6 +1788,7 @@ public class MCOpenVR
 						}
 					} else {
 						MenuWorldExporter.saveAreaToFile(mc.world, pos.getX() - size / 2, pos.getZ() - size / 2, size, size, pos.getY(), file);
+						mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("WARNING: Saving menu world using a client world. Data may be incomplete. It is recommended to save menu worlds in singleplayer."));
 					}
 					mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("World export complete... area size: " + size));
 					mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("Saved to " + file.getAbsolutePath()));

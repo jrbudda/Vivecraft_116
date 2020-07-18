@@ -70,6 +70,8 @@ public class NetworkHelper {
 		pb.writeString(payload);
         return (new SCustomPayloadPlayPacket(channel, pb));
 	}
+
+	public static boolean displayedChatMessage = false;
 	
 	public static boolean serverWantsData = false;
 	public static boolean serverAllowsClimbey = false;

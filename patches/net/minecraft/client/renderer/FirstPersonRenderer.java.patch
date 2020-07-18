@@ -830,7 +830,7 @@
 +
 +    	if (mc.world == null) return false;
 +    	BlockPos bp = new BlockPos(in);
-+    	
++    	   	
 +    	if(mc.world.getBlockState(bp).causesSuffocation(mc.world, bp)) {
 +    		mc.gameRenderer.inBlock = 1;
 +    		return true;

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.LivingEntity;
@@ -26,7 +27,6 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     ResourceLocation DIAMOND_HMD = new ResourceLocation("vivecraft:textures/diamond_hmd.png");
     ResourceLocation GOLD_HMD = new ResourceLocation("vivecraft:textures/gold_hmd.png");
     ResourceLocation BLACK_HMD = new ResourceLocation("vivecraft:textures/black_hmd.png");
-    public BipedArmorLayer armor = null;
     PlayerModelController.RotInfo rotInfo;
     public boolean seated;
     
@@ -94,6 +94,7 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
     	super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+
     	this.rotInfo = PlayerModelController.getInstance().getRotationsForPlayer(((PlayerEntity)entityIn).getUniqueID());
 
     	//Lasciate ogne speranza, voi ch'intrate
@@ -216,23 +217,6 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
 
     	this.vrHMD.copyModelAngles(this.bipedHead);
     	this.bipedHeadwear.copyModelAngles(this.bipedHead);
-    	
-    	if(this.armor != null) { //wtf  	
-    		this.armor.func_241736_a_(EquipmentSlotType.HEAD).bipedHead.copyModelAngles(this.bipedHead);
-	    	if(!seated) {
-		    	this.armor.func_241736_a_(EquipmentSlotType.HEAD).bipedBody.copyModelAngles(this.bipedBody);
-		    	
-		    	this.armor.func_241736_a_(EquipmentSlotType.HEAD).bipedRightArm.copyModelAngles(this.rightShoulder);
-		    	this.armor.func_241736_a_(EquipmentSlotType.HEAD).bipedLeftArm.copyModelAngles(this.leftShoulder);    
-
-		    	this.armor.func_241736_a_(EquipmentSlotType.LEGS).bipedRightLeg.copyModelAngles(this.bipedRightLeg);
-		    	this.armor.func_241736_a_(EquipmentSlotType.LEGS).bipedLeftLeg.copyModelAngles(this.bipedLeftLeg);
-		    	
-		    	this.armor.func_241736_a_(EquipmentSlotType.FEET).bipedRightLeg.copyModelAngles(this.bipedRightLeg);
-		    	this.armor.func_241736_a_(EquipmentSlotType.FEET).bipedLeftLeg.copyModelAngles(this.bipedLeftLeg);
-		    	}
-    	}
-    	
     	this.bipedBodyWear.copyModelAngles(this.bipedBody);
     	this.bipedLeftLegwear.copyModelAngles(this.bipedLeftLeg);
     	this.bipedRightLegwear.copyModelAngles(this.bipedRightLeg);
@@ -240,7 +224,22 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
     	this.bipedRightArmwear.copyModelAngles(this.bipedRightArm);
     	this.bipedBodyWear.copyModelAngles(this.bipedBody);
     }
-
+    
+	@Override
+	public void setModelAttributes(BipedModel<T> modelIn) {
+        super.copyModelAttributesTo(modelIn);
+        modelIn.leftArmPose = this.leftArmPose;
+        modelIn.rightArmPose = this.rightArmPose;
+        modelIn.isSneak = this.isSneak;
+        modelIn.bipedHead.copyModelAngles(this.bipedHead);
+        modelIn.bipedHeadwear.copyModelAngles(this.bipedHeadwear);
+        modelIn.bipedBody.copyModelAngles(this.bipedBody);
+        modelIn.bipedRightArm.copyModelAngles(this.rightShoulder);
+        modelIn.bipedLeftArm.copyModelAngles(this.leftShoulder);
+        modelIn.bipedRightLeg.copyModelAngles(this.bipedRightLeg);
+        modelIn.bipedLeftLeg.copyModelAngles(this.bipedLeftLeg);
+	}
+	
     @Override
     public void setVisible(boolean visible)
     {

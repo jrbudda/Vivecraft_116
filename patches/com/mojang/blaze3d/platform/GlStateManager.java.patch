@@ -15,7 +15,7 @@
  
 +        // VIVECRAFT: correct bad blend function that trashes alpha channel
 +        if (srcFactor == SourceFactor.SRC_ALPHA.param && dstFactor == DestFactor.ONE_MINUS_SRC_ALPHA.param && srcFactorAlpha == SourceFactor.ONE.param && dstFactorAlpha == DestFactor.ZERO.param) {
-+            dstFactorAlpha = DestFactor.ONE.param;
++            dstFactorAlpha = DestFactor.ONE_MINUS_SRC_ALPHA.param;
 +        }
 +        //
 +

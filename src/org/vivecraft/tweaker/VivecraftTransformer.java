@@ -37,9 +37,10 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
     private ZipFile ZipFile;
     
     public List<ITransformer> undeadClassTransformers = new ArrayList<ITransformer>();
-    public List<ITransformer> lostdMethodTransformers = new ArrayList<ITransformer>();
+    public List<ITransformer> lostMethodTransformers = new ArrayList<ITransformer>();
     public List<ITransformer> fieldTransformersOftheDamned  = new ArrayList<ITransformer>();
-
+    public Set<Target> ofTargets = null;
+    
     private List<String> exclusions = Arrays.asList(
             "net/minecraft/item/Item",
             "net/minecraft/item/Item$Properties",
@@ -75,7 +76,7 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
         		continue;
             set.add(target);
         }
-
+        set.addAll(ofTargets);
         LOGGER.info("Targets: " + set.size());
         return set;
     }
@@ -123,10 +124,8 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
         
     	List<MethodNode> ms = new ArrayList<>();
     	for (MethodNode n: (List<MethodNode>)classnode.methods) {
-	        for(ITransformer<MethodNode> t: lostdMethodTransformers) {
-	        	//  	System.out.println("SPAM1 " + context.getClassName() + " " + n.name + " " + n.desc);
+	        for(ITransformer<MethodNode> t: lostMethodTransformers) {
 	        		for(Target target: t.targets()) {
-	            	//  	System.out.println("SPAM2 " + target.getClassName() + " " + target.getElementName() + " " + target.getElementDescriptor());
 			        	if(target.getClassName().equals(context.getClassName() ) && 
 			        			target.getElementName().equals(n.name) && 
 			        			target.getElementDescriptor().equals(n.desc)){    		
