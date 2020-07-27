@@ -9,7 +9,7 @@
      private static final GlStateManager.DepthState DEPTH = new GlStateManager.DepthState();
      private static final GlStateManager.FogState FOG = new GlStateManager.FogState();
      private static final GlStateManager.CullState CULL = new GlStateManager.CullState();
-@@ -331,6 +331,12 @@
+@@ -332,6 +332,12 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThread);
  
@@ -22,7 +22,7 @@
          if (blendLock.isLocked())
          {
              blendLockState.setFactors(srcFactor, dstFactor, srcFactorAlpha, dstFactorAlpha);
-@@ -1006,7 +1012,13 @@
+@@ -1011,7 +1017,13 @@
          getMatrix(2982, MATRIX_BUFFER);
          multMatrix(MATRIX_BUFFER);
      }
@@ -37,7 +37,7 @@
      @Deprecated
      public static void enableFog()
      {
-@@ -1512,7 +1524,18 @@
+@@ -1513,7 +1525,18 @@
          RenderSystem.assertThread(RenderSystem::isOnRenderThread);
          GL11.glGetFloatv(pname, params);
      }
@@ -57,7 +57,7 @@
      @Deprecated
      public static void ortho(double left, double right, double bottom, double top, double zNear, double zFar)
      {
-@@ -2010,7 +2033,7 @@
+@@ -2027,7 +2050,7 @@
          }
      }
  
@@ -66,7 +66,7 @@
      {
          public final GlStateManager.BooleanState blend = new GlStateManager.BooleanState(3042);
          public int srcFactorRgb = 1;
-@@ -2064,6 +2087,7 @@
+@@ -2081,6 +2104,7 @@
      }
  
      @Deprecated

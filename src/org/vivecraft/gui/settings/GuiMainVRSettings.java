@@ -15,10 +15,10 @@ public class GuiMainVRSettings extends GuiVROptionsBase
 {    
 	private VROptionLayout[] vrAlwaysOptions = new VROptionLayout[]
         {
-            new VROptionLayout(GuiHUDSettings.class,VROptionLayout.Position.POS_LEFT,  1,  VROptionLayout.ENABLED, "HUD and GUI Settings..."),
-            new VROptionLayout(GuiRenderOpticsSettings.class,VROptionLayout.Position.POS_LEFT,   0, VROptionLayout.ENABLED, "Stereo Rendering..."),
-            new VROptionLayout(GuiQuickCommandEditor.class,VROptionLayout.Position.POS_RIGHT,  0, VROptionLayout.ENABLED, "Quick Commands..."),
-            new VROptionLayout(GuiOtherHUDSettings.class,VROptionLayout.Position.POS_RIGHT,  1, VROptionLayout.ENABLED, "Chat & Crosshair Settings..."),
+            new VROptionLayout(GuiHUDSettings.class,VROptionLayout.Position.POS_LEFT,  1,  VROptionLayout.ENABLED, "vivecraft.options.screen.gui.button"),
+            new VROptionLayout(GuiRenderOpticsSettings.class,VROptionLayout.Position.POS_LEFT,   0, VROptionLayout.ENABLED, "vivecraft.options.screen.stereorendering.button"),
+            new VROptionLayout(GuiQuickCommandEditor.class,VROptionLayout.Position.POS_RIGHT,  0, VROptionLayout.ENABLED, "vivecraft.options.screen.quickcommands.button"),
+            new VROptionLayout(GuiOtherHUDSettings.class,VROptionLayout.Position.POS_RIGHT,  1, VROptionLayout.ENABLED, "vivecraft.options.screen.guiother.button"),
             new VROptionLayout(VRSettings.VrOptions.WORLD_SCALE,       	VROptionLayout.Position.POS_LEFT,   6f, VROptionLayout.ENABLED, null),
             new VROptionLayout(VRSettings.VrOptions.WORLD_ROTATION,       VROptionLayout.Position.POS_RIGHT,   6f, VROptionLayout.ENABLED, null),
             new VROptionLayout(VRSettings.VrOptions.PLAY_MODE_SEATED, (button, mousePos) -> {
@@ -33,16 +33,16 @@ public class GuiMainVRSettings extends GuiVROptionsBase
 
 	private VROptionLayout[] vrStandingOptions = new VROptionLayout[]
             {
-                new VROptionLayout(GuiStandingSettings.class,VROptionLayout.Position.POS_LEFT,   4f, VROptionLayout.ENABLED, "Locomotion Settings..."),
-                new VROptionLayout(GuiRoomscaleSettings.class,VROptionLayout.Position.POS_RIGHT,   4f, VROptionLayout.ENABLED, "Interaction Settings..."),
-                new VROptionLayout(GuiVRControls.class,VROptionLayout.Position.POS_LEFT,   5f, VROptionLayout.ENABLED, "Controller Settings..."),
-                new VROptionLayout(GuiRadialConfiguration.class,VROptionLayout.Position.POS_RIGHT,   5f, VROptionLayout.ENABLED, "Radial Menu..."),
+                new VROptionLayout(GuiStandingSettings.class,VROptionLayout.Position.POS_LEFT,   4f, VROptionLayout.ENABLED, "vivecraft.options.screen.standing.button"),
+                new VROptionLayout(GuiRoomscaleSettings.class,VROptionLayout.Position.POS_RIGHT,   4f, VROptionLayout.ENABLED, "vivecraft.options.screen.roomscale.button"),
+                new VROptionLayout(GuiVRControls.class,VROptionLayout.Position.POS_LEFT,   5f, VROptionLayout.ENABLED, "vivecraft.options.screen.controls.button"),
+                new VROptionLayout(GuiRadialConfiguration.class,VROptionLayout.Position.POS_RIGHT,   5f, VROptionLayout.ENABLED, "vivecraft.options.screen.radialmenu.button"),
                // new VROption(VRSettings.VrOptions.REVERSE_HANDS,   VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, null),
             };
 
 	private VROptionLayout[] vrSeatedOptions = new VROptionLayout[]
             {
-                    new VROptionLayout(GuiSeatedOptions.class, VROptionLayout.Position.POS_LEFT, 4f, VROptionLayout.ENABLED, "Seated Settings..."),
+                    new VROptionLayout(GuiSeatedOptions.class, VROptionLayout.Position.POS_LEFT, 4f, VROptionLayout.ENABLED, "vivecraft.options.screen.seated.button"),
                     new VROptionLayout(VRSettings.VrOptions.RESET_ORIGIN, (button, mousePos) -> {
                     	resetOrigin();
 						return true;
@@ -55,14 +55,14 @@ public class GuiMainVRSettings extends GuiVROptionsBase
 						GuiMainVRSettings.this.reinit = true;
 						GuiMainVRSettings.this.isConfirm = false;
 						return false;
-					}, VROptionLayout.Position.POS_RIGHT,  2,  VROptionLayout.ENABLED, "Cancel"),
+					}, VROptionLayout.Position.POS_RIGHT,  2,  VROptionLayout.ENABLED, "gui.cancel"),
                     new VROptionLayout((button, mousePos) -> {
 						GuiMainVRSettings.this.minecraft.vrSettings.seated = true;
 						GuiMainVRSettings.this.settings.saveOptions();
 						GuiMainVRSettings.this.reinit = true;
 						GuiMainVRSettings.this.isConfirm = false;
 						return false;
-					}, VROptionLayout.Position.POS_LEFT,   2, VROptionLayout.ENABLED, "OK"),
+					}, VROptionLayout.Position.POS_LEFT,   2, VROptionLayout.ENABLED, "vivecraft.gui.ok"),
             };
     
     private boolean isConfirm = false;
@@ -75,7 +75,7 @@ public class GuiMainVRSettings extends GuiVROptionsBase
     protected void init()
     {
     	if(!isConfirm){
-    		vrTitle = "VR Settings";
+    		vrTitle = "vivecraft.options.screen.main";
     		if(minecraft.vrSettings.seated) {
     			super.init(vrSeatedOptions, true);
     		}else {
@@ -91,7 +91,7 @@ public class GuiMainVRSettings extends GuiVROptionsBase
 			super.addDefaultButtons();
     	}
     	else {
-    		vrTitle = "Switching to Seated Mode will disable controller input. Continue?";
+    		vrTitle = "vivecraft.messages.seatedmode";
     		super.init(vrConfirm, true);
     	}
     }

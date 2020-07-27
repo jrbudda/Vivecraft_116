@@ -15,8 +15,8 @@
 +import net.minecraft.client.renderer.RenderHelper;
  import net.minecraft.client.renderer.RenderType;
  import net.minecraft.client.renderer.WorldRenderer;
- import net.minecraft.client.renderer.culling.ClippingHelper;
-@@ -27,6 +29,7 @@
+ import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
+@@ -28,6 +30,7 @@
  import net.minecraft.tileentity.EndPortalTileEntity;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Direction;
@@ -24,7 +24,7 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
-@@ -194,7 +197,7 @@
+@@ -196,7 +199,7 @@
          }
      }
  
@@ -33,7 +33,7 @@
      {
          if (Shaders.usedShadowDepthBuffers > 0 && --Shaders.shadowPassCounter <= 0)
          {
-@@ -260,6 +263,9 @@
+@@ -262,6 +265,9 @@
              worldrenderer.renderBlockLayer(RenderTypes.SOLID, matrixstack, d0, d1, d2);
              Shaders.checkGLError("shadow terrain solid");
              GlStateManager.enableAlphaTest();
@@ -43,39 +43,52 @@
              worldrenderer.renderBlockLayer(RenderTypes.CUTOUT_MIPPED, matrixstack, d0, d1, d2);
              Shaders.checkGLError("shadow terrain cutoutmipped");
              minecraft.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
-@@ -276,15 +282,29 @@
+@@ -278,7 +284,13 @@
              EntityRendererManager entityrenderermanager = minecraft.getRenderManager();
              IRenderTypeBuffer.Impl irendertypebuffer$impl = worldrenderer1.getRenderTypeTextures().getBufferSource();
              boolean flag = Shaders.isShadowPass && !minecraft.player.isSpectator();
+-
++            
++            //Vivecraft fix something	
 +            Matrix4f light = new Matrix4f();
 +            light.setIdentity();
 +            RenderHelper.setupLevelDiffuseLighting(light);
++            //
++            
+             for (WorldRenderer.LocalRenderInformationContainer worldrenderer$localrenderinformationcontainer : worldrenderer1.getRenderInfosEntities())
+             {
+                 ChunkRenderDispatcher.ChunkRender chunkrenderdispatcher$chunkrender = worldrenderer$localrenderinformationcontainer.renderChunk;
+@@ -286,12 +298,24 @@
  
-             for (Entity entity : minecraft.world.getAllEntities())
--            {
--                if ((entityrenderermanager.shouldRender(entity, clippinghelper, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && (entity != activeRenderInfo.getRenderViewEntity() || flag || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && (!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
-+            {//always render self shadow.
-+                if ((entityrenderermanager.shouldRender(entity, clippinghelper, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && (true || entity != activeRenderInfo.getRenderViewEntity() || flag || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && (!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
+                 for (Entity entity : chunk.getEntityLists()[chunkrenderdispatcher$chunkrender.getPosition().getY() / 16])
                  {
-+                    //Vivecraft shadow location.
-+                    if(entity == activeRenderInfo.getRenderViewEntity()) { 
-+                    	gameRenderer.restoreRVEPos((LivingEntity) entity);
-+                    }
-+                    //
-                     worldrenderer1.renderedEntity = entity;
-                     Shaders.nextEntity(entity);
-                     worldrenderer1.renderEntity(entity, d0, d1, d2, partialTicks, matrixstack, irendertypebuffer$impl);
-                     worldrenderer1.renderedEntity = null;
-+                    //Vivecraft
-+                    if(entity == activeRenderInfo.getRenderViewEntity()) {
-+                    	gameRenderer.cacheRVEPos((LivingEntity) entity);
-+                    	gameRenderer.setupRVE();
-+                    }
-+                    //
+-                    if ((entityrenderermanager.shouldRender(entity, clippinghelper, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && (entity != activeRenderInfo.getRenderViewEntity() || flag || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && (!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
++                	//always render self shadow. add true.
++                    if ((entityrenderermanager.shouldRender(entity, clippinghelper, d0, d1, d2) || entity.isRidingOrBeingRiddenBy(minecraft.player)) && (true || entity != activeRenderInfo.getRenderViewEntity() || flag || activeRenderInfo.isThirdPerson() || activeRenderInfo.getRenderViewEntity() instanceof LivingEntity && ((LivingEntity)activeRenderInfo.getRenderViewEntity()).isSleeping()) && (!(entity instanceof ClientPlayerEntity) || activeRenderInfo.getRenderViewEntity() == entity))
+                     {
+-                        worldrenderer1.renderedEntity = entity;
+-                        Shaders.nextEntity(entity);
+-                        worldrenderer1.renderEntity(entity, d0, d1, d2, partialTicks, matrixstack, irendertypebuffer$impl);
+-                        worldrenderer1.renderedEntity = null;
++                    	//Vivecraft shadow location.
++                    	if(entity == activeRenderInfo.getRenderViewEntity()) { 
++                    		gameRenderer.restoreRVEPos((LivingEntity) entity);
++                    	}
++                    	//
++                    	worldrenderer1.renderedEntity = entity;
++                    	Shaders.nextEntity(entity);
++                    	worldrenderer1.renderEntity(entity, d0, d1, d2, partialTicks, matrixstack, irendertypebuffer$impl);
++                    	worldrenderer1.renderedEntity = null;
++                    	//Vivecraft
++                    	if(entity == activeRenderInfo.getRenderViewEntity()) {
++                    		gameRenderer.cacheRVEPos((LivingEntity) entity);
++                    		gameRenderer.setupRVE();
++                    	}
++                    	//
+                     }
                  }
              }
- 
-@@ -390,7 +410,8 @@
+@@ -398,7 +422,8 @@
              GlStateManager.depthMask(true);
              GlStateManager.enableCull();
              GlStateManager.disableBlend();

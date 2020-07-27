@@ -8,18 +8,24 @@
  
      private static boolean func_239283_a_(IBlockReader p_239283_0_, BlockPos p_239283_1_, Direction p_239283_2_, float p_239283_3_)
      {
-@@ -148,9 +149,11 @@
+@@ -148,11 +149,15 @@
                  float f8 = this.getFluidHeight(lightReaderIn, posIn.south(), fluidStateIn.getFluid());
                  float f9 = this.getFluidHeight(lightReaderIn, posIn.east().south(), fluidStateIn.getFluid());
                  float f10 = this.getFluidHeight(lightReaderIn, posIn.east(), fluidStateIn.getFluid());
 -                double d0 = (double)(posIn.getX() & 15);
 -                double d1 = (double)(posIn.getY() & 15);
 -                double d2 = (double)(posIn.getZ() & 15);
+-
+-                if (Config.isRenderRegions())
 +                // VIVECRAFT: Mojang, why would you do this!? What is the God forsaken purpose of wrapping the block coordinates to chunks in the renderer itself!?
++                //double d0 = (double)(posIn.getX() & 15);
++                //double d1 = (double)(posIn.getY() & 15);
++                //double d2 = (double)(posIn.getZ() & 15);
 +                double d0 = skipStupidGoddamnChunkBoundaryClipping ? posIn.getX() : (double)(posIn.getX() & 15);
 +                double d1 = skipStupidGoddamnChunkBoundaryClipping ? posIn.getY() : (double)(posIn.getY() & 15);
 +                double d2 = skipStupidGoddamnChunkBoundaryClipping ? posIn.getZ() : (double)(posIn.getZ() & 15);
 +                //
-                 float f11 = 0.001F;
-                 float f12 = flag1 ? 0.001F : 0.0F;
- 
++                if (Config.isRenderRegions() && !skipStupidGoddamnChunkBoundaryClipping)
+                 {
+                     int j = posIn.getX() >> 4 << 4;
+                     int k = posIn.getY() >> 4 << 4;

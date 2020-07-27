@@ -31,7 +31,7 @@
          }));
          private final String name;
 @@ -885,11 +880,6 @@
-             this.name = p_i1933_3_;
+             this.name = p_i1934_3_;
          }
  
 -        public String getName()

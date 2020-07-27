@@ -76,6 +76,28 @@
             }
         },
         {
+            "name": "org.ow2.asm:asm-util:7.2",
+            "downloads": {
+                "artifact": {
+                    "path": "org/ow2/asm/asm-util/7.2/asm-util-7.2.jar",
+                    "url": "https://files.minecraftforge.net/maven/org/ow2/asm/asm-util/7.2/asm-util-7.2.jar",
+                    "sha1": "a3ae34e57fa8a4040e28247291d0cc3d6b8c7bcf",
+                    "size": 80707
+                }
+            }
+        },
+        {
+            "name": "org.ow2.asm:asm-analysis:7.2",
+            "downloads": {
+                "artifact": {
+                    "path": "org/ow2/asm/asm-analysis/7.2/asm-analysis-7.2.jar",
+                    "url": "https://files.minecraftforge.net/maven/org/ow2/asm/asm-analysis/7.2/asm-analysis-7.2.jar",
+                    "sha1": "b6e6abe057f23630113f4167c34bda7086691258",
+                    "size": 33444
+                }
+            }
+        },
+        {
             "name": "cpw.mods:modlauncher:5.1.0",
             "downloads": {
                 "artifact": {
@@ -248,6 +270,17 @@
                     "url": "https://files.minecraftforge.net/maven/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
                     "sha1": "4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c",
                     "size": 78146
+                }
+            }
+        },
+        {
+            "name": "org.spongepowered:mixin:0.8",
+            "downloads": {
+                "artifact": {
+                    "path": "org/spongepowered/mixin/0.8/mixin-0.8.jar",
+                    "url": "https://files.minecraftforge.net/maven/org/spongepowered/mixin/0.8/mixin-0.8.jar",
+                    "sha1": "dbe9e5db694a7c3cd644d5bb98f8a21295c75048",
+                    "size": 931239
                 }
             }
         },

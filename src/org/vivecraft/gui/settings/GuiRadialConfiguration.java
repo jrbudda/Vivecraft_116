@@ -1,5 +1,7 @@
 package org.vivecraft.gui.settings;
 
+import net.minecraft.util.text.TranslationTextComponent;
+import net.optifine.Lang;
 import org.apache.commons.lang3.ArrayUtils;
 import org.vivecraft.gui.framework.GuiVROptionsBase;
 import org.vivecraft.gui.framework.VROptionLayout;
@@ -54,7 +56,7 @@ public class GuiRadialConfiguration extends GuiVROptionsBase
 	@Override
 	public void init()
 	{
-		vrTitle = "Radial Menu Configuration";
+		vrTitle = "vivecraft.options.screen.radialmenu";
 		list = new GuiRadialItemsList(this, minecraft);
 
 		this.buttons.clear();
@@ -62,22 +64,22 @@ public class GuiRadialConfiguration extends GuiVROptionsBase
 
 		if(this.isselectmode) {
 
-			this.addButton(new Button(this.width / 2 - 155 ,  this.height -25 ,150,20, "Cancel", (p) -> {
+			this.addButton(new Button(this.width / 2 - 155 ,  this.height -25 ,150,20, new TranslationTextComponent("gui.cancel"), (p) -> {
 				isselectmode = false;
 				reinit = true;
 				visibleList = null;
 			}));
-			this.addButton(new Button(this.width / 2 - 155 ,  25 ,150,20, "Clear", (p) -> {
+			this.addButton(new Button(this.width / 2 - 155 ,  25 ,150,20, new TranslationTextComponent("vivecraft.gui.clear"), (p) -> {
 				setKey(null);
 		}));
 		}else {
 			if(this.isShift)
-				this.addButton(new Button(this.width / 2 +2, 30, 150, 20, "Main Set", (p) -> {
+				this.addButton(new Button(this.width / 2 +2, 30, 150, 20, new TranslationTextComponent("vivecraft.gui.radialmenu.mainset"), (p) -> {
 						GuiRadialConfiguration.this.isShift = !GuiRadialConfiguration.this.isShift;
 						GuiRadialConfiguration.this.reinit = true;
 				}));      
 			else
-				this.addButton(new Button(this.width / 2 +2,30, 150, 20, "Alternate Set", (p) -> {
+				this.addButton(new Button(this.width / 2 +2,30, 150, 20, new TranslationTextComponent("vivecraft.gui.radialmenu.alternateset"), (p) -> {
 						GuiRadialConfiguration.this.isShift = !GuiRadialConfiguration.this.isShift;
 						GuiRadialConfiguration.this.reinit = true;
 				}));     
@@ -182,9 +184,9 @@ public class GuiRadialConfiguration extends GuiVROptionsBase
 		super.render(matrixstack, par1, par2, par3);
 
 		if (GuiRadialConfiguration.this.visibleList == null)
-			this.drawCenteredString(matrixstack,minecraft.fontRenderer, "Make sure Open Radial Menu is bound.", this.width / 2, this.height - 50, 0x55FF55);
+			this.drawCenteredString(matrixstack,minecraft.fontRenderer, Lang.get("vivecraft.messages.radialmenubind.1"), this.width / 2, this.height - 50, 0x55FF55);
 
 		if(this.isShift)
-			this.drawCenteredString(matrixstack,minecraft.fontRenderer, "Hold (Keyboard Shift) with the radial menu open to switch to this set", this.width / 2, this.height - 36, 13777015);
+			this.drawCenteredString(matrixstack,minecraft.fontRenderer, Lang.get("vivecraft.messages.radialmenubind.2"), this.width / 2, this.height - 36, 13777015);
 	}
 }

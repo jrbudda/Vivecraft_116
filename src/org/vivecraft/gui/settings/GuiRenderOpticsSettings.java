@@ -62,7 +62,7 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     @Override
     public void init()
     {
-        vrTitle = "Stereo Renderer Settings";
+        vrTitle = "vivecraft.options.screen.stereorendering";
 
     	{
 			VRSettings.VrOptions[] buttons = new VRSettings.VrOptions[openVRDisplayOptions.length];

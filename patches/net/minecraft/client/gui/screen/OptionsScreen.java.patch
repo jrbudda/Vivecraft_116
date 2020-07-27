@@ -25,7 +25,7 @@
 -            this.addButton(abstractoption.createWidget(this.minecraft.gameSettings, j, k, 150));
 +            //Vivecraft
 +            if (abstractoption == abstractoption.FOV) {
-+            	this.addButton(new Button(j, k, 150, 20, new StringTextComponent("VR Settings..."), (p) ->   
++            	this.addButton(new Button(j, k, 150, 20, new TranslationTextComponent("vivecraft.options.screen.main.button"), (p) ->
 +            	{
 +            		minecraft.gameSettings.saveOptions();
 +            		minecraft.displayGuiScreen(new GuiMainVRSettings(OptionsScreen.this));

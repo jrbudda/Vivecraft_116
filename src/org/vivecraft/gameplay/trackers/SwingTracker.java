@@ -66,6 +66,8 @@ public class SwingTracker extends Tracker{
 		if(!p.isAlive()) return false;
 		if(p.isSleeping()) return false;
 		Minecraft mc = Minecraft.getInstance();
+		if (mc.currentScreen !=null)
+			return false;
 		if (mc.vrSettings.weaponCollision == 0)
 			return false;
 		if (mc.vrSettings.weaponCollision == 2)

@@ -275,7 +275,7 @@ public class OpenVRPlayer
 
 		x = player.getPosX() - campos.x;
 		z = player.getPosZ() - campos.z;
-		y = player.getPosY() + player.getRoomYOffsetFromPos();
+		y = player.getPosY() + player.getRoomYOffsetFromPose();
 				
 		setRoomOrigin(x, y, z, reset);
 	}

@@ -33,7 +33,7 @@ public class GuiHUDSettings extends GuiVROptionsBase
 				return false;
 			}),
 			new VROptionEntry(VRSettings.VrOptions.DUMMY),
-			new VROptionEntry("Menu World Settings...", (button, mousePos) -> {
+			new VROptionEntry("vivecraft.options.screen.menuworld.button", (button, mousePos) -> {
 				Minecraft.getInstance().displayGuiScreen(new GuiMenuWorldSettings(this));
 				return true;
 			}),
@@ -47,7 +47,7 @@ public class GuiHUDSettings extends GuiVROptionsBase
     @Override
     public void init()
     {
-    	vrTitle = "HUD and GUI Settings";
+    	vrTitle = "vivecraft.options.screen.gui";
 
     	super.init(hudOptions, true);
         super.addDefaultButtons();

@@ -33,7 +33,7 @@ public class GuiOtherHUDSettings extends GuiVROptionsBase
     @Override
     public void init()
     {
-    	vrTitle = "Chat/Crosshair Settings";
+    	vrTitle = "vivecraft.options.screen.guiother";
     	super.init(hudOptions, true);  
     	if(minecraft.vrSettings.chatNotifications > 1)
     		super.init(chat, false);

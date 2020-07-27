@@ -86,27 +86,27 @@
          }
 +		
 +		//VIVECRAFT
-+		this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, new StringTextComponent("Chat"), (p) ->
++		this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("vivecraft.gui.chat"), (p) ->
 +		{
 +			minecraft.displayGuiScreen(new ChatScreen(""));    
 +		}));
-+		this.addButton(new Button(this.width / 2 + 2, this.height / 4 + 72 + -16, 98, 20, new StringTextComponent("Commands"), (p) ->
++		this.addButton(new Button(this.width / 2 + 2, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("vivecraft.gui.commands"), (p) ->
 +		{
 +			minecraft.displayGuiScreen(new GuiQuickCommandsInGame());
 +				init();
 +		})); 
-+		this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 49, 20, new StringTextComponent("Overlay"), (p) ->
++		this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 49, 20, new TranslationTextComponent("vivecraft.gui.overlay"), (p) ->
 +		{
 +			minecraft.gameSettings.showDebugInfo = ! minecraft.gameSettings.showDebugInfo;
 +				minecraft.displayGuiScreen(null);
 +		})); 
-+		this.addButton(new Button(this.width / 2 - 51, this.height / 4 + 120 + -16, 49, 20, new StringTextComponent("Profiler"), (p) ->
++		this.addButton(new Button(this.width / 2 - 51, this.height / 4 + 120 + -16, 49, 20, new TranslationTextComponent("vivecraft.gui.profiler"), (p) ->
 +		{
 +			minecraft.gameSettings.showDebugProfilerChart = ! minecraft.gameSettings.showDebugProfilerChart;
 +				minecraft.gameSettings.ofProfiler = minecraft.gameSettings.showDebugProfilerChart;
 +				minecraft.displayGuiScreen(null);
 +		})); 
-+		this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 120 + -16, 98, 20, new StringTextComponent("Screenshot"), (p) ->
++		this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 120 + -16, 98, 20, new TranslationTextComponent("vivecraft.gui.screenshot"), (p) ->
 +		{
 +			minecraft.displayGuiScreen(null);
 +				minecraft.grabScreenShot = true;
@@ -120,7 +120,7 @@
 +		//            }
 +		//        }); 
 +		if (!minecraft.vrSettings.seated)
-+			this.addButton(new Button(this.width / 2 - 100, this.height / 4 + 144 + -16, 98, 20, new StringTextComponent("Calibrate Height"), (p) ->
++			this.addButton(new Button(this.width / 2 - 100, this.height / 4 + 144 + -16, 98, 20, new TranslationTextComponent("vivecraft.gui.calibrateheight"), (p) ->
 +			{
 +					AutoCalibration.calibrateManual();
 +					minecraft.vrSettings.saveOptions();
@@ -128,7 +128,7 @@
 +					//GuiIngameMenu.this.mc.setIngameFocus() ???????
 +			}));
 +		if (Main.katvr)
-+			this.addButton(new Button(this.width / 2 + 100, this.height / 4 + -16, 98, 20, new StringTextComponent("Align KAT WALK"), (p) ->
++			this.addButton(new Button(this.width / 2 + 100, this.height / 4 + -16, 98, 20, new TranslationTextComponent("vivecraft.gui.alignkatwalk"), (p) ->
 +			{
 +					jkatvr.resetYaw(minecraft.vrPlayer.vrdata_room_pre.hmd.getYaw());
 +					minecraft.displayGuiScreen(null);

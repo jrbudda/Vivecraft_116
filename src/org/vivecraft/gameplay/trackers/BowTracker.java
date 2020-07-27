@@ -56,8 +56,8 @@ public class BowTracker extends Tracker {
 //		return leftHandAim;
 	}
 		
-	public double getDrawPercent(){
-		return currentDraw/maxDraw;
+	public float getDrawPercent(){
+		return (float) Math.max(currentDraw/maxDraw,1);
 //		double target= Math.min(currentDraw / maxDraw,1.0);
 //		double cap=(Util.milliTime()-startDrawTime)/ maxDrawMillis;
 //		return target<cap ? target : cap;

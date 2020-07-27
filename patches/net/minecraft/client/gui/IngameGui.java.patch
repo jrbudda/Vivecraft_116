@@ -52,16 +52,16 @@
  import net.minecraft.util.text.TextFormatting;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.GameType;
-@@ -115,6 +125,8 @@
+@@ -116,6 +126,8 @@
      private int scaledWidth;
      private int scaledHeight;
      private final Map<ChatType, List<IChatListener>> chatListeners = Maps.newHashMap();
 +    // Vivecraft
 +    public boolean showPlayerList;
  
-     public IngameGui(Minecraft p_i32_1_)
+     public IngameGui(Minecraft p_i33_1_)
      {
-@@ -155,32 +167,40 @@
+@@ -156,32 +168,40 @@
          FontRenderer fontrenderer = this.getFontRenderer();
          RenderSystem.enableBlend();
  
@@ -119,7 +119,7 @@
  
          if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
          {
-@@ -197,9 +217,13 @@
+@@ -208,9 +228,13 @@
              this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
              RenderSystem.enableBlend();
              RenderSystem.enableAlphaTest();
@@ -135,7 +135,7 @@
              this.mc.getProfiler().startSection("bossHealth");
              this.overlayBoss.func_238484_a_(p_238445_1_);
              this.mc.getProfiler().endSection();
-@@ -285,7 +309,9 @@
+@@ -296,7 +320,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight - 68), 0.0F);
                      RenderSystem.enableBlend();
@@ -146,7 +146,7 @@
                      int k1 = 16777215;
  
                      if (this.animateOverlayMessageColor)
-@@ -328,7 +354,9 @@
+@@ -339,7 +365,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight / 2), 0.0F);
                      RenderSystem.enableBlend();
@@ -157,7 +157,7 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.scalef(4.0F, 4.0F, 4.0F);
                      int l1 = j1 << 24 & -16777216;
-@@ -375,9 +403,30 @@
+@@ -386,9 +414,30 @@
              {
                  this.renderScoreboard(p_238445_1_, scoreobjective1);
              }
@@ -189,7 +189,7 @@
              RenderSystem.disableAlphaTest();
              RenderSystem.pushMatrix();
              RenderSystem.translatef(0.0F, (float)(this.scaledHeight - 48), 0.0F);
-@@ -387,7 +436,7 @@
+@@ -398,7 +447,7 @@
              RenderSystem.popMatrix();
              scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
  
@@ -198,7 +198,7 @@
              {
                  this.overlayPlayerList.setVisible(true);
                  this.overlayPlayerList.func_238523_a_(p_238445_1_, this.scaledWidth, scoreboard, scoreobjective1);
-@@ -582,7 +631,7 @@
+@@ -593,7 +642,7 @@
  
                      if (Reflector.IForgeEffectInstance_renderHUDEffect.exists())
                      {
@@ -207,7 +207,7 @@
                      }
                  }
              }
-@@ -622,7 +671,9 @@
+@@ -633,7 +682,9 @@
              this.setBlitOffset(j);
              RenderSystem.enableRescaleNormal();
              RenderSystem.enableBlend();
@@ -218,7 +218,7 @@
              CustomItems.setRenderOffHand(false);
  
              for (int i1 = 0; i1 < 9; ++i1)
-@@ -673,6 +724,10 @@
+@@ -684,6 +735,10 @@
  
              RenderSystem.disableRescaleNormal();
              RenderSystem.disableBlend();
@@ -229,7 +229,7 @@
          }
      }
  
-@@ -1212,6 +1267,7 @@
+@@ -1223,6 +1278,7 @@
          }
      }
  
@@ -237,7 +237,7 @@
      private void renderPumpkinOverlay()
      {
          RenderSystem.disableDepthTest();
-@@ -1243,6 +1299,8 @@
+@@ -1254,6 +1310,8 @@
          }
      }
  
@@ -246,7 +246,7 @@
      private void renderVignette(Entity entityIn)
      {
          if (!Config.isVignetteEnabled())
-@@ -1295,6 +1353,7 @@
+@@ -1306,6 +1364,7 @@
          }
      }
  
@@ -254,7 +254,7 @@
      private void renderPortal(float timeInPortal)
      {
          if (timeInPortal < 1.0F)
-@@ -1393,8 +1452,8 @@
+@@ -1404,8 +1463,8 @@
  
              if (Reflector.IForgeItemStack_getHighlightTip.exists())
              {
@@ -265,7 +265,7 @@
                  flag = Config.equals(s, s1);
              }
  
-@@ -1520,4 +1579,80 @@
+@@ -1531,4 +1590,80 @@
      {
          this.overlayDebug.resetChunk();
      }

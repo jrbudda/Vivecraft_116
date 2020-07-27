@@ -7,6 +7,7 @@ import org.vivecraft.settings.VRSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.math.vector.Vector2f;
+import net.optifine.Lang;
 
 public class VROptionLayout
 {
@@ -126,7 +127,7 @@ public class VROptionLayout
                 return Minecraft.getInstance().vrSettings.getButtonDisplayString(_e);
         }
 
-        return _title;
+        return Lang.get(_title);
     }
     
     public VRSettings.VrOptions getOption()

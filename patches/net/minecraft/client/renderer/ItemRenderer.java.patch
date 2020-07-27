@@ -31,7 +31,7 @@
 +    private GlAlphaState alphaState = new GlAlphaState();
 +    //
  
-     public ItemRenderer(TextureManager p_i128_1_, ModelManager p_i128_2_, ItemColors p_i128_3_)
+     public ItemRenderer(TextureManager p_i130_1_, ModelManager p_i130_2_, ItemColors p_i130_3_)
      {
 @@ -150,6 +162,14 @@
  

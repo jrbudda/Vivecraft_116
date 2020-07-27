@@ -74,7 +74,7 @@
              shaderPackProgramConditions.clear();
              shaderPackClouds.resetValue();
              shaderPackOldHandLight.resetValue();
-@@ -893,6 +903,27 @@
+@@ -887,6 +897,27 @@
          loadShaderPackResources();
          loadShaderPackDimensions();
          shaderPackOptions = loadShaderPackOptions();
@@ -102,7 +102,7 @@
          loadShaderPackProperties();
          boolean flag3 = shaderPackLoaded != flag;
          boolean flag4 = isOldLighting() != flag1;
-@@ -1066,7 +1097,7 @@
+@@ -1060,7 +1091,7 @@
                  shaderPackFrustumCulling.loadFrom(properties);
                  shaderPackOptionSliders = ShaderPackParser.parseOptionSliders(properties, shaderPackOptions);
                  shaderPackProfiles = ShaderPackParser.parseProfiles(properties, shaderPackOptions);
@@ -111,7 +111,7 @@
                  shaderPackProgramConditions = ShaderPackParser.parseProgramConditions(properties, shaderPackOptions);
                  customTexturesGbuffers = loadCustomTextures(properties, 0);
                  customTexturesComposite = loadCustomTextures(properties, 1);
-@@ -1568,7 +1599,7 @@
+@@ -1562,7 +1593,7 @@
      {
          ShaderOption[] ashaderoption = (ShaderOption[])shaderPackOptions.clone();
  
@@ -120,7 +120,7 @@
          {
              if (shaderPackProfiles != null)
              {
-@@ -1581,7 +1612,7 @@
+@@ -1575,7 +1606,7 @@
          else
          {
              String s = screenName != null ? "screen." + screenName : "screen";
@@ -129,7 +129,7 @@
  
              if (screenshaderoptions == null)
              {
-@@ -1602,7 +1633,7 @@
+@@ -1596,7 +1627,7 @@
                      }
                      else if (shaderoption instanceof ShaderOptionRest)
                      {
@@ -138,7 +138,7 @@
                          list.addAll(Arrays.asList(ashaderoption2));
                      }
                      else
-@@ -1620,13 +1651,13 @@
+@@ -1614,13 +1645,13 @@
      {
          String s = screenName != null ? "screen." + screenName : "screen";
  
@@ -154,7 +154,7 @@
              return screenshaderoptions == null ? def : screenshaderoptions.getColumns();
          }
      }
-@@ -2399,6 +2430,8 @@
+@@ -2393,6 +2424,8 @@
              }
  
              checkGLError("Shaders.init");
@@ -163,7 +163,7 @@
          }
      }
  
-@@ -3516,8 +3549,14 @@
+@@ -3510,8 +3543,14 @@
                  setProgramUniform1f(uniform_viewWidth, (float)renderWidth);
                  setProgramUniform1f(uniform_viewHeight, (float)renderHeight);
                  setProgramUniform1f(uniform_near, 0.05F);
@@ -180,7 +180,7 @@
                  setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
                  setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
                  setProgramUniform3f(uniform_upPosition, upPosition[0], upPosition[1], upPosition[2]);
-@@ -3885,8 +3924,9 @@
+@@ -3879,8 +3918,9 @@
      {
          renderDisplayWidth = mc.getMainWindow().getFramebufferWidth();
          renderDisplayHeight = mc.getMainWindow().getFramebufferHeight();
@@ -192,7 +192,7 @@
          setupFrameBuffer();
      }
  
-@@ -3916,20 +3956,23 @@
+@@ -3910,20 +3950,23 @@
          GL32.glDrawBuffers(0);
          GL32.glReadBuffer(0);
  
@@ -225,7 +225,7 @@
          checkGLError("FT d");
  
          for (int k = 0; k < usedColorBuffers; ++k)
-@@ -4087,7 +4130,7 @@
+@@ -4081,7 +4124,7 @@
          checkWorldChanged(mc.world);
          mc = minecraft;
          mc.getProfiler().startSection("init");
@@ -234,7 +234,7 @@
  
          if (!isShaderPackInitialized)
          {
-@@ -4107,9 +4150,10 @@
+@@ -4101,9 +4144,10 @@
              }
          }
  
@@ -246,7 +246,7 @@
          }
  
          if (needResizeShadow)
-@@ -4161,7 +4205,7 @@
+@@ -4155,7 +4199,7 @@
  
              if (entity != null)
              {
@@ -255,7 +255,7 @@
                  eyePosY = (float)activeRenderInfo.getProjectedView().getY();
                  eyeBrightness = mc.getRenderManager().getPackedLight(entity, partialTicks);
                  float f2 = (float)diffSystemTime * 0.01F;
-@@ -4190,7 +4234,6 @@
+@@ -4184,7 +4228,6 @@
  
                      if (livingentity.isPotionActive(Effects.NIGHT_VISION))
                      {
@@ -263,7 +263,7 @@
                          nightVision = GameRenderer.getNightVisionBrightness(livingentity, partialTicks);
                      }
  
-@@ -4233,7 +4276,9 @@
+@@ -4227,7 +4270,9 @@
          ((Buffer)previousModelView).position(0);
          ((Buffer)modelView).position(0);
          checkGLError("beginRender");
@@ -274,7 +274,7 @@
          mc.getProfiler().endSection();
          EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
  
-@@ -4500,9 +4545,14 @@
+@@ -4494,9 +4539,14 @@
          ((Buffer)projection).position(0);
          ((Buffer)projectionInverse).position(0);
          Matrix4f matrix4f = matrixStackIn.getLast().getMatrix();
@@ -292,7 +292,7 @@
          ((Buffer)modelView).position(0);
          modelView.put(tempMat);
          SMath.invertMat4FBFA((FloatBuffer)((Buffer)modelViewInverse).position(0), (FloatBuffer)((Buffer)modelView).position(0), faModelViewInverse, faModelView);
-@@ -4642,13 +4692,24 @@
+@@ -4636,13 +4686,24 @@
          Matrix4f matrix4f1 = new Matrix4f(matrix4f);
          matrix4f1.transpose();
          matrix4f1.write(tempMat);
@@ -318,3 +318,20 @@
          if (customUniforms != null)
          {
              customUniforms.update();
+@@ -5737,7 +5798,7 @@
+     private static void loadShaderPackResources()
+     {
+         shaderPackResources = new HashMap<>();
+-
++        System.out.println("loadShaderPackResources " + shaderPackLoaded);
+         if (shaderPackLoaded)
+         {
+             List<String> list = new ArrayList<>();
+@@ -5770,6 +5831,7 @@
+                         {
+                             String s6 = properties.getProperty(s5);
+                             shaderPackResources.put(s5, s6);
++                            System.out.println("put " + s5 + " " + s6);
+                         }
+                     }
+                 }

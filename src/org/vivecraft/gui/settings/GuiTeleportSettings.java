@@ -26,7 +26,7 @@ public class GuiTeleportSettings extends GuiVROptionsBase {
 	@Override
 	public void init()
 	{
-		vrTitle = "Teleport Settings";
+		vrTitle = "vivecraft.options.screen.teleport";
 
 		super.init(teleportSettings, true);
 		if (settings.vrLimitedSurvivalTeleport)

@@ -20,7 +20,8 @@ public class GuiFreeMoveSettings extends GuiVROptionsBase {
 
 	private static VRSettings.VrOptions[] seatedSettings = new VRSettings.VrOptions[] {
 			VRSettings.VrOptions.SEATED_HMD,
-			VRSettings.VrOptions.FOV_REDUCTION
+			VRSettings.VrOptions.FOV_REDUCTION,
+			VRSettings.VrOptions.INERTIA_FACTOR
 	};
 	
 	private static VRSettings.VrOptions[] fovRed = new VRSettings.VrOptions[] {
@@ -35,7 +36,7 @@ public class GuiFreeMoveSettings extends GuiVROptionsBase {
 	@Override
 	public void init()
 	{
-		vrTitle = "Free Move Settings";
+		vrTitle = "vivecraft.options.screen.freemove";
 
 		if (minecraft.vrSettings.seated)
 			super.init(seatedSettings, true);

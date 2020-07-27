@@ -16,6 +16,7 @@ public enum VivecraftItemRendering{
 	Map,
 	Noms,
 	Crossbow,
-	Telescope
+	Telescope,
+	Compass
 }
 //

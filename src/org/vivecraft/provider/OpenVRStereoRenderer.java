@@ -19,6 +19,7 @@ import org.vivecraft.render.ShaderHelper;
 import org.vivecraft.render.VRShaders;
 import org.vivecraft.settings.VRSettings;
 import org.vivecraft.settings.VRSettings.VrOptions;
+import org.vivecraft.utils.LangHelper;
 
 import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -343,10 +344,10 @@ public class OpenVRStereoRenderer
 			// Setup ortho projection
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GlStateManager.pushMatrix();
-				GL11.glLoadIdentity();
-				GL11.glMatrixMode(GL11.GL_MODELVIEW);
+			GlStateManager.loadIdentity();
+				GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 				GlStateManager.pushMatrix();
-					GL11.glLoadIdentity();
+					GlStateManager.loadIdentity();
 
 					GL11.glTranslatef(0.0f, 0.0f, -.7f);
 					// Pass 1 - horizontal
@@ -409,7 +410,7 @@ public class OpenVRStereoRenderer
 					GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 					checkGLError("postclear");
 					// Bind the texture
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GlStateManager.activeTexture(GL13.GL_TEXTURE0);
 					checkGLError("postact");
 					// Set up the fragment shader uniforms for pass 2
 					ARBShaderObjects.glUniform1fARB(VRShaders._Lanczos_texelWidthOffsetUniform, 0.0f);
@@ -428,9 +429,9 @@ public class OpenVRStereoRenderer
 					GlStateManager.enableAlphaTest();
 					GlStateManager.enableBlend();
 
-					GL11.glMatrixMode(GL11.GL_PROJECTION);
+					GlStateManager.matrixMode(GL11.GL_PROJECTION);
 					GlStateManager.popMatrix();		
-				GL11.glMatrixMode(GL11.GL_MODELVIEW);
+					GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 				GlStateManager.popMatrix();
 		}
 	}
@@ -499,11 +500,11 @@ public class OpenVRStereoRenderer
 			eyeh = displayFBHeight;
 			
 			if (Config.openGlRenderer.toLowerCase().contains("intel")) {
-				throw new RenderConfigException("Incompatible", "Intel Integrated Grpahics are not supported. If this is a laptop, please force the high-performance GPU. Detected GPU: " + Config.openGlRenderer);
+				throw new RenderConfigException("Incompatible", LangHelper.get("vivecraft.messages.intelgraphics", Config.openGlRenderer));
 			}
 			
 			if (!isInitialized()) {
-				throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), " " + getinitError());
+				throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), getinitError());
 			}		
 			
 			Tuple<Integer, Integer> renderTextureInfo = getRenderTextureSizes();
@@ -809,7 +810,7 @@ public class OpenVRStereoRenderer
 		passes.add(RenderPass.LEFT);
 		passes.add(RenderPass.RIGHT);
 
-		if (mc.grabScreenShot || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_FIRST_PERSON) {
+		if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_FIRST_PERSON) {
 			passes.add(RenderPass.CENTER);
 		} else if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY) {
 			if (mc.vrSettings.mixedRealityMRPlusUndistorted && mc.vrSettings.mixedRealityUnityLike)

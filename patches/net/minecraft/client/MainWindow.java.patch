@@ -61,7 +61,7 @@
      }
  
      private void onWindowFocusUpdate(long windowPointer, boolean hasFocus)
-@@ -495,7 +503,7 @@
+@@ -495,13 +503,14 @@
      {
          int i;
  
@@ -70,7 +70,15 @@
          {
          }
  
-@@ -510,10 +518,10 @@
+         if (forceUnicode && i % 2 != 0)
+         {
+-            ++i;
++            // VIVECRAFT: fuck it, it doesn't look that bad
++            //++i;
+         }
+ 
+         return i;
+@@ -510,10 +519,10 @@
      public void setGuiScale(double scaleFactor)
      {
          this.guiScaleFactor = scaleFactor;
@@ -85,7 +93,7 @@
      }
  
      public void func_230148_b_(String p_230148_1_)
-@@ -533,12 +541,16 @@
+@@ -533,12 +542,16 @@
  
      public int getFramebufferWidth()
      {

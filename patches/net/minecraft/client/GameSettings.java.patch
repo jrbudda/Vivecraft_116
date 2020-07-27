@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/GameSettings.java
 +++ b/net/minecraft/client/GameSettings.java
-@@ -67,6 +67,7 @@
+@@ -68,6 +68,7 @@
  import org.apache.commons.lang3.ArrayUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -8,7 +8,7 @@
  
  public class GameSettings
  {
-@@ -179,6 +180,7 @@
+@@ -180,6 +181,7 @@
      public double fov = 70.0D;
      public double gamma;
      public int guiScale;
@@ -16,7 +16,16 @@
      public ParticleStatus particles = ParticleStatus.ALL;
      public NarratorStatus narrator = NarratorStatus.OFF;
      public String language = "en_us";
-@@ -229,7 +231,7 @@
+@@ -191,7 +193,7 @@
+     public boolean ofSmoothFps = false;
+     public boolean ofSmoothWorld = Config.isSingleProcessor();
+     public boolean ofLazyChunkLoading = Config.isSingleProcessor();
+-    public boolean ofRenderRegions = false;
++    public boolean ofRenderRegions = true;
+     public boolean ofSmartAnimations = false;
+     public double ofAoLevel = 1.0D;
+     public int ofAaLevel = 0;
+@@ -230,7 +232,7 @@
      public int ofTranslucentBlocks = 0;
      public boolean ofDynamicFov = true;
      public boolean ofAlternateBlocks = true;
@@ -25,7 +34,7 @@
      public boolean ofCustomEntityModels = true;
      public boolean ofCustomGuis = true;
      public boolean ofShowGlErrors = true;
-@@ -305,6 +307,9 @@
+@@ -306,6 +308,9 @@
          this.ofKeyBindZoom = new KeyBinding("of.key.zoom", 67, "key.categories.misc");
          this.keyBindings = ArrayUtils.add(this.keyBindings, this.ofKeyBindZoom);
          KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
@@ -35,7 +44,7 @@
          this.renderDistanceChunks = 8;
          this.loadOptions();
          Config.initGameSettings(this);
-@@ -507,7 +512,7 @@
+@@ -508,7 +513,7 @@
  
                      if ("guiScale".equals(s))
                      {
@@ -44,7 +53,7 @@
                      }
  
                      if ("particles".equals(s))
-@@ -869,7 +874,7 @@
+@@ -870,7 +875,7 @@
                  printwriter.println("gamma:" + this.gamma);
                  printwriter.println("renderDistance:" + this.renderDistanceChunks);
                  printwriter.println("entityDistanceScaling:" + this.field_238329_c_);
@@ -53,7 +62,7 @@
                  printwriter.println("particles:" + this.particles.getId());
                  printwriter.println("maxFps:" + this.framerateLimit);
                  printwriter.println("difficulty:" + this.difficulty.getId());
-@@ -1063,7 +1068,7 @@
+@@ -1064,7 +1069,7 @@
              {
                  if (i >= aint[j])
                  {
@@ -62,16 +71,16 @@
                  }
              }
  
-@@ -1510,7 +1515,7 @@
-                 return;
-             }
+@@ -1505,7 +1510,7 @@
  
+         if (p_setOptionValueOF_1_ == AbstractOption.FAST_RENDER)
+         {
 -            this.ofFastRender = !this.ofFastRender;
-+            this.ofFastRender = false; //Vivecraft !this.ofFastRender;
++        	this.ofFastRender = false; //Vivecraft !this.ofFastRender;
+         }
  
-             if (this.ofFastRender)
-             {
-@@ -2627,6 +2632,15 @@
+         if (p_setOptionValueOF_1_ == AbstractOption.TRANSLUCENT_BLOCKS)
+@@ -2615,6 +2620,15 @@
              KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
              KeyBinding.resetKeyBindingArrayAndHash();
              bufferedreader.close();
@@ -87,7 +96,7 @@
          }
          catch (Exception exception11)
          {
-@@ -2773,7 +2787,7 @@
+@@ -2766,7 +2780,7 @@
          this.cloudOption = CloudOption.FANCY;
          this.fov = 70.0D;
          this.gamma = 0.0D;
@@ -96,7 +105,16 @@
          this.particles = ParticleStatus.ALL;
          this.heldItemTooltips = true;
          this.ofUseVbo = true;
-@@ -3007,3 +3021,4 @@
+@@ -2780,7 +2794,7 @@
+         Config.updateAvailableProcessors();
+         this.ofSmoothWorld = Config.isSingleProcessor();
+         this.ofLazyChunkLoading = false;
+-        this.ofRenderRegions = false;
++        this.ofRenderRegions = true;
+         this.ofFastMath = false;
+         this.ofFastRender = false;
+         this.ofTranslucentBlocks = 0;
+@@ -3000,3 +3014,4 @@
          resourcePackListIn.setEnabledPacks(set);
      }
  }

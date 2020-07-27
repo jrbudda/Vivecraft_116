@@ -16,7 +16,7 @@
          boolean flag = shaderPackLoaded;
          boolean flag1 = isOldLighting();
  
-@@ -1095,7 +1097,7 @@
+@@ -1089,7 +1091,7 @@
          Set set = props.keySet();
          List<ICustomTexture> list = new ArrayList<>();
  
@@ -25,7 +25,7 @@
          {
              if (s1.startsWith(s))
              {
-@@ -2457,11 +2459,11 @@
+@@ -2451,11 +2453,11 @@
  
      private static int getDrawBuffer(Program p, String str, int i)
      {
@@ -39,7 +39,7 @@
          }
          else
          {
-@@ -4308,15 +4310,15 @@
+@@ -4302,15 +4304,15 @@
          GlStateManager.activeTexture(33984);
      }
  
@@ -61,7 +61,7 @@
  
              if (j != i)
              {
-@@ -5770,7 +5772,7 @@
+@@ -5764,7 +5766,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

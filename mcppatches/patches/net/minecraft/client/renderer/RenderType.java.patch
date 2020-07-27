@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/RenderType.java
 +++ b/net/minecraft/client/renderer/RenderType.java
-@@ -120,9 +120,10 @@
+@@ -121,9 +121,10 @@
      public static RenderType func_239263_a_(ResourceLocation p_239263_0_)
      {
          p_239263_0_ = getCustomTexture(p_239263_0_);
@@ -12,7 +12,7 @@
              return makeType("armor_cutout_no_cull", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
          });
      }
-@@ -130,9 +131,10 @@
+@@ -131,9 +132,10 @@
      public static RenderType getEntitySolid(ResourceLocation locationIn)
      {
          locationIn = getCustomTexture(locationIn);
@@ -24,7 +24,7 @@
              return makeType("entity_solid", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
          });
      }
-@@ -140,9 +142,10 @@
+@@ -141,9 +143,10 @@
      public static RenderType getEntityCutout(ResourceLocation locationIn)
      {
          locationIn = getCustomTexture(locationIn);
@@ -36,7 +36,7 @@
              return makeType("entity_cutout", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
          });
      }
-@@ -150,9 +153,10 @@
+@@ -151,9 +154,10 @@
      public static RenderType func_230167_a_(ResourceLocation p_230167_0_, boolean p_230167_1_)
      {
          p_230167_0_ = getCustomTexture(p_230167_0_);
@@ -48,7 +48,7 @@
              return makeType("entity_cutout_no_cull", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
          });
      }
-@@ -165,9 +169,10 @@
+@@ -166,9 +170,10 @@
      public static RenderType func_239266_b_(ResourceLocation p_239266_0_, boolean p_239266_1_)
      {
          p_239266_0_ = getCustomTexture(p_239266_0_);
@@ -60,7 +60,7 @@
              return makeType("entity_cutout_no_cull_z_offset", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
          });
      }
-@@ -180,9 +185,10 @@
+@@ -181,9 +186,10 @@
      public static RenderType func_239268_f_(ResourceLocation p_239268_0_)
      {
          p_239268_0_ = getCustomTexture(p_239268_0_);
@@ -72,7 +72,7 @@
              return makeType("item_entity_translucent_cull", DefaultVertexFormats.ENTITY, 7, 256, true, true, rendertype$state);
          });
      }
-@@ -190,19 +196,20 @@
+@@ -191,19 +197,20 @@
      public static RenderType getEntityTranslucentCull(ResourceLocation locationIn)
      {
          locationIn = getCustomTexture(locationIn);
@@ -97,7 +97,7 @@
              return makeType("entity_translucent", DefaultVertexFormats.ENTITY, 7, 256, true, true, rendertype$state);
          });
      }
-@@ -214,80 +221,80 @@
+@@ -215,80 +222,80 @@
  
      public static RenderType getEntitySmoothCutout(ResourceLocation locationIn)
      {

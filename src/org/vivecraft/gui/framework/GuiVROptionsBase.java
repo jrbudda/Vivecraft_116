@@ -3,6 +3,8 @@ package org.vivecraft.gui.framework;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.util.text.TranslationTextComponent;
+import net.optifine.Lang;
 import org.lwjgl.glfw.GLFW;
 import org.vivecraft.gui.framework.VROptionLayout.Position;
 import org.vivecraft.settings.VRSettings;
@@ -32,7 +34,7 @@ public abstract class GuiVROptionsBase extends Screen
 	protected boolean drawDefaultButtons = true;
 	protected ExtendedList visibleList = null;
 	private int nextButtonIndex = 0;
-	public String vrTitle ="Title";
+	public String vrTitle = "Title";
 	
 	private Button btnDone;
 	private Button btnDefaults;
@@ -46,7 +48,7 @@ public abstract class GuiVROptionsBase extends Screen
 
 	protected void addDefaultButtons() {
 		
-		this.addButton(btnDone = new Button(this.width / 2 + 5, this.height - 30, 150, 20, I18n.format("gui.back"), (p) ->
+		this.addButton(btnDone = new Button(this.width / 2 + 5, this.height - 30, 150, 20, new TranslationTextComponent("gui.back"), (p) ->
 		{
 			if (!GuiVROptionsBase.this.onDoneClicked()) {
 				GuiVROptionsBase.this.minecraft.vrSettings.saveOptions();
@@ -54,7 +56,7 @@ public abstract class GuiVROptionsBase extends Screen
 			}
 		}));
 		
-		this.addButton(btnDefaults = new Button(this.width / 2 - 155, this.height - 30, 150, 20, "Load Defaults", (p) ->
+		this.addButton(btnDefaults = new Button(this.width / 2 - 155, this.height - 30, 150, 20, new TranslationTextComponent("vivecraft.gui.loaddefaults"), (p) ->
 		{
 			GuiVROptionsBase.this.loadDefaults();
 			GuiVROptionsBase.this.minecraft.vrSettings.saveOptions();
@@ -183,7 +185,7 @@ public abstract class GuiVROptionsBase extends Screen
 		this.renderBackground(matrixstack);
 		if (visibleList != null)
 			visibleList.render(matrixstack, mouseX, mouseY, partialTicks);
-		this.drawCenteredString(matrixstack,this.font, this.vrTitle, this.width / 2, 15, 16777215);
+		this.drawCenteredString(matrixstack,this.font, Lang.get(this.vrTitle), this.width / 2, 15, 16777215);
 
 		if (btnDefaults != null)
 			btnDefaults.visible = drawDefaultButtons;

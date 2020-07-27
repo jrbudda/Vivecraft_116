@@ -238,7 +238,7 @@
          tessellator.draw();
          this.unbindFramebufferTexture();
          GlStateManager.depthMask(true);
-@@ -340,4 +395,49 @@
+@@ -340,4 +395,72 @@
          GlStateManager.clear(i, onMac);
          this.unbindFramebuffer();
      }
@@ -287,4 +287,27 @@
 +        return sb.toString();
 +    }
 +    
++    /*================================ FORGE START ================================================*/
++    private boolean stencilEnabled = true;
++    /**
++     * Attempts to enable 8 bits of stencil buffer on this FrameBuffer.
++     * Modders must call this directly to set things up.
++     * This is to prevent the default cause where graphics cards do not support stencil bits.
++     * <b>Make sure to call this on the main render thread!</b>
++     */
++    public void enableStencil()
++    {
++    	//Vivecraft noop
++    }
++
++    /**
++     * Returns wither or not this FBO has been successfully initialized with stencil bits.
++     * If not, and a modder wishes it to be, they must call enableStencil.
++     */
++    public boolean isStencilEnabled()
++    {
++       return true;
++    }
++    /*================================ FORGE END   ================================================*/
++
  }

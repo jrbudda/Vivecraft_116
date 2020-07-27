@@ -234,8 +234,13 @@ public class VRPlayerModel<T extends LivingEntity> extends PlayerModel<T>
         modelIn.bipedHead.copyModelAngles(this.bipedHead);
         modelIn.bipedHeadwear.copyModelAngles(this.bipedHeadwear);
         modelIn.bipedBody.copyModelAngles(this.bipedBody);
-        modelIn.bipedRightArm.copyModelAngles(this.rightShoulder);
-        modelIn.bipedLeftArm.copyModelAngles(this.leftShoulder);
+        if(this.rightShoulder != null) {
+	        modelIn.bipedRightArm.copyModelAngles(this.rightShoulder);
+	        modelIn.bipedLeftArm.copyModelAngles(this.leftShoulder);
+        } else {
+            modelIn.bipedRightArm.copyModelAngles(this.bipedRightArm);
+            modelIn.bipedLeftArm.copyModelAngles(this.bipedLeftArm);
+        }
         modelIn.bipedRightLeg.copyModelAngles(this.bipedRightLeg);
         modelIn.bipedLeftLeg.copyModelAngles(this.bipedLeftLeg);
 	}

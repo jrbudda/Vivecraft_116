@@ -59,10 +59,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MC_VERSION        = "1.16.1";
     private static final String MC_MD5            = "9b94beec05c9580343f663165fa53d3f";
 	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.16.1_HD_U_G2_pre3";
-    private static final String OF_MD5            = "e93ad02cc2a06ddbfb5843d9fba7c0a2";
+    private static final String OF_FILE_NAME      = "1.16.1_HD_U_G2_pre10";
+    private static final String OF_MD5            = "6addbd1d567a82a3545f079d2deb2a7c";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "32.0.63";
+    private static String FORGE_VERSION     = "32.0.75";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "Vivecraft " + MINECRAFT_VERSION;
@@ -1629,7 +1629,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		ramAllocation.setEnabled(createProfile.isSelected());
 		txtCustomForgeVersion.setEnabled(optCustomForgeVersion.isSelected());
 		txtCustomForgeVersion.setVisible(useForge.isSelected());
-		optCustomForgeVersion.setVisible(false);
+		optCustomForgeVersion.setVisible(useForge.isSelected());
 		this.revalidate();		
 	}
 

@@ -115,7 +115,7 @@
      public float renderArmPitch;
 @@ -130,9 +169,104 @@
          this.ambientSoundHandlers.add(new BubbleColumnAmbientSoundHandler(this));
-         this.ambientSoundHandlers.add(new BiomeSoundHandler(this, p_i2689_1_.getSoundHandler(), p_i2689_2_.getBiomeManager()));
+         this.ambientSoundHandlers.add(new BiomeSoundHandler(this, p_i2690_1_.getSoundHandler(), p_i2690_2_.getBiomeManager()));
      }
 +    //VIVE
 +    public void setItemInUseClient(ItemStack item, Hand hand){
@@ -345,7 +345,7 @@
 +        //Forge
 +        Object event = Reflector.newInstance(Reflector.PlayerSPPushOutOfBlocksEvent_Constructor, this); 
 +        // 
-+        if (!this.noClip || event == null || !Reflector.postForgeBusEvent(event)) {
++        if (!this.noClip && !Reflector.postForgeBusEvent(event)) {
 +        	double y= this.getPosY() + 0.5f;
 +        	if(event!=null)
 +        		y = Reflector.callDouble(event, Reflector.PlayerSPPushOutOfBlocksEvent_getMinY);
@@ -401,7 +401,7 @@
 +    			this.stepHeight = 0.6f;
 +    			this.updateAutoJump((float)(this.getPosX() - d0), (float)(this.getPosZ() - d1));
 +    		}
-+    		double oy = this.getPosY() + this.getRoomYOffsetFromPos();
++    		double oy = this.getPosY() + this.getRoomYOffsetFromPose();
 +    		OpenVRPlayer.get().setRoomOrigin(
 +    				getPosX() + ox, 
 +    				oy, 
@@ -411,7 +411,7 @@
 +    			super.move(typeIn,new Vector3d(0,pos.y,0));
 +    			OpenVRPlayer.get().setRoomOrigin(
 +    					OpenVRPlayer.get().roomOrigin.x, 
-+    					this.getPosY() + this.getRoomYOffsetFromPos(),
++    					this.getPosY() + this.getRoomYOffsetFromPose(),
 +    					OpenVRPlayer.get().roomOrigin.z, false);
 +    		} else {
 +    			this.onGround = true; //
@@ -420,7 +420,7 @@
 +    	}   		
 +    }
 +    
-+    public double getRoomYOffsetFromPos() {
++    public double getRoomYOffsetFromPose() {
 +		double oy = 0;
 +		//Adjust room origin to account for pose.
 +		if(this.getPose() == Pose.FALL_FLYING || this.getPose() == Pose.SPIN_ATTACK)

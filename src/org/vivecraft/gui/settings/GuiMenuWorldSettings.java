@@ -10,7 +10,7 @@ public class GuiMenuWorldSettings extends GuiVROptionsBase {
 	private VROptionEntry[] miscSettings = new VROptionEntry[]
 			{
 					new VROptionEntry(VRSettings.VrOptions.MENU_WORLD_SELECTION),
-					new VROptionEntry("Refresh Menu World", (button, mousePos) -> {
+					new VROptionEntry("vivecraft.gui.menuworld.refresh", (button, mousePos) -> {
 						if (minecraft.menuWorldRenderer.getWorld() != null) {
 							try {
 								minecraft.menuWorldRenderer.destroy();
@@ -22,7 +22,7 @@ public class GuiMenuWorldSettings extends GuiVROptionsBase {
 						return true;
 					}),
 					new VROptionEntry(VRSettings.VrOptions.DUMMY),
-					new VROptionEntry("Load New Menu World", (button, mousePos) -> {
+					new VROptionEntry("vivecraft.gui.menuworld.loadnew", (button, mousePos) -> {
 						try {
 							if (minecraft.menuWorldRenderer.isReady())
 								minecraft.menuWorldRenderer.destroy();
@@ -41,7 +41,7 @@ public class GuiMenuWorldSettings extends GuiVROptionsBase {
 	@Override
 	public void init()
 	{
-		vrTitle = "Menu World Settings";
+		vrTitle = "vivecraft.options.screen.menuworld";
 
 		super.init(miscSettings, true);
 

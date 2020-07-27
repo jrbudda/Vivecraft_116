@@ -19,7 +19,7 @@ public class GuiQuickCommandEditor extends GuiVROptionsBase {
 
 	@Override
     public void init() {
-        vrTitle = "Quick Commands";
+        vrTitle = "vivecraft.options.screen.quickcommands";
     	this.guiList = new GuiQuickCommandsList(this, minecraft);
     	super.init();
     	super.addDefaultButtons();

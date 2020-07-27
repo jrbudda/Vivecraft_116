@@ -27,7 +27,7 @@ public class GuiRoomscaleSettings extends GuiVROptionsBase
 	@Override
 	public void init()
 	{ 	
-		vrTitle = "Roomscale Interactions Settings";
+		vrTitle = "vivecraft.options.screen.roomscale";
 		super.init(roomscaleSettings, true);
 		super.addDefaultButtons();
 	}

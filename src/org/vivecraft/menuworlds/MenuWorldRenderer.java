@@ -244,7 +244,10 @@ public class MenuWorldRenderer {
 			}
 
 			mc.gameSettings.ambientOcclusionStatus = ao;
-			Shaders.shaderPackLoaded = shaders;
+			if(shaders) {
+				Shaders.shaderPackLoaded = shaders;
+				TextureUtils.resourcesReloaded(Config.getResourceManager());
+			}
 			DefaultVertexFormats.updateVertexFormats();
 			FluidBlockRenderer.skipStupidGoddamnChunkBoundaryClipping = false;
 			copyVisibleTextures();

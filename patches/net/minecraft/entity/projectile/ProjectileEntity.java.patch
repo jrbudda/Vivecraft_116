@@ -33,7 +33,7 @@
 +					aim = vp.getControllerPos(1,(PlayerEntity) p_234612_1_).subtract(vp.getControllerPos(0,(PlayerEntity) p_234612_1_)).normalize();
 +					p_234612_5_ = p_234612_5_ * vp.getDraw();  
 +					((AbstractArrowEntity)this).setDamage(((AbstractArrowEntity)this).getDamage()*2);
-+				}   	
++				}
 +    		}
 +			
 +			p_234612_2_ = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));

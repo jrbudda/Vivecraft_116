@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Supplier;
 
+import net.optifine.Lang;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -20,6 +21,7 @@ import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.settings.profile.ProfileManager;
 import org.vivecraft.settings.profile.ProfileReader;
 import org.vivecraft.settings.profile.ProfileWriter;
+import org.vivecraft.utils.LangHelper;
 import org.vivecraft.utils.math.Angle;
 import org.vivecraft.utils.math.Quaternion;
 import org.vivecraft.utils.math.Vector3;
@@ -884,219 +886,198 @@ public class VRSettings
     
     public String getButtonDisplayString( VRSettings.VrOptions par1EnumOptions )
     {
-        String var2 = par1EnumOptions.getEnumString();
+        String var2 = Lang.get("vivecraft.options." + par1EnumOptions.name());
 
         String var3 = var2 + ": ";
         String var4 = var3;
         String var5;
 
         switch( par1EnumOptions) {
-            case OTHER_HUD_SETTINGS:
-                return var2;
-            case OTHER_RENDER_SETTINGS:
-                return var2;
-            case LOCOMOTION_SETTINGS:
-                return var2;
 	        case MOVEMENT_MULTIPLIER:
 	            return var4 + String.format("%.2f", this.movementSpeedMultiplier);
 	        case HUD_OPACITY:
 	        	if( this.hudOpacity > 0.99)
-	        		return var4 + "Opaque";
+	        		return var4 + Lang.get("vivecraft.options.opaque");
 	            return var4 + String.format("%.2f", this.hudOpacity);
             case RENDER_MENU_BACKGROUND:
-                return this.menuBackground ? var4 + "ON" : var4 + "OFF";
-	        case RENDER_FULL_FIRST_PERSON_MODEL_MODE:
-                if (this.renderFullFirstPersonModelMode == RENDER_FIRST_PERSON_FULL)
-                    return var4 + "Full";
-                else if (this.renderFullFirstPersonModelMode == RENDER_FIRST_PERSON_HAND)
-                    return var4 + "Hand";
-                else if (this.renderFullFirstPersonModelMode == RENDER_FIRST_PERSON_NONE)
-                    return var4 + "None";
+                return this.menuBackground ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case MIRROR_DISPLAY:
                 switch(this.displayMirrorMode) {
                     case MIRROR_OFF:
                     default:
-                        return var4 + "OFF (fast)";
+                        return var4 + Lang.get("vivecraft.options.mirror.off");
                     case MIRROR_ON_DUAL:
-                        return var4 + "Dual (fast)";
+                        return var4 + Lang.get("vivecraft.options.mirror.dual");
                     case MIRROR_ON_SINGLE:
-                        return var4 + "Single (fast)";
+                        return var4 + Lang.get("vivecraft.options.mirror.single");
                     case MIRROR_FIRST_PERSON:
-                        return var4 + "1st Person (slow)";
+                        return var4 + Lang.get("vivecraft.options.mirror.firstperson");
                     case MIRROR_THIRD_PERSON:
-                        return var4 + "3rd Person (slow)";
+                        return var4 + Lang.get("vivecraft.options.mirror.thirdperson");
                     case MIRROR_MIXED_REALITY:
-                        return var4 + "Mixed Reality (slow)";
+                        return var4 + Lang.get("vivecraft.options.mirror.mixedreality");
                     case MIRROR_ON_CROPPED:
-                        return var4 + "Cropped (fast)";
+                        return var4 + Lang.get("vivecraft.options.mirror.cropped");
 
                 }
             case MIRROR_EYE:
-                return this.displayMirrorLeftEye ? var4 + "Left" : var4 + "Right";
+                return this.displayMirrorLeftEye ? var4 + Lang.get("vivecraft.options.left") : var4 + Lang.get("vivecraft.options.right");
             case MIXED_REALITY_KEY_COLOR:
                 if (this.mixedRealityKeyColor.equals(new Color(0, 0, 0))) {
-                	return var4 + "Black";
+                	return var4 + Lang.get("vivecraft.options.color.black");
                 } else if (this.mixedRealityKeyColor.equals(new Color(255, 0, 0))) {
-                	return var4 + "Red";
+                	return var4 + Lang.get("vivecraft.options.color.red");
                 } else if (this.mixedRealityKeyColor.equals(new Color(255, 255, 0))) {
-                	return var4 + "Yellow";
+                	return var4 + Lang.get("vivecraft.options.color.yellow");
                 } else if (this.mixedRealityKeyColor.equals(new Color(0, 255, 0))) {
-                	return var4 + "Green";
+                	return var4 + Lang.get("vivecraft.options.color.green");
                 } else if (this.mixedRealityKeyColor.equals(new Color(0, 255, 255))) {
-                	return var4 + "Cyan";
+                	return var4 + Lang.get("vivecraft.options.color.cyan");
                 } else if (this.mixedRealityKeyColor.equals(new Color(0, 0, 255))) {
-                	return var4 + "Blue";
+                	return var4 + Lang.get("vivecraft.options.color.blue");
                 } else if (this.mixedRealityKeyColor.equals(new Color(255, 0, 255))) {
-                	return var4 + "Magenta";
+                	return var4 + Lang.get("vivecraft.options.color.magenta");
                 }
                 return var4 + this.mixedRealityKeyColor.getRed() + " " + this.mixedRealityKeyColor.getGreen() + " " + this.mixedRealityKeyColor.getBlue();
              case MIXED_REALITY_RENDER_HANDS:
-                return this.mixedRealityRenderHands ? var4 + "ON" : var4 + "OFF";
+                return this.mixedRealityRenderHands ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case MIXED_REALITY_UNITY_LIKE:
-                 return this.mixedRealityUnityLike ? var4 + "Unity" : var4 + "Side-by-Side";
+                 return this.mixedRealityUnityLike ? var4 + Lang.get("vivecraft.options.unity") : var4 + Lang.get("vivecraft.options.sidebyside");
             case MIXED_REALITY_UNDISTORTED:
-                return this.mixedRealityMRPlusUndistorted ? var4 + "ON" : var4 + "OFF";
+                return this.mixedRealityMRPlusUndistorted ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case MIXED_REALITY_ALPHA_MASK:
-                return this.mixedRealityAlphaMask ? var4 + "ON" : var4 + "OFF";
+                return this.mixedRealityAlphaMask ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case MIXED_REALITY_FOV:
             	return var4 + String.format("%.0f\u00B0", this.mc.vrSettings.mixedRealityFov);
-            case INSIDE_BLOCK_SOLID_COLOR:
-            	return this.insideBlockSolidColor ? var4 + "Solid Color" : var4 + "Texture";
             case WALK_UP_BLOCKS:
-                return this.walkUpBlocks ? var4 + "ON" : var4 + "OFF";
+                return this.walkUpBlocks ? var4 + Lang.getOn() : var4 + Lang.getOff();
  	        case HUD_SCALE:
 	            return var4 + String.format("%.2f", this.hudScale);
             case HUD_LOCK_TO:
                 switch (this.vrHudLockMode) {
                 // VIVE - lock to hand instead of body
                 case HUD_LOCK_HAND:
-                	return var4 + "Hand";
+                	return var4 + Lang.get("vivecraft.options.hand");
                 case HUD_LOCK_HEAD:
-                	return var4 + "Head";
+                	return var4 + Lang.get("vivecraft.options.head");
                 case HUD_LOCK_WRIST:
-                	return var4 + "Wrist";
+                	return var4 + Lang.get("vivecraft.options.wrist");
                 case HUD_LOCK_BODY:
-                    return var4 + "Body";
+                    return var4 + Lang.get("vivecraft.options.body");
                 }
 	        case HUD_DISTANCE:
 	            return var4 + String.format("%.2f", this.hudDistance);
-	        case HUD_PITCH:
-	            return var4 + String.format("%.0f", this.hudPitchOffset);
-            case HUD_YAW:
-            	return var4 + String.format("%.0f", this.hudYawOffset);
             case HUD_HIDE:
-                return this.mc.gameSettings.hideGUI ? var4 + "YES" : var4 + "NO";
+                return this.mc.gameSettings.hideGUI ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case RENDER_SCALEFACTOR:
                 Framebuffer eye0 = mc.stereoProvider.framebufferEye0;
             	return var4 + Math.round(this.renderScaleFactor * 100) + "% (" + (int)Math.ceil(eye0.framebufferWidth * Math.sqrt(this.renderScaleFactor)) + "x" + (int)Math.ceil(eye0.framebufferHeight * Math.sqrt(this.renderScaleFactor)) + ")";
             case FSAA:
-            	return this.useFsaa ? var4 + "ON" : var4 + "OFF";
+            	return this.useFsaa ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case CROSSHAIR_SCALE:
 	            return var4 + String.format("%.2f", this.crosshairScale);
             case MENU_CROSSHAIR_SCALE:
                 return var4 + String.format("%.2f", this.menuCrosshairScale);
             case CROSSHAIR_SCALES_WITH_DISTANCE:
-	        	return this.crosshairScalesWithDistance ? var4 + "ON" : var4 + "OFF";
+	        	return this.crosshairScalesWithDistance ? var4 + Lang.getOn() : var4 + Lang.getOff();
 	        case RENDER_CROSSHAIR_MODE:
                 if (this.renderInGameCrosshairMode == RENDER_CROSSHAIR_MODE_HUD)
-                    return var4 + "With HUD";
+                    return var4 + Lang.get("vivecraft.options.withhud");
                 else if (this.renderInGameCrosshairMode == RENDER_CROSSHAIR_MODE_ALWAYS)
-                    return var4 + "Always";
+                    return var4 + Lang.get("vivecraft.options.always");
                 else if (this.renderInGameCrosshairMode == RENDER_CROSSHAIR_MODE_NEVER)
-                    return var4 + "Never";
+                    return var4 + Lang.get("vivecraft.options.never");
 	        case RENDER_BLOCK_OUTLINE_MODE:
                 if (this.renderBlockOutlineMode == RENDER_BLOCK_OUTLINE_MODE_HUD)
-                    return var4 + "With HUD";
+                    return var4 + Lang.get("vivecraft.options.withhud");
                 else if (this.renderBlockOutlineMode == RENDER_BLOCK_OUTLINE_MODE_ALWAYS)
-                    return var4 + "Always";
+                    return var4 + Lang.get("vivecraft.options.always");
                 else if (this.renderBlockOutlineMode == RENDER_BLOCK_OUTLINE_MODE_NEVER)
-                    return var4 + "Never";
+                    return var4 + Lang.get("vivecraft.options.never");
 	        case CHAT_NOTIFICATIONS:
                 if (this.chatNotifications == CHAT_NOTIFICATIONS_NONE)
-                    return var4 + "None";
+                    return var4 + Lang.get("vivecraft.options.chatnotification.none");
                 else if (this.chatNotifications == CHAT_NOTIFICATIONS_HAPTIC)
-                    return var4 + "Haptic";
+                    return var4 + Lang.get("vivecraft.options.chatnotification.haptic");
                 else if (this.chatNotifications == CHAT_NOTIFICATIONS_SOUND)
-                    return var4 + "Sound";
+                    return var4 + Lang.get("vivecraft.options.chatnotification.sound");
                 else if (this.chatNotifications == CHAT_NOTIFICATIONS_BOTH)
-                    return var4 + "Both";
+                    return var4 + Lang.get("vivecraft.options.chatnotification.both");
 	        case CHAT_NOTIFICATION_SOUND:
 	        	try {
 		        	SoundEvent se = Registry.SOUND_EVENT.getOrDefault(new ResourceLocation(chatNotificationSound));
-		        	return I18n.format(se.getName().getPath());
+		        	return Lang.get(se.getName().getPath());
 				} catch (Exception e) {
 					return "error";
 				}
             case GUI_APPEAR_OVER_BLOCK:
-                return this.guiAppearOverBlock ? var4 + "ON" : var4 + "OFF";
+                return this.guiAppearOverBlock ? var4 + Lang.getOn() : var4 + Lang.getOff();
 	        case HUD_OCCLUSION:
-	        	return this.hudOcclusion ? var4 + "ON" : var4 + "OFF";
+	        	return this.hudOcclusion ? var4 + Lang.getOn() : var4 + Lang.getOff();
 	        case MENU_ALWAYS_FOLLOW_FACE:
-	        	return this.menuAlwaysFollowFace ? var4 + "Always" : var4 + "Seated";
+	        	return this.menuAlwaysFollowFace ? var4 + Lang.get("vivecraft.options.always") : var4 + Lang.get("vivecraft.options.seated");
 	        case CROSSHAIR_OCCLUSION:
-	        	return this.useCrosshairOcclusion ? var4 + "ON" : var4 + "OFF";
+	        	return this.useCrosshairOcclusion ? var4 + Lang.getOn() : var4 + Lang.getOff();
 	        case MONO_FOV:
 	        	return var4 + String.format("%.0f\u00B0", this.mc.gameSettings.fov);
 	        case INERTIA_FACTOR:
 	        	if (this.inertiaFactor == INERTIA_NONE)
-	        		return var4 + "Automan";
+	        		return var4 + Lang.get("vivecraft.options.inertia.none");
 	        	else if (this.inertiaFactor == INERTIA_NORMAL)
-	        		return var4 + "Normal";
+	        		return var4 + Lang.get("vivecraft.options.inertia.normal");
                 else if (this.inertiaFactor == INERTIA_LARGE)
-                    return var4 + "A Lot";
+                    return var4 + Lang.get("vivecraft.options.inertia.large");
                 else if (this.inertiaFactor == INERTIA_MASSIVE)
-                    return var4 + "Even More";
+                    return var4 + Lang.get("vivecraft.options.inertia.massive");
                 // VIVE START - new options
             case SIMULATE_FALLING:
-                return this.simulateFalling ? var4 + "ON" : var4 + "OFF";
+                return this.simulateFalling ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case WEAPON_COLLISION:
               if(this.weaponCollision == 0)
-            	  return var4 + "OFF";
+            	  return var4 + Lang.getOff();
               else if(this.weaponCollision == 1)
-            	  return var4 + "ON";
+            	  return var4 + Lang.getOn();
               else if(this.weaponCollision == 2)
-            	  return var4 + "AUTO";
+            	  return var4 + Lang.get("vivecraft.options.auto");
             case ALLOW_CRAWLING:
-                return this.vrAllowCrawling ? var4 + "ON" : var4 + "OFF"; 
+                return this.vrAllowCrawling ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case LIMIT_TELEPORT:
-                return this.overrides.getSetting(par1EnumOptions).getBoolean() ? var4 + "ON" : var4 + "OFF";
+                return this.overrides.getSetting(par1EnumOptions).getBoolean() ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case REVERSE_HANDS:
-            	return this.vrReverseHands ? var4 + "ON" : var4 + "OFF";
+            	return this.vrReverseHands ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case STENCIL_ON:
-            	return this.vrUseStencil ? var4 + "ON" : var4 + "OFF";
+            	return this.vrUseStencil ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case BCB_ON:
-            	return this.vrShowBlueCircleBuddy ? var4 + "ON" : var4 + "OFF";
+            	return this.vrShowBlueCircleBuddy ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case WORLD_SCALE:
 	            return var4 + String.format("%.2f", this.overrides.getSetting(par1EnumOptions).getFloat())+ "x" ;
             case WORLD_ROTATION:
 	            return var4 + String.format("%.0f", this.vrWorldRotation);
             case WORLD_ROTATION_INCREMENT:
-	            return var4 + (this.vrWorldRotationIncrement == 0 ? "Smooth" : String.format("%.0f", this.vrWorldRotationIncrement));
+	            return var4 + (this.vrWorldRotationIncrement == 0 ? Lang.get("vivecraft.options.smooth") : String.format("%.0f", this.vrWorldRotationIncrement));
             case TOUCH_HOTBAR:
-            	return this.vrTouchHotbar ? var4 + "ON" : var4 + "OFF";
+            	return this.vrTouchHotbar ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case PLAY_MODE_SEATED:
-            	return this.seated ? var4 + "Seated" : var4 + "Standing";
+            	return this.seated ? var4 + Lang.get("vivecraft.options.seated") : var4 + Lang.get("vivecraft.options.standing");
                 //END JRBUDDA
             case REALISTIC_JUMP:
-                return this.realisticJumpEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticJumpEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case SEATED_HMD:
-                return this.seatedUseHMD ? var4 + "HMD" : var4 + "Crosshair";
+                return this.seatedUseHMD ? var4 + Lang.get("vivecraft.options.hmd") : var4 + Lang.get("vivecraft.options.crosshair");
             case SEATED_HUD_XHAIR:
-                return this.seatedHudAltMode ? var4 + "Crosshair" : var4 + "HMD";
+                return this.seatedHudAltMode ? var4 + Lang.get("vivecraft.options.crosshair") : var4 + Lang.get("vivecraft.options.hmd");
             case REALISTIC_SNEAK:
-                return this.realisticSneakEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticSneakEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
 			case PHYSICAL_GUI:
-				return this.physicalGuiEnabled ? var4 + "ON" : var4 + "OFF";
+				return this.physicalGuiEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case REALISTIC_CLIMB:
-                return this.realisticClimbEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticClimbEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case REALISTIC_SWIM:
-                return this.realisticSwimEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticSwimEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case REALISTIC_ROW:
-                return this.realisticRowEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticRowEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case VEHICLE_ROTATION:
-                return this.vehicleRotation ? var4 + "ON" : var4 + "OFF";
-            case CALIBRATE_HEIGHT:
-                return var2;
+                return this.vehicleRotation ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case WALK_MULTIPLIER:
                 return var4+ String.format("%.1f",walkMultiplier);
             case X_SENSITIVITY:
@@ -1111,94 +1092,94 @@ public class VRSettings
                 switch (this.vrFreeMoveMode) {
                 // VIVE - lock to hand instead of body
                 case FREEMOVE_CONTROLLER:
-                	return var4 + "Controller";
+                	return var4 + Lang.get("vivecraft.options.controller");
                 case FREEMOVE_HMD:
-                	return var4 + "HMD";
+                	return var4 + Lang.get("vivecraft.options.hmd");
                 case FREEMOVE_RUNINPLACE:
-                	return var4 + "RunInPlace";
+                	return var4 + Lang.get("vivecraft.options.runinplace");
                 }
             case FOV_REDUCTION:
-                return this.useFOVReduction ? var4 + "ON" : var4 + "OFF";
+                return this.useFOVReduction ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case FOV_REDUCTION_MIN:
                 return var4 + String.format("%.2f", fovReductionMin);
             case FOV_REDUCTION_OFFSET:
                 return var4 + String.format("%.2f", fovRedutioncOffset);
             case AUTO_OPEN_KEYBOARD:
-                return this.autoOpenKeyboard ? var4 + "ON" : var4 + "OFF";
+                return this.autoOpenKeyboard ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case BACKPACK_SWITCH:
-                return this.backpackSwitching ? var4 + "ON" : var4 + "OFF";
+                return this.backpackSwitching ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case ANALOG_MOVEMENT:
-                return this.analogMovement ? var4 + "ON" : var4 + "OFF";
+                return this.analogMovement ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case AUTO_SPRINT:
-                return this.autoSprint ? var4 + "ON" : var4 + "OFF";
+                return this.autoSprint ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case AUTO_SPRINT_THRESHOLD:
                 return var4 + String.format("%.2f", autoSprintThreshold);
             case RADIAL_MODE_HOLD:
-                return this.radialModeHold ? var4 + "HOLD" : var4 + "PRESS";
+                return this.radialModeHold ? var4 + Lang.get("vivecraft.options.hold") : var4 + Lang.get("vivecraft.options.press");
             case PHYSICAL_KEYBOARD:
-                return this.physicalKeyboard ? var4 + "Physical" : var4 + "Pointer";
+                return this.physicalKeyboard ? var4 + Lang.get("vivecraft.options.keyboard.physical") : var4 + Lang.get("vivecraft.options.keyboard.pointer");
             case BOW_MODE:
             	if(this.bowMode == BOW_MODE_OFF)
-            		return var4 + " OFF";
+            		return var4 + Lang.getOff();
             	else if(this.bowMode == BOW_MODE_ON)
-            		return var4 + " ON";
+            		return var4 + Lang.getOn();
             	else if (this.bowMode == BOW_MODE_VANILLA)
-            		return var4 + "VANILLA";
-            	else return var4 + " wtf?";
+            		return var4 + Lang.get("vivecraft.options.vanilla");
+            	else return var4 + "wtf?";
             case TELEPORT_UP_LIMIT: {
                 int limit = this.overrides.getSetting(par1EnumOptions).getInt();
-                return var4 + (limit > 0 ? limit + " Blocks" : " OFF");
+                return var4 + (limit > 0 ? LangHelper.get("vivecraft.options.teleportlimit", limit) : Lang.getOff());
             }
             case TELEPORT_DOWN_LIMIT: {
                 int limit = this.overrides.getSetting(par1EnumOptions).getInt();
-                return var4 + (limit > 0 ? limit + " Blocks" : " OFF");
+                return var4 + (limit > 0 ? LangHelper.get("vivecraft.options.teleportlimit", limit) : Lang.getOff());
             }
             case TELEPORT_HORIZ_LIMIT: {
                 int limit = this.overrides.getSetting(par1EnumOptions).getInt();
-                return var4 + (limit > 0 ? limit + " Blocks" : " OFF");
+                return var4 + (limit > 0 ? LangHelper.get("vivecraft.options.teleportlimit", limit) : Lang.getOff());
             }
             case ALLOW_STANDING_ORIGIN_OFFSET:
-                return this.allowStandingOriginOffset ? var4 + "YES" : var4 + "NO";
+                return this.allowStandingOriginOffset ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case SEATED_FREE_MOVE:
-                return this.seatedFreeMove ? var4 + "Free Move" : var4 + "Teleport";
+                return this.seatedFreeMove ? var4 + Lang.get("vivecraft.options.freemove") : var4 + Lang.get("vivecraft.options.teleport");
             case FORCE_STANDING_FREE_MOVE:
-            	return this.forceStandingFreeMove ? var4 + "YES" : var4 + "NO";
+            	return this.forceStandingFreeMove ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case ALLOW_ADVANCED_BINDINGS:
-            	return this.allowAdvancedBindings ? var4 + "YES" : var4 + "NO";
+            	return this.allowAdvancedBindings ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case MENU_WORLD_SELECTION:
                 switch (this.menuWorldSelection) {
                     case MENU_WORLD_BOTH:
-                        return var4 + "Official & Custom";
+                        return var4 + Lang.get("vivecraft.options.menuworld.both");
                     case MENU_WORLD_CUSTOM:
-                        return var4 + "Custom Only";
+                        return var4 + Lang.get("vivecraft.options.menuworld.custom");
                     case MENU_WORLD_OFFICIAL:
-                        return var4 + "Official Only";
+                        return var4 + Lang.get("vivecraft.options.menuworld.official");
                     case MENU_WORLD_NONE:
-                        return var4 + "None";
+                        return var4 + Lang.get("vivecraft.options.menuworld.none");
                 }
             case HRTF_SELECTION: {
                 if (this.hrtfSelection == -1)
-                    return var4 + "Off";
+                    return var4 + Lang.getOff();
                 else if (this.hrtfSelection == 0)
-                    return var4 + "Default";
+                    return var4 + Lang.get("vivecraft.options.default");
                 else if (this.hrtfSelection <= SoundSystem.hrtfList.size())
                     return var4 + SoundSystem.hrtfList.get(this.hrtfSelection - 1);
             }
             case RIGHT_CLICK_DELAY:
                 switch (this.rightclickDelay) {
                     case 4:
-                        return var4 + "Default";
+                        return var4 + Lang.get("vivecraft.options.default");
                     case 6:
-                        return var4 + "Slow";
+                        return var4 + Lang.get("vivecraft.options.rightclickdelay.slow");
                     case 8:
-                        return var4 + "Slower";
+                        return var4 + Lang.get("vivecraft.options.rightclickdelay.slower");
                     case 10:
-                        return var4 + "Slowest";
+                        return var4 + Lang.get("vivecraft.options.rightclickdelay.slowest");
                 }
             case RELOAD_EXTERNAL_CAMERA:
                 return var2;
             default:
-            		return "";
+            	return "";
         }
     }
 
@@ -1213,10 +1194,6 @@ public class VRSettings
 				return this.hudOpacity ;
 			case HUD_DISTANCE :
 				return this.hudDistance ;
-			case HUD_PITCH :
-				return this.hudPitchOffset ;
-            case HUD_YAW :
-                return this.hudYawOffset ;
 			case CROSSHAIR_SCALE :
 				return this.crosshairScale ;
             case MENU_CROSSHAIR_SCALE :
@@ -1294,11 +1271,6 @@ public class VRSettings
             case RENDER_MENU_BACKGROUND:
                 this.menuBackground = !this.menuBackground;
                 break;
-	        case RENDER_FULL_FIRST_PERSON_MODEL_MODE:
-                this.renderFullFirstPersonModelMode++;
-                if (this.renderFullFirstPersonModelMode > RENDER_FIRST_PERSON_NONE)
-                    this.renderFullFirstPersonModelMode = RENDER_FIRST_PERSON_FULL;
-	            break;
             case MIRROR_DISPLAY:
                 switch (this.displayMirrorMode) {
                     case MIRROR_OFF:
@@ -1362,9 +1334,6 @@ public class VRSettings
             case MIXED_REALITY_ALPHA_MASK:
             	this.mixedRealityAlphaMask = !this.mixedRealityAlphaMask;
             	mc.stereoProvider.reinitFrameBuffers("MR Setting Changed");
-            	break;
-            case INSIDE_BLOCK_SOLID_COLOR:
-            	this.insideBlockSolidColor = !this.insideBlockSolidColor;
             	break;
             case WALK_UP_BLOCKS:
                 this.walkUpBlocks = !this.walkUpBlocks;
@@ -1498,11 +1467,6 @@ public class VRSettings
             case VEHICLE_ROTATION:
                 vehicleRotation = !vehicleRotation;
                 break;
-            case CALIBRATE_HEIGHT:
-                if(seated) {
-                    MCOpenVR.resetPosition();
-                }
-                break;
             case FREEMOVE_MODE:
                 switch (this.vrFreeMoveMode) {
                 case FREEMOVE_CONTROLLER:
@@ -1608,12 +1572,6 @@ public class VRSettings
 	        case HUD_DISTANCE:
 	            this.hudDistance = par2;
 	        	break;
-	        case HUD_PITCH:
-	            this.hudPitchOffset = par2;
-	        	break;
-            case HUD_YAW:
-                this.hudYawOffset = par2;
-                break;
 	        case CROSSHAIR_SCALE:
 	            this.crosshairScale = par2;
 	        	break;
@@ -1908,478 +1866,95 @@ public class VRSettings
 
     public static enum VrOptions
     {
-        HUD_SCALE("Head HUD Size", true, false,0.35f,2.5f,0.01f,new String[] {
-                "Relative size HUD takes up in field-of-view",
-                "  The units are just relative, not in degrees",
-                "  or a fraction of FOV or anything"
-        }),
-        HUD_DISTANCE("Head HUD Distance", true, false,0.25f,5.0f,0.01f,new String[] {
-                "Distance the floating HUD is drawn in front of your body",
-                "  The relative size of the HUD is unchanged by this",
-                "  Distance is in meters (though isn't obstructed by blocks)"
-        }),
-        HUD_PITCH("HUD Vertical Offset", true, false, -45f, 45f, 1f, new String[] {
-                "The vertical offset of the HUD, in degrees.",
-                "  Negative values are down, positive up."
-        }),
-        HUD_YAW("HUD Horiz. Offset", true, false, -100f, 100f, 1f, new String[] {
-                "The horizontal offset of the HUD, in degrees.",
-                "  Negative values are to the left, positive to",
-                "  the right."
-        }),
-        HUD_LOCK_TO("HUD Orientation Lock", false, true, new String[] {
-                "Specifies to which orientation the HUD is locked to.",
-                "  HAND:  The HUD will appear just above your off-hand",
-                "  HEAD:  The HUD will always appear in your field of view",
-                "straight ahead",
-                "  WRIST:  The HUD will appear on the inside of your off-hand",
-                "arm. It will 'pop out' when looked at."
-        }),
-        HUD_OPACITY("HUD Opacity", true, false,0.15f, 1.0f, 0.05f, new String[] {
-                "How transparent to draw the in-game HUD and UI",
-        }),
-        HUD_HIDE("Hide HUD (F1)", false, true, null),
-        RENDER_MENU_BACKGROUND("HUD/GUI Background", false, true,new String[] {
-                "Specifies whether the in game GUI menus have a ",
-                "semi-transparent background or not.",
-                "  ON:  Semi-transparent background on in-game menus.",
-                "  OFF: No background on in-game menus."
-        }),
-        HUD_OCCLUSION("HUD Occlusion", false, true,new String[] {
-                "Specifies whether the HUD is occluded by closer objects.",
-                "  ON:  The HUD will be hidden by closer objects. May",
-                "       be hidden completely in confined environments!",
-                "  OFF: The HUD is always visible. Stereo depth issues",
-                "       may be noticable."
-        }),
-        MENU_ALWAYS_FOLLOW_FACE("Main Menu Follow", false, true,new String[] {
-                "Specifies when the main menu follows your look direction.",
-                "  SEATED: The main menu will only follow in seated mode.",
-                "  ALWAYS The main menu will always follow."
-        }),
-        CROSSHAIR_OCCLUSION("Crosshair Occlusion", false, true,null),
-        CHAT_FADE_AWAY("Chat Persistence", false, true,null),
-        DUMMY("Dummy", false, true,null),
-        DUMMY_SMALL("Dummy", false, true,null),
-        VR_RENDERER("Stereo Renderer", false, true,null),
-        VR_HEAD_ORIENTATION("Head Orientation", false, true,null),
-        VR_HEAD_POSITION("Head Position", false, true,null),
-        VR_CONTROLLER("Controller", false, true,null),
-        CROSSHAIR_SCALE("Crosshair Size", true, false, 0.25f, 1.0f, 0.01f, new String[] {
-                "Sets the size of the in-game crosshair"
-        }),
-        MENU_CROSSHAIR_SCALE("Menu Crosshair Size", true, false,0.25f, 2.5f, 0.05f, new String[] {
-                "Sets the size of the menu crosshair"
-        }),
-        RENDER_CROSSHAIR_MODE("Show Crosshair", false, true,new String[] {
-                "Set the in-game crosshair display mode",
-                "  Always:   The crosshair is always shown even if the",
-                "            HUD is disabled",
-                "  With HUD: The crosshair is only shown when the HUD",
-                "            is enabled",
-                "  Never:    The crosshair is never shown"
-        }),
-        CHAT_NOTIFICATIONS("Chat Notifications", false, true,new String[] {
-                "Sets what happens when you recieve a chat message",
-                "  None: Nothing!",
-                "  Haptic: Pulse on left controller.",
-                "  Sound: Plays the Chat Notification Sound",
-                "  Both: Both haptic and Sound"
-        }),
-        CHAT_NOTIFICATION_SOUND("Notification Sound", false, true,new String[] {
-                "Sets the chat notification sound"
-        }),
-        CROSSHAIR_ROLL("Roll Crosshair", false, true,new String[] {
-                "Sets the crosshair roll behaviour.",
-                "  With Head: The crosshair rolls with your head.",
-                "  With HUD:  The crosshair appears to roll, keeping",
-                "             the same orientation as the HUD."
-        }),
-        CROSSHAIR_SCALES_WITH_DISTANCE("Crosshair Scaling", false, true,new String[] {
-                "Determines how the crosshair changes with distance.",
-                "  ON:   The crosshair will grow larger in the distance to",
-                "   remain the same apparent size from your viewpoint.",
-                "  OFF: The crosshair will always be the same size",
-                "   in the world and appear to shrink with distance."
-        }),
-        RENDER_BLOCK_OUTLINE_MODE("Show Block Outline", false, true,new String[] {
-                "Sets the in-game block outline display mode.",
-                "  Always:   The block outline is always shown even if",
-                "            the HUD is disabled",
-                "  With HUD: The block outline is only shown when the",
-                "            HUD is enabled",
-                "  Never:    The block outline is never shown"
-        }),
-        LOAD_MUMBLE_LIB("Load Mumble Lib", false, true,null),
-        RENDER_OWN_HEADWEAR("Render Own Headwear", false, true,null),
-        RENDER_FULL_FIRST_PERSON_MODEL_MODE("First Person Model", false, true,null),
-        RENDER_PLAYER_OFFSET("View Body Offset", true, false,0,1,0.1f,null),
-        AUTO_OPEN_KEYBOARD("Always Open Keyboard", false, true,new String[] {
-        		"If disabled, the keyboard will only open when you",
-        		"click a text field, or if a text field can't lose focus.",
-        		"",
-                "If enabled, the keyboard will open automatically",
-                "any time a text field comes into focus. Enabling this will",
-                "cause it to open in unwanted situations with mods."
-        }),
-        RADIAL_MODE_HOLD("Radial Menu Mode", false, true, new String[] {
-                "HOLD: Hold radial menu button, hover over",
-                "selection and release.",
-                "PRESS: Press radial menu button, click buttons,",
-                "press menu button again to dismiss."
-        }),
-        PHYSICAL_KEYBOARD("Keyboard Type", false, true, new String[] {
-                "Which type of VR keyboard to use for typing.",
-                "Physical: A keyboard which you can type on like",
-                "a real keyboard.",
-                "Pointer: A keyboard which you can use by pointing",
-                "either controller's crosshair at and pressing buttons."
-        }),
-        GUI_APPEAR_OVER_BLOCK("Appear Over Block", false, true, new String[] {
-                "If enabled, the GUI for blocks (such as chests and",
-                "furnaces) will be placed above the block. Otherwise, it",
-                "will be at the usual position."
-        }),
-        
-
-
+        DUMMY(false, true), // Dummy
+        HUD_SCALE(true, false, 0.35f, 2.5f, 0.01f), // Head HUD Size
+        HUD_DISTANCE(true, false, 0.25f, 5.0f, 0.01f), // Head HUD Distance
+        HUD_LOCK_TO(false, true), // HUD Orientation Lock
+        HUD_OPACITY(true, false, 0.15f, 1.0f, 0.05f), // HUD Opacity
+        HUD_HIDE(false, true), // Hide HUD (F1)
+        RENDER_MENU_BACKGROUND(false, true), // HUD/GUI Background
+        HUD_OCCLUSION(false, true), // HUD Occlusion
+        MENU_ALWAYS_FOLLOW_FACE(false, true), // Main Menu Follow
+        CROSSHAIR_OCCLUSION(false, true), // Crosshair Occlusion
+        CROSSHAIR_SCALE(true, false, 0.25f, 1.0f, 0.01f), // Crosshair Size
+        MENU_CROSSHAIR_SCALE(true, false, 0.25f, 2.5f, 0.05f), // Menu Crosshair Size
+        RENDER_CROSSHAIR_MODE(false, true), // Show Crosshair
+        CHAT_NOTIFICATIONS(false, true), // Chat Notifications
+        CHAT_NOTIFICATION_SOUND(false, true), // Notification Sound
+        CROSSHAIR_SCALES_WITH_DISTANCE(false, true), // Crosshair Scaling
+        RENDER_BLOCK_OUTLINE_MODE(false, true), // Show Block Outline
+        AUTO_OPEN_KEYBOARD(false, true), // Always Open Keyboard
+        RADIAL_MODE_HOLD(false, true), // Radial Menu Mode
+        PHYSICAL_KEYBOARD(false, true), // Keyboard Type
+        GUI_APPEAR_OVER_BLOCK(false, true), // Appear Over Block
         //HMD/render
-        FSAA("Lanczos Scaler", false, true,new String[] {
-                "Uses a fancier method of resampling the",
-                "game before sending it to the HMD. Works best",
-                "at high render scales. "}),
-        MIRROR_DISPLAY("Desktop Mirror", false, true,new String[] {
-                "Mirrors image on HMD to separate desktop window.",
-                "Can be set to OFF, single or dual hmd-view, ",
-                "first-person undistorted, third person undistorted",
-                "and Mixed Reality. The undistorted and MR views have",
-                "a performance cost"
-        }),
-        MIRROR_EYE("Mirror Eye", false, true, new String[] {
-                "Which eye to use in cropped and single modes."
-        }),
-        MIXED_REALITY_KEY_COLOR("Key Color", false, false,new String[] {
-                "The color drawn to the \"transparent\" areas of the",
-                "mixed reality view. Other colors in-game will be",
-                "prevented from matching this so it doesn't cause",
-                "weirdness."
-        }),
-        MIXED_REALITY_RENDER_HANDS("Show Hands", false, true,new String[] {
-                "Render hands on the mixed reality view. Only",
-                "toggles rendering of the actual hand models, items",
-                "will still be rendered."
-        }),
-        MIXED_REALITY_UNITY_LIKE("Layout", false, true,new String[] {
-                "Choose between Unity-style 4-pane layout, or 2-pane",
-                "side by side"
-        }),
-        MIXED_REALITY_UNDISTORTED("Undistorted Pass", false, true,new String[] {
-                "Include an undistorted view in 4-pane layout Requires",
-                "an extra render pass. Otherwise the HMD view will be used."
-        }),
-        MIXED_REALITY_ALPHA_MASK("Alpha Mask", false, true,new String[] {
-                "In Unity layout, if yes, will draw a grayscale alpha mask",
-                "to the upper-right quadrant (like Unity) for use in",
-                "maskingthe foreground layer. Otherwise, foreground will",
-                "be drawn with key color for use with color key effect."
-        }),
-        MIXED_REALITY_FOV("Camera FOV", true, false, 0, 179, 1, new String[] {
-        		"The FOV used for the mixed reality mirror mode."
-        }),
-        
-        INSIDE_BLOCK_SOLID_COLOR("Inside Block", false, true,new String[] {
-                "Whether to render the block texture or a solid",
-                "color when eye is inside of a block."
-        }),
-        WALK_UP_BLOCKS("Walk up blocks", false, true,new String[] {
-                "Allows you to set the ability to walk up blocks without",
-                "having to jump. HOTKEY - RCtrl-B",
-                "WARNING: May trigger anti-cheat warnings if on a",
-                "Multiplayer server!!",
-                "  OFF: (Default) You will have to jump up blocks.",
-                "  ON:  You can walk up single blocks. May reduce",
-                "       locomotion induced simulator sickness for some."
-        }),
+        FSAA(false, true), // Lanczos Scaler
+        MIRROR_DISPLAY(false, true), // Desktop Mirror
+        MIRROR_EYE(false, true), // Mirror Eye
+        MIXED_REALITY_KEY_COLOR(false, false), // Key Color
+        MIXED_REALITY_RENDER_HANDS(false, true), // Show Hands
+        MIXED_REALITY_UNITY_LIKE(false, true), // Layout
+        MIXED_REALITY_UNDISTORTED(false, true), // Undistorted Pass
+        MIXED_REALITY_ALPHA_MASK(false, true), // Alpha Mask
+        MIXED_REALITY_FOV(true, false, 0, 179, 1), // Camera FOV
+        WALK_UP_BLOCKS(false, true), // Walk up blocks
         //Movement/aiming controls
-        DECOUPLE_LOOK_MOVE("Decouple Look/Move", false, true,null),
-        MOVEMENT_MULTIPLIER("Move. Speed Multiplier", true, false, 0.15f, 1.3f, 0.01f, new String[] {
-                "Sets a movement multiplier, allowing slower movement",
-                "than default. This may help reduce locomotion induced",
-                "simulator sickness.",
-                "WARNING: May trigger anti-cheat warnings if on a",
-                "Multiplayer server!!",
-                "Defaults to standard Minecraft movement (1.0)",
-                "speed)."
-        }),
-        STRAFE_MULTIPLIER("Strafe Speed Multiplier", true, false, 0f, 1.0f, 0.01f, new String[] {
-                "Sets an additional strafe (side-to-side) movement",
-                "multiplier. This is applied on top of the movement",
-                "multiplier. A value of zero will disable strafe.",
-                "This may help reduce locomotion induced simulator",
-                "sickness. WARNING: May trigger anti-cheat warnings",
-                "if on a Multiplayer server!!",
-                "Defaults to 0.33 (1.0 is standard Minecraft movement",
-                "speed)."
-        }),
-        PITCH_AFFECTS_CAMERA("Pitch Affects Camera", false, true,null),
-        JOYSTICK_DEADZONE("Joystick Deadzone",true,false,0,1,0.1f,null),
-        KEYHOLE_HEAD_RELATIVE("Keyhole Moves With Head",false,true,null),
-        MOUSE_AIM_TYPE("Aim Type",false,true,null),
-        CROSSHAIR_HEAD_RELATIVE("Cursor Relative To",false,true,null),
-        MOVEAIM_HYDRA_USE_CONTROLLER_ONE("Controller", false, true,null),
-        JOYSTICK_AIM_TYPE("Aim Type", false, false,null),
-        AIM_PITCH_OFFSET("Vertical Cursor Offset",true,false,0,1,0.1f,null),
-        INERTIA_FACTOR("Player Inertia",false,true,new String[]{
-                "Sets the player's movement inertia in single player",
-                "mode. Lower inertia means faster acceleration, higher",
-                "inertia slower accelaration. High inertia may reduce",
-                "motion sickness for some, but beware of cliff edges!!",
-                "  Normal: (Default) Standard Minecraft player",
-                "           movement.",
-                "  Automan < Normal < A lot < Even More. Does not",
-                "  affect lava, water or jumping movement currently."
-        }),
-
+        MOVEMENT_MULTIPLIER(true, false, 0.15f, 1.3f, 0.01f), // Move. Speed Multiplier
+        INERTIA_FACTOR(false, true), // Player Inertia
         // VIVE START - new options
-        SIMULATE_FALLING("Simulate falling", false, true,new String[] {
-                "If enabled the player will falls to the ground in TP mode",
-                "when standing above empty space. Also allows jumping"
-        }),
-        WEAPON_COLLISION("Weapon collision", false, true,new String[] {
-                "Enables hitting blocks and entities in roomscale.",
-                "AUTO is on in survival and off in creative."
-        }),
-        ANIMAL_TOUCHING("Animal Interaction", false, true,new String[] {
-                "If enabled, touching a passive mob (animal) without a",
-                "weapon will right-click (interact) instead of attacking.",
-                "Turn off for Piggy Slapping, Josh.",
-        }),
+        SIMULATE_FALLING(false, true), // Simulate falling
+        WEAPON_COLLISION(false, true), // Weapon collision
         // VIVE END - new options
-
         //JRBUDDA VIVE
-        ALLOW_CRAWLING("Allow crawling",false, true,new String[] {
-                "If enabled the player will be able to duck under block"
-        }),
-        LIMIT_TELEPORT("Limit in Survival",false, true,new String[] {
-                "If enabled the arc teleporter will be have restrictions",
-                "in survival mode. It will not be able to jump up the side", 
-                "of blocks, it will consume food, and it will have an energy",
-                "bar that refills over time."
-        }),
-        REVERSE_HANDS("Reverse Hands",false, true,new String[] {
-				"Swap left/right hands as dominant",
-				"  ON: Left dominant",
-				"  OFF: Right dominant",
-                "",
-                "To swap the buttons, restart the game and make",
-                "sure default bindings are selected in SteamVR."
-    		}),
-        STENCIL_ON("Use Eye Stencil", false, true,new String[] {
-                "Mask out areas of the screen outside the FOV.",
-                "Improves performance."
-        }), 
-        BCB_ON("Show Body Position", false, true,new String[] {
-                "Shows your body position as a square shadow on the ground.",
-                "This is your Square Shadow Buddy (tm).",
-                "Do not lose your Square Shadow Buddy."
-        }),    
-        WORLD_SCALE("World Scale", true, false, 0, 29, 1, new String[] {
-                "Scales the player in the world.",
-                "Above one makes you larger",
-                "And below one makes you small",
-                "And the ones that mother gives you",
-                "don't do anything at all."
-        }),
-        WORLD_ROTATION("World Rotation", true, false, 0, 360, 30, new String[] {
-                "Adds extra rotation to your HMD.",
-                "More useful bound to a button or ",
-                "changed with the arrow keys."
-        }),
-        WORLD_ROTATION_INCREMENT("Rotation Increment", true, false,-1, 4, 1, new String[] {
-                "How many degrees to rotate when",
-                "rotating the world."             
-        }),
-        TOUCH_HOTBAR("Touch Hotbar Enabled", false, true,new String[] {
-                "If enabled allow you to touch the hotbar with",
-                "your main hand to select an item."
-        }),
-        PLAY_MODE_SEATED("Play Mode", false, true,new String[] {
-                "Standing or seated play mode",
-                "Standing is vastly superior."           
-        }),
-        RENDER_SCALEFACTOR("Resolution", true, false, 0.1f, 9f, 0.1f, new String[] {
-                "The internal rendering scale of the game, relative",
-                "to the native HMD display. Higher values improve visual",
-                "quality at the cost of performance"
-        }),
-        MONO_FOV("Undistorted FOV", true, false, 0, 179, 1, new String[] {
-                "The FOV used for the undistorted mirror mode."
-        }),
+        ALLOW_CRAWLING(false, true), // Allow crawling
+        LIMIT_TELEPORT(false, true), // Limit in Survival
+        REVERSE_HANDS(false, true), // Reverse Hands
+        STENCIL_ON(false, true), // Use Eye Stencil
+        BCB_ON(false, true), // Show Body Position
+        WORLD_SCALE(true, false, 0, 29, 1), // World Scale
+        WORLD_ROTATION(true, false, 0, 360, 30), // World Rotation
+        WORLD_ROTATION_INCREMENT(true, false, -1, 4, 1), // Rotation Increment
+        TOUCH_HOTBAR(false, true), // Touch Hotbar Enabled
+        PLAY_MODE_SEATED(false, true), // Play Mode
+        RENDER_SCALEFACTOR(true, false, 0.1f, 9f, 0.1f), // Resolution
+        MONO_FOV(true, false, 0, 179, 1), // Undistorted FOV
         //END JRBUDDA
-        REALISTIC_JUMP("Roomscale Jumping",false,true,new String[]{
-                "If turned on, once you jump in real life",
-                "Your player will also jump. Also enables",
-                "Jump Boots."
-        }),
-        REALISTIC_SNEAK("Roomscale Sneaking",false,true,new String[]{
-        		"If turned on, once you duck in real life",
-                "Your player will also sneak"
-        }),
-		PHYSICAL_GUI("Physical GUIs",false,true,new String[]{
-				"If turned on, GUIs will be replaced",
-				"with 3d interactable models",
-				"If Backpack tracking is enabled, reaching on your back",
-				"will bring out your inventory bag"
-		}),
-        REALISTIC_CLIMB("Roomscale Climbing",false,true,new String[]{
-                "If turned on, allow climbing ladders and vines",
-                "by touching them. Also enables Climb Claws."
-        }),
-        REALISTIC_SWIM("Roomscale Swimming",false,true,new String[]{
-                "If turned on, allow swimming by doing the breaststoke",
-                "with the controllers."
-        }),
-        REALISTIC_ROW("Roomscale Rowing",false,true,new String[]{
-                "Row, row, row your boat... by flapping your arms like mad."
-        }),
-        CALIBRATE_HEIGHT("Calibrate Height",false,true,null),
-        WALK_MULTIPLIER("Walking Multipier",true,false,1f, 10f, 0.1f, new String[]{
-                "Multiplies your position in the room by a factor",
-                "Allows you to walk around more,",
-                "but may cause motion sickness"
-        }),
-        FREEMOVE_MODE("Free Move Type", false, true,new String[] {
-                "The source for freemove direction.","",
-                "Controller: Offhand controller pointing direction",
-                "HMD: Headset look direction",
-                "Run In Place:",
-                "    Direction is based on how controllers are swinging."
-    	}),
-        VEHICLE_ROTATION("Vehicle Rotation",false,true,new String[] {
-                "Riding in a vehicle will rotate the world",
-                "as the vehicle rotates. May be disorienting."
-                
-        }),
+        REALISTIC_JUMP(false, true), // Roomscale Jumping
+        REALISTIC_SNEAK(false, true), // Roomscale Sneaking
+        PHYSICAL_GUI(false, true), // Physical GUIs
+        REALISTIC_CLIMB(false, true), // Roomscale Climbing
+        REALISTIC_SWIM(false, true), // Roomscale Swimming
+        REALISTIC_ROW(false, true), // Roomscale Rowing
+        WALK_MULTIPLIER(true, false, 1f, 10f, 0.1f), // Walking Multiplier
+        FREEMOVE_MODE(false, true), // Free Move Type
+        VEHICLE_ROTATION(false, true), // Vehicle Rotation
         //SEATED
-        RESET_ORIGIN("Reset Origin",false,true,new String[] {
-                "Recenter the player's feet in the world to 1.62m below",
-                "the current HMD position. For non-absolute tracking",
-                "systems or seated play."
-        }),
-        X_SENSITIVITY("Rotation Speed",true,false, 0.1f, 5f, 0.01f, new String[] {
-                "Speed the view will rotate when pushed on the edge of the keyhole"
-        }),
-        Y_SENSITIVITY("Y Sensitivity",true,false, 0.1f, 5f, 0.01f, new String[] {
-                "Vertical speed of the crosshair related to the mouse"
-        }),
-        KEYHOLE("Keyhole",true,false, 0f, 40f, 5f, new String[] {
-                "The number of degrees to the left and right of center",
-                "Where the view will begin to rotate."
-        }),
-        FOV_REDUCTION("FOV Comfort Reduction",false,true,new String[] {
-                "Shrinks the field of view while moving. Can help with",
-                "motion sickness."
-        }),
-        FOV_REDUCTION_MIN("FOV Reduction Size",true,false, 0.1f, 0.7f, 0.05f, new String[] {
-        		"The final size of FOV reduction."
-        }),
-        FOV_REDUCTION_OFFSET("FOV Reduction Offset",true,false, 0.0f, 0.3f, 0.01f, new String[] {
-        		"Horizontally offsets the center of the FOV reduction for non-standard HMDs."
-        }),
+        RESET_ORIGIN(false, true), // Reset Origin
+        X_SENSITIVITY(true, false, 0.1f, 5f, 0.01f), // Rotation Speed
+        Y_SENSITIVITY(true, false, 0.1f, 5f, 0.01f), // Y Sensitivity
+        KEYHOLE(true, false, 0f, 40f, 5f), // Keyhole
+        FOV_REDUCTION(false, true), // FOV Comfort Reduction
+        FOV_REDUCTION_MIN(true, false, 0.1f, 0.7f, 0.05f), // FOV Reduction Size
+        FOV_REDUCTION_OFFSET(true, false, 0.0f, 0.3f, 0.01f), // FOV Reduction Offset
         // OTher buttons
-        OTHER_HUD_SETTINGS("Overlay/Crosshair/Chat...", false, true, new String[] {
-                "Configure Crosshair and overlay settings."
-        }),
-        OTHER_RENDER_SETTINGS("IPD / FOV...", false, true,new String[] {
-                "Configure IPD and FOV border settings."
-        }),
-        LOCOMOTION_SETTINGS("Locomotion Settings...", false, true, null),
-        SEATED_HMD("Forward Direction",false,true,new String[] {
-                "The direction the forward (W) key will go. You can ",
-                "HMD view direction or crosshair pointing direction"
-        }),
-        SEATED_HUD_XHAIR("HUD Follows",false,true,new String[] {
-                "The direction the HUD will be placed.",
-                "HMD view direction or crosshair pointing direction"
-        }), 
-        BACKPACK_SWITCH("Backpack Switching",false,true,new String[]{
-                "If turned on, reaching behind your head with the right",
-                "controller will swap to the 1st hotbar slot, or back to the",
-                "previous slot. Doing the same with the left controller will",
-                "swap the left and right hand items."
-        }),
-        ANALOG_MOVEMENT("Analog Movement",false,true,new String[] {
-                "Walking speed will be determined by the controller button",
-                "axis, if the bound button has a variable axis."    ,"",
-                "For full analog control it is better to use 'Move/Strafe'", "or 'Move/Rotate'."
-        }),
-        AUTO_SPRINT("Auto-sprint", false, true, new String[] {
-                "While using freemove, sprint will automatically activate",
-                "when the axis reaches the configured threshold."
-        }),
-        AUTO_SPRINT_THRESHOLD("Auto-sprint Threshold", true, false, 0.5f, 1f, 0.01f, new String[] {
-                "The axis threshold at which auto-sprint activates."
-        }), 
-        BOW_MODE("Roomscale Bow Mode", false, true,new String[]{
-                "Sets when to use Roomscale Archery",
-                "OFF: Never",
-                "Vanilla: Only for the vanilla bow, no mod items",
-                "ON: Always for any item that uses the 'bow' action"                        
-        }),
-        TELEPORT_DOWN_LIMIT("Down Limit", true, false, 0, 16, 1, new String[] {
-                "Limit the number of blocks you can teleport below you"
-        }),
-        TELEPORT_UP_LIMIT("Up Limit", true, false, 0, 4, 1,  new String[] {
-                "Limit the number of blocks you can teleport above you"
-        }),
-        TELEPORT_HORIZ_LIMIT("Distance Limit", true, false, 0, 32, 1, new String[] {
-                "Limit the number of blocks you can teleport sideways you"
-        }),
-        ALLOW_STANDING_ORIGIN_OFFSET("Allow Origin Offset", false, true, new String[] {
-                "Allows the \"Reset Origin\" button to be used in",
-                "standing mode, for those that wish to play physically",
-                "seated while using tracked controllers."
-        }),
-        SEATED_FREE_MOVE("Movement Type", false, true, new String[] {
-        		"Which locomotion mode to use in seated mode.",
-        		"",
-        		"Teleport: Press any direction to activate.",
-        		"Free Move: WASD movement like vanilla Minecraft."
-        }),
-        FORCE_STANDING_FREE_MOVE("Force Free Move", false, true, new String[] {
-        		"Forces the use of the fallback walk forwards",
-        		"binding (left trigger by default). For more movement",
-        		"options, edit the SteamVR controller bindings.",
-        		"",
-        		"Note that this disables the teleport binding."
-        }),
-        ALLOW_ADVANCED_BINDINGS("Show Advanced Bindings", false, true, new String[] {
-        		"Unhides additional SteamVR bindings for climbey,",
-        		"keyboard and mixed reality.",
-        		"",
-        		"Requires a restart to take effect."
-        }),
-        MENU_WORLD_SELECTION("Worlds", false, false, new String[] {
-                "Which menu worlds to load on startup.",
-                "",
-                "If no custom worlds are found, official worlds",
-                "will be used regardless."
-        }),
-        HRTF_SELECTION("HRTF", false, false, new String[] {
-                "HRTF profile to use for directional 3D audio.",
-                "Quality may vary by device and driver.",
-                "",
-                "Off: Explicitly disable HRTF.",
-                "Default: Use the default HRTF profile.",
-                "Others: Use a specific HRTF profile.",
-        }),
-        RELOAD_EXTERNAL_CAMERA("Reload External Camera", false, false, new String[] {
-                "Reloads the camera config from ExternalCamera.cfg"
-        }),
-        RIGHT_CLICK_DELAY("Right Click Repeat", false, false, new String[] {
-                "The number of game ticks between 'right clicks'",
-                "while holding the button down."
-        });
+        SEATED_HMD(false, true), // Forward Direction
+        SEATED_HUD_XHAIR(false, true), // HUD Follows
+        BACKPACK_SWITCH(false, true), // Backpack Switching
+        ANALOG_MOVEMENT(false, true), // Analog Movement
+        AUTO_SPRINT(false, true), // Auto-sprint
+        AUTO_SPRINT_THRESHOLD(true, false, 0.5f, 1f, 0.01f), // Auto-sprint Threshold
+        BOW_MODE(false, true), // Roomscale Bow Mode
+        TELEPORT_DOWN_LIMIT(true, false, 0, 16, 1), // Down Limit
+        TELEPORT_UP_LIMIT(true, false, 0, 4, 1), // Up Limit
+        TELEPORT_HORIZ_LIMIT(true, false, 0, 32, 1), // Distance Limit
+        ALLOW_STANDING_ORIGIN_OFFSET(false, true), // Allow Origin Offset
+        SEATED_FREE_MOVE(false, true), // Movement Type
+        FORCE_STANDING_FREE_MOVE(false, true), // Force Free Move
+        ALLOW_ADVANCED_BINDINGS(false, true), // Show Advanced Bindings
+        MENU_WORLD_SELECTION(false, false), // Worlds
+        HRTF_SELECTION(false, false), // HRTF
+        RELOAD_EXTERNAL_CAMERA(false, false), // Reload External Camera
+        RIGHT_CLICK_DELAY(false, false); // Right Click Repeat
 //        ANISOTROPIC_FILTERING("options.anisotropicFiltering", true, false, 1.0F, 16.0F, 0.0F)
 //                {
 //                    private static final String __OBFID = "CL_00000654";
@@ -2391,11 +1966,9 @@ public class VRSettings
 
         private final boolean enumFloat;
         private final boolean enumBoolean;
-        private final String enumString;
         private final float valueStep;
         private final float valueMin;
         private final float valueMax;
-        private final String[] tooltip;
         
         public static VRSettings.VrOptions getEnumOptions(int par0)
         {
@@ -2415,24 +1988,22 @@ public class VRSettings
             return null;
         }
 
-        private VrOptions(String par3Str, boolean isfloat, boolean isbool, String[] tooltip)
+        private VrOptions(boolean isfloat, boolean isbool)
         {
-            this(par3Str, isfloat, isbool, 0.0F, 1.0F, 0.0F, tooltip);
+            this(isfloat, isbool, 0.0F, 1.0F, 0.0F);
         	//TEMP
         	if (isfloat) {
         		int insertbreakpointhere = 0;
         	}
         }
 
-        private VrOptions(String name, boolean isfloat, boolean isboolean, float min, float max, float step, String[] tooltip)
+        private VrOptions(boolean isfloat, boolean isboolean, float min, float max, float step)
         {
-            this.enumString = name;
             this.enumFloat = isfloat;
             this.enumBoolean = isboolean;
             this.valueMin = min;
             this.valueMax = max;
             this.valueStep = step;
-            this.tooltip = tooltip;
         }
         
         public boolean getEnumFloat()
@@ -2450,11 +2021,6 @@ public class VRSettings
             return this.ordinal();
         }
 
-        public String getEnumString()
-        {
-            return this.enumString;
-        }
-
         public float getValueMax()
         {
             return this.valueMax;
@@ -2463,11 +2029,6 @@ public class VRSettings
         public float getValueMin()
         {
             return this.valueMin;
-        }
-        
-        public String[] getToolTip()
-        {
-            return this.tooltip;
         }
 
         protected float snapToStep(float p_148264_1_)
