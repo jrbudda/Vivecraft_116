@@ -1340,6 +1340,16 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				Thread.sleep(millis);
 			} catch (InterruptedException e) {}
 		}
+		
+		private String getGCOptions() {
+			return "-XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M";
+		}
+		
+		private int[] getRamAlloc() {
+			int minAlloc = ramAllocation.getSelectedItem() == Integer.valueOf(1) ? 1 : 2;
+			int maxAlloc = (int)ramAllocation.getSelectedItem();
+			return new int[]{minAlloc, maxAlloc};
+		}
 
 		private boolean updateLauncherJson(File mcBaseDirFile, String minecriftVer, String profileName)
 		{
@@ -1368,8 +1378,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				prof.put("lastVersionId", minecriftVer + mod);
-				int minAlloc = ramAllocation.getSelectedItem() == Integer.valueOf(1) ? 1 : 2;
-				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + minAlloc + "G -XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
+				int[] ramAlloc = getRamAlloc();
+				prof.put("javaArgs", "-Xmx" + ramAlloc[1] + "G -Xms" + ramAlloc[0] + "G " + getGCOptions());
 				prof.put("name", profileName);
 				prof.put("icon", ICON);
 				prof.put("type", "custom");
@@ -1427,11 +1437,12 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					lines.add(l);
 				}
 
-				lines.add("MinMemAlloc=" + ((Integer)ramAllocation.getSelectedItem())*1024);
-				lines.add("MaxMemAlloc=" + ((Integer)ramAllocation.getSelectedItem())*1024);
+				int[] ramAlloc = getRamAlloc();
+				lines.add("MinMemAlloc=" + (ramAlloc[0] * 1024));
+				lines.add("MaxMemAlloc=" + (ramAlloc[1] * 1024));
 				lines.add("OverrideJavaArgs=true");
 				lines.add("OverrideMemory=true");
-				lines.add("JvmArgs=-XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
+				lines.add("JvmArgs=" + getGCOptions());
 
 				r.close();
 
