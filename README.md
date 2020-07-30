@@ -4,6 +4,13 @@ Vivecraft for Minecraft 1.16
 This readme is intended for developers. For downloads and gameplay instructions please see the [official website](http://www.vivecraft.org/)
 
 
+Localization
+========
+Vivecraft supports localization of its plethora of options and other strings. If you are multilingual and would like to help the project out, you can translate Vivecraft into your language of choice over on [Transifex](https://www.transifex.com/techjar/vivecraft/). If your target language is not on the list, you can put in a request for it to be added.
+
+When translating tooltips (these are indicated by having `.tooltip` at the end of the translation key) bear in mind that the tooltip box in-game has a fixed width and height, so if you put too many characters per line or too many lines it will just spill off the screen. It can be difficult to judge where the limit is though since it depends on character width, so you'll have to just guess based on the wrapping of the English text.
+
+
 Using this Repository
 ========
  
