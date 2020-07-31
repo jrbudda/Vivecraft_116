@@ -10,6 +10,8 @@ Vivecraft supports localization of its plethora of options and other strings. If
 
 When translating tooltips (these are indicated by having `.tooltip` at the end of the translation key) bear in mind that the tooltip box in-game has a fixed width and height, so if you put too many characters per line or too many lines it will just spill off the screen. It can be difficult to judge where the limit is though since it depends on character width, so you'll have to just guess based on the wrapping of the English text.
 
+Some option names may appear to be vague and missing context. This is because context is provided by the category they are in. The names of these screens are found under the `vivecraft.options.screen` keys.
+
 
 Using this Repository
 ========
