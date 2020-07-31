@@ -1488,7 +1488,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					String dir = txtCustomGameDir.getText();
 					if (dir.endsWith("\\mods")) dir = dir.substring(0, dir.length()-5);
 					if (dir.endsWith("\\mods\\")) dir = dir.substring(0, dir.length()-6);
-					prof.put("gameDir", txtCustomGameDir.getText());
+					prof.put("gameDir", dir);
 				} else {
 					prof.remove("gameDir");
 				}
