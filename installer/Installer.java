@@ -20,6 +20,7 @@ import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * Derived from https://github.com/MinecraftForge/Installer/
@@ -39,7 +40,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private static final boolean DEFAULT_FORGE_INSTALL = false; 
 	private static final boolean ALLOW_HYDRA_INSTALL = false; 
 	private static final boolean ALLOW_KATVR_INSTALL = true; 
-	private static final boolean ALLOW_KIOSK_INSTALL = true; 
+	private static final boolean ALLOW_KIOSK_INSTALL = true;
+	private static final boolean ALLOW_ZGC_INSTALL = true;
 	private static final boolean ALLOW_HRTF_INSTALL = false; 
 	private static final boolean PROMPT_REMOVE_HRTF = true; 
 	private static final boolean ALLOW_SHADERSMOD_INSTALL = false;  
@@ -97,6 +99,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private JCheckBox katvr;
 	private JCheckBox kiosk;
 	private JCheckBox optCustomForgeVersion;
+	private JCheckBox useZGC;
 	private JTextField txtCustomForgeVersion;
 	private JComboBox ramAllocation;
 	private final boolean QUIET_DEV = false;
@@ -139,7 +142,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			// Read png
 			BufferedImage image;
 			image = ImageIO.read(Installer.class.getResourceAsStream("logo.png"));
-			ImageIcon icon = new ImageIcon(image.getScaledInstance(500, 200,  java.awt.Image.SCALE_SMOOTH));
+			ImageIcon icon = new ImageIcon(image.getScaledInstance(500, 200,  Image.SCALE_SMOOTH));
 			JLabel logoLabel = new JLabel(icon);
 			logoLabel.setAlignmentX(LEFT_ALIGNMENT);
 			logoLabel.setAlignmentY(CENTER_ALIGNMENT);
@@ -427,6 +430,35 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				"</html>");
 		kiosk.setAlignmentX(LEFT_ALIGNMENT);
 
+		useZGC = new JCheckBox();
+		useZGC.setToolTipText("<html>Enables experimental nearly stutter-free Java 14 garbage collector.</html>");
+		useZGC.setAlignmentX(LEFT_ALIGNMENT);
+		AbstractAction zgcAction = new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (useZGC.isSelected()) {
+					JPanel panel = new JPanel();
+					panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+					panel.add(new JLabel(
+							"<html>ZGC (Z Garbage Collector) is an experimental new garbage collector available only as of Java 14.<br>" +
+							"It can practically eliminate GC stutter, however there may be stability issues as it is still in development.<br>" +
+							"You MUST configure your launcher profile to use Java 14 or the game will crash with this enabled.</html>"
+					));
+					panel.add(linkify("You can download the latest version of Java at AdoptOpenJDK.", "https://adoptopenjdk.net/", "AdoptOpenJDK"));
+					panel.add(new JLabel("<html><br>Have you read all of the above and wish to continue with this option enabled?</html>"));
+					int res = JOptionPane.showOptionDialog(
+							null, panel, "Warning!",
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, new String[]{"Yes", "No"}, "No"
+					);
+					if (res == JOptionPane.NO_OPTION)
+						useZGC.setSelected(false);
+				}
+			}
+		};
+		zgcAction.putValue(AbstractAction.NAME, "Enable ZGC (Experimental)");
+		useZGC.setAction(zgcAction);
+
 		this.add(forgePanel);
 		if(ALLOW_SHADERSMOD_INSTALL) this.add(useShadersMod);
 		this.add(createProfile);
@@ -435,7 +467,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		this.add(gameDirPanel);
 		if(ALLOW_HRTF_INSTALL)this.add(useHrtf);
 		this.add(new JLabel("         "));
-		if(ALLOW_KATVR_INSTALL||ALLOW_KIOSK_INSTALL) this.add(new JLabel("Advanced Options"));
+		if(ALLOW_KATVR_INSTALL||ALLOW_KIOSK_INSTALL||ALLOW_ZGC_INSTALL) this.add(new JLabel("Advanced Options"));
+		if(ALLOW_ZGC_INSTALL) this.add(useZGC);
 		if(ALLOW_KIOSK_INSTALL) this.add(kiosk);
 		if(ALLOW_KATVR_INSTALL) this.add(katvr);
 
@@ -1342,13 +1375,80 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		}
 		
 		private String getGCOptions() {
-			return "-XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M";
+			if (useZGC.isSelected()) {
+				return "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC";
+			} else {
+				return "-XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M";
+			}
 		}
 		
 		private int[] getRamAlloc() {
-			int minAlloc = ramAllocation.getSelectedItem() == Integer.valueOf(1) ? 1 : 2;
+			int minAlloc = Math.min((int)ramAllocation.getSelectedItem(), 2);
 			int maxAlloc = (int)ramAllocation.getSelectedItem();
 			return new int[]{minAlloc, maxAlloc};
+		}
+
+		private String getJavaVersionFromPath(String path) {
+			try {
+				ProcessBuilder pb = new ProcessBuilder(path, "-version");
+				Process p = pb.start();
+				BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+				String line = br.readLine();
+				p.destroy();
+				return line.substring(line.indexOf('"') + 1, line.lastIndexOf('"'));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "";
+			}
+		}
+
+		private int parseJavaVersion(String version) {
+			try {
+				return Integer.parseInt(version.substring(0, version.indexOf('.')));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				return 0;
+			}
+		}
+
+		private String checkForJava14(String path) {
+			while (true) {
+				String ver = !path.isEmpty() ? getJavaVersionFromPath(path) : "0.0.0";
+				if (parseJavaVersion(ver) >= 14)
+					break;
+
+				int res = JOptionPane.showConfirmDialog(null,
+						"The currently selected Java executable is not at least Java 14.\n" +
+						"Would you like to select the correct one now?",
+						"Wrong Java Version",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.ERROR_MESSAGE
+				);
+				if (res != JOptionPane.YES_OPTION)
+					break;
+
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				fileChooser.setFileHidingEnabled(false);
+				fileChooser.setFileFilter(new FileFilter() {
+					@Override
+					public boolean accept(File f) {
+						if (!f.isFile())
+							return true;
+						return isWindows ? f.getName().equals("javaw.exe") : f.getName().equals("java");
+					}
+
+					@Override
+					public String getDescription() {
+						return "Java Executable";
+					}
+				});
+				int response = fileChooser.showOpenDialog(null);
+				if (response == JFileChooser.APPROVE_OPTION)
+					path = fileChooser.getSelectedFile().getAbsolutePath();
+			}
+
+			return path;
 		}
 
 		private boolean updateLauncherJson(File mcBaseDirFile, String minecriftVer, String profileName)
@@ -1392,6 +1492,18 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				} else {
 					prof.remove("gameDir");
 				}
+
+				if (useZGC.isSelected()) {
+					String javaExe;
+					if (prof.has("javaDir"))
+						javaExe = prof.getString("javaDir");
+					else
+						javaExe = "";
+
+					javaExe = checkForJava14(javaExe);
+					if (!javaExe.isEmpty())
+						prof.put("javaDir", javaExe);
+				}
 				
 				FileWriter fwJson = new FileWriter(fileJson);
 				fwJson.write(root.toString(jsonIndentSpaces));
@@ -1415,6 +1527,22 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				File cfg = new File(mcBaseDirFile, "instance.cfg");
 				if(!cfg.exists()) return result;
 
+				boolean setupJavaPath = useZGC.isSelected();
+
+				String javaPath = "javaw";
+				if (setupJavaPath) {
+					try (BufferedReader br = new BufferedReader(new FileReader(new File(mcBaseDirFile, "../../multimc.cfg")))) {
+						String line;
+						while ((line = br.readLine()) != null) {
+							String[] split = line.split("=", 2);
+							if (split[0].equals("JavaPath")) {
+								javaPath = split[1];
+								break;
+							}
+						}
+					}
+				}
+
 				BufferedReader r = new BufferedReader(new FileReader(cfg));
 				java.util.List<String> lines = new ArrayList<String>();
 				String l;
@@ -1434,6 +1562,12 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					
 					if(l.startsWith("OverrideMemory"))
 						continue;
+
+					if (l.startsWith("JavaPath") && setupJavaPath) {
+						javaPath = l.split("=", 2)[1];
+						continue;
+					}
+
 					lines.add(l);
 				}
 
@@ -1443,6 +1577,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				lines.add("OverrideJavaArgs=true");
 				lines.add("OverrideMemory=true");
 				lines.add("JvmArgs=" + getGCOptions());
+
+				if (setupJavaPath) {
+					javaPath = checkForJava14(javaPath);
+					lines.add("JavaPath=" + javaPath);
+				}
 
 				r.close();
 
@@ -1689,7 +1828,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) { }
 		try {
-			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					createAndShowGUI();
 				}
