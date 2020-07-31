@@ -1437,7 +1437,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fileChooser.setFileHidingEnabled(false);
-				fileChooser.setCurrentDirectory(new File(System.getenv("JAVA_HOME")));
+				fileChooser.setCurrentDirectory(new File(System.getProperty("java.home")));
 				fileChooser.setFileFilter(new FileFilter() {
 					@Override
 					public boolean accept(File f) {
@@ -1505,9 +1505,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					String javaExe;
 					if (prof.has("javaDir"))
 						javaExe = prof.getString("javaDir");
-					else
-						javaExe = "";
-
+					else {
+						javaExe = System.getProperty("java.home") + "\\bin\\" + (isWindows ? "javaw.exe" : "java");
+					}
 					javaExe = checkForJava14(javaExe);
 					if (!javaExe.isEmpty())
 						prof.put("javaDir", javaExe);
