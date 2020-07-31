@@ -12,6 +12,8 @@ When translating tooltips (these are indicated by having `.tooltip` at the end o
 
 Some option names may appear to be vague and missing context. This is because context is provided by the category they are in. The names of these categories are found under the `vivecraft.options.screen` keys.
 
+If you're not sure about a particular translation, feel free to join our [Discord server](https://discord.gg/c4WunxQ) and ask about it.
+
 
 Using this Repository
 ========
