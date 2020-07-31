@@ -1437,6 +1437,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fileChooser.setFileHidingEnabled(false);
+				fileChooser.setCurrentDirectory(new File(System.getenv("JAVA_HOME")));
 				fileChooser.setFileFilter(new FileFilter() {
 					@Override
 					public boolean accept(File f) {
