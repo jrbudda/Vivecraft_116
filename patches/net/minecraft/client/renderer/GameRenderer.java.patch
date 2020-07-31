@@ -811,7 +811,7 @@
          }
      }
  
-@@ -1320,4 +1350,2176 @@
+@@ -1320,4 +1350,2177 @@
      {
          return this.overlayTexture;
      }
@@ -2512,8 +2512,9 @@
 +    	MatrixStack mat = new MatrixStack();
 +    	mat.getLast().getMatrix().setIdentity();
 +    	applyVRModelView(mc.currentPass, mat);
-+
++    	mc.getItemRenderer().ismainhand = true;
 +    	this.renderVRHand_Main(mat, partialTicks);
++    	mc.getItemRenderer().ismainhand = false;
 +    	this.renderVRHand_Offhand(partialTicks, !translucentSecondPass, mat);
 +
 +    	this.mc.getProfiler().endSection();

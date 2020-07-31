@@ -366,7 +366,7 @@
  
          if (this.onGround && this.abilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
-@@ -1033,12 +1232,58 @@
+@@ -1033,12 +1232,60 @@
          return super.removeActivePotionEffect(potioneffectin);
      }
  
@@ -422,14 +422,16 @@
 +    
 +    public double getRoomYOffsetFromPose() {
 +		double oy = 0;
-+		//Adjust room origin to account for pose.
-+		if(this.getPose() == Pose.FALL_FLYING || this.getPose() == Pose.SPIN_ATTACK)
-+			oy = 1.62 - 0.4;
-+		return -oy;
++		//Adjust room origin to account for pose, only when not standing on something.
++		if(this.getPose() == Pose.FALL_FLYING || 
++				this.getPose() == Pose.SPIN_ATTACK || 
++				this.getPose() == Pose.SWIMMING)
++			oy = -1.2;
++		return oy;
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1056,13 +1301,17 @@
+@@ -1056,13 +1303,17 @@
              float f = this.getAIMoveSpeed();
              float f1 = (float)vector3d2.lengthSquared();
  
@@ -449,7 +451,7 @@
                  vector3d2 = new Vector3d((double)(f2 * f5 - f3 * f4), vector3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vector3d2.lengthSquared();
  
-@@ -1248,4 +1497,406 @@
+@@ -1248,4 +1499,406 @@
              return this.eyesInWaterPlayer;
          }
      }

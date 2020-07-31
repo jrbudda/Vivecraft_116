@@ -457,20 +457,18 @@ public class OpenVRStereoRenderer
 		Minecraft mc = Minecraft.getInstance();
 		boolean changeNonDestructiveRenderConfig = false;
 
-		if (clipPlanesChanged())
-		{
+		if (clipPlanesChanged()) {
 			reinitFrameBuffers("Clip Planes Changed");
 		}
-	
-//		if (lastGuiScale != mc.gameSettings.guiScale)
-//		{
-//			lastGuiScale = mc.gameSettings.guiScale;
-//			reinitFrameBuffers("GUI Scale Changed");
-//		}
+
+		//if (lastGuiScale != mc.gameSettings.guiScale)
+		//{
+		//	lastGuiScale = mc.gameSettings.guiScale;
+		//	reinitFrameBuffers("GUI Scale Changed");
+		//}
 
 		// Check for changes in window handle
-		if (mc.getMainWindow().getHandle() != lastWindow)
-		{
+		if (mc.getMainWindow().getHandle() != lastWindow) {
 			lastWindow = mc.getMainWindow().getHandle();
 			reinitFrameBuffers("Window Handle Changed");
 		}
@@ -479,38 +477,37 @@ public class OpenVRStereoRenderer
 			reinitFrameBuffers("VSync Changed");
 			lastEnableVsync = mc.gameSettings.vsync;
 		}
-		
+
 		if (lastMirror != mc.vrSettings.displayMirrorMode) {
 			reinitFrameBuffers("Mirror Changed");
 			lastMirror = mc.vrSettings.displayMirrorMode;
 		}
 
-		if (reinitFramebuffers)
-		{
+		if (reinitFramebuffers) {
 			//visible = true;
 			this.reinitShadersFlag = true;
 			checkGLError("Start Init");
 
 			int displayFBWidth = (mc.getMainWindow().getWidth() < 1) ? 1 : mc.getMainWindow().getWidth();
-			int displayFBHeight = (mc.getMainWindow().getHeight()  < 1) ? 1 : mc.getMainWindow().getHeight();
-				
+			int displayFBHeight = (mc.getMainWindow().getHeight() < 1) ? 1 : mc.getMainWindow().getHeight();
+
 			int eyew, eyeh;
-			
+
 			eyew = displayFBWidth;
 			eyeh = displayFBHeight;
-			
+
 			if (Config.openGlRenderer.toLowerCase().contains("intel")) {
 				throw new RenderConfigException("Incompatible", LangHelper.get("vivecraft.messages.intelgraphics", Config.openGlRenderer));
 			}
-			
+
 			if (!isInitialized()) {
 				throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), getinitError());
-			}		
-			
+			}
+
 			Tuple<Integer, Integer> renderTextureInfo = getRenderTextureSizes();
 
-			eyew  = renderTextureInfo.getA();
-			eyeh  = renderTextureInfo.getB();
+			eyew = renderTextureInfo.getA();
+			eyeh = renderTextureInfo.getB();
 
 			if (framebufferVrRender != null) {
 				framebufferVrRender.deleteFramebuffer();
@@ -527,23 +524,25 @@ public class OpenVRStereoRenderer
 				framebufferUndistorted = null;
 			}
 
-			if (framebufferEye0 != null) {
-				framebufferEye0.deleteFramebuffer();
-				framebufferEye0 = null;
-			}
-			
-			if (framebufferEye1 != null) {
-				framebufferEye1.deleteFramebuffer();
-				framebufferEye1 = null;
-			}
-			
-			deleteRenderTextures(); ///TODO should this do something.. ?
+			//if (framebufferEye0 != null) {
+			//	framebufferEye0.deleteFramebuffer();
+			//	framebufferEye0 = null;
+			//}
+
+			//if (framebufferEye1 != null) {
+			//	framebufferEye1.deleteFramebuffer();
+			//	framebufferEye1 = null;
+			//}
+
+			// SteamVR on Linux breaks if we delete the eye textures
+			// https://github.com/ValveSoftware/SteamVR-for-Linux/issues/378
+			//deleteRenderTextures();
 
 			if (GuiHandler.guiFramebuffer != null) {
 				GuiHandler.guiFramebuffer.deleteFramebuffer();
 				GuiHandler.guiFramebuffer = null;
 			}
-			
+
 			if (KeyboardHandler.Framebuffer != null) {
 				KeyboardHandler.Framebuffer.deleteFramebuffer();
 				KeyboardHandler.Framebuffer = null;
@@ -560,59 +559,60 @@ public class OpenVRStereoRenderer
 			//	loadingScreen.deleteFramebuffer();
 			//}
 
-			deleteMirrorTexture(); 
+			deleteMirrorTexture();
 
 			if (fsaaFirstPassResultFBO != null) {
 				fsaaFirstPassResultFBO.deleteFramebuffer();
 				fsaaFirstPassResultFBO = null;
 			}
-		
+
 			if (fsaaLastPassResultFBO != null) {
 				fsaaLastPassResultFBO.deleteFramebuffer();
 				fsaaLastPassResultFBO = null;
 			}
-			
-			int multiSampleCount = 0;
-			boolean multiSample = (multiSampleCount > 0 ? true : false);
-					
-			checkGLError("Mirror framebuffer setup");
 
-			createRenderTexture(
-					eyew,
-					eyeh);
+			int multiSampleCount = 0;
+			boolean multiSample = multiSampleCount > 0;
 
 			if (LeftEyeTextureId == -1) {
-				throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), getLastError());
+				createRenderTexture(eyew, eyeh);
+				if (LeftEyeTextureId == -1)
+					throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), getLastError());
+
+				mc.print("Provider supplied render texture IDs: " + LeftEyeTextureId + " " + RightEyeTextureId);
+				mc.print("Provider supplied texture resolution: " + eyew + " x " + eyeh);
 			}
-			mc.print("L Render texture resolution: " + eyew + " x " + eyeh);
-			mc.print("Provider supplied render texture IDs:\n" + LeftEyeTextureId + " " + RightEyeTextureId);
 
 			checkGLError("Render Texture setup");
-				
-			framebufferEye0 = new Framebuffer("L Eye", eyew, eyeh, false, false, LeftEyeTextureId, false, true);
-			mc.print(framebufferEye0.toString());
-			checkGLError("Left Eye framebuffer setup");
-			
-			framebufferEye1 = new Framebuffer("R Eye", eyew, eyeh, false, false, RightEyeTextureId, false, true);
-			mc.print(framebufferEye1.toString());
-			checkGLError("Right Eye framebuffer setup");
-			
-		//	MCOpenVR.texType0.depth.handle = Pointer.createConstant(framebufferEye0.depthBuffer);	
-		//	MCOpenVR.texType1.depth.handle = Pointer.createConstant(framebufferEye1.depthBuffer);	
-			this.renderScale = (float) Math.sqrt((mc.vrSettings.renderScaleFactor));
-			displayFBWidth = (int) Math.ceil(eyew * renderScale);
-			displayFBHeight = (int) Math.ceil(eyeh * renderScale);
-			
-			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, true, true);
+
+			if (framebufferEye0 == null) {
+				framebufferEye0 = new Framebuffer("L Eye", eyew, eyeh, false, false, LeftEyeTextureId, false, true);
+				mc.print(framebufferEye0.toString());
+				checkGLError("Left Eye framebuffer setup");
+			}
+
+			if (framebufferEye1 == null) {
+				framebufferEye1 = new Framebuffer("R Eye", eyew, eyeh, false, false, RightEyeTextureId, false, true);
+				mc.print(framebufferEye1.toString());
+				checkGLError("Right Eye framebuffer setup");
+			}
+
+			//MCOpenVR.texType0.depth.handle = Pointer.createConstant(framebufferEye0.depthBuffer);
+			//MCOpenVR.texType1.depth.handle = Pointer.createConstant(framebufferEye1.depthBuffer);
+			this.renderScale = (float)Math.sqrt((mc.vrSettings.renderScaleFactor));
+			displayFBWidth = (int)Math.ceil(eyew * renderScale);
+			displayFBHeight = (int)Math.ceil(eyeh * renderScale);
+
+			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth, displayFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, true, true);
 			mc.print(framebufferVrRender.toString());
 			checkGLError("3D framebuffer setup");
-			
+
 			mirrorFBWidth = mc.getMainWindow().getWidth();
 			mirrorFBHeight = mc.getMainWindow().getHeight();
-			
+
 			if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY) {
 				mirrorFBWidth = mc.getMainWindow().getWidth() / 2;
-				if(mc.vrSettings.mixedRealityUnityLike)
+				if (mc.vrSettings.mixedRealityUnityLike)
 					mirrorFBHeight = mc.getMainWindow().getHeight() / 2;
 			}
 
@@ -627,69 +627,63 @@ public class OpenVRStereoRenderer
 			for (RenderPass renderPass : renderPasses) {
 				System.out.println("Passes: " + renderPass.toString());
 			}
-			
+
 			if (renderPasses.contains(RenderPass.THIRD)) {
 				framebufferMR = new Framebuffer("Mixed Reality Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, true, false);
 				mc.print(framebufferMR.toString());
 				checkGLError("Mixed reality framebuffer setup");
 			}
-			
+
 			if (renderPasses.contains(RenderPass.CENTER)) {
 				framebufferUndistorted = new Framebuffer("Undistorted View Render", mirrorFBWidth, mirrorFBHeight, true, false, Framebuffer.NO_TEXTURE_ID, false, false);
 				mc.print(framebufferUndistorted.toString());
 				checkGLError("Undistorted view framebuffer setup");
 			}
-			
-			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false, true);
+
+			GuiHandler.guiFramebuffer = new Framebuffer("GUI", mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false, true);
 			mc.print(GuiHandler.guiFramebuffer.toString());
 			checkGLError("GUI framebuffer setup");
 
-			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false, true);
+			KeyboardHandler.Framebuffer = new Framebuffer("Keyboard", mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false, true);
 			mc.print(KeyboardHandler.Framebuffer.toString());
 			checkGLError("Keyboard framebuffer setup");
 
-			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false, true);
+			RadialHandler.Framebuffer = new Framebuffer("Radial Menu", mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), true, false, Framebuffer.NO_TEXTURE_ID, false, true);
 			mc.print(RadialHandler.Framebuffer.toString());
 			checkGLError("Radial framebuffer setup");
 
 			int scopeW = 720;
 			int scopeH = 720;
-			
-			if(Config.isShaders()) {
+
+			if (Config.isShaders()) { //ugh.
 				scopeW = displayFBWidth;
 				scopeH = displayFBHeight;
 			}
-			
-			telescopeFramebufferR  = new Framebuffer("TelescopeR", scopeW,scopeH, true, false, Framebuffer.NO_TEXTURE_ID, true, false);
+
+			checkGLError("Mirror framebuffer setup");
+
+			telescopeFramebufferR = new Framebuffer("TelescopeR", scopeW, scopeH, true, false, Framebuffer.NO_TEXTURE_ID, true, false);
 			mc.print(telescopeFramebufferR.toString());
 			checkGLError("TelescopeR framebuffer setup");
 
-			telescopeFramebufferL  = new Framebuffer("TelescopeL", scopeW,scopeH, true, false, Framebuffer.NO_TEXTURE_ID, true, false);
+			telescopeFramebufferL = new Framebuffer("TelescopeL", scopeW, scopeH, true, false, Framebuffer.NO_TEXTURE_ID, true, false);
 			mc.print(telescopeFramebufferL.toString());
 			checkGLError("TelescopeL framebuffer setup");
-			
-			checkGLError("post color");
-			
+
 			mc.gameRenderer.setupClipPlanes();
 
 			eyeproj[0] = getProjectionMatrix(0, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
 			eyeproj[1] = getProjectionMatrix(1, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
-			//cloudeyeproj[0] = getProjectionMatrix(0, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
-			//cloudeyeproj[1] = getProjectionMatrix(1, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
 
-			if (mc.vrSettings.useFsaa)
-			{
+			if (mc.vrSettings.useFsaa) {
 				try //setup fsaa
 				{
-
-					// GL21.GL_SRGB8_ALPHA8
-					// GL11.GL_RGBA8
 					checkGLError("pre FSAA FBO creation");
 					// Lanczos downsample FBOs
-					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO",eyew, displayFBHeight,false, false, Framebuffer.NO_TEXTURE_ID, false, false);
+					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO", eyew, displayFBHeight, false, false, Framebuffer.NO_TEXTURE_ID, false, false);
 					//TODO: ugh, support multiple color attachments in Framebuffer....
-					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO",eyew, eyeh,false, false, Framebuffer.NO_TEXTURE_ID, false, false);
-			
+					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO", eyew, eyeh, false, false, Framebuffer.NO_TEXTURE_ID, false, false);
+
 					mc.print(fsaaFirstPassResultFBO.toString());
 					mc.print(fsaaLastPassResultFBO.toString());
 
@@ -698,10 +692,7 @@ public class OpenVRStereoRenderer
 					VRShaders.setupFSAA();
 
 					ShaderHelper.checkGLError("FBO init fsaa shader");
-				}
-
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					// We had an issue. Set the usual suspects to defaults...
 					mc.vrSettings.useFsaa = false;
 					mc.vrSettings.saveOptions();
@@ -710,62 +701,58 @@ public class OpenVRStereoRenderer
 					return;
 				}
 			}
-			
+
 			try { //setup other shaders
 				mc.framebuffer = this.framebufferVrRender;
 				VRShaders.setupDepthMask();
 				ShaderHelper.checkGLError("init depth shader");
 				VRShaders.setupFOVReduction();
-				ShaderHelper.checkGLError("init FOV shader");		
-		       
+				ShaderHelper.checkGLError("init FOV shader");
+
 				//vanilla entity outline shader
 				for (ShaderGroup s : entityShaders.values()) {
 					s.close();
 				}
-	           	entityShaders.clear();            	
-		        ResourceLocation outline = new ResourceLocation("shaders/post/entity_outline.json");
-                entityShaders.put(framebufferVrRender.name, createShaderGroup(outline, framebufferVrRender));
-    			if (renderPasses.contains(RenderPass.THIRD)) 
-    				entityShaders.put(framebufferMR.name, createShaderGroup(outline, framebufferMR));
-    			if (renderPasses.contains(RenderPass.CENTER)) 
-    				entityShaders.put(framebufferUndistorted.name, createShaderGroup(outline, framebufferUndistorted));
-    			entityShaders.put(telescopeFramebufferL.name, createShaderGroup(outline, telescopeFramebufferL));
-    			entityShaders.put(telescopeFramebufferR.name, createShaderGroup(outline, telescopeFramebufferR));
-		        //
-    			
-    			//Vanilla alpha sort shader
-            	for (ShaderGroup s : alphaShaders.values()) {
+				entityShaders.clear();
+				ResourceLocation outline = new ResourceLocation("shaders/post/entity_outline.json");
+				entityShaders.put(framebufferVrRender.name, createShaderGroup(outline, framebufferVrRender));
+				if (renderPasses.contains(RenderPass.THIRD))
+					entityShaders.put(framebufferMR.name, createShaderGroup(outline, framebufferMR));
+				if (renderPasses.contains(RenderPass.CENTER))
+					entityShaders.put(framebufferUndistorted.name, createShaderGroup(outline, framebufferUndistorted));
+				entityShaders.put(telescopeFramebufferL.name, createShaderGroup(outline, telescopeFramebufferL));
+				entityShaders.put(telescopeFramebufferR.name, createShaderGroup(outline, telescopeFramebufferR));
+				//
+
+				//Vanilla alpha sort shader
+				for (ShaderGroup s : alphaShaders.values()) {
 					s.close();
 				}
-            	alphaShaders.clear();
-	            if (Minecraft.func_238218_y_())
-	            { //Fabulous
-	                ResourceLocation resourcelocation = new ResourceLocation("shaders/post/vrtransparency.json");
-	                alphaShaders.put(framebufferVrRender.name, createShaderGroup(resourcelocation, framebufferVrRender));
-	    			if (renderPasses.contains(RenderPass.THIRD)) 
-	    				alphaShaders.put(framebufferMR.name, createShaderGroup(resourcelocation, framebufferMR));
-	    			if (renderPasses.contains(RenderPass.CENTER)) 
-	    				alphaShaders.put(framebufferUndistorted.name, createShaderGroup(resourcelocation, framebufferUndistorted));
-	                alphaShaders.put(telescopeFramebufferL.name, createShaderGroup(resourcelocation, telescopeFramebufferL));
-	                alphaShaders.put(telescopeFramebufferR.name, createShaderGroup(resourcelocation, telescopeFramebufferR));
-	            }
-	            else
-	            {//not fabulous!
+				alphaShaders.clear();
+				if (Minecraft.func_238218_y_()) { //Fabulous
+					ResourceLocation resourcelocation = new ResourceLocation("shaders/post/vrtransparency.json");
+					alphaShaders.put(framebufferVrRender.name, createShaderGroup(resourcelocation, framebufferVrRender));
+					if (renderPasses.contains(RenderPass.THIRD))
+						alphaShaders.put(framebufferMR.name, createShaderGroup(resourcelocation, framebufferMR));
+					if (renderPasses.contains(RenderPass.CENTER))
+						alphaShaders.put(framebufferUndistorted.name, createShaderGroup(resourcelocation, framebufferUndistorted));
+					alphaShaders.put(telescopeFramebufferL.name, createShaderGroup(resourcelocation, telescopeFramebufferL));
+					alphaShaders.put(telescopeFramebufferR.name, createShaderGroup(resourcelocation, telescopeFramebufferR));
+				} else {//not fabulous!
 
-	            }	
-	            //
-	            
-	            //Vanilla mob spectator shader
-	            mc.gameRenderer.loadEntityShader(mc.getRenderViewEntity());
-	            //
-		       } catch (Exception e) {
+				}
+				//
+
+				//Vanilla mob spectator shader
+				mc.gameRenderer.loadEntityShader(mc.getRenderViewEntity());
+				//
+			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				System.exit(-1);
 			}
-			
+
 			// Init screen size
-			if (mc.currentScreen != null)
-			{
+			if (mc.currentScreen != null) {
 				int k = mc.getMainWindow().getScaledWidth();
 				int l = mc.getMainWindow().getScaledHeight();
 				mc.currentScreen.init(mc, k, l);
@@ -784,14 +771,10 @@ public class OpenVRStereoRenderer
 					"\nTotal shaded pixels per frame: " + String.format("%.1f", pixelsPerFrame / 1000000F) + " MP (eye stencil not accounted for)"
 			);
 
-
-			//loadingScreen = new LoadingScreenRenderer(this);
-			
 			lastDisplayFBWidth = displayFBWidth;
 			lastDisplayFBHeight = displayFBHeight;
 			reinitFramebuffers = false;
 		}
-	
 	}
 
 	private ShaderGroup createShaderGroup(ResourceLocation resource, Framebuffer fb) throws JsonSyntaxException, IOException

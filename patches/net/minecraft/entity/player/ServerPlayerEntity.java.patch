@@ -137,7 +137,7 @@
      }
  
      protected void onNewPotionEffect(EffectInstance id)
-@@ -1620,6 +1675,82 @@
+@@ -1620,9 +1675,82 @@
              this.interactionManager.setWorld(newWorld);
              this.server.getPlayerList().sendWorldInfo(this, newWorld);
              this.server.getPlayerList().sendInventory(this);
@@ -187,40 +187,40 @@
 +                this.addItemParticles(p_226293_1_, p_226293_2_);
 +                this.playSound(this.getEatSound(p_226293_1_), 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
 +            }
-+        }
-+    }
-+
-+    private void addItemParticles(ItemStack stack, int count)
-+    {
-+
-+        for (int i = 0; i < count; ++i)
-+        {
-+            Vector3d vector3d = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
-+            vector3d = vector3d.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
-+            vector3d = vector3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
-+            double d0 = (double)(-this.rand.nextFloat()) * 0.6D - 0.3D;
-+            Vector3d vector3d1 = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
-+		
-+            if(this.isUser()) { 
-+            	//TODO: wait what
-+	            //VIVE
-+				Hand hand = getActiveHand();
-+				if(hand == Hand.MAIN_HAND){
-+					vector3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
-+				} else {
-+					vector3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();      
-+				}
-+			}
-+               
-+            // vector3d1 = vector3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
-+            // vector3d1 = vector3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
-+            // vector3d1 = vector3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
-+			//
-+            this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vector3d1.x, vector3d1.y, vector3d1.z, vector3d.x, vector3d.y + 0.05D, vector3d.z);
          }
      }
  
-@@ -1696,6 +1827,7 @@
++    private void addItemParticles(ItemStack stack, int count)
++    {
++    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
++
++    	for (int i = 0; i < count; ++i)
++    	{
++    		Vector3d vector3d = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
++    		vector3d = vector3d.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++    		vector3d = vector3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++    		double d0 = (double)(-this.rand.nextFloat()) * 0.6D - 0.3D;
++    		Vector3d vector3d1 = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
++    		vector3d1 = vector3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++    		vector3d1 = vector3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++    		vector3d1 = vector3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
++    		if (vp != null && vp.isVR()) {
++    			//VIVE
++    			Hand hand = getActiveHand();
++    			if(hand == Hand.MAIN_HAND){
++    				vector3d1 = vp.getControllerPos(0, this);             	
++    			} else {
++    				vector3d1 = vp.getControllerPos(1, this);  
++    			}
++    		}
++    		this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vector3d1.x, vector3d1.y, vector3d1.z, vector3d.x, vector3d.y + 0.05D, vector3d.z);
++    	}
++    }
++
+     @Nullable
+     public BlockPos func_241140_K_()
+     {
+@@ -1696,6 +1824,7 @@
          return new SSpawnPlayerPacket(this);
      }
  
@@ -228,7 +228,7 @@
      public ItemEntity dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
      {
          ItemEntity itementity = super.dropItem(droppedItem, dropAround, traceItem);
-@@ -1706,7 +1838,28 @@
+@@ -1706,7 +1835,28 @@
          }
          else
          {
@@ -257,7 +257,7 @@
              ItemStack itemstack = itementity.getItem();
  
              if (traceItem)
-@@ -1722,4 +1875,4 @@
+@@ -1722,4 +1872,4 @@
              return itementity;
          }
      }

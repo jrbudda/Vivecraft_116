@@ -440,12 +440,13 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					JPanel panel = new JPanel();
 					panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 					panel.add(new JLabel(
-							"<html>ZGC (Z Garbage Collector) is an experimental new garbage collector available only as of Java 14.<br>" +
-							"It can practically eliminate GC stutter, however there may be stability issues as it is still in development.<br>" +
-							"You MUST configure your launcher profile to use Java 14 or the game will crash with this enabled.</html>"
+							"<html>ZGC is an experimental garbage collector available in Java 14+.<br>" +
+							"It can significantly reduce GC stutter, but may have stability issues as it is still in development.<br>" +
+							"Your launcher profile must be configured to use Java 14+ or the game will crash with this option enabled.<br>" +
+							"The installer will prompt you to locate the Java14+ runtime and do this for you, however it must be installed before proceeding. <html>"
 					));
 					panel.add(linkify("You can download the latest version of Java at AdoptOpenJDK.", "https://adoptopenjdk.net/", "AdoptOpenJDK"));
-					panel.add(new JLabel("<html><br>Have you read all of the above and wish to continue with this option enabled?</html>"));
+					panel.add(new JLabel("<html><br>Do you wish to continue installation with this option enabled?</html>"));
 					int res = JOptionPane.showOptionDialog(
 							null, panel, "Warning!",
 							JOptionPane.YES_NO_OPTION,
@@ -1389,17 +1390,23 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		}
 
 		private String getJavaVersionFromPath(String path) {
+			String out = "";
 			try {
 				ProcessBuilder pb = new ProcessBuilder(path, "-version");
 				Process p = pb.start();
 				BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-				String line = br.readLine();
+				String line;
+				while ((line = br.readLine()) != null) {
+					if(line.toLowerCase().contains("version")){
+						out = line.substring(line.indexOf('"') + 1, line.lastIndexOf('"'));
+						break;
+					}
+				}
 				p.destroy();
-				return line.substring(line.indexOf('"') + 1, line.lastIndexOf('"'));
 			} catch (Exception e) {
 				e.printStackTrace();
-				return "";
 			}
+			return out;
 		}
 
 		private int parseJavaVersion(String version) {

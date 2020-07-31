@@ -1,5 +1,6 @@
 package org.vivecraft.gameplay.trackers;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.vivecraft.control.ControllerType;
@@ -49,7 +50,6 @@ public class SwingTracker extends Tracker{
 	private Vector3d[] lastWeaponEndAir = new Vector3d[]{new Vector3d(0, 0, 0), new Vector3d(0,0,0)};
 	private boolean[] lastWeaponSolid = new boolean[2];
 	private Vector3d[] weaponEnd= new Vector3d[2];
-	private Vector3d[] weaponEndlast= new Vector3d[]{new Vector3d(0, 0, 0), new Vector3d(0,0,0)};
 
 	public boolean[] shouldIlookatMyHand= new boolean[2];
 	public boolean[] IAmLookingAtMyHand= new boolean[2];
@@ -61,6 +61,10 @@ public class SwingTracker extends Tracker{
 	}
 
 	public boolean isActive(ClientPlayerEntity p){
+		if(disableSwing > 0) {
+			disableSwing--;
+			return false;
+		}
 		if(mc.playerController == null) return false;
 		if(p == null) return false;
 		if(!p.isAlive()) return false;
@@ -105,262 +109,205 @@ public class SwingTracker extends Tracker{
 		return flag;
 	}
 
-	
+	Vector3d forward = new Vector3d(0,0,-1);
+	double speedthresh = 1.8f;
+
 	public void doProcess(ClientPlayerEntity player){ //on tick
-       
-        mc.getProfiler().startSection("updateSwingAttack");
-        
-        Vector3d forward = new Vector3d(0,0,-1);
-        
-        for(int c =0 ;c<2;c++){
-        	
-        	if (mc.climbTracker.isGrabbingLadder(c)) continue;
-        	
-        	Vector3d handPos = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
-        	Vector3d handDirection = mc.vrPlayer.vrdata_world_pre.getHand(c).getCustomVector(forward);
 
-        	ItemStack is = player.getHeldItem(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);
-        	Item item = null;
+		mc.getProfiler().startSection("updateSwingAttack");
 
-        	double speedthresh = 1.8f;
-        	float weaponLength;
-        	float entityReachAdd;
+		for(int c=0;c<2;c++){
+			
+			if (mc.climbTracker.isGrabbingLadder(c)) continue;
 
-        	if(is!=null )item = is.getItem();
+			Vector3d handPos = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
+			Vector3d handDirection = mc.vrPlayer.vrdata_world_pre.getHand(c).getCustomVector(forward);
 
-            boolean tool = false;
-            boolean sword = false;
+			ItemStack is = player.getHeldItem(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);
+			Item item = is.getItem();
 
-            if(item instanceof SwordItem || item instanceof TridentItem){
-            	sword = true;
-            	tool = true;    	
-            }
-            else if (isTool(item)) {
-            	tool = true;
-            }
-//            else if(item !=null && Reflector.forgeExists()){ //tinkers hack
-//            	String t = item.getClass().getSuperclass().getName().toLowerCase();
-//            	//System.out.println(c);
-//            	if (t.contains("weapon") || t.contains("sword")) {
-//            		sword = true;
-//            		tool = true;
-//            	} else 	if 	(t.contains("tool")){
-//            		tool = true;
-//            	}
-//            }    
+			float weaponLength;
+			float entityReachAdd;
 
-            if (sword){
-                 	entityReachAdd = 1.8f;
-            		weaponLength = 0.7f;
-            		tool = true;
-            } else if (tool){
-            	entityReachAdd = 1.0f;
-            	weaponLength = 0.5f;
-        		tool = true;
-            } else if (item !=null){
-            	weaponLength = 0.1f;
-            	entityReachAdd = 0.3f;
-            } else {
-            	weaponLength = 0.0f;
-            	entityReachAdd = 0.3f;
-            }
+			boolean tool = false;
+			boolean sword = false;
 
-        	weaponLength *= mc.vrPlayer.vrdata_world_pre.worldScale;
+			if(item instanceof SwordItem || item instanceof TridentItem){
+				sword = true;
+				tool = true;    	
+			}
+			else if (isTool(item)) {
+				tool = true;
+			}
+			//            else if(item !=null && Reflector.forgeExists()){ //tinkers hack
+			//            	String t = item.getClass().getSuperclass().getName().toLowerCase();
+			//            	//System.out.println(c);
+			//            	if (t.contains("weapon") || t.contains("sword")) {
+			//            		sword = true;
+			//            		tool = true;
+			//            	} else 	if 	(t.contains("tool")){
+			//            		tool = true;
+			//            	}
+			//            }    
 
-        	weaponEnd[c] = new Vector3d(
-        			handPos.x + handDirection.x * weaponLength,
-        			handPos.y + handDirection.y * weaponLength,
-        			handPos.z + handDirection.z * weaponLength);     
+			if (sword){
+				entityReachAdd = 1.8f;
+				weaponLength = 0.7f;
+				tool = true;
+			} else if (tool){
+				entityReachAdd = 1.0f;
+				weaponLength = 0.5f;
+				tool = true;
+			} else if (!is.isEmpty()){
+				weaponLength = 0.1f;
+				entityReachAdd = 0.3f;
+			} else {
+				weaponLength = 0.0f;
+				entityReachAdd = 0.3f;
+			}
 
-        	if (disableSwing > 0 ) {
-        		disableSwing--;
-        		if(disableSwing<0)disableSwing = 0;
-        		weaponEndlast[c] = new Vector3d(weaponEnd[c].x,	 weaponEnd[c].y, 	 weaponEnd[c].z);
-        		return;
-        	}
+			weaponLength *= mc.vrPlayer.vrdata_world_pre.worldScale;
 
-        	float speed = (float) MCOpenVR.controllerHistory[c].averageSpeed(0.1);
-
-        	weaponEndlast[c] = new Vector3d(weaponEnd[c].x, weaponEnd[c].y, weaponEnd[c].z);
-
-        	boolean inAnEntity = false;
-        	boolean insolidBlock = false;
-        	boolean canact = speed > speedthresh && !lastWeaponSolid[c];
-
-        	//Check EntityCollisions first    	
-        	{// normal reach check.
-            	AxisAlignedBB weaponBB = new AxisAlignedBB(
-            			Math.min(weaponEnd[c].x, handPos.x),
-            			Math.min(weaponEnd[c].y, handPos.y),
-            			Math.min(weaponEnd[c].z, handPos.z),
-            			Math.max(weaponEnd[c].x, handPos.x),
-            			Math.max(weaponEnd[c].y, handPos.y),
-            			Math.max(weaponEnd[c].z, handPos.z));
-        		List entities = mc.world.getEntitiesWithinAABBExcludingEntity(
-        				mc.player, weaponBB);       	
-        		for (int e = 0; e < entities.size(); ++e)
-        		{
-        			Entity hitEntity = (Entity) entities.get(e);
-        			if (hitEntity.canBeCollidedWith() && !(hitEntity == mc.getRenderViewEntity().getRidingEntity()) )
-        			{       			       			
-        				if(canact){
-        					Minecraft.getInstance().physicalGuiManager.preClickAction();
-        					mc.playerController.attackEntity(player, hitEntity);
-        					MCOpenVR.triggerHapticPulse(c, 1000);
-        					lastWeaponSolid[c] = true;
-        				}
-        				inAnEntity = true;
-        				break;
-        			}
-        		}     
-        	}
-        	
-        	if(!inAnEntity) { //extended check vs non players.   
-        		
-        		Vector3d extWeapon = new Vector3d(
-    			handPos.x + handDirection.x * (weaponLength + entityReachAdd),
-    			handPos.y + handDirection.y * (weaponLength + entityReachAdd),
-    			handPos.z + handDirection.z * (weaponLength + entityReachAdd));
-        		
-            	AxisAlignedBB weaponBBEXT = new AxisAlignedBB(
-            			handPos.x < extWeapon.x ? handPos.x : extWeapon.x  ,
-            					handPos.y < extWeapon.y ? handPos.y : extWeapon.y  ,
-            							handPos.z < extWeapon.z ? handPos.z : extWeapon.z  ,
-            									handPos.x > extWeapon.x ? handPos.x : extWeapon.x  ,
-            											handPos.y > extWeapon.y ? handPos.y : extWeapon.y  ,
-            													handPos.z > extWeapon.z ? handPos.z : extWeapon.z  
-            			);
-            	
-        		List entities = mc.world.getEntitiesWithinAABBExcludingEntity(
-        				mc.player, weaponBBEXT);       	
-        		for (int e = 0; e < entities.size(); ++e)
-        		{
-        			Entity hitEntity = (Entity) entities.get(e);
-        			if((hitEntity instanceof PlayerEntity)) continue; 
-        			if (hitEntity.canBeCollidedWith() && !(hitEntity == mc.getRenderViewEntity().getRidingEntity()) )
-        			{       			       			
-        				if(canact){
-        					Minecraft.getInstance().physicalGuiManager.preClickAction();
-        					mc.playerController.attackEntity(player, hitEntity);
-        					MCOpenVR.triggerHapticPulse(c, 1000);
-        					lastWeaponSolid[c] = true;
-        				}
-        				inAnEntity = true;
-        				break;
-        			}    		
-        		}
-        	}
-        	
-        	if(!inAnEntity && !sword){ //block check
-        		            	
-        		if(mc.climbTracker.isClimbeyClimb()){
-        			if(c == 0 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) || !tool ) continue;
-        			if(c == 1 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) || !tool ) continue;
-        		}
-
-        		BlockPos bp =null;
-        		bp = new BlockPos(weaponEnd[c]);
-        		BlockState block = mc.world.getBlockState(bp);
-        		Material material = block.getMaterial();
-
-        		// every time end of weapon enters a solid for the first time, trace from our previous air position
-        		// and damage the block it collides with... 
-        		AxisAlignedBB axisalignedbb = player.getBoundingBox().grow(4.0D, 4.0D, 4.0D);
+			weaponEnd[c] = new Vector3d(
+					handPos.x + handDirection.x * weaponLength,
+					handPos.y + handDirection.y * weaponLength,
+					handPos.z + handDirection.z * weaponLength);     
 
 
-        		BlockRayTraceResult blockHit = mc.world.rayTraceBlocks(new RayTraceContext(lastWeaponEndAir[c], weaponEnd[c], BlockMode.OUTLINE, FluidMode.NONE, mc.player));
+			boolean inAnEntity = false;
 
-        		EntityRayTraceResult entityHit = ProjectileHelper.rayTraceEntities(player, lastWeaponEndAir[c], weaponEnd[c], axisalignedbb, (p_lambda$getMouseOver$0_0_) ->
-        		{
-        			return !p_lambda$getMouseOver$0_0_.isSpectator() && p_lambda$getMouseOver$0_0_.canBeCollidedWith();
-        		}, 16);   
+			float speed = (float) MCOpenVR.controllerHistory[c].averageSpeed(0.1);
+			boolean canact = speed > speedthresh && !lastWeaponSolid[c];
 
-        		if (blockHit.getType() == Type.BLOCK) {
-        			boolean flag = blockHit.getPos().equals(bp); //fix ladder but prolly break everything else.
+			//Check EntityCollisions first    	
+			{
+				AxisAlignedBB weaponBB = new AxisAlignedBB(handPos, weaponEnd[c]);      
+				Vector3d extWeapon = new Vector3d(
+						handPos.x + handDirection.x * (weaponLength + entityReachAdd),
+						handPos.y + handDirection.y * (weaponLength + entityReachAdd),
+						handPos.z + handDirection.z * (weaponLength + entityReachAdd));
+				AxisAlignedBB weaponBBEXT = new AxisAlignedBB(handPos, extWeapon);     
 
-        			if (flag)
-        			{
-        				this.shouldIlookatMyHand[c] = false;
-        				if (!(material == material.AIR))
-        				{
-        					if (block.getMaterial().isLiquid()) {
-        						if(item == Items.BUCKET) {       						
-        							//mc.playerController.onPlayerRightClick(player, player.world,is, col.blockX, col.blockY, col.blockZ, col.sideHit,col.hitVec);
-        							this.shouldIlookatMyHand[c] = true;
-        							if (IAmLookingAtMyHand[c]){
-        								Minecraft.getInstance().physicalGuiManager.preClickAction();
-        								if(	Minecraft.getInstance().playerController.processRightClick(player, player.world,c==0?Hand.MAIN_HAND:Hand.OFF_HAND).isSuccessOrConsume()){
-        									mc.gameRenderer.itemRenderer.resetEquippedProgress(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);					
-        								}
-        							}
-        						}
-        					} else {
-        						if(canact && (!mc.vrSettings.realisticClimbEnabled || (!(block.getBlock() instanceof LadderBlock) && !(block.getBlock() instanceof VineBlock)))) { 
-        							int p = 3;
-        							if(item instanceof HoeItem){
-        								mc.physicalGuiManager.preClickAction();
-        								mc.playerController.func_217292_a(player, (ClientWorld) player.world, c==0 ? Hand.MAIN_HAND:Hand.OFF_HAND, blockHit);
-        								
-        							} else if(block.getBlock() instanceof NoteBlock) {
-    									mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace());       								
-        							} else{
-        								p += (speed - speedthresh) / 2;
+				List<Entity> mobs = mc.world.getEntitiesWithinAABBExcludingEntity(mc.player, weaponBBEXT);       	      		
+				mobs.removeIf(e -> e instanceof PlayerEntity);
+				List<Entity> players = mc.world.getEntitiesWithinAABBExcludingEntity(mc.player, weaponBB);
+				players.removeIf(e -> !(e instanceof PlayerEntity));
 
-        								for (int i = 0; i < p; i++)
-        								{
-        									//set delay to 0
-        									clearBlockHitDelay();			
-        									boolean test = mc.climbTracker.isGrabbingLadder();
-        									//all this comes from plaeyrControllerMP clickMouse and friends.
+				mobs.addAll(players);
+				//mobs.sort((Entity e1, Entity e2) -> Double.compare(e1.getDistanceSq(handPos), e2.getDistanceSq(handPos)));
+				//There is no point in the sort due to hitting them all, see next comment.
+				
+				for (Entity hitEntity : mobs) {
+					if (hitEntity.canBeCollidedWith() && !(hitEntity == mc.getRenderViewEntity().getRidingEntity()) )
+					{       			       			
+						if(canact){
+							Minecraft.getInstance().physicalGuiManager.preClickAction();
+							mc.playerController.attackEntity(player, hitEntity);
+							MCOpenVR.triggerHapticPulse(c, 1000);
+							lastWeaponSolid[c] = true;
+						}
+						inAnEntity = true;
+						//break;
+						//I'm on the fence about this break.
+						//On the one hand, sending multiple attack packets per tick on different entities is not vanilla.
+						//On the other hand, being able to attack everything in range all at once with one swing is a little overpowered.
+						//On the the other other hand, knowing which entities can actually be hurt due to cooldowns, etc, is a server-side thing..
+						//...so it's possible that swinging at a group of enemies will never hit certain ones if we break on the first.
+						//It's mostly due to this last reason that I am removing the break and leaving the range shorter than clicking.
+					}
+				}     
+			}
 
-        									Minecraft.getInstance().physicalGuiManager.preClickAction();
-        									//all this does is sets the block you're currently hitting, has no effect in survival mode after that.
-        									//but if in creaive mode will clickCreative on the block
-        									mc.playerController.clickBlock(blockHit.getPos(), blockHit.getFace());
+			{ //block check
 
-        									if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
-        										break;
+				//dont hit blocks with sword or same time as hitting entity
+				canact = canact && !sword && !inAnEntity; 
+				
+				if(mc.climbTracker.isClimbeyClimb()){
+					if(c == 0 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) || !tool ) continue;
+					if(c == 1 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) || !tool ) continue;
+				}
 
-        									//apply destruction for survival only
-        									mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace());
+				BlockPos bp = new BlockPos(weaponEnd[c]);
+				BlockState block = mc.world.getBlockState(bp);
+			
+				// every time end of weapon enters a solid for the first time, trace from our previous air position
+				// and damage the block it collides with... 
+				BlockRayTraceResult blockHit = mc.world.rayTraceBlocks(new RayTraceContext(lastWeaponEndAir[c], weaponEnd[c], BlockMode.OUTLINE, FluidMode.NONE, mc.player));
+		
+				if(block.isAir() || blockHit.getType() != Type.BLOCK || lastWeaponEndAir[c].length() == 0) { //reset				
+					this.lastWeaponEndAir[c] = weaponEnd[c];
+					lastWeaponSolid[c] = false;
 
-        									if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
-        										break;
+					//if you're in creative you can get your own goddamn water.
+					if (!mc.player.isCreative() && block.getMaterial().isLiquid() && item == Items.BUCKET) {
+						//mc.playerController.onPlayerRightClick(player, player.world,is, col.blockX, col.blockY, col.blockZ, col.sideHit,col.hitVec);
+						this.shouldIlookatMyHand[c] = true;
+						if (IAmLookingAtMyHand[c]){
+							Minecraft.getInstance().physicalGuiManager.preClickAction();
+							this.shouldIlookatMyHand[c] = false;
+							if(	Minecraft.getInstance().playerController.processRightClick(player, player.world,c==0?Hand.MAIN_HAND:Hand.OFF_HAND).isSuccessOrConsume()){
+								mc.gameRenderer.itemRenderer.resetEquippedProgress(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);					
+							}
+						}
+					} 	
+					continue;
+				}
+				
+				lastWeaponSolid[c] = true;
 
-        									//something effects
-        									mc.particles.addBlockHitEffects(blockHit.getPos(), blockHit.getFace());
+				boolean flag = blockHit.getPos().equals(bp); //fix ladder
+				boolean protectedBlock = mc.vrSettings.realisticClimbEnabled && (block.getBlock() instanceof LadderBlock || block.getBlock() instanceof VineBlock);
+				//TODO: maybe blacklist right-clickable blocks?
+				
+				if (blockHit.getType() == Type.BLOCK && flag) {
+					if(canact && !protectedBlock) { 
+						int p = 3;
+						if(item instanceof HoeItem){
+							mc.physicalGuiManager.preClickAction();
+							mc.playerController.func_217292_a(player, (ClientWorld) player.world, c==0 ? Hand.MAIN_HAND:Hand.OFF_HAND, blockHit);
+						} else if(block.getBlock() instanceof NoteBlock) {
+							mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace());       								
+						} else{ //smack it
+							p += (speed - speedthresh) / 2;
 
-        								}
+							for (int i = 0; i < p; i++)
+							{
+								//set delay to 0
+								clearBlockHitDelay();		
+								Minecraft.getInstance().physicalGuiManager.preClickAction();
 
-        							}
-        							mc.vrPlayer.blockDust(blockHit.getHitVec().x, blockHit.getHitVec().y, blockHit.getHitVec().z, 3*p, bp, block, 0.6f, 1f);
+								//all this comes from plaeyrControllerMP clickMouse and friends.
+								//all this does is sets the block you're currently hitting, has no effect in survival mode after that.
+								//but if in creative mode will clickCreative on the block
+								mc.playerController.clickBlock(blockHit.getPos(), blockHit.getFace());
 
-        							MCOpenVR.triggerHapticPulse(c, 250*p);
-        							//   System.out.println("Hit block speed =" + speed + " mot " + mot + " thresh " + speedthresh) ;            				
-        							lastWeaponSolid[c] = true;
-        						}
-        						insolidBlock = true;
-        					}
-        				}
-        			}
-        			//mc.playerController.hitVecOverride = null;
-        		}
-        	}
-        	
-            if ((!inAnEntity && !insolidBlock ) || lastWeaponEndAir[c].length() ==0)
-        	{
-        		this.lastWeaponEndAir[c] = new Vector3d(
-        				weaponEnd[c].x,
-        				weaponEnd[c].y,
-        				weaponEnd[c].z
-        				);
-        		lastWeaponSolid[c] = false;
-        	}
-        }
-        
-        mc.getProfiler().endSection();
-    
-    }
+								if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
+									break;
+
+								//apply destruction for survival only
+								mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace());
+
+								if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
+									break;
+
+								//something effects
+								mc.particles.addBlockHitEffects(blockHit.getPos(), blockHit.getFace());
+
+							}
+						}
+						mc.vrPlayer.blockDust(blockHit.getHitVec().x, blockHit.getHitVec().y, blockHit.getHitVec().z, 3*p, bp, block, 0.6f, 1f);
+
+						MCOpenVR.triggerHapticPulse(c, 250*p);
+						//   System.out.println("Hit block speed =" + speed + " mot " + mot + " thresh " + speedthresh) ;            				
+					}
+				}
+			}
+		}
+
+		mc.getProfiler().endSection();
+
+	}
 
 	private boolean getIsHittingBlock(){
 		return (Boolean)MCReflection.PlayerController_isHittingBlock.get(Minecraft.getInstance().playerController);
@@ -374,24 +321,29 @@ public class SwingTracker extends Tracker{
 	//Get the transparency for held items to indicate attack power or sneaking.
 	public static float getItemFade(ClientPlayerEntity p, ItemStack is) {
 		float fade = p.getCooledAttackStrength(0)*.75f + .25f;
-    	
-      	if(p.isSneaking()) 
-          	fade =0.75f;
-          
-	      	if(is != ItemStack.EMPTY) {
-	      		
-		      	if(p.isActiveItemStackBlocking() && p.getActiveItemStack() != is) 
-		      		fade -= 0.25f;
-		      	
-		          if(is.getItem() == Items.SHIELD) {
-		              if (!p.isActiveItemStackBlocking())
-		                  fade -= 0.25f;
-		          }
-	      	}
-      	
-          if(fade < 0.1) fade = 0.1f;
-          if(fade > 1) fade = 1f;
-          return fade;
+
+		if(p.isSneaking()) 
+			fade =0.75f;
+	
+		//see if this helps at all
+		if(Minecraft.getInstance().swingTracker.lastWeaponSolid[Minecraft.getInstance().getItemRenderer().ismainhand ? 0 : 1])
+			fade -= 0.25f;
+		//
+		
+		if(is != ItemStack.EMPTY) {
+
+			if(p.isActiveItemStackBlocking() && p.getActiveItemStack() != is) 
+				fade -= 0.25f;
+
+			if(is.getItem() == Items.SHIELD) {
+				if (!p.isActiveItemStackBlocking())
+					fade -= 0.25f;
+			}
+		}
+
+		if(fade < 0.1) fade = 0.1f;
+		if(fade > 1) fade = 1f;
+		return fade;
 	}
 	
 }

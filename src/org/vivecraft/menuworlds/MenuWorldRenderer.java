@@ -155,11 +155,12 @@ public class MenuWorldRenderer {
 
 		Matrix4f matrix = GLUtils.getViewModelMatrix();
 
+		GlStateManager.disableBlend();
 		RenderSystem.disableAlphaTest();
 		drawBlockLayer(RenderType.getSolid(), matrix);
 		RenderSystem.enableAlphaTest();
 
-		blocksTexture.setBlurMipmapDirect(false, false);//this.mc.gameSettings.mipmapLevels > 0);
+		blocksTexture.setBlurMipmapDirect(false, this.mc.gameSettings.mipmapLevels > 0);
 		drawBlockLayer(RenderType.getCutoutMipped(), matrix);
 		blocksTexture.restoreLastBlurMipmap();
 
@@ -167,6 +168,7 @@ public class MenuWorldRenderer {
 		drawBlockLayer(RenderType.getCutout(), matrix);
 		blocksTexture.restoreLastBlurMipmap();
 
+		GlStateManager.enableBlend();
 		RenderSystem.depthMask(false);
 		drawBlockLayer(RenderType.getTranslucent(), matrix);
 		drawBlockLayer(RenderType.func_241715_r_(), matrix); // tripwire
