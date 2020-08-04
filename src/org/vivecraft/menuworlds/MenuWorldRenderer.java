@@ -193,67 +193,70 @@ public class MenuWorldRenderer {
 			mc.gameSettings.ambientOcclusionStatus = AmbientOcclusionStatus.MAX;
 			boolean shaders = Shaders.shaderPackLoaded;
 			Shaders.shaderPackLoaded = false;
-			DefaultVertexFormats.updateVertexFormats();
 			FluidBlockRenderer.skipStupidGoddamnChunkBoundaryClipping = true;
+			DefaultVertexFormats.updateVertexFormats();
 			RenderTypeLookup.setFancyGraphics(true);
 			TextureUtils.resourcesReloaded(Config.getResourceManager());
 			visibleTextures.clear();
 			lol = rand.nextInt(1000) == 0;
 
-			List<RenderType> layers = RenderType.getBlockRenderTypes();
-			vertexBuffers = new VertexBuffer[layers.size()];
+			try {
+				List<RenderType> layers = RenderType.getBlockRenderTypes();
+				vertexBuffers = new VertexBuffer[layers.size()];
 
-			Random random = new Random();
-			BlockRendererDispatcher blockRenderer = mc.getBlockRendererDispatcher();
-			MatrixStack matrixStack = new MatrixStack();
-			for (int i = 0; i < vertexBuffers.length; i++) {
-				RenderType layer = layers.get(i);
-				System.out.println("Layer: " + layer.getName());
-				BufferBuilder vertBuffer = new BufferBuilder(20 * 2097152);
-				vertBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK_VANILLA);
-				vertBuffer.setBlockLayer(layer);
+				Random random = new Random();
+				BlockRendererDispatcher blockRenderer = mc.getBlockRendererDispatcher();
+				MatrixStack matrixStack = new MatrixStack();
+				for (int i = 0; i < vertexBuffers.length; i++) {
+					RenderType layer = layers.get(i);
+					System.out.println("Layer: " + layer.getName());
+					BufferBuilder vertBuffer = new BufferBuilder(20 * 2097152);
+					vertBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK_VANILLA);
+					vertBuffer.setBlockLayer(layer);
 
-				int c = 0;
-				for (int x = 0; x < blockAccess.getXSize(); x++) {
-					for (int y = 0; y < blockAccess.getYSize(); y++) {
-						for (int z = 0; z < blockAccess.getZSize(); z++) {
-							BlockPos pos = new BlockPos(x, y, z);
-							BlockState state = blockAccess.getBlockState(pos);
-							if (state != null) {
-								FluidState fluidState = state.getFluidState();
-								if (!fluidState.isEmpty() && RenderTypeLookup.getRenderType(fluidState) == layer) {
-									if (blockRenderer.renderFluid(pos, blockAccess, vertBuffer, new FluidStateWrapper(fluidState)))
-										c++;
-								}
-								if (state.getRenderType() != BlockRenderType.INVISIBLE && RenderTypeLookup.getChunkRenderType(state) == layer) {
-									matrixStack.push();
-									matrixStack.translate(pos.getX(), pos.getY(), pos.getZ());
-									if (blockRenderer.renderModel(state, pos, blockAccess, matrixStack, vertBuffer, true, random))
-										c++;
-									matrixStack.pop();
+					int c = 0;
+					for (int x = 0; x < blockAccess.getXSize(); x++) {
+						for (int y = 0; y < blockAccess.getYSize(); y++) {
+							for (int z = 0; z < blockAccess.getZSize(); z++) {
+								BlockPos pos = new BlockPos(x, y, z);
+								BlockState state = blockAccess.getBlockState(pos);
+								if (state != null) {
+									FluidState fluidState = state.getFluidState();
+									if (!fluidState.isEmpty() && RenderTypeLookup.getRenderType(fluidState) == layer) {
+										if (blockRenderer.renderFluid(pos, blockAccess, vertBuffer, new FluidStateWrapper(fluidState)))
+											c++;
+									}
+									if (state.getRenderType() != BlockRenderType.INVISIBLE && RenderTypeLookup.getChunkRenderType(state) == layer) {
+										matrixStack.push();
+										matrixStack.translate(pos.getX(), pos.getY(), pos.getZ());
+										if (blockRenderer.renderModel(state, pos, blockAccess, matrixStack, vertBuffer, true, random))
+											c++;
+										matrixStack.pop();
+									}
 								}
 							}
 						}
 					}
+
+					System.out.println("Built " + c + " blocks.");
+					if (layer.isNeedsSorting())
+						vertBuffer.sortVertexData(blockAccess.getXSize() / 2, blockAccess.getGround(), blockAccess.getXSize() / 2);
+					vertBuffer.finishDrawing();
+					vertexBuffers[i] = new VertexBuffer(vertBuffer.getVertexFormat());
+					vertexBuffers[i].upload(vertBuffer);
 				}
 
-				System.out.println("Built " + c + " blocks.");
-				if (layer.isNeedsSorting())
-					vertBuffer.sortVertexData(blockAccess.getXSize() / 2, blockAccess.getGround(), blockAccess.getXSize() / 2);
-				vertBuffer.finishDrawing();
-				vertexBuffers[i] = new VertexBuffer(vertBuffer.getVertexFormat());
-				vertexBuffers[i].upload(vertBuffer);
+				copyVisibleTextures();
+				ready = true;
+			} finally {
+				mc.gameSettings.ambientOcclusionStatus = ao;
+				FluidBlockRenderer.skipStupidGoddamnChunkBoundaryClipping = false;
+				if (shaders) {
+					Shaders.shaderPackLoaded = shaders;
+					TextureUtils.resourcesReloaded(Config.getResourceManager());
+				}
+				DefaultVertexFormats.updateVertexFormats();
 			}
-
-			mc.gameSettings.ambientOcclusionStatus = ao;
-			if(shaders) {
-				Shaders.shaderPackLoaded = shaders;
-				TextureUtils.resourcesReloaded(Config.getResourceManager());
-			}
-			DefaultVertexFormats.updateVertexFormats();
-			FluidBlockRenderer.skipStupidGoddamnChunkBoundaryClipping = false;
-			copyVisibleTextures();
-			ready = true;
 		}
 	}
 

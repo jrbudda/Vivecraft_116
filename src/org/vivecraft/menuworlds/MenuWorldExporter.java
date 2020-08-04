@@ -244,7 +244,7 @@ public class MenuWorldExporter {
 	private static Biome getBiome(int biomeId)
 	{
 		Biome biome = Registry.BIOME.getByValue(biomeId);
-		return biome == null ? Biomes.PLAINS : biome;
+		return biome == null ? Biomes.DEFAULT : biome;
 	}
 
 	// Just version for now, but could have future use

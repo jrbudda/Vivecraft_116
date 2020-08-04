@@ -77,7 +77,15 @@
      }
  
      public void sendEnterCombat()
-@@ -545,6 +575,10 @@
+@@ -454,6 +484,7 @@
+             if (!this.isSpectator() || this.world.isBlockLoaded(this.getBlockPos()))
+             {
+                 super.tick();
++                NetworkHelper.overridePose(this); // VIVECRAFT
+             }
+ 
+             for (int i = 0; i < this.inventory.getSizeInventory(); ++i)
+@@ -545,6 +576,10 @@
  
      public void onDeath(DamageSource cause)
      {
@@ -88,7 +96,7 @@
          boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
  
          if (flag)
-@@ -1089,6 +1123,7 @@
+@@ -1089,6 +1124,7 @@
                  this.connection.sendPacket(new SOpenWindowPacket(container.windowId, container.getType(), p_213829_1_.getDisplayName()));
                  container.addListener(this);
                  this.openContainer = container;
@@ -96,7 +104,7 @@
                  return OptionalInt.of(this.currentWindowId);
              }
          }
-@@ -1110,6 +1145,7 @@
+@@ -1110,6 +1146,7 @@
          this.connection.sendPacket(new SOpenHorseWindowPacket(this.currentWindowId, inventoryIn.getSizeInventory(), horse.getEntityId()));
          this.openContainer = new HorseInventoryContainer(this.currentWindowId, this.inventory, inventoryIn, horse);
          this.openContainer.addListener(this);
@@ -104,7 +112,7 @@
      }
  
      public void openBook(ItemStack stack, Hand hand)
-@@ -1182,6 +1218,7 @@
+@@ -1182,6 +1219,7 @@
      public void closeContainer()
      {
          this.openContainer.onContainerClosed(this);
@@ -112,7 +120,7 @@
          this.openContainer = this.container;
      }
  
-@@ -1331,6 +1368,24 @@
+@@ -1331,6 +1369,24 @@
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.setLeftShoulderEntity(that.getLeftShoulderEntity());
          this.setRightShoulderEntity(that.getRightShoulderEntity());
@@ -137,7 +145,7 @@
      }
  
      protected void onNewPotionEffect(EffectInstance id)
-@@ -1620,9 +1675,82 @@
+@@ -1620,9 +1676,82 @@
              this.interactionManager.setWorld(newWorld);
              this.server.getPlayerList().sendWorldInfo(this, newWorld);
              this.server.getPlayerList().sendInventory(this);
@@ -220,7 +228,7 @@
      @Nullable
      public BlockPos func_241140_K_()
      {
-@@ -1696,6 +1824,7 @@
+@@ -1696,6 +1825,7 @@
          return new SSpawnPlayerPacket(this);
      }
  
@@ -228,7 +236,7 @@
      public ItemEntity dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
      {
          ItemEntity itementity = super.dropItem(droppedItem, dropAround, traceItem);
-@@ -1706,7 +1835,28 @@
+@@ -1706,7 +1836,28 @@
          }
          else
          {
@@ -257,7 +265,7 @@
              ItemStack itemstack = itementity.getItem();
  
              if (traceItem)
-@@ -1722,4 +1872,4 @@
+@@ -1722,4 +1873,4 @@
              return itementity;
          }
      }

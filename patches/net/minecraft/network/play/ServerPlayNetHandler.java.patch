@@ -1,6 +1,11 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -8,6 +8,12 @@
+@@ -4,10 +4,17 @@
+ import com.google.common.primitives.Floats;
+ import com.mojang.brigadier.ParseResults;
+ import com.mojang.brigadier.StringReader;
++import io.netty.channel.Channel;
+ import io.netty.util.concurrent.Future;
  import io.netty.util.concurrent.GenericFutureListener;
  import it.unimi.dsi.fastutil.ints.Int2ShortMap;
  import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap;
@@ -13,7 +18,7 @@
  import java.util.Collections;
  import java.util.Optional;
  import java.util.Set;
-@@ -19,6 +25,7 @@
+@@ -19,6 +26,7 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
  import net.minecraft.block.CommandBlockBlock;
@@ -21,15 +26,16 @@
  import net.minecraft.command.CommandSource;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -26,6 +33,7 @@
+@@ -26,6 +34,8 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.IJumpingMount;
  import net.minecraft.entity.MoverType;
++import net.minecraft.entity.Pose;
 +import net.minecraft.entity.ai.attributes.Attribute;
  import net.minecraft.entity.item.BoatEntity;
  import net.minecraft.entity.item.ExperienceOrbEntity;
  import net.minecraft.entity.item.ItemEntity;
-@@ -51,6 +59,7 @@
+@@ -51,6 +61,7 @@
  import net.minecraft.nbt.StringNBT;
  import net.minecraft.network.IPacket;
  import net.minecraft.network.NetworkManager;
@@ -37,7 +43,7 @@
  import net.minecraft.network.PacketThreadUtil;
  import net.minecraft.network.play.client.CAnimateHandPacket;
  import net.minecraft.network.play.client.CChatMessagePacket;
-@@ -140,8 +149,15 @@
+@@ -140,9 +151,18 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -46,14 +52,27 @@
 +
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
+ 
++import org.vivecraft.api.AimFixHandler;
 +import org.vivecraft.api.NetworkHelper;
 +import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
 +import org.vivecraft.api.ServerVivePlayer;
 +import org.vivecraft.reflection.MCReflection;
- 
++
  public class ServerPlayNetHandler implements IServerPlayNetHandler
  {
-@@ -281,6 +297,8 @@
+     private static final Logger LOGGER = LogManager.getLogger();
+@@ -186,6 +206,9 @@
+         p_i392_2_.setNetHandler(this);
+         this.player = p_i392_3_;
+         p_i392_3_.connection = this;
++        // VIVECRAFT
++        ((Channel)MCReflection.NetworkManager_channel.get(p_i392_2_)).pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
++        //
+     }
+ 
+     public void tick()
+@@ -281,6 +304,8 @@
          {
              this.disconnect(new TranslationTextComponent("multiplayer.disconnect.idling"));
          }
@@ -62,7 +81,7 @@
      }
  
      public void captureCurrentPosition()
-@@ -396,11 +414,17 @@
+@@ -396,11 +421,17 @@
                  }
  
                  entity.setPositionAndRotation(d3, d4, d5, f, f1);
@@ -80,7 +99,7 @@
                      this.netManager.sendPacket(new SMoveVehiclePacket(entity));
                      return;
                  }
-@@ -1105,7 +1129,15 @@
+@@ -1105,7 +1136,15 @@
  
          if (blockpos.getY() < this.server.getBuildLimit())
          {
@@ -97,7 +116,7 @@
              {
                  ActionResultType actionresulttype = this.player.interactionManager.func_219441_a(this.player, serverworld, itemstack, hand, blockraytraceresult);
  
-@@ -1259,43 +1291,51 @@
+@@ -1259,43 +1298,51 @@
  
      public void processChatMessage(CChatMessagePacket packetIn)
      {
@@ -111,8 +130,7 @@
 -        {
 -            this.player.markPlayerActive();
 -            String s = org.apache.commons.lang3.StringUtils.normalizeSpace(packetIn.getMessage());
-+    	PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
- 
+-
 -            for (int i = 0; i < s.length(); ++i)
 -            {
 -                if (!SharedConstants.isAllowedCharacter(s.charAt(i)))
@@ -133,7 +151,8 @@
 -            }
 -
 -            this.chatSpamThresholdCount += 20;
--
++    	PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
+ 
 -            if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile()))
 -            {
 -                this.disconnect(new TranslationTextComponent("disconnect.spam"));
@@ -185,7 +204,7 @@
      }
  
      private void handleSlashCommand(String command)
-@@ -1409,6 +1449,9 @@
+@@ -1409,6 +1456,9 @@
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.INTERACT_AT)
                  {
@@ -195,7 +214,7 @@
                      optional = Optional.of(entity.applyPlayerInteraction(this.player, packetIn.getHitVec(), hand));
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.ATTACK)
-@@ -1681,6 +1724,109 @@
+@@ -1681,6 +1731,117 @@
  
      public void processCustomPayload(CCustomPayloadPacket packetIn)
      {
@@ -228,8 +247,9 @@
 +            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.VERSION,ver));
 +            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.REQUESTDATA, new byte[]{}));  
 +            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.CLIMBING, new byte[]{1, 0}));
-+            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.TELEPORT, new byte[]{})); 
-+    			vp = new ServerVivePlayer(this.player);
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.TELEPORT, new byte[]{}));
++                sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.CRAWL, new byte[]{}));
++                vp = new ServerVivePlayer(this.player);
 +            	NetworkHelper.vivePlayers.put(this.player.getUniqueID(), vp);
 +            	
 +            	BufferedReader br = new BufferedReader(
@@ -296,7 +316,14 @@
 +    			vp.activeHand = rawdata.readByte();
 +    			if (vp.isSeated())
 +    				vp.activeHand = 0;
-+    			break;	
++    			break;
++    		case CRAWL:
++                rawdata.resetReaderIndex();
++                rawdata.readByte();
++                vp.crawling = rawdata.readByte() != 0;
++    		    if (vp.crawling)
++                    this.player.setPose(Pose.SWIMMING);
++    		    break;
 +        	default:
 +        		break;
 +        	}

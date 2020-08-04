@@ -26,6 +26,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class ClimbTracker extends Tracker{
 
@@ -94,7 +95,7 @@ public class ClimbTracker extends Tracker{
 		if(!i.hasDisplayName()) return false;
 		if(i.getItem() != Items.SHEARS) return false;
 		if(!(i.getTag().getBoolean("Unbreakable"))) return false;
-		return i.getDisplayName().getString().equals("Climb Claws");
+		return (i.getDisplayName() instanceof TranslationTextComponent && ((TranslationTextComponent)i.getDisplayName()).getKey().equals("vivecraft.item.climbclaws")) || i.getDisplayName().getString().equals("Climb Claws");
 	}
 
 	public boolean isActive(ClientPlayerEntity p){

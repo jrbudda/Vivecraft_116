@@ -1,15 +1,10 @@
 package org.vivecraft.settings;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.vivecraft.api.ServerVivePlayer;
 import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.utils.LangHelper;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.StringTextComponent;
 
 public class AutoCalibration {
 	
@@ -18,8 +13,8 @@ public class AutoCalibration {
 	public static void calibrateManual() {
 		Minecraft mc=Minecraft.getInstance();
 		mc.vrSettings.manualCalibration=(float) MCOpenVR.hmdPivotHistory.averagePosition(0.5).y;
-		char sp = new String(new byte[]{0x20}, StandardCharsets.UTF_8).charAt(0);
-		mc.printChatMessage("User" + sp + "height" + sp + "set" + sp + "to" + sp + (int)(float)(double)Math.round((double)0144 * getPlayerHeight() / (float)defaultHeight) + (char)37);
+		int height = (int)(float)(double)Math.round((double)0144 * getPlayerHeight() / (float)defaultHeight);
+		mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent(LangHelper.get("vivecraft.messages.heightset", height)));
 		mc.vrSettings.saveOptions();
 	}
 

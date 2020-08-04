@@ -16,7 +16,8 @@ public class GuiRoomscaleSettings extends GuiVROptionsBase
 					VRSettings.VrOptions.REALISTIC_ROW,
 					VRSettings.VrOptions.REALISTIC_SWIM,
 					VRSettings.VrOptions.BOW_MODE,
-					VRSettings.VrOptions.BACKPACK_SWITCH
+					VRSettings.VrOptions.BACKPACK_SWITCH,
+					VRSettings.VrOptions.ALLOW_CRAWLING,
 					//VRSettings.VrOptions.PHYSICAL_GUI
 			};
 
@@ -41,5 +42,6 @@ public class GuiRoomscaleSettings extends GuiVROptionsBase
 		this.settings.realisticSwimEnabled = true;
 		this.settings.realisticRowEnabled = true;
 		this.settings.backpackSwitching = true;
+		this.settings.vrAllowCrawling = true;
 	}
 }

@@ -10,10 +10,14 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.optifine.Lang;
 import org.lwjgl.glfw.GLFW;
 import org.vivecraft.api.VRData;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.settings.VRSettings.VrOptions;
+import org.vivecraft.utils.LangHelper;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Angle;
 import org.vivecraft.utils.math.Axis;
@@ -27,7 +31,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.WinGameScreen;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.StringTextComponent;
 
 public class VRHotkeys {
 
@@ -56,7 +59,7 @@ public class VRHotkeys {
 		if (action == GLFW.GLFW_PRESS && key == GLFW.GLFW_KEY_RIGHT_SHIFT && InputMappings.isKeyDown(GLFW.GLFW_KEY_RIGHT_CONTROL))
 		{
 			mc.vrSettings.storeDebugAim = true;
-			mc.printChatMessage("Show aim (RCTRL+RSHIFT): done");
+			mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.showaim"));
 			gotKey = true;
 		}
 
@@ -64,7 +67,7 @@ public class VRHotkeys {
 		if (action == GLFW.GLFW_PRESS && key == GLFW.GLFW_KEY_B && InputMappings.isKeyDown(GLFW.GLFW_KEY_RIGHT_CONTROL))
 		{
 			mc.vrSettings.walkUpBlocks = !mc.vrSettings.walkUpBlocks;
-			mc.printChatMessage("Walk up blocks (RCTRL+B): " + (mc.vrSettings.walkUpBlocks ? "YES" : "NO"));
+			mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.walkupblocks", mc.vrSettings.walkUpBlocks ? LangHelper.getYes() : LangHelper.getNo()));
 			gotKey = true;
 		}
 
@@ -77,23 +80,23 @@ public class VRHotkeys {
 			switch (mc.vrSettings.inertiaFactor)
 			{
 			case VRSettings.INERTIA_NONE:
-				mc.printChatMessage("Player player movement inertia (LCTRL-I): None");
+				mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.playerinertia", Lang.get("vivecraft.options.inertia.none")));
 				break;
 			case VRSettings.INERTIA_NORMAL:
-				mc.printChatMessage("Player player movement inertia (LCTRL-I): Normal");
+				mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.playerinertia", Lang.get("vivecraft.options.inertia.normal")));
 				break;
 			case VRSettings.INERTIA_LARGE:
-				mc.printChatMessage("Player player movement inertia (LCTRL-I): Large");
+				mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.playerinertia", Lang.get("vivecraft.options.inertia.large")));
 				break;
 			case VRSettings.INERTIA_MASSIVE:
-				mc.printChatMessage("Player player movement inertia (LCTRL-I): Massive");
+				mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.playerinertia", Lang.get("vivecraft.options.inertia.massive")));
 				break;
 			}
 			gotKey = true;
 		}
 
 		// Render full player model or just an disembodied hand...
-		if (action == GLFW.GLFW_PRESS && key == GLFW.GLFW_KEY_H && InputMappings.isKeyDown(GLFW.GLFW_KEY_RIGHT_CONTROL))
+		/*if (action == GLFW.GLFW_PRESS && key == GLFW.GLFW_KEY_H && InputMappings.isKeyDown(GLFW.GLFW_KEY_RIGHT_CONTROL))
 		{
 			mc.vrSettings.renderFullFirstPersonModelMode++;
 			if (mc.vrSettings.renderFullFirstPersonModelMode > VRSettings.RENDER_FIRST_PERSON_NONE)
@@ -112,7 +115,7 @@ public class VRHotkeys {
 				break;
 			}
 			gotKey = true;
-		}
+		}*/
 		// VIVE START - hotkeys
 
 		// Testing different movement styles
@@ -147,10 +150,10 @@ public class VRHotkeys {
 
 			if (mc.vrPlayer.isTeleportOverridden()) {
 				mc.vrPlayer.setTeleportOverride(false);
-				mc.printChatMessage("Restricted movement enabled (no teleporting)");
+				mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.teleportdisabled"));
 			} else {
 				mc.vrPlayer.setTeleportOverride(true);
-							mc.printChatMessage("Restricted movement disabled (teleporting allowed)");
+				mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.teleportenabled"));
 			}
 			
 			gotKey = true;
@@ -270,13 +273,13 @@ public class VRHotkeys {
 		if (gotKey) {
 			mc.vrSettings.saveOptions();
 			if (MCOpenVR.mrMovingCamActive) {
-				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("X: " + mc.vrSettings.mrMovingCamOffsetX + " Y: " + mc.vrSettings.mrMovingCamOffsetY + " Z: " + mc.vrSettings.mrMovingCamOffsetZ));
+				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent(LangHelper.get("vivecraft.messages.coords", mc.vrSettings.mrMovingCamOffsetX, mc.vrSettings.mrMovingCamOffsetY, mc.vrSettings.mrMovingCamOffsetZ)));
 				Angle angle = mc.vrSettings.mrMovingCamOffsetRotQuat.toEuler();
-				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("Pitch: " + angle.getPitch() + " Yaw: " + angle.getYaw() + " Roll: " + angle.getRoll()));
+				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent(LangHelper.get("vivecraft.messages.angles", angle.getPitch(), angle.getYaw(), angle.getRoll())));
 			} else {
-				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("X: " + mc.vrSettings.vrFixedCamposX + " Y: " + mc.vrSettings.vrFixedCamposY + " Z: " + mc.vrSettings.vrFixedCamposZ));
+				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent(LangHelper.get("vivecraft.messages.coords", mc.vrSettings.vrFixedCamposX, mc.vrSettings.vrFixedCamposY, mc.vrSettings.vrFixedCamposZ)));
 				Angle angle = mc.vrSettings.vrFixedCamrotQuat.toEuler();
-				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("Pitch: " + angle.getPitch() + " Yaw: " + angle.getYaw() + " Roll: " + angle.getRoll()));
+				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent(LangHelper.get("vivecraft.messages.angles", angle.getPitch(), angle.getYaw(), angle.getRoll())));
 			}
 		}
 	}

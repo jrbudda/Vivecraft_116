@@ -16,10 +16,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.ExtendedList;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.StringTextComponent;
-import net.optifine.gui.TooltipManager;
 
 public abstract class GuiVROptionsBase extends Screen
 {
@@ -28,7 +26,7 @@ public abstract class GuiVROptionsBase extends Screen
 
 	protected final Screen lastScreen;
 	protected final VRSettings settings;
-	private TooltipManager tooltipManager = new TooltipManager(this, new TooltipProviderVROptions());
+	private VRTooltipManager tooltipManager = new VRTooltipManager(this, new TooltipProviderVROptions());
 
 	protected boolean reinit;
 	protected boolean drawDefaultButtons = true;

@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import net.minecraft.util.text.TranslationTextComponent;
+import net.optifine.Lang;
 import net.optifine.reflect.Reflector;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.glfw.GLFW;
@@ -48,6 +50,7 @@ import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRHotkeys;
 import org.vivecraft.settings.VRSettings;
+import org.vivecraft.utils.LangHelper;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.external.jinfinadeck;
 import org.vivecraft.utils.external.jkatvr;
@@ -1061,25 +1064,38 @@ public class MCOpenVR
 		List<String> componentNames = new ArrayList<String>(); //TODO get the controller-specific list
 
 		componentNames.add("tip");
-		componentNames.add("base");
+		//wmr doesnt define these...
+		//componentNames.add("base"); 
+		//componentNames.add("status");
+		//
 		componentNames.add("handgrip");
-		componentNames.add("status");
 		boolean failed = false;
 		
+
+
 		for (String comp : componentNames) {
 			controllerComponentTransforms.put(comp, new Matrix4f[2]); 			
-			Pointer p = ptrFomrString(comp);
 
 			for (int i = 0; i < 2; i++) {
-
-				//	debugOut(controllerDeviceIndex[i]);
-
+		
 				if (controllerDeviceIndex[i] == JOpenVRLibrary.k_unTrackedDeviceIndexInvalid) {
 					failed = true;
 					continue;
 				}
 				vrsystem.GetStringTrackedDeviceProperty.apply(controllerDeviceIndex[i], JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_RenderModelName_String, pointer, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
-
+				String renderModel = pointer.getString(0);
+				Pointer p = ptrFomrString(comp);
+				
+				Pointer test = new Memory(JOpenVRLibrary.k_unMaxPropertyStringSize);
+				vrsystem.GetStringTrackedDeviceProperty.apply(controllerDeviceIndex[i], JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_InputProfilePath_String, test, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
+				String path = test.getString(0);
+				boolean isWMR = path.contains("holographic");
+				
+				if(isWMR && comp.equals("handgrip")) {// i have no idea, Microsoft, none.
+				//	System.out.println("Apply WMR override " + i);
+					p = ptrFomrString("body");
+				}
+				
 				//doing this next bit for each controller because pointer
 				long button = vrRenderModels.GetComponentButtonMask.apply(pointer, p);   		
 				if(button > 0){ //see now... wtf openvr, '0' is the system button, it cant also be the error value! (hint: it's a mask, not an index)
@@ -1096,14 +1112,14 @@ public class MCOpenVR
 				RenderModel_ComponentState_t.ByReference componentState = new RenderModel_ComponentState_t.ByReference();
 				byte ret = vrRenderModels.GetComponentStateForDevicePath.apply(pointer, p, sourceHandle, modeState, componentState);
 				if(ret == 0) {
-					//System.out.println("Failed getting transform: " + comp + " controller " + i);
+				//	System.out.println("Failed getting transform: " + comp + " controller " + i);
 					failed = true; // Oculus does not seem to raise ANY trackedDevice events. So just keep trying...
 					continue;
 				}
 				Matrix4f xform = new Matrix4f();
 				OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(componentState.mTrackingToComponentLocal, xform);
 				controllerComponentTransforms.get(comp)[i] = xform;
-			//	System.out.println("Transform: " + comp + " controller: " + i +" button: " + button + "\r" + Utils.convertOVRMatrix(xform).toString());
+			//	System.out.println("Transform: " + comp + " controller: " + i + "model " + renderModel + " button: " + button + "\r" + Utils.convertOVRMatrix(xform).toString());
 
 				if (!failed && i == 0) {
 					try {
@@ -1144,7 +1160,7 @@ public class MCOpenVR
 
 	public static Matrix4f getControllerComponentTransformFromButton(int controllerIndex, long button){
 		if (controllerComponentNames == null || !controllerComponentNames.containsKey(button))
-			return getControllerComponentTransform(controllerIndex, "status");
+			return new Matrix4f();
 
 		return getControllerComponentTransform(controllerIndex, controllerComponentNames.get(button));
 	}
@@ -1539,19 +1555,19 @@ public class MCOpenVR
 			if (++moveModeSwitchCount == 20 * 4 || toggleMovementPressed) {
 				if (mc.vrSettings.seated) {
 					mc.vrSettings.seatedFreeMove = !mc.vrSettings.seatedFreeMove;
-					mc.printChatMessage("Movement mode switched to: " + (mc.vrSettings.seatedFreeMove ? " Free-move" : "Teleport"));
+					mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.movementmodeswitch", mc.vrSettings.seatedFreeMove ? Lang.get("vivecraft.options.freemove") : Lang.get("vivecraft.options.teleport")));
 				} else 
 				{
 					if (mc.vrPlayer.isTeleportSupported()) {
 						mc.vrSettings.forceStandingFreeMove = !mc.vrSettings.forceStandingFreeMove;
-						mc.printChatMessage("Movement mode switched to: " + (mc.vrSettings.forceStandingFreeMove ? "Free-move" : "Teleport"));
+						mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.movementmodeswitch", mc.vrSettings.seatedFreeMove ? Lang.get("vivecraft.options.freemove") : Lang.get("vivecraft.options.teleport")));
 					} else {
 						if (mc.vrPlayer.isTeleportOverridden()) {
 							mc.vrPlayer.setTeleportOverride(false);
-							mc.printChatMessage("Restricted movement enabled (no teleporting)");
+							mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.teleportdisabled"));
 						} else {
 							mc.vrPlayer.setTeleportOverride(true);
-							mc.printChatMessage("Restricted movement disabled (teleporting allowed)");
+							mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.teleportenabled"));
 						}
 					}
 				}
@@ -1788,10 +1804,10 @@ public class MCOpenVR
 						}
 					} else {
 						MenuWorldExporter.saveAreaToFile(mc.world, pos.getX() - size / 2, pos.getZ() - size / 2, size, size, pos.getY(), file);
-						mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("WARNING: Saving menu world using a client world. Data may be incomplete. It is recommended to save menu worlds in singleplayer."));
+						mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.menuworldexportclientwarning"));
 					}
-					mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("World export complete... area size: " + size));
-					mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent("Saved to " + file.getAbsolutePath()));
+					mc.ingameGUI.getChatGUI().printChatMessage(new StringTextComponent(LangHelper.get("vivecraft.messages.menuworldexportcomplete.1", size)));
+					mc.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.menuworldexportcomplete.2", file.getAbsolutePath()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -2036,7 +2052,7 @@ public class MCOpenVR
 		}
 		return "Unknown";
 	}
-	
+	private static boolean dbg = false;
 	private static void updatePose()
 	{
 		if ( vrsystem == null || vrCompositor == null )
@@ -2053,10 +2069,18 @@ public class MCOpenVR
 		}
 
 		if (getXforms == true) { //set null by events.
+			dbg = true;
 			getTransforms(); //do we want the dynamic info? I don't think so...
 			//findControllerDevices();
+		} else {
+			if (dbg) {
+				dbg = false;
+				debugOut(0);
+				debugOut(controllerDeviceIndex[0]);
+				debugOut(controllerDeviceIndex[1]);
+			}
 		}
-
+		
 		HmdMatrix34_t matL = vrsystem.GetEyeToHeadTransform.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Left);
 		OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(matL, hmdPoseLeftEye);
 
@@ -2406,12 +2430,6 @@ public class MCOpenVR
 	}
 
 
-	public boolean initBodyAim() throws Exception
-	{
-		return init();
-	}
-
-
 	public static Vector3d getAimSource( int controller ) {
 		Vector3d out = new Vector3d(aimSource[controller].x, aimSource[controller].y, aimSource[controller].z);
 		if(!mc.vrSettings.seated && mc.vrSettings.allowStandingOriginOffset)
@@ -2505,7 +2523,7 @@ public class MCOpenVR
 				controllerPoseHand[0] = controllerPose[0];
 			 else	
 				controllerPoseHand[0] = Matrix4f.multiply(controllerPose[0], getControllerComponentTransform(0,"handgrip"));
-		
+
 			handRotation[0].M[0][0] = controllerPoseHand[0].M[0][0];
 			handRotation[0].M[0][1] = controllerPoseHand[0].M[0][1];
 			handRotation[0].M[0][2] = controllerPoseHand[0].M[0][2];

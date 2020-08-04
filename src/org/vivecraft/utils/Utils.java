@@ -24,13 +24,22 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.annotation.Nullable;
+
+import com.google.common.collect.Lists;
 import io.github.classgraph.ClassGraph;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TextPropertiesManager;
 import net.minecraft.world.IBlockDisplayReader;
 import optifine.OptiFineTransformer;
 
@@ -716,6 +725,51 @@ public class Utils
 			light |= minLight << 4;
 		}
 		return light;
+	}
+
+	public static List<ITextProperties> wrapText(ITextProperties text, int width, FontRenderer fontRenderer, @Nullable ITextProperties linePrefix)
+	{
+		TextPropertiesManager manager = new TextPropertiesManager();
+		text.func_230439_a_((style, str) -> {
+			manager.func_238155_a_(ITextProperties.func_240653_a_(str, style));
+			return Optional.empty();
+		}, Style.field_240709_b_);
+		List<ITextProperties> list = fontRenderer.func_238420_b_().func_241570_a_(manager.func_238156_b_(), width, Style.field_240709_b_, linePrefix);
+		return list.isEmpty() ? Lists.newArrayList(ITextProperties.field_240651_c_) : list;
+	}
+
+	public static List<TextFormatting> styleToFormats(Style style) {
+		if (style.isEmpty())
+			return new ArrayList<>();
+
+		ArrayList<TextFormatting> list = new ArrayList<>();
+		if (style.func_240711_a_() != null)
+			list.add(TextFormatting.getValueByName(style.func_240711_a_().func_240747_b_()));
+		if (style.getBold())
+			list.add(TextFormatting.BOLD);
+		if (style.getItalic())
+			list.add(TextFormatting.ITALIC);
+		if (style.getStrikethrough())
+			list.add(TextFormatting.STRIKETHROUGH);
+		if (style.getUnderlined())
+			list.add(TextFormatting.UNDERLINE);
+		if (style.getObfuscated())
+			list.add(TextFormatting.OBFUSCATED);
+
+		return list;
+	}
+
+	public static String formatsToString(List<TextFormatting> formats) {
+		if (formats.size() == 0)
+			return "";
+
+		StringBuilder sb = new StringBuilder();
+		formats.forEach(sb::append);
+		return sb.toString();
+	}
+
+	public static String styleToFormatString(Style style) {
+		return formatsToString(styleToFormats(style));
 	}
 
 	public static long microTime() {

@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class JumpTracker extends Tracker {
 
@@ -180,6 +181,6 @@ public class JumpTracker extends Tracker {
 		if(!i.hasDisplayName()) return false;
 		if((i.getItem() != Items.LEATHER_BOOTS)) return false;
 		if(!(i.getTag().getBoolean("Unbreakable"))) return false;
-		return i.getDisplayName().getString().equals("Jump Boots");
+		return (i.getDisplayName() instanceof TranslationTextComponent && ((TranslationTextComponent)i.getDisplayName()).getKey().equals("vivecraft.item.jumpboots")) || i.getDisplayName().getString().equals("Jump Boots");
 	}
 }

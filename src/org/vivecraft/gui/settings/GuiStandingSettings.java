@@ -45,7 +45,6 @@ public class GuiStandingSettings extends GuiVROptionsBase
 	@Override
 	protected void loadDefaults() {
 		VRSettings vr = minecraft.vrSettings;
-		vr.vrAllowCrawling = false;
 		vr.vrShowBlueCircleBuddy = true;
 		vr.walkMultiplier=1;
 		vr.vehicleRotation = true;

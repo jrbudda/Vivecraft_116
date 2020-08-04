@@ -49,10 +49,11 @@ public class SwingTracker extends Tracker{
 	//VIVECRAFT SWINGING SUPPORT
 	private Vector3d[] lastWeaponEndAir = new Vector3d[]{new Vector3d(0, 0, 0), new Vector3d(0,0,0)};
 	private boolean[] lastWeaponSolid = new boolean[2];
-	private Vector3d[] weaponEnd= new Vector3d[2];
+	public Vector3d[] weaponEnd= new Vector3d[2];
 
 	public boolean[] shouldIlookatMyHand= new boolean[2];
 	public boolean[] IAmLookingAtMyHand= new boolean[2];
+	public boolean[] canact= new boolean[2];
 
 	public int disableSwing = 3;
 
@@ -110,10 +111,10 @@ public class SwingTracker extends Tracker{
 	}
 
 	Vector3d forward = new Vector3d(0,0,-1);
-	double speedthresh = 1.8f;
-
+	double speedthresh = 3.8f;
+	
 	public void doProcess(ClientPlayerEntity player){ //on tick
-
+		speedthresh = 3.8f;
 		mc.getProfiler().startSection("updateSwingAttack");
 
 		for(int c=0;c<2;c++){
@@ -176,8 +177,8 @@ public class SwingTracker extends Tracker{
 
 			boolean inAnEntity = false;
 
-			float speed = (float) MCOpenVR.controllerHistory[c].averageSpeed(0.1);
-			boolean canact = speed > speedthresh && !lastWeaponSolid[c];
+			float speed = (float) MCOpenVR.controllerForwardHistory[c].averageSpeed(0.2);
+			canact[c] = speed > speedthresh && !lastWeaponSolid[c];
 
 			//Check EntityCollisions first    	
 			{
@@ -200,7 +201,7 @@ public class SwingTracker extends Tracker{
 				for (Entity hitEntity : mobs) {
 					if (hitEntity.canBeCollidedWith() && !(hitEntity == mc.getRenderViewEntity().getRidingEntity()) )
 					{       			       			
-						if(canact){
+						if(canact[c]){
 							Minecraft.getInstance().physicalGuiManager.preClickAction();
 							mc.playerController.attackEntity(player, hitEntity);
 							MCOpenVR.triggerHapticPulse(c, 1000);
@@ -221,7 +222,7 @@ public class SwingTracker extends Tracker{
 			{ //block check
 
 				//dont hit blocks with sword or same time as hitting entity
-				canact = canact && !sword && !inAnEntity; 
+				canact[c] = canact[c] && !sword && !inAnEntity; 
 				
 				if(mc.climbTracker.isClimbeyClimb()){
 					if(c == 0 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) || !tool ) continue;
@@ -261,7 +262,7 @@ public class SwingTracker extends Tracker{
 				//TODO: maybe blacklist right-clickable blocks?
 				
 				if (blockHit.getType() == Type.BLOCK && flag) {
-					if(canact && !protectedBlock) { 
+					if(canact[c] && !protectedBlock) { 
 						int p = 3;
 						if(item instanceof HoeItem){
 							mc.physicalGuiManager.preClickAction();

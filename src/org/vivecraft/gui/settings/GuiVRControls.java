@@ -7,12 +7,10 @@ package org.vivecraft.gui.settings;
 import org.vivecraft.gui.framework.GuiVROptionsBase;
 import org.vivecraft.gui.framework.VROptionEntry;
 import org.vivecraft.settings.VRSettings;
-import org.vivecraft.utils.LangHelper;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.TextFormatting;
 import net.optifine.Lang;
 
 public class GuiVRControls extends GuiVROptionsBase {
@@ -45,7 +43,7 @@ public class GuiVRControls extends GuiVROptionsBase {
 		super.render(matrixstack, mouseX, mouseY, partialTicks);
 		this.drawCenteredString(matrixstack, minecraft.fontRenderer, Lang.get("vivecraft.messages.controls.1"), this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2 - minecraft.fontRenderer.FONT_HEIGHT - 3, 16777215);
 		this.drawCenteredString(matrixstack, minecraft.fontRenderer, Lang.get("vivecraft.messages.controls.2"), this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2, 16777215);
-		this.drawCenteredString(matrixstack, minecraft.fontRenderer, LangHelper.get("vivecraft.messages.controls.3", TextFormatting.GOLD.toString(), TextFormatting.ITALIC.toString(), TextFormatting.RESET.toString() + TextFormatting.GOLD.toString()), this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2 + minecraft.fontRenderer.FONT_HEIGHT + 3, 16777215);
+		this.drawCenteredString(matrixstack, minecraft.fontRenderer, Lang.get("vivecraft.messages.controls.3"), this.width / 2, this.height / 2 - minecraft.fontRenderer.FONT_HEIGHT / 2 + minecraft.fontRenderer.FONT_HEIGHT + 3, 16777215);
 	}
 	
 		@Override

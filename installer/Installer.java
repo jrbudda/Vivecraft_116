@@ -35,42 +35,29 @@ public class Installer extends JPanel  implements PropertyChangeListener
 {
 	private static final long serialVersionUID = -562178983462626162L;
 	private String tempDir = System.getProperty("java.io.tmpdir");
-
-	private static final boolean ALLOW_FORGE_INSTALL = true;
-	private static final boolean DEFAULT_FORGE_INSTALL = false;
-	private static final boolean ALLOW_HYDRA_INSTALL = false;
-	private static final boolean ALLOW_KATVR_INSTALL = true;
-	private static final boolean ALLOW_KIOSK_INSTALL = true;
-	private static final boolean ALLOW_ZGC_INSTALL = true;
-	private static final boolean ALLOW_HRTF_INSTALL = false;
-	private static final boolean PROMPT_REMOVE_HRTF = true;
-	private static final boolean ALLOW_SHADERSMOD_INSTALL = false;
-
-	private static final boolean NEEDS_2010_REDIST = false;
-	private static final boolean NEEDS_2012_REDIST = false;
-
-	// Currently needed for Win boxes - C++ redists
-
-	public static String winredist2012_64url = "http://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe";
-	public static String winredist2012_32url = "http://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe";
-	public static String winredist2010_64url = "http://download.microsoft.com/download/A/8/0/A80747C3-41BD-45DF-B505-E9710D2744E0/vcredist_x64.exe";
-	public static String winredist2010_32url = "http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe";
-
 	/* DO NOT RENAME THESE STRING CONSTS - THEY ARE USED IN (AND THE VALUES UPDATED BY) THE AUTOMATED BUILD SCRIPTS */
-	private static final String MINECRAFT_VERSION = "1.16.1";
-	private static final String MC_VERSION        = "1.16.1";
-	private static final String MC_MD5            = "9b94beec05c9580343f663165fa53d3f";
-	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-	private static final String OF_FILE_NAME      = "1.16.1_HD_U_G2_pre10";
-	private static final String OF_MD5            = "6addbd1d567a82a3545f079d2deb2a7c";
-	private static final String OF_VERSION_EXT    = ".jar";
-	private static String FORGE_VERSION     = "32.0.75";
+    private static final boolean ALLOW_FORGE_INSTALL  = true;
+    private static final boolean DEFAULT_FORGE_INSTALL= false;
+    private static final boolean ALLOW_KATVR_INSTALL  = true;
+    private static final boolean ALLOW_KIOSK_INSTALL  = true;
+    private static final boolean ALLOW_ZGC_INSTALL    = true;
+    private static final boolean ALLOW_HRTF_INSTALL   = true;
+    private static final boolean PROMPT_REMOVE_HRTF   = false;
+    private static final String MINECRAFT_VERSION     = "1.16.1";
+    private static final String MC_VERSION            = "1.16.1";
+    private static final String MC_MD5                = "9b94beec05c9580343f663165fa53d3f";
+    private static final String OF_FILE_NAME          = "1.16.1_HD_U_G2_pre10";
+    private static final String OF_MD5                = "6addbd1d567a82a3545f079d2deb2a7c";
+    private static final String OF_VERSION_EXT        = ".jar";
+    private static String FORGE_VERSION               = "32.0.75";
+    private static final String HOMEPAGE_LINK         = "http://www.vivecraft.org";
+    private static final String DONATION_LINK         = "https://www.patreon.com/jrbudda";
+    private static final String PROJECT_NAME          = "Vivecraft";
 	/* END OF DO NOT RENAME */
-
-	private static final String DEFAULT_PROFILE_NAME = "Vivecraft " + MINECRAFT_VERSION;
-	private static final String DEFAULT_PROFILE_NAME_FORGE = "Vivecraft-Forge " + MINECRAFT_VERSION;
-	private static final String HOMEPAGE_LINK = "http://www.vivecraft.org";
-	private static final String DONATION_LINK = "https://www.patreon.com/jrbudda";
+	
+	private static final String OF_LIB_PATH           = "libraries/optifine/OptiFine/";
+	private static final String DEFAULT_PROFILE_NAME = PROJECT_NAME + " " + MINECRAFT_VERSION;
+	private static final String DEFAULT_PROFILE_NAME_FORGE = PROJECT_NAME + "-Forge " + MINECRAFT_VERSION;
 	private static final String ORIG_FORGE_VERSION = FORGE_VERSION;
 
 	private InstallTask task;
@@ -106,22 +93,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private File releaseNotes = null;
 	private static String releaseNotePathAddition = "";
 	private static JLabel instructions;
-	private String smcVanillaURL = "http://www.karyonix.net/shadersmod/files/ShadersMod-v2.3.29mc1.7.10-installer.jar";
-	private String smcForgeURL = "http://www.karyonix.net/shadersmod/files/ShadersModCore-v2.3.31-mc1.7.10-f.jar";
-	private  final String smcVanillaLib  = "libraries/shadersmodcore/ShadersModCore/2.3.29mc1.7.10";
-	private  final String smcForgelib   = "libraries/shadersmodcore/ShadersModCore/2.3.31mc1.7.10-f";
-	private  final String smcVanillaFile  = "ShadersModCore-2.3.29mc1.7.10.jar";
-	private  final String smcForgeFile   = "ShadersModCore-2.3.31mc1.7.10-f.jar";
-	private  final String smcVanillaMD5  = "4797D91A1F3752EF47242637901199CB";
-	private  final String smcForgeMD5   = "F66374AEA8DDA5F3B7CCB20C230375D7";
 
 	private JTextField txtCustomProfileName;
 	private JTextField txtCustomGameDir;
 	private JCheckBox chkCustomProfileName;
 	private JCheckBox chkCustomGameDir;
-
-
-	static private final String forgeNotFound = "Forge not found..." ;
 
 	private String userHomeDir;
 	private String osType;
@@ -189,7 +165,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			releaseNotes = null;
 		}
 
-		JLabel tag = new JLabel("Welcome! This will install Vivecraft "+ version);
+		JLabel tag = new JLabel("Welcome! This will install " + PROJECT_NAME + " " + version);
 		tag.setAlignmentX(LEFT_ALIGNMENT);
 		tag.setAlignmentY(CENTER_ALIGNMENT);
 		logoSplash.add(tag);
@@ -461,7 +437,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		useZGC.setAction(zgcAction);
 
 		this.add(forgePanel);
-		if(ALLOW_SHADERSMOD_INSTALL) this.add(useShadersMod);
 		this.add(createProfile);
 		this.add(ramPanel);
 		this.add(namePanel);
@@ -668,35 +643,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				downloadedOptifine = true;
 			}
 
-			if(useShadersMod.isSelected()){
-				finalMessage = "Failed: Couldn't download ShadersMod. ";
-				monitor.setNote("Checking ShadersModCore");
-				monitor.setProgress(42);
-				boolean downloadedSMC = false;
-				monitor.setNote("Downloading ShadersModCore");
-
-				for (int i = 1; i <= 3; i++)
-				{
-					if (downloadSMC(useForge.isSelected()))
-					{
-						// Got it!
-						downloadedSMC = true;
-						break;
-					}
-
-					// Failed. Sleep a bit and retry...
-					if (i < 3) {
-						monitor.setNote("Downloading ShadersModCore... waiting...");
-						try {
-							Thread.sleep(i * 1000);
-						}
-						catch (InterruptedException e) {
-						}
-						monitor.setNote("Downloading ShadersModCore...retrying...");
-					}
-				}
-			}
-
 			monitor.setProgress(50);
 
 			// VIVE START - install openVR
@@ -901,124 +847,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			return false;
 		}
 
-		private boolean downloadSMC(boolean forge)
-		{
-			String dir = null;
-			String file = null;
-			String url = null;
-			String goodmd5 = null;
-			String temp = "temp.jar";
-			if (forge) {
-				dir = smcForgelib;
-				file = smcForgeFile;
-				url = smcForgeURL;
-				goodmd5 = smcForgeMD5;
-			} else {
-				dir = smcVanillaLib;
-				file = smcVanillaFile;
-				url = smcVanillaURL;
-				goodmd5 = smcVanillaMD5;
-			}
-
-			boolean success = true;
-			boolean deleted = false;
-
-			try {
-				File fod = new File(targetDir,dir);
-				fod.mkdirs();
-				File fo = new File(fod,file);
-
-				// Attempt to get the Optifine MD5
-				String md5 = GetMd5(fo);
-				System.out.println(md5 == null ? fo.getCanonicalPath() : fo.getCanonicalPath() + " MD5: " + md5);
-
-				// Test MD5
-				if (md5 == null)
-				{
-					// Just continue...
-					System.out.println("ShadersMod not found - downloading");
-				}
-				else if (!md5.equalsIgnoreCase(goodmd5)) {
-					// Bad copy. Attempt delete just to make sure.
-					System.out.println("ShadersMod MD5 bad - downloading");
-
-					try {
-						deleted = fo.delete();
-					}
-					catch (Exception ex1) {
-						ex1.printStackTrace();
-					}
-				}
-				else {
-					// A good copy!
-					System.out.println("ShadersMod MD5 good! " + md5);
-					return true;
-				}
-
-				// Need to attempt download...
-
-				if(forge) {
-					success = downloadFile(url, fo);
-
-				}else {
-					File t = new File(fod,temp);
-					if( downloadFile(url, t)){
-
-						ZipInputStream temp_jar = new ZipInputStream(new FileInputStream(t));
-
-						ZipEntry ze = null;
-						byte data[] = new byte[1024];
-						while ((ze = temp_jar.getNextEntry()) != null) {
-							if(ze.getName().equals(file)) //extract the core jar.
-
-							{
-								FileOutputStream output = new FileOutputStream(fo);
-								try
-								{
-									byte[] buffer = new byte[2048];
-									int len = 0;
-									while ((len = temp_jar.read(buffer)) > 0)
-									{
-										output.write(buffer, 0, len);
-									}
-								}
-								finally
-								{
-									if(output!=null) output.close();
-								}
-							}
-						}
-						temp_jar.close();
-						t.delete();
-						return true;
-					} else {
-						return false;
-					}
-
-				}
-
-				//Check (potentially) downloaded shadersmodcore md5
-				md5 = GetMd5(fo);
-				if (success == false || md5 == null || !md5.equalsIgnoreCase(goodmd5)) {
-					// No good
-					if (md5 != null)
-						System.out.println("ShadersMod - bad MD5. Got " + md5 + ", expected " + goodmd5);
-					try {
-						deleted = fo.delete();
-					}
-					catch (Exception ex1) {
-						ex1.printStackTrace();
-					}
-					return false;
-				}
-
-				return true;
-			} catch (Exception e) {
-				finalMessage += " Error: "+e.getLocalizedMessage();
-			}
-			return false;
-		}
-
 		private boolean downloadFile(String surl, File fo)
 		{
 			return downloadFile(surl, fo, null);
@@ -1163,18 +991,13 @@ public class Installer extends JPanel  implements PropertyChangeListener
 						filename = "version-multimc-forge.json";
 					version_json = Installer.class.getResourceAsStream(filename);
 				}
-				else if(useForge.isSelected() /*&& forgeVersion.getSelectedItem() != forgeNotFound*/ )
+				else if(useForge.isSelected())
 				{
 					String filename;
 
-					if(!useShadersMod.isSelected()){
-						filename = "version-forge.json";
-						mod="-forge";
-					}
-					else{
-						filename = "version-forge-shadersmod.json";
-						mod="-forge-shadersmod";
-					}
+					filename = "version-forge.json";
+					mod="-forge";
+
 					version_json = new FilterInputStream( Installer.class.getResourceAsStream(filename) ) {
 						public int read(byte[] buff) throws IOException {
 							int ret = in.read(buff);

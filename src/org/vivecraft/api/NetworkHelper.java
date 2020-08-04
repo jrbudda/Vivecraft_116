@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
 import org.vivecraft.gameplay.OpenVRPlayer;
-import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.render.PlayerModelController;
 import org.vivecraft.settings.AutoCalibration;
 import org.vivecraft.settings.VRSettings;
@@ -18,6 +16,9 @@ import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CCustomPayloadPacket;
@@ -43,7 +44,8 @@ public class NetworkHelper {
 		CLIMBING,
 		SETTING_OVERRIDE,
 		HEIGHT,
-		ACTIVEHAND
+		ACTIVEHAND,
+		CRAWL
 	}
 	public final static ResourceLocation channel = new ResourceLocation("vivecraft:data");
 	
@@ -76,6 +78,7 @@ public class NetworkHelper {
 	public static boolean serverWantsData = false;
 	public static boolean serverAllowsClimbey = false;
 	public static boolean serverSupportsDirectTeleport = false;
+	public static boolean serverAllowsCrawling = false;
 	
 	private static float worldScallast = 0;
 	private static float heightlast = 0;
@@ -86,6 +89,7 @@ public class NetworkHelper {
         serverAllowsClimbey = false;
         serverWantsData = false;
         serverSupportsDirectTeleport = false;
+        serverAllowsCrawling = false;
         Minecraft.getInstance().vrSettings.overrides.resetAll();
 	}
 
@@ -195,7 +199,12 @@ public class NetworkHelper {
 	public static void sendPosData(ServerPlayerEntity from) {
 
 		ServerVivePlayer v = vivePlayers.get(from.getUniqueID());
-		if (v==null || v.isVR() == false || v.player == null || v.player.hasDisconnected()) return;
+		if (v == null) return;
+		if (v.player == null || v.player.hasDisconnected()) {
+			vivePlayers.remove(from.getUniqueID());
+			return;
+		}
+		if (v.isVR() == false) return;
 
 		for (ServerVivePlayer sendTo : vivePlayers.values()) {
 
@@ -236,6 +245,17 @@ public class NetworkHelper {
 		CCustomPayloadPacket pack =	NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.ACTIVEHAND, new byte[]{c});
 		if(Minecraft.getInstance().getConnection() !=null)
 			Minecraft.getInstance().getConnection().sendPacket(pack);
+	}
+
+	public static void overridePose(PlayerEntity player) {
+		if (player instanceof ServerPlayerEntity) {
+			ServerVivePlayer vp = vivePlayers.get(player.getGameProfile().getId());
+			if (vp != null && vp.isVR() && vp.crawling)
+				player.setPose(Pose.SWIMMING);
+		} else if (player instanceof ClientPlayerEntity) {
+			if (Minecraft.getInstance().crawlTracker.crawling)
+				player.setPose(Pose.SWIMMING);
+		}
 	}
 	
 }

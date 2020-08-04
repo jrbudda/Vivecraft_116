@@ -7,8 +7,7 @@ from tempfile import mkstemp
 from shutil import move
 from os import remove, close
 from install import download_deps, download_native, download_file, mkdir_p, replacelineinfile
-from minecriftversion import mc_version, of_file_name, minecrift_version_num, \
-  minecrift_build, of_file_extension, of_file_md5, mcp_version, forge_version, mc_file_md5
+from minecriftversion import *
 
 try:
     WindowsError
@@ -169,13 +168,24 @@ def create_install(mcp_dir):
     # Replace version info in installer.java
     print "Updating installer versions..."
     installer_java_file = os.path.join("installer","Installer.java")
-    replacelineinfile( installer_java_file, "private static final String MINECRAFT_VERSION", "    private static final String MINECRAFT_VERSION = \"%s\";\n" % mc_version );
-    replacelineinfile( installer_java_file, "private static final String MC_VERSION",        "    private static final String MC_VERSION        = \"%s\";\n" % minecrift_version_num );
-    replacelineinfile( installer_java_file, "private static final String MC_MD5",            "    private static final String MC_MD5            = \"%s\";\n" % mc_file_md5 );
-    replacelineinfile( installer_java_file, "private static final String OF_FILE_NAME",      "    private static final String OF_FILE_NAME      = \"%s\";\n" % of_file_name );
-    replacelineinfile( installer_java_file, "private static final String OF_MD5",            "    private static final String OF_MD5            = \"%s\";\n" % of_file_md5 );
-    replacelineinfile( installer_java_file, "private static final String OF_VERSION_EXT",    "    private static final String OF_VERSION_EXT    = \"%s\";\n" % of_file_extension );
-    replacelineinfile( installer_java_file, "private static String FORGE_VERSION",     "    private static String FORGE_VERSION     = \"%s\";\n" % forge_version );
+    replacelineinfile( installer_java_file, "private static final String PROJECT_NAME",          "    private static final String PROJECT_NAME          = \"%s\";\n" % project_name );
+    replacelineinfile( installer_java_file, "private static final String MINECRAFT_VERSION",     "    private static final String MINECRAFT_VERSION     = \"%s\";\n" % mc_version );
+    replacelineinfile( installer_java_file, "private static final String MC_VERSION",            "    private static final String MC_VERSION            = \"%s\";\n" % minecrift_version_num );
+    replacelineinfile( installer_java_file, "private static final String MC_MD5",                "    private static final String MC_MD5                = \"%s\";\n" % mc_file_md5 );
+    replacelineinfile( installer_java_file, "private static final String OF_FILE_NAME",          "    private static final String OF_FILE_NAME          = \"%s\";\n" % of_file_name );
+    replacelineinfile( installer_java_file, "private static final String OF_MD5",                "    private static final String OF_MD5                = \"%s\";\n" % of_file_md5 );
+    replacelineinfile( installer_java_file, "private static final String OF_VERSION_EXT",        "    private static final String OF_VERSION_EXT        = \"%s\";\n" % of_file_extension );
+    replacelineinfile( installer_java_file, "private static String FORGE_VERSION",               "    private static String FORGE_VERSION               = \"%s\";\n" % forge_version );
+    replacelineinfile( installer_java_file, "private static final String HOMEPAGE_LINK",         "    private static final String HOMEPAGE_LINK         = \"%s\";\n" % homepage );
+    replacelineinfile( installer_java_file, "private static final String DONATION_LINK",         "    private static final String DONATION_LINK         = \"%s\";\n" % donation );
+
+    replacelineinfile( installer_java_file, "private static final boolean ALLOW_FORGE_INSTALL",  "    private static final boolean ALLOW_FORGE_INSTALL  = %s;\n" % str(allow_forge).lower() );
+    replacelineinfile( installer_java_file, "private static final boolean DEFAULT_FORGE_INSTALL","    private static final boolean DEFAULT_FORGE_INSTALL= %s;\n" % str(forge_default).lower() );
+    replacelineinfile( installer_java_file, "private static final boolean ALLOW_KATVR_INSTALL",  "    private static final boolean ALLOW_KATVR_INSTALL  = %s;\n" % str(allow_katvr).lower() );
+    replacelineinfile( installer_java_file, "private static final boolean ALLOW_KIOSK_INSTALL",  "    private static final boolean ALLOW_KIOSK_INSTALL  = %s;\n" % str(allow_kiosk).lower() );
+    replacelineinfile( installer_java_file, "private static final boolean ALLOW_ZGC_INSTALL",    "    private static final boolean ALLOW_ZGC_INSTALL    = %s;\n" % str(allow_zgc).lower() );
+    replacelineinfile( installer_java_file, "private static final boolean ALLOW_HRTF_INSTALL",   "    private static final boolean ALLOW_HRTF_INSTALL   = %s;\n" % str(allow_hrtf).lower() );
+    replacelineinfile( installer_java_file, "private static final boolean PROMPT_REMOVE_HRTF",   "    private static final boolean PROMPT_REMOVE_HRTF   = %s;\n" % str(allow_remove_hrtf).lower() );
 
     # Build installer.java
     print "Recompiling Installer.java..."

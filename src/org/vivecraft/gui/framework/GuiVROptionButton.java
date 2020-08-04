@@ -6,7 +6,6 @@ import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
-import net.optifine.Lang;
 
 public class GuiVROptionButton extends Button
 {
@@ -38,19 +37,5 @@ public class GuiVROptionButton extends Button
     public VRSettings.VrOptions getOption()
     {
         return this.enumOptions;
-    }
-    
-    public String[] getToolTip() {
-    	if (this.enumOptions == null)
-    		return null;
-
-        String key = "vivecraft.options." + this.enumOptions.name() + ".tooltip";
-        String str = Lang.get(key, null);
-
-        if (str == null)
-            return null;
-
-        String[] lines = str.split("\\r?\\n", -1);
-        return lines;
     }
 }

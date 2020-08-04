@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class TelescopeTracker extends Tracker {
 	
@@ -40,7 +41,7 @@ public class TelescopeTracker extends Tracker {
 		if(!i.hasDisplayName()) return false;
 		if(i.getItem() != Items.ENDER_EYE) return false;
 		if(!(i.getTag().getBoolean("Unbreakable"))) return false;
-		return i.getDisplayName().getString().equals("Eye of the Farseer");
+		return (i.getDisplayName() instanceof TranslationTextComponent && ((TranslationTextComponent)i.getDisplayName()).getKey().equals("vivecraft.item.telescope")) || i.getDisplayName().getString().equals("Eye of the Farseer");
 	}
 	
 	public static Vector3d getLensOrigin( int controller){

@@ -23,6 +23,7 @@ public class ServerVivePlayer {
 	public float worldScale = 1.0f;
 	public float heightscale = 1.0f;
 	public byte activeHand = 0;
+	public boolean crawling;
 
 	boolean isTeleportMode;
 	boolean isReverseHands;

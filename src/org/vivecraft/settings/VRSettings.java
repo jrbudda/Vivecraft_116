@@ -155,6 +155,7 @@ public class VRSettings
     public boolean seatedUseHMD = false;
     public float jumpThreshold=0.05f;
     public float sneakThreshold=0.4f;
+    public float crawlThreshold = 0.82f;
     public boolean realisticJumpEnabled=true;
     public boolean realisticSneakEnabled=true;
     public boolean realisticClimbEnabled=true;
@@ -163,7 +164,7 @@ public class VRSettings
     public boolean backpackSwitching = true;
     public boolean physicalGuiEnabled = false;
     public float walkMultiplier=1;
-    public boolean vrAllowCrawling = false; //unused
+    public boolean vrAllowCrawling = true;
     public boolean vrShowBlueCircleBuddy = true;
     public boolean vehicleRotation = true; 
     public boolean analogMovement = true;
@@ -1906,7 +1907,7 @@ public class VRSettings
         WEAPON_COLLISION(false, true), // Weapon collision
         // VIVE END - new options
         //JRBUDDA VIVE
-        ALLOW_CRAWLING(false, true), // Allow crawling
+        ALLOW_CRAWLING(false, true), // Roomscale Crawling
         LIMIT_TELEPORT(false, true), // Limit in Survival
         REVERSE_HANDS(false, true), // Reverse Hands
         STENCIL_ON(false, true), // Use Eye Stencil
