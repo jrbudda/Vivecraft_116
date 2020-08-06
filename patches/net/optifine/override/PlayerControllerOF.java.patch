@@ -1,11 +1,91 @@
 --- a/net/optifine/override/PlayerControllerOF.java
 +++ b/net/optifine/override/PlayerControllerOF.java
-@@ -52,7 +52,7 @@
-         return actionresulttype;
-     }
+@@ -1,5 +1,7 @@
+ package net.optifine.override;
  
--    public ActionResultType func_217292_a(ClientPlayerEntity player, ClientWorld worldIn, Hand hand, BlockRayTraceResult rayTrace)
-+    public ActionResultType processRightClickBlock(ClientPlayerEntity player, ClientWorld worldIn, Hand hand, BlockRayTraceResult rayTrace)
++import org.vivecraft.api.NetworkHelper;
++
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.entity.player.ClientPlayerEntity;
+ import net.minecraft.client.multiplayer.PlayerController;
+@@ -7,6 +9,7 @@
+ import net.minecraft.client.world.ClientWorld;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.network.play.client.CPlayerDiggingPacket;
+ import net.minecraft.util.ActionResultType;
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.Hand;
+@@ -25,7 +28,8 @@
+     {
+         super(mcIn, netHandler);
+     }
+-
++    
++    @Override
+     public boolean clickBlock(BlockPos loc, Direction face)
      {
          this.acting = true;
+@@ -34,7 +38,8 @@
+         this.acting = false;
+         return flag;
+     }
+-
++    
++    @Override
+     public boolean onPlayerDamageBlock(BlockPos posBlock, Direction directionFacing)
+     {
+         this.acting = true;
+@@ -43,30 +48,49 @@
+         this.acting = false;
+         return flag;
+     }
+-
++    
++    @Override
+     public ActionResultType processRightClick(PlayerEntity player, World worldIn, Hand hand)
+     {
+         this.acting = true;
++		//Vivecraft
++		NetworkHelper.overrideLook(player, Minecraft.getInstance().vrPlayer.getRightClickLookOverride(player, hand.ordinal()));
++		//	
+         ActionResultType actionresulttype = super.processRightClick(player, worldIn, hand);
+         this.acting = false;
+         return actionresulttype;
+     }
++    
++    //Vivecraft
++    @Override
++    public void onStoppedUsingItem(PlayerEntity playerIn)
++    {
++		NetworkHelper.overrideLook(playerIn, Minecraft.getInstance().vrPlayer.getRightClickLookOverride(playerIn, playerIn.getActiveHand().ordinal()));
++    	super.onStoppedUsingItem(playerIn);
++    }
++    //
+ 
++    @Override
+     public ActionResultType func_217292_a(ClientPlayerEntity player, ClientWorld worldIn, Hand hand, BlockRayTraceResult rayTrace)
+     {
++		//Vivecraft
++		NetworkHelper.overrideLook(player, rayTrace.getHitVec().subtract(player.getEyePosition(1).normalize()));
++		//	
+         this.acting = true;
          this.lastClickBlockPos = rayTrace.getPos();
+         ActionResultType actionresulttype = super.func_217292_a(player, worldIn, hand, rayTrace);
+         this.acting = false;
+         return actionresulttype;
+     }
+-
++    
++    @Override
+     public ActionResultType interactWithEntity(PlayerEntity player, Entity target, Hand hand)
+     {
+         this.lastClickEntity = target;
+         return super.interactWithEntity(player, target, hand);
+     }
+-
++    
++    @Override
+     public ActionResultType interactWithEntity(PlayerEntity player, Entity target, EntityRayTraceResult ray, Hand hand)
+     {
+         this.lastClickEntity = target;

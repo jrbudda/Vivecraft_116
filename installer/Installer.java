@@ -46,10 +46,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MINECRAFT_VERSION     = "1.16.1";
     private static final String MC_VERSION            = "1.16.1";
     private static final String MC_MD5                = "9b94beec05c9580343f663165fa53d3f";
-    private static final String OF_FILE_NAME          = "1.16.1_HD_U_G2_pre10";
-    private static final String OF_MD5                = "6addbd1d567a82a3545f079d2deb2a7c";
+    private static final String OF_FILE_NAME          = "1.16.1_HD_U_G2";
+    private static final String OF_MD5                = "ef86ff22ecf29c2cb66967cfdaccee90";
     private static final String OF_VERSION_EXT        = ".jar";
-    private static String FORGE_VERSION               = "32.0.75";
+    private static String FORGE_VERSION               = "32.0.106";
     private static final String HOMEPAGE_LINK         = "http://www.vivecraft.org";
     private static final String DONATION_LINK         = "https://www.patreon.com/jrbudda";
     private static final String PROJECT_NAME          = "Vivecraft";
@@ -483,11 +483,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	{
 		JOptionPane optionPane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, new String[]{"Install", "Cancel"});
 
-		emptyFrame = new Frame("Vivecraft Installer");
+		emptyFrame = new Frame(PROJECT_NAME + " Installer");
 		emptyFrame.setUndecorated(true);
 		emptyFrame.setVisible(true);
 		emptyFrame.setLocationRelativeTo(null);
-		dialog = optionPane.createDialog(emptyFrame, "Vivecraft Installer");
+		dialog = optionPane.createDialog(emptyFrame, PROJECT_NAME + " Installer");
 		dialog.setResizable(true);
 		dialog.setSize(620,748);
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

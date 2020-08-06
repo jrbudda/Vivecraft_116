@@ -96,7 +96,33 @@
          boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
  
          if (flag)
-@@ -1089,6 +1124,7 @@
+@@ -892,6 +927,12 @@
+ 
+     public Either<PlayerEntity.SleepResult, Unit> trySleep(BlockPos at)
+     {
++        java.util.Optional<BlockPos> optAt = java.util.Optional.of(at);
++    	if(Reflector.ForgeEventFactory_onPlayerSleepInBed.exists()) {
++	        PlayerEntity.SleepResult ret = (SleepResult) Reflector.call(Reflector.ForgeEventFactory_onPlayerSleepInBed, this, optAt);
++	        if (ret != null) return Either.left(ret);
++    	}
++
+         Direction direction = this.world.getBlockState(at).get(HorizontalBlock.HORIZONTAL_FACING);
+ 
+         if (!this.isSleeping() && this.isAlive())
+@@ -912,7 +953,11 @@
+             {
+                 this.func_241153_a_(this.world.getDimension(), at, false, true);
+ 
+-                if (this.world.isDaytime())
++                boolean sflag = this.world.isDaytime();
++                if(Reflector.ForgeEventFactory_fireSleepingTimeCheck.exists()) 
++                	sflag = Reflector.callBoolean(Reflector.ForgeEventFactory_fireSleepingTimeCheck, this, optAt);
++                
++                if (sflag)
+                 {
+                     return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
+                 }
+@@ -1089,6 +1134,7 @@
                  this.connection.sendPacket(new SOpenWindowPacket(container.windowId, container.getType(), p_213829_1_.getDisplayName()));
                  container.addListener(this);
                  this.openContainer = container;
@@ -104,7 +130,7 @@
                  return OptionalInt.of(this.currentWindowId);
              }
          }
-@@ -1110,6 +1146,7 @@
+@@ -1110,6 +1156,7 @@
          this.connection.sendPacket(new SOpenHorseWindowPacket(this.currentWindowId, inventoryIn.getSizeInventory(), horse.getEntityId()));
          this.openContainer = new HorseInventoryContainer(this.currentWindowId, this.inventory, inventoryIn, horse);
          this.openContainer.addListener(this);
@@ -112,7 +138,7 @@
      }
  
      public void openBook(ItemStack stack, Hand hand)
-@@ -1182,6 +1219,7 @@
+@@ -1182,6 +1229,7 @@
      public void closeContainer()
      {
          this.openContainer.onContainerClosed(this);
@@ -120,7 +146,7 @@
          this.openContainer = this.container;
      }
  
-@@ -1331,6 +1369,24 @@
+@@ -1331,6 +1379,24 @@
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.setLeftShoulderEntity(that.getLeftShoulderEntity());
          this.setRightShoulderEntity(that.getRightShoulderEntity());
@@ -145,15 +171,15 @@
      }
  
      protected void onNewPotionEffect(EffectInstance id)
-@@ -1620,9 +1676,82 @@
+@@ -1620,8 +1686,81 @@
              this.interactionManager.setWorld(newWorld);
              this.server.getPlayerList().sendWorldInfo(this, newWorld);
              this.server.getPlayerList().sendInventory(this);
 +            //Forge
 +            Reflector.call(Reflector.BasicEventHooks_firePlayerChangedDimensionEvent, this, serverworld.getDimension(), newWorld.getDimension());
 +            //
-+        }
-+    }
+         }
+     }
 +	@Override
 +	public void spawnSweepParticles() {
 +		ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
@@ -195,9 +221,9 @@
 +                this.addItemParticles(p_226293_1_, p_226293_2_);
 +                this.playSound(this.getEatSound(p_226293_1_), 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
 +            }
-         }
-     }
- 
++        }
++    }
++
 +    private void addItemParticles(ItemStack stack, int count)
 +    {
 +    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
@@ -224,11 +250,20 @@
 +    		this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vector3d1.x, vector3d1.y, vector3d1.z, vector3d.x, vector3d.y + 0.05D, vector3d.z);
 +    	}
 +    }
-+
+ 
      @Nullable
      public BlockPos func_241140_K_()
+@@ -1641,6 +1780,9 @@
+ 
+     public void func_241153_a_(RegistryKey<World> p_241153_1_, @Nullable BlockPos p_241153_2_, boolean p_241153_3_, boolean p_241153_4_)
      {
-@@ -1696,6 +1825,7 @@
++    	//Forge
++    	if(Reflector.callBoolean(Reflector.ForgeEventFactory_onPlayerSpawnSet, this, p_241153_2_ == null ? World.OVERWORLD : p_241153_1_, p_241153_2_, p_241153_3_)) return;
++		//
+         if (p_241153_2_ != null)
+         {
+             boolean flag = p_241153_2_.equals(this.field_241138_cr_) && p_241153_1_.equals(this.field_241137_cq_);
+@@ -1696,6 +1838,7 @@
          return new SSpawnPlayerPacket(this);
      }
  
@@ -236,7 +271,7 @@
      public ItemEntity dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
      {
          ItemEntity itementity = super.dropItem(droppedItem, dropAround, traceItem);
-@@ -1706,7 +1836,28 @@
+@@ -1706,7 +1849,28 @@
          }
          else
          {
@@ -265,7 +300,7 @@
              ItemStack itemstack = itementity.getItem();
  
              if (traceItem)
-@@ -1722,4 +1873,4 @@
+@@ -1722,4 +1886,4 @@
              return itementity;
          }
      }

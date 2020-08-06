@@ -52,7 +52,7 @@
  import net.minecraft.util.text.TextFormatting;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.GameType;
-@@ -116,6 +126,8 @@
+@@ -115,6 +125,8 @@
      private int scaledWidth;
      private int scaledHeight;
      private final Map<ChatType, List<IChatListener>> chatListeners = Maps.newHashMap();
@@ -61,7 +61,7 @@
  
      public IngameGui(Minecraft p_i33_1_)
      {
-@@ -156,32 +168,40 @@
+@@ -155,32 +167,40 @@
          FontRenderer fontrenderer = this.getFontRenderer();
          RenderSystem.enableBlend();
  
@@ -119,7 +119,7 @@
  
          if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
          {
-@@ -208,9 +228,13 @@
+@@ -197,9 +217,13 @@
              this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
              RenderSystem.enableBlend();
              RenderSystem.enableAlphaTest();
@@ -135,7 +135,7 @@
              this.mc.getProfiler().startSection("bossHealth");
              this.overlayBoss.func_238484_a_(p_238445_1_);
              this.mc.getProfiler().endSection();
-@@ -296,7 +320,9 @@
+@@ -285,7 +309,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight - 68), 0.0F);
                      RenderSystem.enableBlend();
@@ -146,7 +146,7 @@
                      int k1 = 16777215;
  
                      if (this.animateOverlayMessageColor)
-@@ -339,7 +365,9 @@
+@@ -328,7 +354,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight / 2), 0.0F);
                      RenderSystem.enableBlend();
@@ -157,7 +157,7 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.scalef(4.0F, 4.0F, 4.0F);
                      int l1 = j1 << 24 & -16777216;
-@@ -386,9 +414,30 @@
+@@ -375,9 +403,30 @@
              {
                  this.renderScoreboard(p_238445_1_, scoreobjective1);
              }
@@ -189,7 +189,7 @@
              RenderSystem.disableAlphaTest();
              RenderSystem.pushMatrix();
              RenderSystem.translatef(0.0F, (float)(this.scaledHeight - 48), 0.0F);
-@@ -398,7 +447,7 @@
+@@ -387,7 +436,7 @@
              RenderSystem.popMatrix();
              scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
  
@@ -198,16 +198,45 @@
              {
                  this.overlayPlayerList.setVisible(true);
                  this.overlayPlayerList.func_238523_a_(p_238445_1_, this.scaledWidth, scoreboard, scoreobjective1);
-@@ -593,7 +642,7 @@
+@@ -607,22 +656,44 @@
+             this.blit(p_238443_2_, i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
+             this.blit(p_238443_2_, i - 91 - 1 + playerentity.inventory.currentItem * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
  
-                     if (Reflector.IForgeEffectInstance_renderHUDEffect.exists())
-                     {
--                        Reflector.call(effectinstance, Reflector.IForgeEffectInstance_renderHUDEffect, this, k, l, this.getBlitOffset(), f);
-+                        Reflector.call(effectinstance, Reflector.IForgeEffectInstance_renderHUDEffect, this, p_238444_1_, k, l, this.getBlitOffset(), f);
-                     }
+-            if (!itemstack.isEmpty())
++            //Vivecraft - render hotbar context selection.
++            if(mc.interactTracker.hotbar >= 0 && mc.interactTracker.hotbar < 9 && playerentity.inventory.currentItem != mc.interactTracker.hotbar) {
++                RenderSystem.color4f(0.0F, 1.0F, 0.0F, 1.0F);
++                this.blit(p_238443_2_, i - 91 - 1 + mc.interactTracker.hotbar * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
++                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
++            }
++            
++            //Vivecraft
++            if (!itemstack.isEmpty() || mc.vrSettings.vrTouchHotbar)
+             {
+                 if (handside == HandSide.LEFT)
+                 {
+-                    this.blit(p_238443_2_, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
++                    if(mc.interactTracker.hotbar == 9 ) {
++                        RenderSystem.color4f(0.0F, 0.0F, 1.0F, 1.0F);
++                        this.blit(p_238443_2_, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
++                        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
++                    } else {
++                        this.blit(p_238443_2_, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
++                    }
+                 }
+                 else
+                 {
+-                    this.blit(p_238443_2_, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
++                    if(mc.interactTracker.hotbar == 9) {
++                        RenderSystem.color4f(0.0F, 0.0F, 1.0F, 1.0F);
++                        this.blit(p_238443_2_, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
++                        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
++                    } else 
++                        this.blit(p_238443_2_, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
                  }
              }
-@@ -633,7 +682,9 @@
+ 
++                
              this.setBlitOffset(j);
              RenderSystem.enableRescaleNormal();
              RenderSystem.enableBlend();
@@ -218,7 +247,7 @@
              CustomItems.setRenderOffHand(false);
  
              for (int i1 = 0; i1 < 9; ++i1)
-@@ -684,6 +735,10 @@
+@@ -673,6 +744,10 @@
  
              RenderSystem.disableRescaleNormal();
              RenderSystem.disableBlend();
@@ -229,7 +258,7 @@
          }
      }
  
-@@ -1223,6 +1278,7 @@
+@@ -1212,6 +1287,7 @@
          }
      }
  
@@ -237,7 +266,7 @@
      private void renderPumpkinOverlay()
      {
          RenderSystem.disableDepthTest();
-@@ -1254,6 +1310,8 @@
+@@ -1243,6 +1319,8 @@
          }
      }
  
@@ -246,7 +275,7 @@
      private void renderVignette(Entity entityIn)
      {
          if (!Config.isVignetteEnabled())
-@@ -1306,6 +1364,7 @@
+@@ -1295,6 +1373,7 @@
          }
      }
  
@@ -254,18 +283,7 @@
      private void renderPortal(float timeInPortal)
      {
          if (timeInPortal < 1.0F)
-@@ -1404,8 +1463,8 @@
- 
-             if (Reflector.IForgeItemStack_getHighlightTip.exists())
-             {
--                String s = Reflector.callString(itemstack, Reflector.IForgeItemStack_getHighlightTip, itemstack.getDisplayName());
--                String s1 = Reflector.callString(this.highlightingItemStack, Reflector.IForgeItemStack_getHighlightTip, this.highlightingItemStack.getDisplayName());
-+                ITextComponent s = (ITextComponent) Reflector.call(itemstack, Reflector.IForgeItemStack_getHighlightTip, itemstack.getDisplayName());
-+                ITextComponent s1 = (ITextComponent) Reflector.call(this.highlightingItemStack, Reflector.IForgeItemStack_getHighlightTip, this.highlightingItemStack.getDisplayName());
-                 flag = Config.equals(s, s1);
-             }
- 
-@@ -1531,4 +1590,80 @@
+@@ -1520,4 +1599,80 @@
      {
          this.overlayDebug.resetChunk();
      }

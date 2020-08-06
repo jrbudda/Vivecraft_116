@@ -34,7 +34,7 @@
      public boolean ofCustomEntityModels = true;
      public boolean ofCustomGuis = true;
      public boolean ofShowGlErrors = true;
-@@ -306,6 +308,9 @@
+@@ -304,6 +306,9 @@
          this.ofKeyBindZoom = new KeyBinding("of.key.zoom", 67, "key.categories.misc");
          this.keyBindings = ArrayUtils.add(this.keyBindings, this.ofKeyBindZoom);
          KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
@@ -44,7 +44,7 @@
          this.renderDistanceChunks = 8;
          this.loadOptions();
          Config.initGameSettings(this);
-@@ -508,7 +513,7 @@
+@@ -506,7 +511,7 @@
  
                      if ("guiScale".equals(s))
                      {
@@ -53,7 +53,7 @@
                      }
  
                      if ("particles".equals(s))
-@@ -870,7 +875,7 @@
+@@ -868,7 +873,7 @@
                  printwriter.println("gamma:" + this.gamma);
                  printwriter.println("renderDistance:" + this.renderDistanceChunks);
                  printwriter.println("entityDistanceScaling:" + this.field_238329_c_);
@@ -62,7 +62,7 @@
                  printwriter.println("particles:" + this.particles.getId());
                  printwriter.println("maxFps:" + this.framerateLimit);
                  printwriter.println("difficulty:" + this.difficulty.getId());
-@@ -1064,7 +1069,7 @@
+@@ -1062,7 +1067,7 @@
              {
                  if (i >= aint[j])
                  {
@@ -71,7 +71,7 @@
                  }
              }
  
-@@ -1505,7 +1510,7 @@
+@@ -1503,7 +1508,7 @@
  
          if (p_setOptionValueOF_1_ == AbstractOption.FAST_RENDER)
          {
@@ -80,15 +80,13 @@
          }
  
          if (p_setOptionValueOF_1_ == AbstractOption.TRANSLUCENT_BLOCKS)
-@@ -2615,6 +2620,15 @@
+@@ -2598,6 +2603,13 @@
              KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
              KeyBinding.resetKeyBindingArrayAndHash();
              bufferedreader.close();
 +            
 +            //Vivecraft important.
 +            this.ofFastRender = false;
-+            this.ofUseFbo = true;
-+            this.ofUseVbo = true;
 +            this.ofAaLevel = 0;
 +            this.ofAfLevel = 1;
 +            //
@@ -96,7 +94,7 @@
          }
          catch (Exception exception11)
          {
-@@ -2766,7 +2780,7 @@
+@@ -2748,7 +2760,7 @@
          this.cloudOption = CloudOption.FANCY;
          this.fov = 70.0D;
          this.gamma = 0.0D;
@@ -104,8 +102,8 @@
 +        this.guiScaleUser = 0; // VIVECRAFT: ignore gui scale
          this.particles = ParticleStatus.ALL;
          this.heldItemTooltips = true;
-         this.ofUseVbo = true;
-@@ -2780,7 +2794,7 @@
+         this.forceUnicodeFont = false;
+@@ -2761,7 +2773,7 @@
          Config.updateAvailableProcessors();
          this.ofSmoothWorld = Config.isSingleProcessor();
          this.ofLazyChunkLoading = false;
@@ -114,7 +112,7 @@
          this.ofFastMath = false;
          this.ofFastRender = false;
          this.ofTranslucentBlocks = 0;
-@@ -3000,3 +3014,4 @@
+@@ -2981,3 +2993,4 @@
          resourcePackListIn.setEnabledPacks(set);
      }
  }

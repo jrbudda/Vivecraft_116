@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
 +++ b/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
-@@ -988,7 +988,7 @@
+@@ -999,7 +999,7 @@
                      Random random = new Random();
                      BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
  

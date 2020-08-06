@@ -98,13 +98,13 @@
             }
         },
         {
-            "name": "cpw.mods:modlauncher:5.1.0",
+            "name": "cpw.mods:modlauncher:6.1.1",
             "downloads": {
                 "artifact": {
-                    "path": "cpw/mods/modlauncher/5.1.0/modlauncher-5.1.0.jar",
-                    "url": "https://files.minecraftforge.net/maven/cpw/mods/modlauncher/5.1.0/modlauncher-5.1.0.jar",
-                    "sha1": "b9caea28c3fd15fd2c971cb41c44855767f7dbc8",
-                    "size": 115795
+                    "path": "cpw/mods/modlauncher/6.1.1/modlauncher-6.1.1.jar",
+                    "url": "https://files.minecraftforge.net/maven/cpw/mods/modlauncher/6.1.1/modlauncher-6.1.1.jar",
+                    "sha1": "aa2b9b88c70e6857009de2143ddf2a6d27a39bdd",
+                    "size": 117621
                 }
             }
         },
@@ -120,46 +120,46 @@
             }
         },
         {
-            "name": "net.minecraftforge:accesstransformers:2.1.3-shadowed",
+            "name": "net.minecraftforge:accesstransformers:2.2.0-shadowed",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/accesstransformers/2.1.3-shadowed/accesstransformers-2.1.3-shadowed.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/accesstransformers/2.1.3/accesstransformers-2.1.3-shadowed.jar",
-                    "sha1": "addc10ee659e011004852c6cf1d036180f67a169",
-                    "size": 444938
+                    "path": "net/minecraftforge/accesstransformers/2.2.0-shadowed/accesstransformers-2.2.0-shadowed.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/accesstransformers/2.2.0/accesstransformers-2.2.0-shadowed.jar",
+                    "sha1": "043c882f4e7e5648acb14c9de8c2eca5f670d2bd",
+                    "size": 445030
                 }
             }
         },
         {
-            "name": "net.minecraftforge:eventbus:2.2.0-service",
+            "name": "net.minecraftforge:eventbus:3.0.3-service",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/eventbus/2.2.0-service/eventbus-2.2.0-service.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/eventbus/2.2.0/eventbus-2.2.0-service.jar",
-                    "sha1": "e663ad1f795b81da8a132c8fde40580b05c2343d",
-                    "size": 39776
+                    "path": "net/minecraftforge/eventbus/3.0.3-service/eventbus-3.0.3-service.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/eventbus/3.0.3/eventbus-3.0.3-service.jar",
+                    "sha1": "e5dedecd71479bbb4984485553b6fcf36953ef00",
+                    "size": 40980
                 }
             }
         },
         {
-            "name": "net.minecraftforge:forgespi:3.0.0",
+            "name": "net.minecraftforge:forgespi:3.1.1",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/forgespi/3.0.0/forgespi-3.0.0.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forgespi/3.0.0/forgespi-3.0.0.jar",
-                    "sha1": "f950d208c9fa7a1d7700d8a222bd08d4baf90600",
-                    "size": 19925
+                    "path": "net/minecraftforge/forgespi/3.1.1/forgespi-3.1.1.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forgespi/3.1.1/forgespi-3.1.1.jar",
+                    "sha1": "f258f875d9252d5ee83d8f0f2d03f71123f37650",
+                    "size": 19937
                 }
             }
         },
         {
-            "name": "net.minecraftforge:coremods:2.0.3",
+            "name": "net.minecraftforge:coremods:3.0.0",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/coremods/2.0.3/coremods-2.0.3.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/coremods/2.0.3/coremods-2.0.3.jar",
-                    "sha1": "9e3f5323f6a2c3ac04fa27481cbeeb48f89757bd",
-                    "size": 21802
+                    "path": "net/minecraftforge/coremods/3.0.0/coremods-3.0.0.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/coremods/3.0.0/coremods-3.0.0.jar",
+                    "sha1": "fdf3b62a9a1fbd6a0826190d6d9962d9dd4f0340",
+                    "size": 21803
                 }
             }
         },
@@ -292,7 +292,7 @@
 			"name": "org.json:json:20140107"
 		}, 
 		{
-			"name": "net.minecraft:launchwrapper:2.1",
+			"name": "net.minecraft:launchwrapper:2.2",
 			"url": "http://vivecraft.org/jar/"
 		}, 
 		{

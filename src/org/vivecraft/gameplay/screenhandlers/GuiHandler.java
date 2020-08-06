@@ -108,7 +108,8 @@ public class GuiHandler {
 		if(mc.currentScreen == null)return;
 		if(mc.vrSettings.seated) return;
 		if(guiRotation_room == null) return;
-
+		if(!MCOpenVR.isControllerTracking(0)) return;
+		
 		Vector2f tex = getTexCoordsForCursor(guiPos_room, guiRotation_room, mc.currentScreen, guiScale, mc.vrPlayer.vrdata_room_pre.getController(0));
 
 		float u = tex.x;

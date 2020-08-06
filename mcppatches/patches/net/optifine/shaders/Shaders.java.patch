@@ -1,6 +1,6 @@
 --- a/net/optifine/shaders/Shaders.java
 +++ b/net/optifine/shaders/Shaders.java
-@@ -117,6 +117,7 @@
+@@ -118,6 +118,7 @@
  import net.optifine.util.WorldUtils;
  import org.apache.commons.io.IOUtils;
  import org.lwjgl.BufferUtils;
@@ -8,7 +8,7 @@
  import org.lwjgl.opengl.ARBGeometryShader4;
  import org.lwjgl.opengl.ARBShaderObjects;
  import org.lwjgl.opengl.ARBVertexShader;
-@@ -810,6 +811,7 @@
+@@ -811,6 +812,7 @@
  
      public static void loadShaderPack()
      {
@@ -16,7 +16,7 @@
          boolean flag = shaderPackLoaded;
          boolean flag1 = isOldLighting();
  
-@@ -1089,7 +1091,7 @@
+@@ -1090,7 +1092,7 @@
          Set set = props.keySet();
          List<ICustomTexture> list = new ArrayList<>();
  
@@ -25,7 +25,7 @@
          {
              if (s1.startsWith(s))
              {
-@@ -2451,11 +2453,11 @@
+@@ -2453,11 +2455,11 @@
  
      private static int getDrawBuffer(Program p, String str, int i)
      {
@@ -39,7 +39,7 @@
          }
          else
          {
-@@ -4302,15 +4304,15 @@
+@@ -4304,15 +4306,15 @@
          GlStateManager.activeTexture(33984);
      }
  
@@ -61,7 +61,7 @@
  
              if (j != i)
              {
-@@ -5764,7 +5766,7 @@
+@@ -5766,7 +5768,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

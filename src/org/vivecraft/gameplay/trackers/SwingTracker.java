@@ -51,8 +51,6 @@ public class SwingTracker extends Tracker{
 	private boolean[] lastWeaponSolid = new boolean[2];
 	public Vector3d[] weaponEnd= new Vector3d[2];
 
-	public boolean[] shouldIlookatMyHand= new boolean[2];
-	public boolean[] IAmLookingAtMyHand= new boolean[2];
 	public boolean[] canact= new boolean[2];
 
 	public int disableSwing = 3;
@@ -239,19 +237,6 @@ public class SwingTracker extends Tracker{
 				if(block.isAir() || blockHit.getType() != Type.BLOCK || lastWeaponEndAir[c].length() == 0) { //reset				
 					this.lastWeaponEndAir[c] = weaponEnd[c];
 					lastWeaponSolid[c] = false;
-
-					//if you're in creative you can get your own goddamn water.
-					if (!mc.player.isCreative() && block.getMaterial().isLiquid() && item == Items.BUCKET) {
-						//mc.playerController.onPlayerRightClick(player, player.world,is, col.blockX, col.blockY, col.blockZ, col.sideHit,col.hitVec);
-						this.shouldIlookatMyHand[c] = true;
-						if (IAmLookingAtMyHand[c]){
-							Minecraft.getInstance().physicalGuiManager.preClickAction();
-							this.shouldIlookatMyHand[c] = false;
-							if(	Minecraft.getInstance().playerController.processRightClick(player, player.world,c==0?Hand.MAIN_HAND:Hand.OFF_HAND).isSuccessOrConsume()){
-								mc.gameRenderer.itemRenderer.resetEquippedProgress(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);					
-							}
-						}
-					} 	
 					continue;
 				}
 				

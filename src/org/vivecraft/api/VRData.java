@@ -140,11 +140,12 @@ public class VRData{
 			return hmd.getYaw();
 		
 		Vector3d v = (c1.getPosition().subtract(c0.getPosition())).normalize().rotateYaw((float) (-Math.PI/2));
+		Vector3d h = hmd.getDirection();
 		
-		if(Minecraft.getInstance().vrSettings.vrReverseHands)
-			v = v.scale(-1);
-
-		v = Utils.vecLerp(hmd.getDirection(), v, 0.7);
+		if(v.dotProduct(h) < 0) //you are not an owl.
+			v = v.inverse();
+		
+		v = Utils.vecLerp(h, v, 0.7);
 		
 		return (float) Math.toDegrees(Math.atan2(-v.x, v.z)); 		
 	}
@@ -152,14 +153,14 @@ public class VRData{
 	public float getFacingYaw(){
 		if(Minecraft.getInstance().vrSettings.seated)
 			return hmd.getYaw();
-		
+
 		Vector3d v = (c1.getPosition().subtract(c0.getPosition())).normalize().rotateYaw((float) (-Math.PI/2));
-	
+
 		if(Minecraft.getInstance().vrSettings.vrReverseHands)
 			return(float) Math.toDegrees(Math.atan2(v.x, -v.z)); 
 		else
 			return(float) Math.toDegrees(Math.atan2(-v.x, v.z)); 
-		}
+	}
 	
 	public Vector3d getHeadPivot() {
 		Vector3d eye = hmd.getPosition();

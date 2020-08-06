@@ -37,7 +37,7 @@ public class KeyboardHandler {
             if (mc.vrSettings.physicalKeyboard)
 				physicalKeyboard.show();
             else
-            	UI.init(Minecraft.getInstance(), i, j);          
+            	UI.init(Minecraft.getInstance(), i, j);
 			Showing = true;
       		orientOverlay(mc.currentScreen!=null);
       		RadialHandler.setOverlayShowing(false, null);

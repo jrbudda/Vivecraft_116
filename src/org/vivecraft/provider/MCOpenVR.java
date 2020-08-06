@@ -1348,7 +1348,7 @@ public class MCOpenVR
 	private static int quickTorchPreviousSlot;
 
 	private static void processHotbar() {
-
+		mc.interactTracker.hotbar = -1;
 		if(mc.player == null) return;
 		if(mc.player.inventory == null) return;
 		
@@ -1383,26 +1383,30 @@ public class MCOpenVR
 
 		float fact = (float) (pq.dotProduct(u) / (u.x*u.x + u.y*u.y + u.z*u.z));
 
-		if(fact < 0) return;
-
+		if(fact < -1) return;
+		
 		Vector3d w2 = u.scale(fact).subtract(pq);
 
 		Vector3d point = main.subtract(w2);
-		float linelen = (float) barStart.subtract(barEnd).length();
+		float linelen = (float) u.length();
 		float ilen = (float) barStart.subtract(point).length();
-
+		if(fact < 0) ilen *= -1;
 		float pos = ilen / linelen * 9; 
 
 		if(mc.vrSettings.vrReverseHands) pos = 9 - pos;
 
 		int box = (int) Math.floor(pos);
-		if(pos - Math.floor(pos) < 0.1) return;
 
 		if(box > 8) return;
-		if(box < 0) return;
+		if(box < 0) {
+			if(pos <= -0.5 && pos >= -1.5) //TODO fix reversed hands situation.
+				box = 9;
+			else
+				return;
+		}
 		//all that maths for this.
-		if(box != mc.player.inventory.currentItem){
-			mc.player.inventory.currentItem = box;	
+		mc.interactTracker.hotbar = box;
+		if(box != mc.interactTracker.hotbar){
 			triggerHapticPulse(0, 750);
 		}
 	}
@@ -2108,14 +2112,14 @@ public class MCOpenVR
 			OpenVRUtil.Matrix4fSetIdentity(hmdPose);
 			hmdPose.M[1][3] = 1.62f;
 		}
-
+		TPose = false;
 		if(TPose) {
 			TPose_Right.M[0][3] = 0f;
 			TPose_Right.M[1][3] = 0f;
 			TPose_Right.M[2][3] = 0f;
 			OpenVRUtil.Matrix4fCopy(TPose_Right.rotationY(-120), TPose_Right);
-			TPose_Right.M[0][3] = 1.5f;
-			TPose_Right.M[1][3] = 1.65f;
+			TPose_Right.M[0][3] = 0.5f;
+			TPose_Right.M[1][3] = 1.0f;
 			TPose_Right.M[2][3] = -.5f;
 
 			TPose_Left.M[0][3] = 0f;

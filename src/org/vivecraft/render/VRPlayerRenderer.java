@@ -2,24 +2,17 @@ package org.vivecraft.render;
 
 import java.util.UUID;
 
-import org.vivecraft.utils.math.Quaternion;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.ArrowLayer;
 import net.minecraft.client.renderer.entity.layers.BeeStingerLayer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
-import net.minecraft.client.renderer.entity.layers.CapeLayer;
 import net.minecraft.client.renderer.entity.layers.ElytraLayer;
 import net.minecraft.client.renderer.entity.layers.HeadLayer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
@@ -42,7 +35,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity, VRPlayerModel<AbstractClientPlayerEntity>>
 {
@@ -50,7 +47,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
     {
         super(p_i1296_1_, new VRPlayerModel<>(0.0F, p_i1296_2_, seated), 0.5F);       
         this.addLayer(new BipedArmorLayer<>(this, new BipedModel(0.5F), new BipedModel(1.0F)));
-        this.addLayer(new VRHMDLayer(this));    
+        //this.addLayer(new VRHMDLayer(this));    
         this.addLayer(new HeldItemLayer<>(this));
         this.addLayer(new ArrowLayer(this));
     //    this.addLayer(new Deadmau5HeadLayer(this));
@@ -89,7 +86,15 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
 
     public Vector3d getRenderOffset(AbstractClientPlayerEntity entityIn, float partialTicks)
     {
-        return entityIn.isCrouching() ? new Vector3d(0.0D, -0.125D, 0.0D) : super.getRenderOffset(entityIn, partialTicks);
+    	if(entityIn.isActualySwimming())
+    		return new Vector3d(0.0D, -0.125D , 0.0D);
+    	return Vector3d.ZERO;
+    	//i will put u back when i have a need.
+//    	float sc = 1;
+//    	PlayerModelController.RotInfo rotInfo = PlayerModelController.getInstance().getRotationsForPlayer(((PlayerEntity)entityIn).getUniqueID());
+//    	if(rotInfo != null && !rotInfo.seated)
+//    		sc = rotInfo.heightScale;
+//        return (entityIn.isCrouching() && !entityIn.isActualySwimming()) ? new Vector3d(0.0D, -0.125D * sc, 0.0D) : super.getRenderOffset(entityIn, partialTicks);
     }
 
     private void setModelVisibilities(AbstractClientPlayerEntity clientPlayer)
@@ -103,8 +108,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             playermodel.bipedHeadwear.showModel = true;
         }
         else
-        {
-         
+        {      
             playermodel.setVisible(true);
             playermodel.bipedHeadwear.showModel = clientPlayer.isWearing(PlayerModelPart.HAT);
             playermodel.bipedBodyWear.showModel = clientPlayer.isWearing(PlayerModelPart.JACKET);
@@ -112,7 +116,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             playermodel.bipedRightLegwear.showModel = clientPlayer.isWearing(PlayerModelPart.RIGHT_PANTS_LEG);
             playermodel.bipedLeftArmwear.showModel = clientPlayer.isWearing(PlayerModelPart.LEFT_SLEEVE);
             playermodel.bipedRightArmwear.showModel = clientPlayer.isWearing(PlayerModelPart.RIGHT_SLEEVE);
-            playermodel.isSneak = clientPlayer.isCrouching();
+            playermodel.isSneak = clientPlayer.isCrouching() && !clientPlayer.isActualySwimming();
             BipedModel.ArmPose bipedmodel$armpose = func_241741_a_(clientPlayer, Hand.MAIN_HAND);
             BipedModel.ArmPose bipedmodel$armpose1 = func_241741_a_(clientPlayer, Hand.OFF_HAND);
 

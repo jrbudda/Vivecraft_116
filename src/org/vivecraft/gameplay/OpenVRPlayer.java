@@ -10,6 +10,7 @@ import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.gameplay.screenhandlers.RadialHandler;
 import org.vivecraft.gameplay.trackers.BowTracker;
 import org.vivecraft.gameplay.trackers.Tracker;
+import org.vivecraft.gameplay.trackers.VehicleTracker;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRSettings;
@@ -22,9 +23,12 @@ import net.minecraft.client.particle.DiggingParticle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BowItem;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.EggItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.SnowballItem;
 import net.minecraft.item.SpawnEggItem;
@@ -115,7 +119,7 @@ public class OpenVRPlayer
 	}
 
 	public void preTick(){
-	
+		this.onTick = true;
 		this.vrdata_world_pre = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
 		//adjust world scale
@@ -150,9 +154,6 @@ public class OpenVRPlayer
 		if(mc.vrSettings.seated && !mc.gameRenderer.isInMenuRoom())
 			mc.vrSettings.vrWorldRotation = MCOpenVR.seatedRot;
 
-		//setup the player entity with the correct view for the logic tick.
-		doLookOverride(vrdata_world_pre);
-
 	}
   
 	public void postTick(){
@@ -176,11 +177,11 @@ public class OpenVRPlayer
 		this.vrdata_world_post = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
 		//Vivecraft - setup the player entity with the correct view for the logic tick.
-		doLookOverride(vrdata_world_post);
-		////
+		doPermanantLookOverride(mc.player, vrdata_world_post);
+		//
 
 		NetworkHelper.sendVRPlayerPositions(this);
-
+		this.onTick = false;
 	}
 
 	public void preRender(float par1){
@@ -230,21 +231,19 @@ public class OpenVRPlayer
 	}
 
 	public void postRender(float par1){
-		//insurance.
-		vrdata_world_render = null; 		
 	}
 
-
+	private boolean onTick; 
 	public void setRoomOrigin(double x, double y, double z, boolean reset) { 
 
-		if(!reset && vrdata_world_render != null){
-			if (Util.milliTime() - errorPrintTime >= 1000) { // Only print once per second, since this might happen every frame
-				System.out.println("Vivecraft Warning: Room origin set too late! Printing call stack:");
-				Thread.dumpStack();
-				errorPrintTime = Util.milliTime();
-			}
-			return;
-		}
+//		if(!reset && !onTick){
+//			if (Util.milliTime() - errorPrintTime >= 1000) { // Only print once per second, since this might happen every frame
+//				System.out.println("Vivecraft Warning: Room origin set wrongly! Printing call stack:");
+//				Thread.dumpStack();
+//				errorPrintTime = Util.milliTime();
+//			}
+//			return;
+//		}
 
 		if (reset){
 			if(vrdata_world_pre!=null)
@@ -338,22 +337,7 @@ public class OpenVRPlayer
 				}
 			}
 		}
-
-		if(mc.vrSettings.vrAllowCrawling){         
-			//experimental
-			//           topofhead = (double) (mc.vrPlayer.getHMDPos_Room().y + .05);
-			//           
-			//           if(topofhead < .5) {topofhead = 0.5f;}
-			//           if(topofhead > 1.8) {topofhead = 1.8f;}
-			//           
-			//           player.height = (float) topofhead - 0.05f;
-			//           player.spEyeHeight = player.height - 1.62f;
-			//           player.boundingBox.setMaxY( player.boundingBox.minY +  topofhead);  	   
-		} else {
-			//    	   player.height = 1.8f;
-			//    	   player.spEyeHeight = 0.12f;
-		}
-		
+	
 		if(player.isPassenger()){
 			Entity e = mc.player.getRidingEntity();		
 			if (e instanceof AbstractHorseEntity) {
@@ -363,7 +347,7 @@ public class OpenVRPlayer
 					  mc.vehicleTracker.rotationCooldown = 10;
 				}
 			}else if (e instanceof MobEntity) {
-				MobEntity el = (MobEntity) e; //this is just pigs in vanilla
+				MobEntity el = (MobEntity) e; //pigs and striders.
 				if (el.canBeSteered()){
 					el.renderYawOffset = vrdata_world_pre.getBodyYaw();
 				    mc.vehicleTracker.rotationCooldown = 10;
@@ -385,18 +369,19 @@ public class OpenVRPlayer
 		if(mc.jumpTracker.isjumping()) return; //
 		if(mc.climbTracker.isGrabbingLadder()) return; //
 		if(!player.isAlive()) return; //
+			
+		VRData temp = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, this.vrdata_world_pre.rotation_radians);
 		
 		if(mc.vehicleTracker.canRoomscaleDismount(mc.player)) {
 			Vector3d mountpos = mc.player.getRidingEntity().getPositionVec();
-			Vector3d tp = vrdata_world_pre.getHeadPivot();
+			Vector3d tp = temp.getHeadPivot();
 			double dist = Math.sqrt((tp.x - mountpos.x) * (tp.x - mountpos.x) + (tp.z - mountpos.z) *(tp.z - mountpos.z));
-			if (dist > 0.85) {
+			//TODO: The timing on this is wrong, I think.
+			if (dist > 1.0) {
 				mc.sneakTracker.sneakCounter = 5;
 			}	
 			return; 
 		}
-		
-		VRData temp = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, this.vrdata_world_pre.rotation_radians);
 		//if(Math.abs(player.motionX) > 0.01) return;
 		//if(Math.abs(player.motionZ) > 0.01) return;
 
@@ -624,75 +609,71 @@ public class OpenVRPlayer
 				"\r\n \t world_render " + this.vrdata_world_render ;	
 	}
 
-
-	public void doLookOverride(VRData data){
-		ClientPlayerEntity entity = this.mc.player;
-		if(entity == null)return;
-		//This is used for all sorts of things both client and server side.
-
-		if(false){  //hmm, to use HMD? literally never.
-			//set model view direction to camera
-			//entity.rotationYawHead = entity.rotationYaw = (float)mc.vrPlayer.getHMDYaw_World();
-			//entity.rotationPitch = (float)mc.vrPlayer.getHMDPitch_World();
-		} else { //default to looking 'at' the crosshair position.
-			if(mc.gameRenderer.crossVec != null){
-				Vector3d playerToCrosshair = entity.getEyePosition(1).subtract(mc.gameRenderer.crossVec); //backwards
-				double what = playerToCrosshair.y/playerToCrosshair.length();
-				if(what > 1) what = 1;
-				if(what < -1) what = -1;
-				float pitch = (float)Math.toDegrees(Math.asin(what));
-				float yaw = (float)Math.toDegrees(Math.atan2(playerToCrosshair.x, -playerToCrosshair.z));    
-				entity.rotationYaw = entity.rotationYawHead = yaw;
-				entity.rotationPitch = pitch;
-			}
+	public Vector3d getRightClickLookOverride(PlayerEntity entity, int c) {
+		Vector3d out = entity.getLookVec();
+		
+		if(mc.gameRenderer.crossVec != null){
+			out = entity.getEyePosition(1).subtract(mc.gameRenderer.crossVec).normalize().inverse(); //backwards
 		}
 		
-		ItemStack i = ((ClientPlayerEntity) entity).inventory.getCurrentItem();
+		ItemStack i = c == 0 ? entity.getHeldItemMainhand() : entity.getHeldItemOffhand();
 
-		if((entity.isSprinting() && entity.movementInput.jump) || entity.isElytraFlying() || (entity.isSwimming() && entity.moveForward > 0) || (entity.isPassenger() && entity.moveForward > 0)){
-			//needed for server side movement.
-			if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_HMD ){
-				entity.rotationYawHead = entity.rotationYaw = data.hmd.getYaw();
-				entity.rotationPitch = -data.hmd.getPitch();
-			}else{
-				entity.rotationYawHead = entity.rotationYaw = data.getController(1).getYaw();
-				entity.rotationPitch = -data.getController(1).getPitch();
-			}
-		} else if(i.getItem() instanceof SnowballItem ||
+		if(i.getItem() instanceof SnowballItem ||
 				i.getItem() instanceof EggItem ||
 				i.getItem() instanceof SpawnEggItem ||
 				i.getItem() instanceof PotionItem ||
+				i.getItem() instanceof BowItem ||
 				(i.getItem() instanceof CrossbowItem && ((CrossbowItem)i.getItem()).isCharged(i))
 				) { //TODO: Check for others?
 			//use r_hand aim
-			entity.rotationYawHead = entity.rotationYaw =  data.getController(0).getYaw();
-			entity.rotationPitch = -data.getController(0).getPitch();
-		} else if (BowTracker.isHoldingBowEither(entity) && mc.bowTracker.isNotched()){
-			//use bow aim
+			VRData data = mc.vrPlayer.vrdata_world_pre;
+			out = data.getController(c).getDirection();		
+			
 			Vector3d aim = mc.bowTracker.getAimVector(); //this is actually reversed
-			if (aim != null && aim.lengthSquared() > 0) {
-				float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.length()));
-				float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   		
-				entity.rotationYaw = (float)yaw;
-				entity.rotationPitch = (float)pitch;
-				entity.rotationYawHead = yaw;	
+			if (mc.bowTracker.isNotched() && aim != null && aim.lengthSquared() > 0) {
+				out = aim.inverse();
 			}
+		} 
+		else if  (i.getItem() == Items.BUCKET){
+			if(mc.interactTracker.bukkit[c])
+				out = entity.getEyePosition(1).subtract(mc.vrPlayer.vrdata_world_pre.getController(c).getPosition()).normalize().inverse(); //backwards
+		}
+
+		return out;
+	}
+	
+	public void doPermanantLookOverride(ClientPlayerEntity entity, VRData data){
+		if(entity == null)return;
+		//This is used for all sorts of things both client and server side.
+
+		if(true){  //hmm, to use HMD? LETS TRY IT!
+			//set model view direction to camera
+			entity.rotationYawHead = entity.rotationYaw = data.hmd.getYaw();
+			entity.rotationPitch = -data.hmd.getPitch();
+		} else { //default to looking 'at' the crosshair position.
+
 		}	
 
-		if(mc.swingTracker.shouldIlookatMyHand[0]){
-			Vector3d playerToMain = entity.getEyePosition(1).subtract(data.getController(0).getPosition()); //backwards
-			float pitch =(float)Math.toDegrees(Math.asin(playerToMain.y/playerToMain.length()));
-			float yaw = (float)Math.toDegrees(Math.atan2(playerToMain.x,-playerToMain.z));    
-			entity.rotationYawHead  = entity.rotationYaw = yaw;
-			entity.rotationPitch = pitch;
+		if((entity.isSprinting() && entity.movementInput.jump) || entity.isElytraFlying() || (entity.isSwimming() && entity.moveForward > 0)){
+			//needed for server side movement.
+			if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_HMD ){
+				entity.rotationYaw = data.hmd.getYaw();
+				entity.rotationPitch = -data.hmd.getPitch();
+			}else{
+				entity.rotationYaw = data.getController(1).getYaw();
+				entity.rotationPitch = -data.getController(1).getPitch();
+			}
+		} 
+
+		if(entity.isPassenger()) {
+			//needed for server side movement.
+			Vector3d dir = VehicleTracker.getSteeringDirection(entity);
+			if(dir != null) {
+				entity.rotationPitch = (float)Math.toDegrees(Math.asin(-dir.y/dir.length()));
+				entity.rotationYaw = (float)Math.toDegrees(Math.atan2(-dir.x,dir.z));
+			}
 		}
-		else if(mc.swingTracker.shouldIlookatMyHand[1]){
-			Vector3d playerToMain = entity.getEyePosition(1).subtract(data.getController(1).getPosition()); //backwards
-			float pitch = (float)Math.toDegrees(Math.asin(playerToMain.y/playerToMain.length()));
-			float yaw = (float)Math.toDegrees(Math.atan2(playerToMain.x, -playerToMain.z));    
-			entity.rotationYawHead  = entity.rotationYaw = yaw;
-			entity.rotationPitch = pitch;
-		}
+		
 	}
 
 	public Vector3d AimedPointAtDistance(VRData source, int controller, double distance) {
@@ -701,13 +682,14 @@ public class OpenVRPlayer
         return vec3d.add(vec3d1.x * distance, vec3d1.y * distance, vec3d1.z * distance);
 	}
 	
-    public RayTraceResult rayTraceBlocksVR(VRData source, int controller, double blockReachDistance, boolean p_174822_4_)
-    {
-        Vector3d vec3d = source.getController(controller).getPosition();
-        Vector3d vec3d2 = AimedPointAtDistance(source, controller, blockReachDistance);
-        return mc.world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d2, RayTraceContext.BlockMode.OUTLINE, p_174822_4_ ? RayTraceContext.FluidMode.ANY : RayTraceContext.FluidMode.NONE, mc.player));
-    }
-    	public boolean isTeleportSupported() {
+	public RayTraceResult rayTraceBlocksVR(VRData source, int controller, double blockReachDistance, boolean p_174822_4_)
+	{
+		Vector3d vec3d = source.getController(controller).getPosition();
+		Vector3d vec3d2 = AimedPointAtDistance(source, controller, blockReachDistance);
+		return mc.world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d2, RayTraceContext.BlockMode.OUTLINE, p_174822_4_ ? RayTraceContext.FluidMode.ANY : RayTraceContext.FluidMode.NONE, mc.player));
+	}
+	
+	public boolean isTeleportSupported() {
 		return !noTeleportClient;
 	}
 

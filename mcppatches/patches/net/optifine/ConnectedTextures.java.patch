@@ -1,6 +1,6 @@
 --- a/net/optifine/ConnectedTextures.java
 +++ b/net/optifine/ConnectedTextures.java
-@@ -2309,7 +2309,7 @@
+@@ -2303,7 +2303,7 @@
              }
          }
  
@@ -9,7 +9,7 @@
          Set set1 = new HashSet();
          Set set = new HashSet();
  
-@@ -2332,17 +2332,17 @@
+@@ -2326,17 +2326,17 @@
          return !set1.isEmpty();
      }
  
@@ -32,7 +32,7 @@
                  aconnectedproperties[i] = aconnectedproperties1;
              }
          }
-@@ -2406,15 +2406,15 @@
+@@ -2400,15 +2400,15 @@
              list.add((Object)null);
          }
  
@@ -53,7 +53,7 @@
      }
  
      private static String[] getDefaultCtmPaths()
-@@ -2435,7 +2435,7 @@
+@@ -2429,7 +2429,7 @@
              addDefaultLocation(list, "textures/block/" + s + "_stained_glass.png", s1 + "_glass_" + s + "/glass_pane_" + s + ".properties");
          }
  

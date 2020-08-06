@@ -268,7 +268,7 @@
      public void renderItemInFirstPerson(float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, ClientPlayerEntity playerEntityIn, int combinedLightIn)
      {
          float f = playerEntityIn.getSwingProgress(partialTicks);
-@@ -310,186 +430,413 @@
+@@ -310,186 +430,420 @@
          bufferIn.finish();
      }
  
@@ -824,11 +824,17 @@
 +    				this.transformFirstPersonVR(matrixStackIn, handside, swingProgress);
 +
 +    			this.itemRenderer.isfphand = true;
-+
-+    			matrixStackIn.rotate(prerotation);
-+    			matrixStackIn.translate(translateX, translateY, translateZ);
-+    			matrixStackIn.rotate(rotation);
-+    			matrixStackIn.scale((float)scale, (float)scale,(float)scale);
++    			
++				ItemCameraTransforms.TransformType transform = flag ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : mirror ? ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
++			
++				if(stack.hasTag() && stack.getTag().getInt("CustomModelData") > 0) {
++					transform = ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND;
++				} else {
++	    			matrixStackIn.rotate(prerotation);
++	    			matrixStackIn.translate(translateX, translateY, translateZ);
++	    			matrixStackIn.rotate(rotation);
++	    			matrixStackIn.scale((float)scale, (float)scale,(float)scale);
++				}
 +
 +    			if(isFilledMap)  {
 +    				RenderSystem.disableCull(); //dont. get. me. started.
@@ -849,8 +855,9 @@
 +    				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180));
 +    				mc.gameRenderer.DrawScopeFB(matrixStackIn, handIn == Hand.MAIN_HAND ? 0 :1);
 +    				matrixStackIn.pop();
-+    			}else
-+    				this.renderItemSide(player, stack, flag ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : mirror ? ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, mirror, matrixStackIn, bufferIn, combinedLightIn);
++    			}else {
++    				this.renderItemSide(player, stack,transform, mirror, matrixStackIn, bufferIn, combinedLightIn);
++    			}
 +
 +    			this.itemRenderer.isfphand = false;
 +
@@ -861,7 +868,7 @@
      }
  
      public void tick()
-@@ -571,4 +918,120 @@
+@@ -571,4 +925,120 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }

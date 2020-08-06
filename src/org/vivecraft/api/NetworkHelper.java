@@ -22,6 +22,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CCustomPayloadPacket;
+import net.minecraft.network.play.client.CPlayerPacket;
 import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
@@ -258,4 +259,21 @@ public class NetworkHelper {
 		}
 	}
 	
+	private static float capturedYaw, capturedPitch;
+	private static boolean overrideActive;
+	public static void overrideLook(PlayerEntity player, Vector3d view) {
+		if(serverWantsData) return; // shouldn't be needed, don't tease the anti-cheat.
+        capturedPitch = player.rotationPitch;
+        capturedYaw = player.rotationYaw;
+		float pitch =(float)Math.toDegrees(Math.asin(-view.y/view.length()));
+		float yaw = (float)Math.toDegrees(Math.atan2(-view.x,view.z));    
+		((ClientPlayerEntity)player).connection.sendPacket(new CPlayerPacket.RotationPacket(yaw, pitch, player.isOnGround()));
+        overrideActive = true;
+	}
+	public static void restoreLook(PlayerEntity player) {
+		if(serverWantsData) return; // shouldn't be needed, don't tease the anti-cheat.
+		if(!overrideActive) return; //wat
+        ((ClientPlayerEntity)player).connection.sendPacket(new CPlayerPacket.RotationPacket(capturedYaw, capturedPitch, player.isOnGround()));
+        overrideActive = false;
+	}
 }

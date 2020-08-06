@@ -1,13 +1,16 @@
 package org.vivecraft.gameplay.trackers;
 
+import org.vivecraft.api.VRData.VRDevicePose;
 import org.vivecraft.provider.MCOpenVR;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.item.minecart.MinecartEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
+import net.minecraft.item.OnAStickItem;
 import net.minecraft.util.math.vector.Vector3d;
 
 
@@ -44,6 +47,29 @@ public class VehicleTracker extends Tracker {
 	}
 	
 	public int rotationCooldown = 0; 
+	
+	public static Vector3d getSteeringDirection(ClientPlayerEntity player) {
+		Vector3d out = null;
+		Entity e = player.getRidingEntity();
+		Minecraft mc = Minecraft.getInstance();			
+		if (e instanceof AbstractHorseEntity || e instanceof BoatEntity) {
+			if (player.moveForward > 0){
+				if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_HMD ){
+					return mc.vrPlayer.vrdata_world_pre.hmd.getDirection();
+				}else{
+					return mc.vrPlayer.vrdata_world_pre.getController(0).getDirection();
+				}			
+			}
+		}else if (e instanceof MobEntity) {
+			MobEntity el = (MobEntity) e; //pigs and striders
+			if (el.canBeSteered()){
+				int c = (player.getHeldItemMainhand().getItem() instanceof OnAStickItem) ? 0 : 1;
+				VRDevicePose con = mc.vrPlayer.vrdata_world_pre.getController(c);
+				return con.getPosition().add(con.getDirection().scale(0.3)).subtract(e.getPositionVec()).normalize();
+			}
+		}	
+		return out;
+	}
 	
 	@Override
 	public void doProcess(ClientPlayerEntity player){

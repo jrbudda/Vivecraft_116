@@ -492,7 +492,7 @@
 +    			}
 +
 +    			if(mc.currentPass != RenderPass.THIRD || mc.vrSettings.mixedRealityRenderHands){
-+    				renderMainMenuHands(partialTicks, true);
++    				renderVRHands(partialTicks, true, true, true, true);
 +    			}
 +
 +    			RenderSystem.popMatrix();
@@ -811,7 +811,7 @@
          }
      }
  
-@@ -1320,4 +1350,2177 @@
+@@ -1320,4 +1350,2187 @@
      {
          return this.overlayTexture;
      }
@@ -1341,28 +1341,28 @@
 +
 +  			this.lightmapTexture.setAllowed(true);
 +  		} //end !skipRenderWorld
-+	
-+	  		// VIVE added debug info to HUD
-+	  		if (mc.gameSettings.showDebugProfilerChart && !mc.gameSettings.hideGUI)
-+	  		{
-+	  			mc.drawProfiler();
-+	  		}
-+	  		
-+	        this.frameFinish();
-+	        this.waitForServerThread();
-+	        MemoryMonitor.update();
-+	        Lagometer.updateLagometer();
-+	        
-+	        if (this.mc.gameSettings.ofProfiler)
-+	        {
-+	            this.mc.gameSettings.showDebugProfilerChart = true;
-+	        }
-+	        
-+	  		this.mc.getFramebuffer().bindFramebufferTexture();
-+	  		this.mc.getFramebuffer().genMipMaps();
-+	  		this.mc.getFramebuffer().unbindFramebufferTexture();
-+	  		
-+	  	RenderSystem.matrixMode(5889);
++
++  		// VIVE added debug info to HUD
++  		if (mc.gameSettings.showDebugProfilerChart && !mc.gameSettings.hideGUI)
++  		{
++  			mc.drawProfiler();
++  		}
++
++  		this.frameFinish();
++  		this.waitForServerThread();
++  		MemoryMonitor.update();
++  		Lagometer.updateLagometer();
++
++  		if (this.mc.gameSettings.ofProfiler)
++  		{
++  			this.mc.gameSettings.showDebugProfilerChart = true;
++  		}
++
++  		this.mc.getFramebuffer().bindFramebufferTexture();
++  		this.mc.getFramebuffer().genMipMaps();
++  		this.mc.getFramebuffer().unbindFramebufferTexture();
++
++  		RenderSystem.matrixMode(5889);
 +  		RenderSystem.popMatrix();
 +  		RenderSystem.matrixMode(5888);
 +  		RenderSystem.popMatrix();
@@ -2096,13 +2096,13 @@
 +  	//old and busted
 +  	private void applyVRModelViewLegacy(RenderPass currentPass)
 +  	{ 		
-+  		if(mc == null) System.out.println("mc is null");
-+  		if(mc.vrPlayer == null) System.out.println("mc.vrPlayer is null");
-+  		if(mc.vrPlayer.vrdata_world_render == null) System.out.println("mc.vrPlayer.vrdata_world_render is null");
-+  		if(mc.vrPlayer.vrdata_world_render.getEye(currentPass) == null) System.out.println("mc.vrPlayer.vrdata_world_render.getEye(currentPass) is null");
-+  		if(mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix() == null) System.out.println("mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix() is null");
++//  		if(mc == null) System.out.println("mc is null");
++//  		if(mc.vrPlayer == null) System.out.println("mc.vrPlayer is null");
++//  		if(mc.vrPlayer.vrdata_world_render == null) System.out.println("mc.vrPlayer.vrdata_world_render is null");
++//  		if(mc.vrPlayer.vrdata_world_render.getEye(currentPass) == null) System.out.println("mc.vrPlayer.vrdata_world_render.getEye(currentPass) is null");
++//  		if(mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix() == null) System.out.println("mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix() is null");
 +  		FloatBuffer fb = mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().toFloatBuffer();
-+  		if(mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().toFloatBuffer() == null) System.out.println("mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().toFloatBuffer() is null");		
++//  		if(mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().toFloatBuffer() == null) System.out.println("mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().toFloatBuffer() is null");		
 +  		GL11.glMultMatrixf(fb);	
 +  	}  	
 +  	
@@ -2499,24 +2499,40 @@
 +    }
 +    
 +
-+    void renderVRHands(boolean translucentSecondPass, float partialTicks) {
++    void renderVRHands(float partialTicks, boolean renderright, boolean renderleft, boolean menuhandright, boolean menuhandleft) {
 +    	this.mc.getProfiler().startSection("hands");
 +
 +    	//Render Physical Inventories
-+    	mc.physicalGuiManager.doRender(partialTicks);
++    	//mc.physicalGuiManager.doRender(partialTicks);
 +    	//
-+
-+    	this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
-+    	RenderSystem.loadIdentity();
-+
-+    	MatrixStack mat = new MatrixStack();
-+    	mat.getLast().getMatrix().setIdentity();
-+    	applyVRModelView(mc.currentPass, mat);
-+    	mc.getItemRenderer().ismainhand = true;
-+    	this.renderVRHand_Main(mat, partialTicks);
-+    	mc.getItemRenderer().ismainhand = false;
-+    	this.renderVRHand_Offhand(partialTicks, !translucentSecondPass, mat);
-+
++    	
++    	if(renderright) {
++	    	mc.getItemRenderer().ismainhand = true;
++	    	if(menuhandright) {
++	    		renderMainMenuHand(0, partialTicks, false);
++	    	} else {
++	    		this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
++	    		RenderSystem.loadIdentity();
++	    		MatrixStack mat = new MatrixStack();
++	    		mat.getLast().getMatrix().setIdentity();
++	    		applyVRModelView(mc.currentPass, mat); 	
++	    		this.renderVRHand_Main(mat, partialTicks);
++	    	}
++	    	mc.getItemRenderer().ismainhand = false;
++    	}
++    	
++    	if(renderleft) {
++	    	if(menuhandleft) {
++	    		renderMainMenuHand(1, partialTicks, false);
++	    	} else {
++	    		this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
++	    		RenderSystem.loadIdentity();
++	    		MatrixStack mat = new MatrixStack();
++	    		mat.getLast().getMatrix().setIdentity();
++	    		applyVRModelView(mc.currentPass, mat); 	
++	        	this.renderVRHand_Offhand(partialTicks, true, mat);
++	    	}
++    	}
 +    	this.mc.getProfiler().endSection();
 +    }
 +    
@@ -2688,73 +2704,71 @@
 + 		}
 + 	}
 +
-+  	void renderMainMenuHands(float partialTicks, boolean depthAlways)
++  	void renderMainMenuHand(int c, float partialTicks, boolean depthAlways)
 +  	{		
-+            this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
++  		this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
 +
-+            RenderSystem.matrixMode(GL11.GL_MODELVIEW);
-+  			RenderSystem.pushMatrix();
-+  				RenderSystem.loadIdentity();
-+  		
-+  				RenderSystem.disableTexture();
-+				RenderSystem.disableAlphaTest();	
-+				RenderSystem.enableDepthTest();
++  		RenderSystem.matrixMode(GL11.GL_MODELVIEW);
++  		RenderSystem.pushMatrix();
++	  		RenderSystem.loadIdentity();
 +	
-+  				applyVRModelViewLegacy(mc.currentPass);
-+
-+                //Shaders goes crazy without this
-+  				if (mc.loadingGui == null)
-+  					mc.getTextureManager().bindTexture(new ResourceLocation("vivecraft:textures/white.png"));
-+  							
-+  				Tessellator tes = Tessellator.getInstance();
-+  		
-+  				for (int c=0;c<2;c++)
-+  				{				
-+  					if(depthAlways && c == 0) //this ensures the pointer hand is visble while not interfering with the other hand.
-+  						RenderSystem.depthFunc(GL11.GL_ALWAYS);		
-+  					else
-+  						RenderSystem.depthFunc(GL11.GL_LEQUAL);		
-+  					
-+  					Vector3i color = new Vector3i((200 - 127 * c), (200 - 127 * c), (200 - 127 * c));
-+  					byte alpha = (byte) 255;
-+  					
-+  					RenderSystem.pushMatrix();
-+	  										
-+  						SetupRenderingAtControllerLegacy(c);
-+	  									
-+	  						Vector3d start = new Vector3d(0,0,0);
-+	  			
-+	  						Vector3d dir = mc.vrPlayer.vrdata_world_render.getController(c).getDirection();
-+	  						Vector3d up = mc.vrPlayer.vrdata_world_render.getController(c).getCustomVector(new Vector3d(0, 1, 0));
-+	  				
-+	  						float sc = mc.vrPlayer.vrdata_world_render.worldScale;
-+	  					
-+	  						up = new Vector3d(0,1,0);
-+	  						dir = new Vector3d(0,0,-1);
-+	  						
-+	  						Vector3d end = new Vector3d(
-+	  								start.x - dir.x*.18*sc,
-+	  								start.y - dir.y*.18*sc,
-+	  								start.z - dir.z*.18*sc);
-+	  						
-+	  			           if(mc.world!= null) {
-+	  			        	  float light = mc.world.getLight(new BlockPos(mc.vrPlayer.vrdata_world_render.hmd.getPosition()));
-+		  			          int minLight = Config.isShaders() ? 8 : 4;
-+		  			          if (light < minLight) light = minLight;
-+	  			        	  float lightpercent = light / mc.world.getMaxLightLevel();
-+	  			        	  color = new Vector3i(color.getX() * lightpercent, color.getY() * lightpercent, color.getZ() * lightpercent);
-+	  			           }
-+	  			            
-+	  						tes.getBuffer().begin(7, DefaultVertexFormats.POSITION_COLOR_NORMAL);
-+	  						renderBox(tes, start, end, -0.02f*sc, 0.02f*sc, -0.0125f*sc, 0.0125f*sc, up, color, alpha);
-+	  						tes.getBuffer().finishDrawing();
-+	  						WorldVertexBufferUploader.draw(tes.getBuffer());
-+  						RenderSystem.popMatrix();     
-+  				}		
-+  			
-+  				RenderSystem.enableTexture();
-+  				RenderSystem.popMatrix();
-+  				RenderSystem.depthFunc(GL11.GL_LEQUAL);
++	  		RenderSystem.disableTexture();
++	  		RenderSystem.disableAlphaTest();	
++	  		RenderSystem.enableDepthTest();
++	
++	  		applyVRModelViewLegacy(mc.currentPass);
++	
++	  		//Shaders goes crazy without this
++	  		if (mc.loadingGui == null)
++	  			mc.getTextureManager().bindTexture(new ResourceLocation("vivecraft:textures/white.png"));
++	
++	  		Tessellator tes = Tessellator.getInstance();
++	
++	
++	  		if(depthAlways && c == 0) //this ensures the pointer hand is visble while not interfering with the other hand.
++	  			RenderSystem.depthFunc(GL11.GL_ALWAYS);		
++	  		else
++	  			RenderSystem.depthFunc(GL11.GL_LEQUAL);		
++	
++	  		Vector3i color = new Vector3i((200 - 127 * c), (200 - 127 * c), (200 - 127 * c));
++	  		byte alpha = (byte) 255;
++	
++	  		RenderSystem.pushMatrix();
++	
++	  		SetupRenderingAtControllerLegacy(c);
++	
++	  		Vector3d start = new Vector3d(0,0,0);
++	
++	  		Vector3d dir = mc.vrPlayer.vrdata_world_render.getController(c).getDirection();
++	  		Vector3d up = mc.vrPlayer.vrdata_world_render.getController(c).getCustomVector(new Vector3d(0, 1, 0));
++	
++	  		float sc = mc.vrPlayer.vrdata_world_render.worldScale;
++	
++	  		up = new Vector3d(0,1,0);
++	  		dir = new Vector3d(0,0,-1);
++	
++	  		Vector3d end = new Vector3d(
++	  				start.x - dir.x*.18*sc,
++	  				start.y - dir.y*.18*sc,
++	  				start.z - dir.z*.18*sc);
++	
++	  		if(mc.world!= null) {
++	  			float light = mc.world.getLight(new BlockPos(mc.vrPlayer.vrdata_world_render.hmd.getPosition()));
++	  			int minLight = Config.isShaders() ? 8 : 4;
++	  			if (light < minLight) light = minLight;
++	  			float lightpercent = light / mc.world.getMaxLightLevel();
++	  			color = new Vector3i(color.getX() * lightpercent, color.getY() * lightpercent, color.getZ() * lightpercent);
++	  		}
++	
++	  		tes.getBuffer().begin(7, DefaultVertexFormats.POSITION_COLOR_NORMAL);
++	  		renderBox(tes, start, end, -0.02f*sc, 0.02f*sc, -0.0125f*sc, 0.0125f*sc, up, color, alpha);
++	  		tes.getBuffer().finishDrawing();
++	  		WorldVertexBufferUploader.draw(tes.getBuffer());
++	  		RenderSystem.popMatrix();     
++	
++	  		RenderSystem.enableTexture();
++  		RenderSystem.popMatrix();
++  		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 +  	}
 +
 +    
@@ -2799,7 +2813,7 @@
 +      		if(RadialHandler.isShowing())
 +      			render2D(par1, RadialHandler.Framebuffer, RadialHandler.Pos_room, RadialHandler.Rotation_room, true);
 +        	if(inBlock >= 1) 
-+        		renderMainMenuHands(par1, true);
++        		renderVRHands(par1, true, true, true, true);
 +    	}
 +    	
 +    	if (shadersMod) {
@@ -2903,7 +2917,7 @@
 +    	RenderSystem.disableBlend();
 +    }
 +    
-+    public void renderVRFabulous(float partialTicks, WorldRenderer worldrendererin) {
++    public void renderVRFabulous(float partialTicks, WorldRenderer worldrendererin, boolean menuhandright, boolean menuhandleft) {
 +        this.mc.getProfiler().endStartSection("VR");
 +
 +        renderCrosshairAtDepth(!this.mc.vrSettings.useCrosshairOcclusion);
@@ -2913,15 +2927,19 @@
 +        worldrendererin.alphaSortVROccludedFramebuffer.func_237506_a_(this.mc.getFramebuffer());
 +        worldrendererin.alphaSortVROccludedFramebuffer.bindFramebuffer(true);
 +
-+          if(shouldOccludeGui())
++        if(shouldOccludeGui()) {
 +        	renderGuiLayer(partialTicks, false);
-+        
++      		renderVrShadow(partialTicks, false);
++        }
++
 +        worldrendererin.alphaSortVRUnoccludedFramebuffer.framebufferClear(Minecraft.IS_RUNNING_ON_MAC);
 +        //no dont do it. this.alphaSortVRUnoccludedFramebuffer.func_237506_a_(this.mc.getFramebuffer());
 +        worldrendererin.alphaSortVRUnoccludedFramebuffer.bindFramebuffer(true);
-+               
-+        if(!shouldOccludeGui())
++
++        if(!shouldOccludeGui()) {
 +        	renderGuiLayer(partialTicks, false);
++      		renderVrShadow(partialTicks, false);
++        }
 +        
 +  		if(KeyboardHandler.Showing) {
 +  			if (mc.vrSettings.physicalKeyboard)
@@ -2934,19 +2952,17 @@
 +  			render2D(partialTicks, RadialHandler.Framebuffer, RadialHandler.Pos_room, RadialHandler.Rotation_room, false);
 +    
 +  		renderVRSelfEffects(partialTicks);
-+  		renderVrShadow(partialTicks, false);
 +  		renderVRThirdPersonCamWidget();
 +  		
-+    	boolean menuHands = isInMenuRoom() || mc.currentScreen != null || KeyboardHandler.Showing;
-+    	if (menuHands && shouldRenderHands()) 
-+    		renderMainMenuHands(partialTicks, false);
++  		boolean should = shouldRenderHands();
 +  		
++    	renderVRHands(partialTicks, should && menuhandright, should && menuhandleft, true, true);
++	
 +    	worldrendererin.alphaSortVRHandsFramebuffer.framebufferClear(Minecraft.IS_RUNNING_ON_MAC);
 +    	worldrendererin.alphaSortVRHandsFramebuffer.func_237506_a_(this.mc.getFramebuffer());
 +    	worldrendererin.alphaSortVRHandsFramebuffer.bindFramebuffer(true);
 +        
-+    	if (!menuHands && shouldRenderHands())
-+    		renderVRHands(false, partialTicks);
++    	renderVRHands(partialTicks, should && !menuhandright, should && !menuhandleft, false, false);
 +
 +        RenderSystem.enableTexture();
 +        RenderSystem.defaultBlendFunc();
@@ -2957,11 +2973,11 @@
 +        mc.getFramebuffer().bindFramebuffer(true);
 +    }
 +    
-+    public void renderVrFast(float partialTicks, boolean secondpass) {
++    public void renderVrFast(float partialTicks, boolean secondpass, boolean menuright, boolean menuleft) {
 +        this.mc.getProfiler().endStartSection("VR");
 +        lightmapTexture.disableLightmap();
 +        
-+    	if(secondpass) renderVrShadow(partialTicks, true);
++    	if(secondpass) renderVrShadow(partialTicks, !shouldOccludeGui());
 +        if(!secondpass) renderCrosshairAtDepth(!mc.vrSettings.useCrosshairOcclusion);
 +        if(!secondpass) renderVRThirdPersonCamWidget();	
 +    	
@@ -2975,14 +2991,8 @@
 +  		if(secondpass && RadialHandler.isShowing())
 +  			render2D(partialTicks, RadialHandler.Framebuffer, RadialHandler.Pos_room, RadialHandler.Rotation_room, !shouldOccludeGui());
 +
-+    	boolean menuHands = mc.currentScreen != null || KeyboardHandler.Showing;
-+    	
-+    	if(shouldRenderHands()) {
-+	    	if (menuHands) 
-+	    		renderMainMenuHands(partialTicks, false);
-+	    	else 
-+	    		renderVRHands(false, partialTicks);
-+    	}
++   	
++	    renderVRHands(partialTicks, shouldRenderHands(), shouldRenderHands(), menuright, menuleft);
 +    	
 +    	renderVRSelfEffects(partialTicks);
 +    }

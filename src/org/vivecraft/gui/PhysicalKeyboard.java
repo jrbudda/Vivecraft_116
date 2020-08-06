@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.util.Tuple;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.vivecraft.control.ControllerType;
@@ -37,12 +39,21 @@ public class PhysicalKeyboard {
 	private boolean shiftSticky;
 	private List<KeyButton> keys;
 
-	private int rows = 4;
-	private int columns = 13;
-	private float spacing = .008f;
-	private float keyWidth = .05f;
-	private float keyHeight = .05f;
-	private float keyWidthSpecial = keyWidth * 2 + spacing;
+	// base values
+	private static final int ROWS = 4;
+	private static final int COLUMNS = 13;
+	private static final float SPACING = .0056f;
+	private static final float KEY_WIDTH = .035f;
+	private static final float KEY_HEIGHT = .035f;
+	private static final float KEY_WIDTH_SPECIAL = KEY_WIDTH * 2 + SPACING;
+
+	private int rows;
+	private int columns;
+	private float spacing;
+	private float keyWidth;
+	private float keyHeight;
+	private float keyWidthSpecial;
+	private float scale = 1.0f;
 
 	private KeyButton[] pressedKey = new KeyButton[2];
 	private long[] pressTime = new long[2];
@@ -54,12 +65,20 @@ public class PhysicalKeyboard {
 	private int easterEggIndex = 0;
 	private boolean easterEggActive;
 
+
 	public PhysicalKeyboard() {
 		this.keys = new ArrayList<>();
 	}
 
 	public void init() {
 		this.keys.clear();
+
+		rows = ROWS;
+		columns = COLUMNS;
+		spacing = SPACING * scale;
+		keyWidth = KEY_WIDTH * scale;
+		keyHeight = KEY_HEIGHT * scale;
+		keyWidthSpecial = KEY_WIDTH_SPECIAL * scale;
 
 		String chars = mc.vrSettings.keyboardKeys;
 		if (this.shift)
@@ -84,6 +103,10 @@ public class PhysicalKeyboard {
 						InputSimulator.typeChar(chr);
 						if (!shiftSticky)
 							setShift(false, false);
+						if (chr == '/' && mc.currentScreen == null) { // this is dumb but whatever
+							InputSimulator.pressKey(GLFW.GLFW_KEY_SLASH);
+							InputSimulator.releaseKey(GLFW.GLFW_KEY_SLASH);
+						}
 					}
 				});
 			}
@@ -300,12 +323,8 @@ public class PhysicalKeyboard {
 		}
 	}
 
-	private void drawBox(AxisAlignedBB box, GlStateManager.Color color) {
+	private void drawBox(BufferBuilder buf, AxisAlignedBB box, GlStateManager.Color color) {
 		// Alright let's draw a box
-		Tessellator tess = Tessellator.getInstance();
-		BufferBuilder buf = tess.getBuffer();
-		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_NORMAL);
-
 		buf.pos(box.minX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
 		buf.pos(box.minX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
 		buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
@@ -335,9 +354,7 @@ public class PhysicalKeyboard {
 		buf.pos(box.maxX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
 		buf.pos(box.maxX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
 		buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
-
 		// Woo that was fun
-		tess.draw();
 	}
 
 	public void render() {
@@ -359,50 +376,69 @@ public class PhysicalKeyboard {
 			}
 		}
 
+		// Shaders goes crazy without this
+		mc.getTextureManager().bindTexture(new ResourceLocation("vivecraft:textures/white.png"));
+
+		// We need to ignore depth so we can see the back faces and text
+		GlStateManager.depthFunc(GL11.GL_ALWAYS);
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+
+		// Stuff for drawing labels
 		FontRenderer fontRenderer = mc.getRenderManager().getFontRenderer();
-		MatrixStack matrixstack = new MatrixStack();
+		ArrayList<Tuple<String, Vector3f>> labels = new ArrayList<>();
+		float textScale = 0.00175F * scale;
+
+		// Start building vertices for key boxes
+		Tessellator tess = Tessellator.getInstance();
+		BufferBuilder buf = tess.getBuffer();
+		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_NORMAL);
+
 		for (KeyButton key : keys) {
 			AxisAlignedBB box = key.getRenderBoundingBox();
 			GlStateManager.Color color = key.getRenderColor();
 
-			// Shaders goes crazy without this
-			mc.getTextureManager().bindTexture(new ResourceLocation("vivecraft:textures/white.png"));
-
-			// We need to ignore depth so we can see the back faces and text
-			// Set up this crap every iteration cause FontRenderer screws with it
-			GlStateManager.depthFunc(GL11.GL_ALWAYS);
-			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-
 			// Draw the key itself
-			drawBox(box, color);
-
-			GlStateManager.enableTexture();
-			GlStateManager.disableLighting();
+			drawBox(buf, box, color);
 
 			// Calculate text position
-			float textScale = 0.0025F;
 			float stringWidth = fontRenderer.getStringWidth(key.label) * textScale;
 			float stringHeight = fontRenderer.FONT_HEIGHT * textScale;
 			float textX = (float)box.minX + ((float)box.maxX - (float)box.minX) / 2 - stringWidth / 2;
 			float textY = (float)box.minY + ((float)box.maxY - (float)box.minY) / 2 - stringHeight / 2;
 			float textZ = (float)box.minZ + ((float)box.maxZ - (float)box.minZ) / 2;
 
-			// Draw the text
-			GlStateManager.translatef(0, 0, textZ);
-			GlStateManager.scalef(textScale, textScale, 1.0F);
-			fontRenderer.drawString(matrixstack, key.label, textX / textScale, textY / textScale, 0xFFFFFFFF);
-			GlStateManager.scalef(1.0F / textScale, 1.0F / textScale, 1.0F);
-			GlStateManager.translatef(0, 0, -textZ);
-
-			GlStateManager.disableTexture();
-			GlStateManager.enableLighting();
-			GlStateManager.enableBlend(); // dammit FontRenderer
-			GlStateManager.enableDepthTest(); // aaaargh
+			// Put label in the list
+			labels.add(new Tuple<>(key.label, new Vector3f(textX, textY, textZ)));
 		}
 
+		// Draw all the key boxes
+		tess.draw();
+
+		GlStateManager.depthFunc(GL11.GL_LEQUAL);
+		GlStateManager.enableTexture();
+		GlStateManager.disableLighting();
+
+		// Start building vertices for text
+		IRenderTypeBuffer.Impl renderBuffer = IRenderTypeBuffer.getImpl(tess.getBuffer());
+		MatrixStack matrixstack = new MatrixStack();
+
+		// Build all the text
+		for (Tuple<String, Vector3f> label : labels) {
+			matrixstack.push();
+			matrixstack.translate(label.getB().x, label.getB().y, label.getB().z);
+			matrixstack.scale(textScale, textScale, 1.0F);
+			fontRenderer.func_238411_a_(label.getA(), 0, 0, 0xFFFFFFFF, false, matrixstack.getLast().getMatrix(), renderBuffer, false, 0, 15728880, fontRenderer.getBidiFlag());
+			matrixstack.pop();
+		}
+
+		// Draw all the labels
+		renderBuffer.finish();
+
+		GlStateManager.enableLighting();
+		GlStateManager.enableBlend(); // dammit FontRenderer
+		GlStateManager.enableDepthTest(); // aaaargh
 		GlStateManager.enableTexture();
 		GlStateManager.enableCull();
-		GlStateManager.depthFunc(GL11.GL_LEQUAL);
 		RenderSystem.defaultBlendFunc();
 	}
 
@@ -433,6 +469,15 @@ public class PhysicalKeyboard {
 		}
 	}
 
+	public float getScale() {
+		return scale;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
+		this.reinit = true;
+	}
+
 	private abstract class KeyButton {
 		public final int id;
 		public final String label;
@@ -443,18 +488,18 @@ public class PhysicalKeyboard {
 		public KeyButton(int id, String label, float x, float y, float width, float height) {
 			this.id = id;
 			this.label = label;
-			this.boundingBox = new AxisAlignedBB(x, y, 0.0, x + width, y + height, 0.035);
+			this.boundingBox = new AxisAlignedBB(x, y, 0.0, x + width, y + height, 0.0245 * scale);
 		}
 
 		public AxisAlignedBB getRenderBoundingBox() {
 			if (pressed)
-				return boundingBox.offset(0, 0, 0.015);
+				return boundingBox.offset(0, 0, 0.0105 * scale);
 			return boundingBox;
 		}
 
 		public AxisAlignedBB getCollisionBoundingBox() {
 			if (pressed)
-				return boundingBox.expand(0, 0, 0.05);
+				return boundingBox.expand(0, 0, 0.08);
 			return boundingBox;
 		}
 

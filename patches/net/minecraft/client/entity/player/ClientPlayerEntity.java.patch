@@ -80,7 +80,7 @@
  
  public class ClientPlayerEntity extends AbstractClientPlayerEntity
  {
-@@ -99,6 +113,23 @@
+@@ -99,6 +113,22 @@
      public MovementInput movementInput;
      protected final Minecraft mc;
      protected int sprintToggleTimer;
@@ -92,7 +92,6 @@
 +	public boolean teleported;
 +    // VIVE END - teleport movement
 +    /** MINECRIFT **/
-+    public float headPitch = 0;
 +    public double additionX = 0;
 +    public double additionZ = 0;
 +    public double additionY = 0;
@@ -104,7 +103,7 @@
      public int sprintingTicksLeft;
      public float renderArmYaw;
      public float renderArmPitch;
-@@ -130,9 +161,104 @@
+@@ -130,9 +160,104 @@
          this.ambientSoundHandlers.add(new BubbleColumnAmbientSoundHandler(this));
          this.ambientSoundHandlers.add(new BiomeSoundHandler(this, p_i2690_1_.getSoundHandler(), p_i2690_2_.getBiomeManager()));
      }
@@ -209,7 +208,7 @@
          return false;
      }
  
-@@ -140,6 +266,8 @@
+@@ -140,6 +265,8 @@
      {
      }
  
@@ -218,7 +217,7 @@
      public boolean startRiding(Entity entityIn, boolean force)
      {
          if (!super.startRiding(entityIn, force))
-@@ -159,7 +287,10 @@
+@@ -159,7 +286,10 @@
                  this.rotationYaw = entityIn.rotationYaw;
                  this.setRotationYawHead(entityIn.rotationYaw);
              }
@@ -230,7 +229,7 @@
              return true;
          }
      }
-@@ -168,6 +299,10 @@
+@@ -168,6 +298,10 @@
      {
          super.func_233575_bb_();
          this.rowingBoat = false;
@@ -241,29 +240,34 @@
      }
  
      public float getPitch(float partialTicks)
-@@ -185,6 +320,7 @@
+@@ -185,7 +319,11 @@
          if (this.world.isBlockLoaded(new BlockPos(this.getPosX(), 0.0D, this.getPosZ())))
          {
              super.tick();
-+            NetworkHelper.overridePose(this); // VIVECRAFT
- 
+-
++            //Vivecarft
++            NetworkHelper.overridePose(this);
++            mc.vrPlayer.doPermanantLookOverride(this, mc.vrPlayer.vrdata_world_pre);
++            //
++            
              if (this.isPassenger())
              {
-@@ -291,6 +427,13 @@
+                 this.connection.sendPacket(new CPlayerPacket.RotationPacket(this.rotationYaw, this.rotationPitch, this.onGround));
+@@ -291,6 +429,13 @@
              }
  
              this.prevOnGround = this.onGround;
 +            
 +            //VIVECRAFT
-+            mc.swingTracker.IAmLookingAtMyHand[0] = mc.swingTracker.shouldIlookatMyHand[0];
-+            mc.swingTracker.IAmLookingAtMyHand[1] = mc.swingTracker.shouldIlookatMyHand[1];
++ //           mc.interactTracker.IAmLookingAtMyHand[0] = mc.interactTracker.shouldIlookatMyHand[0];
++ //           mc.interactTracker.IAmLookingAtMyHand[1] = mc.interactTracker.shouldIlookatMyHand[1];
 +            if(mc.vrSettings.walkUpBlocks) mc.gameSettings.autoJump = false;
 +            //END VIVECRAFT
 +            
              this.autoJumpEnabled = this.mc.gameSettings.autoJump;
          }
      }
-@@ -305,10 +448,31 @@
+@@ -305,10 +450,31 @@
      public void sendChatMessage(String message)
      {
          this.connection.sendPacket(new CChatMessagePacket(message));
@@ -295,7 +299,7 @@
          super.swingArm(hand);
          this.connection.sendPacket(new CAnimateHandPacket(hand));
      }
-@@ -577,7 +741,24 @@
+@@ -577,7 +743,24 @@
  
      public void playSound(SoundEvent soundIn, float volume, float pitch)
      {
@@ -321,7 +325,7 @@
      }
  
      public void playSound(SoundEvent p_213823_1_, SoundCategory p_213823_2_, float p_213823_3_, float p_213823_4_)
-@@ -750,6 +931,9 @@
+@@ -750,6 +933,9 @@
          boolean flag2 = this.func_223110_ee();
          this.field_239203_ch_ = !this.abilities.isFlying && !this.isSwimming() && this.isPoseClear(Pose.CROUCHING) && (this.isSneaking() || !this.isSleeping() && !this.isPoseClear(Pose.STANDING));
          this.movementInput.func_225607_a_(this.func_228354_I_());
@@ -331,7 +335,7 @@
          this.mc.getTutorial().handleMovement(this.movementInput);
  
          if (this.isHandActive() && !this.isPassenger())
-@@ -768,12 +952,17 @@
+@@ -768,12 +954,17 @@
              this.movementInput.jump = true;
          }
  
@@ -355,7 +359,22 @@
          }
  
          if (flag1)
-@@ -940,6 +1129,9 @@
+@@ -851,7 +1042,13 @@
+         {
+             ItemStack itemstack = this.getItemStackFromSlot(EquipmentSlotType.CHEST);
+ 
+-            if (itemstack.getItem() == Items.ELYTRA && ElytraItem.isUsable(itemstack) && this.tryToStartFallFlying())
++            //Forge
++            boolean eflag = itemstack.getItem() == Items.ELYTRA && ElytraItem.isUsable(itemstack);
++            if(Reflector.IForgeItemStack_canElytraFly.exists()) 
++            	eflag = Reflector.callBoolean(itemstack, Reflector.IForgeItemStack_canElytraFly, this);
++            
++            //Forge
++            if (eflag && this.tryToStartFallFlying()) 
+             {
+                 this.connection.sendPacket(new CEntityActionPacket(this, CEntityActionPacket.Action.START_FALL_FLYING));
+             }
+@@ -940,6 +1137,9 @@
          }
  
          super.livingTick();
@@ -365,7 +384,7 @@
  
          if (this.onGround && this.abilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
-@@ -1033,12 +1225,60 @@
+@@ -1033,12 +1233,60 @@
          return super.removeActivePotionEffect(potioneffectin);
      }
  
@@ -430,7 +449,7 @@
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1056,13 +1296,17 @@
+@@ -1056,13 +1304,17 @@
              float f = this.getAIMoveSpeed();
              float f1 = (float)vector3d2.lengthSquared();
  
@@ -450,7 +469,7 @@
                  vector3d2 = new Vector3d((double)(f2 * f5 - f3 * f4), vector3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vector3d2.lengthSquared();
  
-@@ -1248,4 +1492,406 @@
+@@ -1248,4 +1500,406 @@
              return this.eyesInWaterPlayer;
          }
      }
@@ -512,14 +531,14 @@
 +    			x = x - offset.x;
 +    			y = mc.vehicleTracker.getVehicleFloor(mount, y);
 +    			z = z - offset.z;
-+    			mc.vrPlayer.setRoomOrigin(x, y, z, false);   		
++    			mc.vrPlayer.setRoomOrigin(x, y, z, x+y+z==0);   		
 +            } else {
 +        		Vector3d roomOrigin = Minecraft.getInstance().vrPlayer.roomOrigin;
 +          		OpenVRPlayer.get().setRoomOrigin(
 +          				roomOrigin.x + (ax - bx),
 +          				roomOrigin.y + (ay - by),
 +          				roomOrigin.z + (az - bz),
-+          				false
++          				x+y+z==0
 +          				);
 +            }
 +            
