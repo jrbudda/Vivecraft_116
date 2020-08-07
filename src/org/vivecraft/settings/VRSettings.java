@@ -1584,6 +1584,7 @@ public class VRSettings
                 break;
             // VIVE START - new options
             case WORLD_SCALE:
+            	mc.vrPlayer.roomScaleMovementDelay = 2;
             	if(par2 ==  0) vrWorldScale = 0.1f;
             	else if(par2 ==  1) vrWorldScale = 0.25f;
             	else if(par2 >=  2 && par2 <=  17) vrWorldScale = (float) (par2 * 0.1 + 0.3);

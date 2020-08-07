@@ -198,7 +198,7 @@
              {
                  this.overlayPlayerList.setVisible(true);
                  this.overlayPlayerList.func_238523_a_(p_238445_1_, this.scaledWidth, scoreboard, scoreobjective1);
-@@ -607,22 +656,44 @@
+@@ -607,22 +656,45 @@
              this.blit(p_238443_2_, i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
              this.blit(p_238443_2_, i - 91 - 1 + playerentity.inventory.currentItem * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
  
@@ -209,8 +209,9 @@
 +                this.blit(p_238443_2_, i - 91 - 1 + mc.interactTracker.hotbar * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
 +                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 +            }
++            //
 +            
-+            //Vivecraft
++            //Vivecraft - touch hotbar offhand-slot-swap
 +            if (!itemstack.isEmpty() || mc.vrSettings.vrTouchHotbar)
              {
                  if (handside == HandSide.LEFT)
@@ -235,7 +236,8 @@
 +                        this.blit(p_238443_2_, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
                  }
              }
- 
+-
++            //
 +                
              this.setBlitOffset(j);
              RenderSystem.enableRescaleNormal();
@@ -247,7 +249,7 @@
              CustomItems.setRenderOffHand(false);
  
              for (int i1 = 0; i1 < 9; ++i1)
-@@ -673,6 +744,10 @@
+@@ -673,6 +745,10 @@
  
              RenderSystem.disableRescaleNormal();
              RenderSystem.disableBlend();
@@ -258,7 +260,7 @@
          }
      }
  
-@@ -1212,6 +1287,7 @@
+@@ -1212,6 +1288,7 @@
          }
      }
  
@@ -266,7 +268,7 @@
      private void renderPumpkinOverlay()
      {
          RenderSystem.disableDepthTest();
-@@ -1243,6 +1319,8 @@
+@@ -1243,6 +1320,8 @@
          }
      }
  
@@ -275,7 +277,7 @@
      private void renderVignette(Entity entityIn)
      {
          if (!Config.isVignetteEnabled())
-@@ -1295,6 +1373,7 @@
+@@ -1295,6 +1374,7 @@
          }
      }
  
@@ -283,7 +285,7 @@
      private void renderPortal(float timeInPortal)
      {
          if (timeInPortal < 1.0F)
-@@ -1520,4 +1599,80 @@
+@@ -1520,4 +1600,79 @@
      {
          this.overlayDebug.resetChunk();
      }
@@ -305,28 +307,27 @@
 +        	  if(entityplayer.isSneaking()) e = Effects.BLINDNESS;
 +        	  if(entityplayer.isActualySwimming()) e = Effects.DOLPHINS_GRACE;
 +        	  if(entityplayer.isElytraFlying()) iconp = -1;
++        	  if(mc.crawlTracker.crawling) iconp = -2;
 +        	  
-+        	  if(iconp == -1){
-+//            	  GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-+        		  int w = this.mc.getMainWindow().getScaledWidth() / 2 - 109;
-+        		  int h = this.mc.getMainWindow().getScaledHeight() -39;	 
-+//        		  //TODO: this aint right.
-+//        		  TextureAtlasSprite textureatlassprite =  this.mc.getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(new ResourceLocation("textures/items/elytra"));
-+//        		  this.mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-+//        		  AbstractGui.blit(w,h,0,16,16,textureatlassprite);
-+//        		  
-+        		  mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.ELYTRA), w, h);
-+        		  
-+        	//	    public void renderItemAndEffectIntoGUI(@Nullable LivingEntity entityIn, ItemStack itemIn, int x, int y)
++    		  int w = this.mc.getMainWindow().getScaledWidth() / 2 - 109;
++    		  int h = this.mc.getMainWindow().getScaledHeight() -39;	 
 +
-+        		  
++        	  if(iconp == -1){
++        		  mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.ELYTRA), w, h);
++        		  e = null;
 +        	  } 
-+        	  else if (e!=null) {  		   
++        	  else if(iconp == -2){
++        		  if(entityplayer.isSneaking())
++        			  w = this.mc.getMainWindow().getScaledWidth() / 2 - 109 - 16;
++        		  else
++        			  e = null;
++        		  mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.RABBIT_FOOT), w, h);
++        	  } 
++        	  
++        	  if (e!=null) {  		   
 +        	      TextureAtlasSprite sprite = mc.getPotionSpriteUploader().getSprite(e);
 +            	  GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 +        		  this.mc.getTextureManager().bindTexture(sprite.getAtlasTexture().getTextureLocation());
-+        		  int w = this.mc.getMainWindow().getScaledWidth() / 2 - 109;
-+        		  int h = this.mc.getMainWindow().getScaledHeight() -39;      			  
 +        		  AbstractGui.blit(matrixstack, w, h, 0, 18, 18, sprite);        			
 +        	  }       	  
 +          }

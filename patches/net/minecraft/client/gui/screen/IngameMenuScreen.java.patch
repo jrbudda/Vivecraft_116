@@ -94,7 +94,7 @@
 +		}));
 +		this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("vivecraft.gui.commands"), (p) ->
 +		{
-+			minecraft.displayGuiScreen(new GuiQuickCommandsInGame());
++			minecraft.displayGuiScreen(new GuiQuickCommandsInGame(this));
 +				init();
 +		})); 
 +		this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 49, 20, new TranslationTextComponent("vivecraft.gui.overlay"), (p) ->

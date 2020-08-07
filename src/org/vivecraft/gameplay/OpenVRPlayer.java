@@ -90,7 +90,7 @@ public class OpenVRPlayer
 	public int wfCount = 0;
 	//
 
-	private int roomScaleMovementDelay = 0;
+	public int roomScaleMovementDelay = 0;
 
 	boolean initdone =false;
 	

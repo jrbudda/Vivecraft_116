@@ -10,14 +10,16 @@ import net.minecraft.util.text.StringTextComponent;
 
 public class GuiQuickCommandsInGame extends Screen
 {
-    public GuiQuickCommandsInGame() {
+    public GuiQuickCommandsInGame(Screen parent) {
 		super(new StringTextComponent(""));
+		this.parentScreen = parent;
 	}
 
 	private int field_146445_a;
     private int field_146444_f;
     private static final String __OBFID = "CL_00000703";
-    
+    protected final Screen parentScreen;
+
     @Override
     public void init()
     {
@@ -40,7 +42,7 @@ public class GuiQuickCommandsInGame extends Screen
     		}));     
     	}
     	this.addButton(new Button( this.width / 2 -50, this.height -30  + var1, 100, 20, "Cancel", (p) -> { 
-				minecraft.displayGuiScreen(new IngameMenuScreen(false));
+				minecraft.displayGuiScreen(parentScreen);
 		}));   
     }
 

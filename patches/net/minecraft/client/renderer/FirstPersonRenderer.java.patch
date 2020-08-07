@@ -268,7 +268,7 @@
      public void renderItemInFirstPerson(float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, ClientPlayerEntity playerEntityIn, int combinedLightIn)
      {
          float f = playerEntityIn.getSwingProgress(partialTicks);
-@@ -310,186 +430,420 @@
+@@ -310,186 +430,421 @@
          bufferIn.finish();
      }
  
@@ -829,6 +829,7 @@
 +			
 +				if(stack.hasTag() && stack.getTag().getInt("CustomModelData") > 0) {
 +					transform = ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND;
++	    			matrixStackIn.scale(0.7f, 0.7f, 0.7f);
 +				} else {
 +	    			matrixStackIn.rotate(prerotation);
 +	    			matrixStackIn.translate(translateX, translateY, translateZ);
@@ -868,7 +869,7 @@
      }
  
      public void tick()
-@@ -571,4 +925,120 @@
+@@ -571,4 +926,120 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }

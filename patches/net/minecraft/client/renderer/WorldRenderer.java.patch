@@ -382,7 +382,7 @@
 -
 +        
 +        	//Vivecraft do it again. Come at be bro.
-+            gameRendererIn.renderVrFast(partialTicks, false, menuhandright, menuHandleft);
++            gameRendererIn.renderVrFast(partialTicks, true, menuhandright, menuHandleft);
 +            //
 +            
              if (flag1)
