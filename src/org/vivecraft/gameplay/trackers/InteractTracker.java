@@ -51,7 +51,7 @@ public class InteractTracker extends Tracker{
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.vrSettings.seated)
 			return false;
-		if(p.isActiveItemStackBlocking()){
+		if(p.isActiveItemStackBlocking() && hotbar < 0){
 			return false; 
 		}
 		return true;    

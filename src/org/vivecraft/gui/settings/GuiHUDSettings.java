@@ -67,6 +67,7 @@ public class GuiHUDSettings extends GuiVROptionsBase
         this.settings.autoOpenKeyboard = false;
         this.settings.physicalKeyboard = true;
         this.settings.guiAppearOverBlock = true;
+        this.settings.vrTouchHotbar = true;
         this.minecraft.gameSettings.hideGUI = false;
     }
 }
