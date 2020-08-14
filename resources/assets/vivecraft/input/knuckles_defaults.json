@@ -72,7 +72,13 @@
                      "output" : "/actions/contextual/in/vivecraft.key.vrinteract"
                   }
                },
-               "mode" : "grab",
+               "mode" : "button",
+               "parameters" : {
+                  "click_activate_threshold" : "0.8",
+                  "click_deactivate_threshold" : "0.2",
+                  "force_input" : "force",
+                  "haptic_amplitude": "0"
+               },
                "path" : "/user/hand/left/input/grip"
             },
             {
@@ -81,7 +87,13 @@
                      "output" : "/actions/contextual/in/vivecraft.key.vrinteract"
                   }
                },
-               "mode" : "grab",
+               "mode" : "button",
+               "parameters" : {
+                  "click_activate_threshold" : "0.8",
+                  "click_deactivate_threshold" : "0.2",
+                  "force_input" : "force",
+                  "haptic_amplitude": "0"
+               },
                "path" : "/user/hand/right/input/grip"
             },
             {
@@ -151,10 +163,7 @@
                   }
                },
                "mode" : "button",
-               "parameters" : {
-                  "click_activate_threshold" : "0.5"
-               },
-               "path" : "/user/hand/left/input/trackpad"
+               "path" : "/user/hand/left/input/a"
             }
          ]
       },
@@ -217,6 +226,18 @@
                   "click_activate_threshold" : "0.5"
                },
                "path" : "/user/hand/right/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "scroll" : {
+                     "output" : "/actions/gui/in/vivecraft.key.guiscrollaxis"
+                  }
+               },
+               "parameters": {
+                  "discrete_scroll_trackpad_slideandhold_enabled": "false"
+               },
+               "mode" : "scroll",
+               "path" : "/user/hand/right/input/trackpad"
             }
          ]
       },
@@ -229,7 +250,12 @@
                   }
                },
                "mode" : "button",
-               "path" : "/user/hand/right/input/a"
+               "parameters" : {
+                  "click_activate_threshold" : "0.6",
+                  "click_deactivate_threshold" : "0.2",
+                  "force_input" : "force"
+               },
+               "path" : "/user/hand/right/input/grip"
             },
             {
                "inputs" : {
@@ -269,6 +295,9 @@
             },
             {
                "inputs" : {
+                  "click" : {
+                     "output" : "/actions/ingame/in/key.jump"
+                  },
                   "position" : {
                      "output" : "/actions/ingame/in/vivecraft.key.freemovestrafe"
                   }
@@ -292,7 +321,12 @@
                   }
                },
                "mode" : "button",
-               "path" : "/user/hand/left/input/a"
+               "parameters" : {
+                  "click_activate_threshold" : "0.6",
+                  "click_deactivate_threshold" : "0.2",
+                  "force_input" : "force"
+               },
+               "path" : "/user/hand/left/input/grip"
             },
             {
                "inputs" : {
@@ -313,26 +347,7 @@
                   }
                },
                "mode" : "button",
-               "parameters" : {
-                  "click_activate_threshold" : "0.8",
-                  "click_deactivate_threshold" : "0.2",
-                  "force_input" : "force"
-               },
-               "path" : "/user/hand/left/input/grip"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/ingame/in/key.jump"
-                  }
-               },
-               "mode" : "button",
-               "parameters" : {
-                  "click_activate_threshold" : "0.8",
-                  "click_deactivate_threshold" : "0.2",
-                  "force_input" : "force"
-               },
-               "path" : "/user/hand/right/input/grip"
+               "path" : "/user/hand/right/input/a"
             }
          ]
       },

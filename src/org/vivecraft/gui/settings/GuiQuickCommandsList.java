@@ -84,10 +84,10 @@ public class GuiQuickCommandsList extends ExtendedList<GuiQuickCommandsList.Comm
         }
         
         @Override
-        public boolean func_231042_a_(char p_charTyped_1_, int p_charTyped_2_) {
+        public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
         	if (txt.isFocused()) 
-        		return txt.func_231042_a_(p_charTyped_1_, p_charTyped_2_);
-        	return super.func_231042_a_(p_charTyped_1_, p_charTyped_2_);
+        		return txt.charTyped(p_charTyped_1_, p_charTyped_2_);
+        	return super.charTyped(p_charTyped_1_, p_charTyped_2_);
         }
         
         @Override

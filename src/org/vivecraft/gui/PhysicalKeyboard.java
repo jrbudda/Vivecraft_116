@@ -42,9 +42,9 @@ public class PhysicalKeyboard {
 	// base values
 	private static final int ROWS = 4;
 	private static final int COLUMNS = 13;
-	private static final float SPACING = .0056f;
-	private static final float KEY_WIDTH = .035f;
-	private static final float KEY_HEIGHT = .035f;
+	private static final float SPACING = .0064f;
+	private static final float KEY_WIDTH = .04f;
+	private static final float KEY_HEIGHT = .04f;
 	private static final float KEY_WIDTH_SPECIAL = KEY_WIDTH * 2 + SPACING;
 
 	private int rows;
@@ -278,7 +278,7 @@ public class PhysicalKeyboard {
 
 	public void processBindings() {
 		if (GuiHandler.keyKeyboardShift.isPressed()) {
-			setShift(true, false);
+			setShift(true, true);
 			lastPressedShift = true;
 		}
 		if (!GuiHandler.keyKeyboardShift.isKeyDown() && lastPressedShift) {
@@ -386,7 +386,7 @@ public class PhysicalKeyboard {
 		// Stuff for drawing labels
 		FontRenderer fontRenderer = mc.getRenderManager().getFontRenderer();
 		ArrayList<Tuple<String, Vector3f>> labels = new ArrayList<>();
-		float textScale = 0.00175F * scale;
+		float textScale = 0.002F * scale;
 
 		// Start building vertices for key boxes
 		Tessellator tess = Tessellator.getInstance();
@@ -445,6 +445,7 @@ public class PhysicalKeyboard {
 	public void show() {
 		if (!this.shiftSticky)
 			this.shift = false;
+		this.scale = this.mc.vrSettings.physicalKeyboardScale;
 		this.reinit = true;
 	}
 
@@ -488,12 +489,12 @@ public class PhysicalKeyboard {
 		public KeyButton(int id, String label, float x, float y, float width, float height) {
 			this.id = id;
 			this.label = label;
-			this.boundingBox = new AxisAlignedBB(x, y, 0.0, x + width, y + height, 0.0245 * scale);
+			this.boundingBox = new AxisAlignedBB(x, y, 0.0, x + width, y + height, 0.028 * scale);
 		}
 
 		public AxisAlignedBB getRenderBoundingBox() {
 			if (pressed)
-				return boundingBox.offset(0, 0, 0.0105 * scale);
+				return boundingBox.offset(0, 0, 0.012 * scale);
 			return boundingBox;
 		}
 

@@ -204,7 +204,7 @@ public class VRPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity,
             if (scoreobjective != null)
             {
                 Score score = scoreboard.getOrCreateScore(entityIn.getScoreboardName(), scoreobjective);
-                super.renderName(entityIn, (new StringTextComponent(Integer.toString(score.getScorePoints()))).func_240702_b_(" ").func_230529_a_(scoreobjective.getDisplayName()), matrixStackIn, bufferIn, packedLightIn);
+                super.renderName(entityIn, (new StringTextComponent(Integer.toString(score.getScorePoints()))).appendString(" ").append(scoreobjective.getDisplayName()), matrixStackIn, bufferIn, packedLightIn);
                 matrixStackIn.translate(0.0D, (double)(9.0F * 1.15F * 0.025F), 0.0D);
             }
         }

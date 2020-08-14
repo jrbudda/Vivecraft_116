@@ -44,7 +44,7 @@ public class LangHelper {
 						bufKey = null;
 					} else {
 						String[] split = s.split("=", 2);
-						map.put(split[0], split.length == 2 ? split[1] : "");
+						map.put(split[0], split.length == 2 ? StringEscapeUtils.unescapeJava(split[1]) : "");
 					}
 				}
 			}

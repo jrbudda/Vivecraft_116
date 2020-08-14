@@ -656,12 +656,12 @@ public class OpenVRPlayer
 
 		if((entity.isSprinting() && entity.movementInput.jump) || entity.isElytraFlying() || (entity.isSwimming() && entity.moveForward > 0)){
 			//needed for server side movement.
-			if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_HMD ){
-				entity.rotationYaw = data.hmd.getYaw();
-				entity.rotationPitch = -data.hmd.getPitch();
-			}else{
+			if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_CONTROLLER ){
 				entity.rotationYaw = data.getController(1).getYaw();
 				entity.rotationPitch = -data.getController(1).getPitch();
+			}else{
+				entity.rotationYaw = data.hmd.getYaw();
+				entity.rotationPitch = -data.hmd.getPitch();
 			}
 		} 
 

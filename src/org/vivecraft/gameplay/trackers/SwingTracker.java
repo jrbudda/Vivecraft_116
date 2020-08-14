@@ -248,41 +248,35 @@ public class SwingTracker extends Tracker{
 				
 				if (blockHit.getType() == Type.BLOCK && flag) {
 					if(canact[c] && !protectedBlock) { 
-						int p = 3;
+						int p = 1;
 						if(item instanceof HoeItem){
 							mc.physicalGuiManager.preClickAction();
 							mc.playerController.func_217292_a(player, (ClientWorld) player.world, c==0 ? Hand.MAIN_HAND:Hand.OFF_HAND, blockHit);
 						} else if(block.getBlock() instanceof NoteBlock) {
 							mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace());       								
 						} else{ //smack it
-							p += (speed - speedthresh) / 2;
+							p += Math.min((speed - speedthresh) / 2, 6);			
+							mc.physicalGuiManager.preClickAction();
 
-							for (int i = 0; i < p; i++)
-							{
-								//set delay to 0
-								clearBlockHitDelay();		
-								Minecraft.getInstance().physicalGuiManager.preClickAction();
-
-								//all this comes from plaeyrControllerMP clickMouse and friends.
-								//all this does is sets the block you're currently hitting, has no effect in survival mode after that.
-								//but if in creative mode will clickCreative on the block
-								mc.playerController.clickBlock(blockHit.getPos(), blockHit.getFace());
-
-								if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
-									break;
-
-								//apply destruction for survival only
-								mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace());
-
-								if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
-									break;
-
-								//something effects
-								mc.particles.addBlockHitEffects(blockHit.getPos(), blockHit.getFace());
-
-							}
+							//this comes from plaeyrControllerMP clickMouse and friends.
+							//this will either destroy the block if in creative or set it as the current block.
+							//does nothing in survival if you are already hitting this block.
+							mc.playerController.clickBlock(blockHit.getPos(), blockHit.getFace());						
+							if(getIsHittingBlock()) { //seems to be the only way to tell it didnt insta-broke.
+								for (int i = 0; i < p; i++)
+								{	//send multiple ticks worth of 'holding left click' to it.
+																		
+									clearBlockHitDelay();
+									
+									if(mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace()))
+										mc.particles.addBlockHitEffects(blockHit.getPos(), blockHit.getFace());
+									
+									if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
+										break;
+								}
+							}						
+							mc.vrPlayer.blockDust(blockHit.getHitVec().x, blockHit.getHitVec().y, blockHit.getHitVec().z, 3*p, bp, block, 0.6f, 1f);
 						}
-						mc.vrPlayer.blockDust(blockHit.getHitVec().x, blockHit.getHitVec().y, blockHit.getHitVec().z, 3*p, bp, block, 0.6f, 1f);
 
 						MCOpenVR.triggerHapticPulse(c, 250*p);
 						//   System.out.println("Hit block speed =" + speed + " mot " + mot + " thresh " + speedthresh) ;            				

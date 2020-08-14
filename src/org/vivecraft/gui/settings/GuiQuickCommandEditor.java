@@ -34,7 +34,7 @@ public class GuiQuickCommandEditor extends GuiVROptionsBase {
 	@Override
 	protected boolean onDoneClicked() {
 		for (int i = 0; i < 12; i++) {
-			String c = ((GuiQuickCommandsList.CommandEntry)this.guiList.children().get(i)).txt.getText();
+			String c = this.guiList.getEventListeners().get(i).txt.getText();
 			minecraft.vrSettings.vrQuickCommands[i] = c;
 		}	
 		return super.onDoneClicked();

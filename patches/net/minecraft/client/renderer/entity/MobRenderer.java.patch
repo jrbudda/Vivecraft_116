@@ -22,6 +22,6 @@
 +            	d8 = aimSource.z;             		         
 +            }
 +            // VIVE END 
-             Vector3d vector3d = entityLivingIn.getLeashPoint();
+             Vector3d vector3d = entityLivingIn.func_241205_ce_();
              d2 = Math.cos(d9) * vector3d.z + Math.sin(d9) * vector3d.x;
              d3 = Math.sin(d9) * vector3d.z - Math.cos(d9) * vector3d.x;

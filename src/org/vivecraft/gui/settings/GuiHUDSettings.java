@@ -22,17 +22,17 @@ public class GuiHUDSettings extends GuiVROptionsBase
             new VROptionEntry(VRSettings.VrOptions.HUD_OPACITY),
             new VROptionEntry(VRSettings.VrOptions.RENDER_MENU_BACKGROUND),
             new VROptionEntry(VRSettings.VrOptions.TOUCH_HOTBAR),
+			new VROptionEntry(VRSettings.VrOptions.AUTO_OPEN_KEYBOARD),
             new VROptionEntry(VRSettings.VrOptions.MENU_ALWAYS_FOLLOW_FACE, (button, mousePos) -> {
                 GuiHandler.onScreenChanged(Minecraft.getInstance().currentScreen, Minecraft.getInstance().currentScreen, false);
                 return false;
             }),
-            new VROptionEntry(VRSettings.VrOptions.AUTO_OPEN_KEYBOARD),
-			new VROptionEntry(VRSettings.VrOptions.GUI_APPEAR_OVER_BLOCK),
 			new VROptionEntry(VRSettings.VrOptions.PHYSICAL_KEYBOARD, (button, mousePos) -> {
 				KeyboardHandler.setOverlayShowing(false);
 				return false;
 			}),
-			new VROptionEntry(VRSettings.VrOptions.DUMMY),
+			new VROptionEntry(VRSettings.VrOptions.GUI_APPEAR_OVER_BLOCK),
+			new VROptionEntry(VRSettings.VrOptions.PHYSICAL_KEYBOARD_SCALE),
 			new VROptionEntry("vivecraft.options.screen.menuworld.button", (button, mousePos) -> {
 				Minecraft.getInstance().displayGuiScreen(new GuiMenuWorldSettings(this));
 				return true;
@@ -66,6 +66,7 @@ public class GuiHUDSettings extends GuiVROptionsBase
         this.settings.menuAlwaysFollowFace = false;
         this.settings.autoOpenKeyboard = false;
         this.settings.physicalKeyboard = true;
+        this.settings.physicalKeyboardScale = 1.0f;
         this.settings.guiAppearOverBlock = true;
         this.settings.vrTouchHotbar = true;
         this.minecraft.gameSettings.hideGUI = false;

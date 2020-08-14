@@ -25,24 +25,24 @@
 +            if(flag) 
 +            	KeyboardHandler.setOverlayShowing(true);       
 +            // VIVE END - show keyboard
-             if (this.isFocused() && flag && p_231044_5_ == 0)
+             if (this.isFocused() && flag && button == 0)
              {
-                 int i = MathHelper.floor(p_231044_1_) - this.x;
+                 int i = MathHelper.floor(mouseX) - this.x;
 @@ -504,7 +512,12 @@
              {
                  String s1 = flag ? s.substring(0, j) : s;
-                 j1 = this.fontRenderer.func_238405_a_(p_230431_1_, this.textFormatter.apply(s1, this.lineScrollOffset), (float)l, (float)i1, i2);
+                 j1 = this.fontRenderer.drawStringWithShadow(matrixStack, this.textFormatter.apply(s1, this.lineScrollOffset), (float)l, (float)i1, i2);
 +                //VIVECRAFT
 +            } else {
 +            	if(!Minecraft.getInstance().vrSettings.seated && !KeyboardHandler.Showing)
-+            		this.fontRenderer.func_238405_a_(p_230431_1_,"Click to open keyboard", (float)l, (float)i1, this.disabledColor);
++            		this.fontRenderer.drawStringWithShadow(matrixStack,"Click to open keyboard", (float)l, (float)i1, this.disabledColor);
              }
 +            //
  
              boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
              int k1 = j1;
 @@ -647,6 +660,12 @@
-         if (p_230995_1_)
+         if (focused)
          {
              this.cursorCounter = 0;
 +            

@@ -51,7 +51,7 @@
  import net.minecraft.client.resources.LegacyResourcePackWrapper;
  import net.minecraft.client.resources.LegacyResourcePackWrapperV4;
  import net.minecraft.client.settings.KeyBinding;
-@@ -104,23 +116,47 @@
+@@ -104,23 +116,48 @@
  import net.minecraft.entity.LivingEntity;
  import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.entity.item.ItemFrameEntity;
@@ -71,6 +71,7 @@
 +import net.minecraft.network.NetworkManager;
  import net.minecraft.network.datasync.DataParameter;
 +import net.minecraft.network.play.ServerPlayNetHandler;
++import net.minecraft.network.play.client.CClientSettingsPacket;
 +import net.minecraft.network.play.client.CCustomPayloadPacket;
 +import net.minecraft.resources.IPackNameDecorator;
 +import net.minecraft.resources.IReloadableResourceManager;
@@ -100,7 +101,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.optifine.Log;
  import net.optifine.util.ArrayUtils;
-@@ -143,7 +179,7 @@
+@@ -143,7 +180,7 @@
      public static ReflectorMethod ClientModLoader_isLoading = new ReflectorMethod(ClientModLoader, "isLoading");
      public static ReflectorMethod ClientModLoader_renderProgressText = new ReflectorMethod(ClientModLoader, "renderProgressText");
      public static ReflectorClass ChunkDataEvent_Save = new ReflectorClass("net.minecraftforge.event.world.ChunkDataEvent$Save");
@@ -109,7 +110,7 @@
      public static ReflectorClass ChunkEvent_Load = new ReflectorClass("net.minecraftforge.event.world.ChunkEvent$Load");
      public static ReflectorConstructor ChunkEvent_Load_Constructor = new ReflectorConstructor(ChunkEvent_Load, new Class[] {IChunk.class});
      public static ReflectorClass ChunkEvent_Unload = new ReflectorClass("net.minecraftforge.event.world.ChunkEvent$Unload");
-@@ -156,9 +192,9 @@
+@@ -156,9 +193,9 @@
      public static ReflectorMethod CrashReportExtender_addCrashReportHeader = new ReflectorMethod(CrashReportExtender, "addCrashReportHeader");
      public static ReflectorMethod CrashReportExtender_generateEnhancedStackTrace = new ReflectorMethod(CrashReportExtender, "generateEnhancedStackTrace");
      public static ReflectorClass DrawScreenEvent_Pre = new ReflectorClass("net.minecraftforge.client.event.GuiScreenEvent$DrawScreenEvent$Pre");
@@ -121,7 +122,7 @@
      public static ReflectorClass EarlyProgressVisualization = new ReflectorClass("net.minecraftforge.fml.loading.progress.EarlyProgressVisualization");
      public static ReflectorField EarlyProgressVisualization_INSTANCE = new ReflectorField(EarlyProgressVisualization, "INSTANCE");
      public static ReflectorMethod EarlyProgressVisualization_handOffWindow = new ReflectorMethod(EarlyProgressVisualization, "handOffWindow");
-@@ -329,8 +365,9 @@
+@@ -329,8 +366,9 @@
      public static ReflectorField Launch_blackboard = new ReflectorField(Launch, "blackboard");
      public static ReflectorClass LightUtil = new ReflectorClass("net.minecraftforge.client.model.pipeline.LightUtil");
      public static ReflectorField LightUtil_itemConsumer = new ReflectorField(LightUtil, "itemConsumer");
@@ -132,7 +133,7 @@
      public static ReflectorClass Loader = new ReflectorClass("net.minecraftforge.fml.common.Loader");
      public static ReflectorMethod Loader_getActiveModList = new ReflectorMethod(Loader, "getActiveModList");
      public static ReflectorMethod Loader_instance = new ReflectorMethod(Loader, "instance");
-@@ -377,6 +414,8 @@
+@@ -377,6 +415,8 @@
      public static ReflectorField EnderDragonRenderer_model = new ReflectorField(EnderDragonRenderer, EnderDragonRenderer.EnderDragonModel.class);
      public static ReflectorClass GuiMainMenu = new ReflectorClass(MainMenuScreen.class);
      public static ReflectorField GuiMainMenu_splashText = new ReflectorField(GuiMainMenu, String.class);
@@ -141,7 +142,7 @@
      public static ReflectorClass ItemOverride = new ReflectorClass(ItemOverride.class);
      public static ReflectorField ItemOverride_mapResourceValues = new ReflectorField(ItemOverride, Map.class);
      public static ReflectorClass LegacyResourcePackWrapper = new ReflectorClass(LegacyResourcePackWrapper.class);
-@@ -392,6 +431,10 @@
+@@ -392,6 +432,10 @@
      public static ReflectorFields ModelArmorStand_ModelRenderers = new ReflectorFields(ModelArmorStand, ModelRenderer.class, 4);
      public static ReflectorClass ModelBat = new ReflectorClass(BatModel.class);
      public static ReflectorFields ModelBat_ModelRenderers = new ReflectorFields(ModelBat, ModelRenderer.class, 6);
@@ -152,7 +153,7 @@
      public static ReflectorClass ModelBlaze = new ReflectorClass(BlazeModel.class);
      public static ReflectorField ModelBlaze_blazeHead = new ReflectorField(ModelBlaze, ModelRenderer.class);
      public static ReflectorField ModelBlaze_blazeSticks = new ReflectorField(ModelBlaze, ModelRenderer[].class);
-@@ -403,6 +446,8 @@
+@@ -403,6 +447,8 @@
      public static ReflectorFields ModelCod_ModelRenderers = new ReflectorFields(ModelCod, ModelRenderer.class, 7);
      public static ReflectorClass ModelCreeper = new ReflectorClass(CreeperModel.class);
      public static ReflectorFields ModelCreeper_ModelRenderers = new ReflectorFields(ModelCreeper, ModelRenderer.class, 7);
@@ -161,7 +162,7 @@
      public static ReflectorClass ModelDragon = new ReflectorClass(EnderDragonRenderer.EnderDragonModel.class);
      public static ReflectorFields ModelDragon_ModelRenderers = new ReflectorFields(ModelDragon, ModelRenderer.class, 20);
      public static ReflectorClass RenderEnderCrystal = new ReflectorClass(EnderCrystalRenderer.class);
-@@ -411,6 +456,9 @@
+@@ -411,6 +457,9 @@
      public static ReflectorField ModelEnderMite_bodyParts = new ReflectorField(ModelEnderMite, ModelRenderer[].class);
      public static ReflectorClass ModelEvokerFangs = new ReflectorClass(EvokerFangsModel.class);
      public static ReflectorFields ModelEvokerFangs_ModelRenderers = new ReflectorFields(ModelEvokerFangs, ModelRenderer.class, 3);
@@ -171,7 +172,7 @@
      public static ReflectorClass ModelGuardian = new ReflectorClass(GuardianModel.class);
      public static ReflectorField ModelGuardian_body = new ReflectorField(ModelGuardian, ModelRenderer.class, 0);
      public static ReflectorField ModelGuardian_eye = new ReflectorField(ModelGuardian, ModelRenderer.class, 1);
-@@ -1260,4 +1308,165 @@
+@@ -1260,4 +1309,167 @@
          ReflectorResolver.register(iresolvable);
          return true;
      }
@@ -262,6 +263,8 @@
 +    public static ReflectorMethod ForgeEventFactory_onPlayerSleepInBed= new ReflectorMethod(ForgeEventFactory, "onPlayerSleepInBed");
 +    public static ReflectorMethod ForgeEventFactory_fireSleepingTimeCheck= new ReflectorMethod(ForgeEventFactory, "fireSleepingTimeCheck");
 +    public static ReflectorMethod ForgeEventFactory_onPlayerSpawnSet= new ReflectorMethod(ForgeEventFactory, "onPlayerSpawnSet");
++    public static ReflectorClass CClientSettingsPacket = new ReflectorClass(CClientSettingsPacket.class);
++    public static ReflectorMethod CClientSettingsPacket_getLanguage = new ReflectorMethod(CClientSettingsPacket, "getLanguage");
 +
 +    //ClientPlayerEntity
 +    public static ReflectorMethod ForgeHooks_onPlayerAttack = new ReflectorMethod(ForgeHooks, "onPlayerAttack");

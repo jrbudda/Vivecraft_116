@@ -2,7 +2,7 @@
 +++ b/net/minecraft/client/gui/AbstractGui.java
 @@ -181,6 +181,11 @@
  
-     private static void innerBlit(Matrix4f p_238461_0_, int p_238461_1_, int p_238461_2_, int p_238461_3_, int p_238461_4_, int p_238461_5_, float p_238461_6_, float p_238461_7_, float p_238461_8_, float p_238461_9_)
+     private static void innerBlit(Matrix4f matrix, int x1, int x2, int y1, int y2, int blitOffset, float minU, float maxU, float minV, float maxV)
      {
 +        // VIVECRAFT: DestFactor of ONE_MINUS_SRC_ALPHA is really what we want here, because math
 +        // Also this blending wasn't here before but it fixes stuff so yeah
@@ -11,7 +11,7 @@
 +    	//
          BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
          bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-         bufferbuilder.pos(p_238461_0_, (float)p_238461_1_, (float)p_238461_4_, (float)p_238461_5_).tex(p_238461_6_, p_238461_9_).endVertex();
+         bufferbuilder.pos(matrix, (float)x1, (float)y2, (float)blitOffset).tex(minU, maxV).endVertex();
 @@ -190,6 +195,9 @@
          bufferbuilder.finishDrawing();
          RenderSystem.enableAlphaTest();

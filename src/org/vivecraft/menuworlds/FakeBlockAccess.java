@@ -106,7 +106,7 @@ public class FakeBlockAccess implements IWorldReader {
 	}
 
 	@Override
-	public DimensionType getDimensionType() {
+	public DimensionType func_230315_m_() {
 		return dimensionType;
 	}
 
@@ -239,17 +239,17 @@ public class FakeBlockAccess implements IWorldReader {
 
 	@Override
 	public IChunk getChunk(int x, int z, ChunkStatus requiredStatus, boolean nonnull) {
-		return null; // ¯\_(ツ)_/¯
+		return null; // �\_(?)_/�
 	}
 
 	@Override
 	public int getHeight(Heightmap.Type heightmapType, int x, int z) {
-		return 0; // ¯\_(ツ)_/¯
+		return 0; // �\_(?)_/�
 	}
 
 	@Override
 	public BlockPos getHeight(Heightmap.Type heightmapType, BlockPos pos) {
-		return BlockPos.ZERO; // ¯\_(ツ)_/¯
+		return BlockPos.ZERO; // �\_(?)_/�
 	}
 
 	@Override

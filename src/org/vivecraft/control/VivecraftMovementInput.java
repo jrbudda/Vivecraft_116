@@ -33,7 +33,7 @@ public class VivecraftMovementInput extends MovementInput {
 	}
 	
 	@Override //tick
-	public void func_225607_a_(boolean sneaking)
+	public void tickMovement(boolean sneaking)
 	{       
 		this.moveStrafe = 0.0F;
 		this.moveForward = 0.0F;

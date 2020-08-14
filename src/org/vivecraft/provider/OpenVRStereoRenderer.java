@@ -79,7 +79,7 @@ public class OpenVRStereoRenderer
 	public boolean lastFogFast = false;
 	public float lastWorldScale = 0f;
 	public boolean lastEnableVsync = true;
-	public RegistryKey<DimensionType> lastDimensionId = DimensionType.field_235999_c_;
+	public RegistryKey<DimensionType> lastDimensionId = DimensionType.OVERWORLD;
 	public int lastGuiScale = 0;
 	public float renderScale;
 	public static final String RENDER_SETUP_FAILURE_MESSAGE = "Failed to initialise stereo rendering plugin: ";

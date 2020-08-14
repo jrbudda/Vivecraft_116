@@ -1354,7 +1354,7 @@ public class MCOpenVR
 		
 		if(mc.climbTracker.isGrabbingLadder() && 
 				mc.climbTracker.isClaws(mc.player.getHeldItemMainhand())) return;
-
+		if(!mc.interactTracker.isActive(mc.player)) return;
 		Vector3d main = getAimSource(0);
 		Vector3d off = getAimSource(1);
 
@@ -1778,7 +1778,7 @@ public class MCOpenVR
 		if (keyExportWorld.isPressed()) {
 			if (mc.world != null && mc.player != null) {
 				try {
-					final BlockPos pos = mc.player.getBlockPos();
+					final BlockPos pos = mc.player.getPosition();
 					final int size = 320;
 					File dir = new File("menuworlds/custom_114");
 					dir.mkdirs();
@@ -1792,7 +1792,7 @@ public class MCOpenVR
 					System.out.println("Exporting world... area size: " + size);
 					System.out.println("Saving to " + file.getAbsolutePath());
 					if (mc.isIntegratedServerRunning()) {
-						final World world = mc.getIntegratedServer().getWorld(mc.player.world.getDimension());
+						final World world = mc.getIntegratedServer().getWorld(mc.player.world.getDimensionKey());
 						CompletableFuture<Void> task = mc.getIntegratedServer().runAsync(new Runnable() {
 							@Override
 							public void run() {

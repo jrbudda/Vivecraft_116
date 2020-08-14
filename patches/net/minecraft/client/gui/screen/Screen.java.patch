@@ -9,23 +9,28 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -128,7 +130,12 @@
+@@ -128,22 +130,41 @@
  
-     protected void getTooltipFromItem(MatrixStack p_230457_1_, ItemStack p_230457_2_, int p_230457_3_, int p_230457_4_)
+     protected void renderTooltip(MatrixStack matrixStack, ItemStack itemStack, int mouseX, int mouseY)
      {
--        this.renderTooltip(p_230457_1_, this.renderTooltip(p_230457_2_), p_230457_3_, p_230457_4_);
+-        this.renderTooltip(matrixStack, this.getTooltipFromItem(itemStack), mouseX, mouseY);
 +    	//Forge
-+    	Reflector.call(Reflector.GuiUtils_preItemToolTip, p_230457_2_);        
-+    	FontRenderer fon = (FontRenderer)Reflector.call(p_230457_2_.getItem(), Reflector.IForgeItem_getFontRenderer, p_230457_2_);
-+    	this.renderTooltip(p_230457_1_, this.renderTooltip(p_230457_2_), p_230457_3_, p_230457_4_, (fon == null ? this.font : fon));
++    	Reflector.call(Reflector.GuiUtils_preItemToolTip, itemStack);        
++    	FontRenderer fon = (FontRenderer)Reflector.call(itemStack.getItem(), Reflector.IForgeItem_getFontRenderer, itemStack);
++    	this.renderTooltip(matrixStack, this.getTooltipFromItem(itemStack), mouseX, mouseY, (fon == null ? this.font : fon));
 +    	Reflector.call(Reflector.GuiUtils_postItemToolTip);
-+    	//Forge
++    	//
      }
  
-     public List<ITextComponent> renderTooltip(ItemStack p_231151_1_)
-@@ -140,10 +147,24 @@
+     public List<ITextComponent> getTooltipFromItem(ItemStack itemStack)
      {
-         this.renderTooltip(p_238652_1_, Arrays.asList(p_238652_2_), p_238652_3_, p_238652_4_);
+-        return itemStack.getTooltip(this.minecraft.player, this.minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
++    	return itemStack.getTooltip(this.minecraft.player, this.minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+     }
+ 
+     public void renderTooltip(MatrixStack matrixStack, ITextProperties text, int mouseX, int mouseY)
+     {
+         this.renderTooltip(matrixStack, Arrays.asList(text), mouseX, mouseY);
      }
 -
 +    
@@ -52,58 +57,58 @@
  
 @@ -360,6 +381,11 @@
  
-     public void sendMessage(String p_231159_1_, boolean p_231159_2_)
+     public void sendMessage(String text, boolean addToChat)
      {
 +    	//Forge
 +    	if(Reflector.ForgeEventFactory_onClientSendMessage.exists())
-+    		p_231159_1_ = Reflector.callString(Reflector.ForgeEventFactory_onClientSendMessage, p_231159_1_);
-+        if (p_231159_1_.isEmpty()) return;
++    		text = Reflector.callString(Reflector.ForgeEventFactory_onClientSendMessage, text);
++        if (text.isEmpty()) return;
 +        //
-         if (p_231159_2_)
+         if (addToChat)
          {
-             this.minecraft.ingameGUI.getChatGUI().addToSentMessages(p_231159_1_);
+             this.minecraft.ingameGUI.getChatGUI().addToSentMessages(text);
 @@ -375,10 +401,15 @@
-         this.font = p_231158_1_.fontRenderer;
-         this.width = p_231158_2_;
-         this.height = p_231158_3_;
+         this.font = minecraft.fontRenderer;
+         this.width = width;
+         this.height = height;
 -        this.buttons.clear();
 -        this.children.clear();
--        this.func_231035_a_((IGuiEventListener)null);
+-        this.setListener((IGuiEventListener)null);
 -        this.init();
 +        java.util.function.Consumer<Widget> remove = (b) -> { buttons.remove(b); children.remove(b); };
 +        java.util.function.Consumer<Widget> add = (b) -> { this.addButton(b); };
 +        if (!Reflector.postForgeBusEvent(Reflector.InitGuiEvent_Pre_Constructor, this, this.buttons, add, remove)) {
 +	        this.buttons.clear();
 +	        this.children.clear();
-+	        this.func_231035_a_((IGuiEventListener)null);
++	        this.setListener((IGuiEventListener)null);
 +	        this.init();
 +        }
 +        Reflector.postForgeBusEvent(Reflector.InitGuiEvent_Post_Constructor, this, this.buttons, add, remove);
      }
  
-     public List <? extends IGuiEventListener > children()
+     public List <? extends IGuiEventListener > getEventListeners()
 @@ -407,7 +438,17 @@
      {
          if (this.minecraft.world != null)
          {
--            this.fillGradient(p_238651_1_, 0, 0, this.width, this.height, -1072689136, -804253680);
+-            this.fillGradient(matrixStack, 0, 0, this.width, this.height, -1072689136, -804253680);
 +        	//Vivecraft
 +        	if (minecraft.vrSettings != null && minecraft.vrSettings.menuBackground == false)
 +        	{
-+        		this.fillGradient(p_238651_1_, 0, 0, this.width, this.height, 0, 0);
++        		this.fillGradient(matrixStack, 0, 0, this.width, this.height, 0, 0);
 +        	}
 +        	else
 +        	{
-+        		this.fillGradient(p_238651_1_, 0, 0, this.width, this.height, -1072689136, -804253680);
++        		this.fillGradient(matrixStack, 0, 0, this.width, this.height, -1072689136, -804253680);
 +        	}
 +        	//     	
-+            Reflector.postForgeBusEvent(Reflector.BackgroundDrawnEvent_Constructor, this, p_238651_1_);
++            Reflector.postForgeBusEvent(Reflector.BackgroundDrawnEvent_Constructor, this, matrixStack);
          }
          else
          {
 @@ -428,6 +469,7 @@
-         bufferbuilder.pos((double)this.width, 0.0D, 0.0D).tex((float)this.width / 32.0F, (float)p_231165_1_).color(64, 64, 64, 255).endVertex();
-         bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0F, (float)p_231165_1_).color(64, 64, 64, 255).endVertex();
+         bufferbuilder.pos((double)this.width, 0.0D, 0.0D).tex((float)this.width / 32.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
+         bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
          tessellator.draw();
 +        Reflector.postForgeBusEvent(Reflector.BackgroundDrawnEvent_Constructor, this, new MatrixStack());
      }

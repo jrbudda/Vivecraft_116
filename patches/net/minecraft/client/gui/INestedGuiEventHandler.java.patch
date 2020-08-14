@@ -8,23 +8,23 @@
 +
  public interface INestedGuiEventHandler extends IGuiEventListener
  {
-     List <? extends IGuiEventListener > children();
+     List <? extends IGuiEventListener > getEventListeners();
 @@ -91,10 +93,14 @@
-     void func_231035_a_(@Nullable IGuiEventListener p_231035_1_);
+     void setListener(@Nullable IGuiEventListener listener);
  
  default void setFocusedDefault(@Nullable IGuiEventListener eventListener)
 -    {
--        this.func_231035_a_(eventListener);
+-        this.setListener(eventListener);
 -        eventListener.changeFocus(true);
 -    }
 +{
 +	//Vivecraft - dont autofocus text fields, it forces open the keyboard
 +	if(Minecraft.getInstance().vrSettings.seated) {
-+		this.func_231035_a_(eventListener);
++		this.setListener(eventListener);
 +		eventListener.changeFocus(true);
 +	}
 +	//
 +}
  
- default void func_212932_b(@Nullable IGuiEventListener eventListener)
+ default void setListenerDefault(@Nullable IGuiEventListener eventListener)
      {

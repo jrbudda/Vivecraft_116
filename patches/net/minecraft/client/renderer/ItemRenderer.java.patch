@@ -52,7 +52,7 @@
                  {
                      RenderType rendertype = RenderTypeLookup.func_239219_a_(itemStackIn, flag1);
                      IVertexBuilder ivertexbuilder;
-+                    //Vivecraft �\_(?)_/� pick one? make a better one?
++                    //Vivecraft ?\_(?)_/? pick one? make a better one?
 +                    if(isfphand && fade < 1)
 +                    	rendertype = Atlases.getTranslucentCullBlockType();
 +                    //

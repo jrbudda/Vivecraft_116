@@ -67,7 +67,7 @@
      public ActionResultType func_217292_a(ClientPlayerEntity player, ClientWorld worldIn, Hand hand, BlockRayTraceResult rayTrace)
      {
 +		//Vivecraft
-+		NetworkHelper.overrideLook(player, rayTrace.getHitVec().subtract(player.getEyePosition(1).normalize()));
++		NetworkHelper.overrideLook(player, rayTrace.getHitVec().subtract(player.getEyePosition(1)).normalize());
 +		//	
          this.acting = true;
          this.lastClickBlockPos = rayTrace.getPos();

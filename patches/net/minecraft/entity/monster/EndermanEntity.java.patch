@@ -27,7 +27,7 @@
  public class EndermanEntity extends MonsterEntity implements IAngerable
  {
 @@ -126,6 +132,9 @@
-                 modifiableattributeinstance.func_233767_b_(ATTACKING_SPEED_BOOST);
+                 modifiableattributeinstance.applyNonPersistentModifier(ATTACKING_SPEED_BOOST);
              }
          }
 +        //Forge move down here
@@ -128,12 +128,12 @@
  
          private boolean func_220836_a(IWorldReader p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_)
          {
--            return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
+-            return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.hasOpaqueCollisionShape(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
 +        	if(Reflector.IForgeBlockState_isAir2.exists()) {
 +        		boolean flag = Reflector.callBoolean(p_220836_4_, Reflector.IForgeBlockState_isAir2, p_220836_1_, p_220836_2_);
-+        		return !flag && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
++        		return !flag && p_220836_5_.hasOpaqueCollisionShape(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
 +        	}else
-+         	   return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
++         	   return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.hasOpaqueCollisionShape(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
          }
      }
  

@@ -103,6 +103,7 @@ vivecraft.options.RENDER_BLOCK_OUTLINE_MODE=Show Block Outline
 vivecraft.options.AUTO_OPEN_KEYBOARD=Always Open Keyboard
 vivecraft.options.RADIAL_MODE_HOLD=Radial Menu Mode
 vivecraft.options.PHYSICAL_KEYBOARD=Keyboard Type
+vivecraft.options.PHYSICAL_KEYBOARD_SCALE=Keyboard Size
 vivecraft.options.GUI_APPEAR_OVER_BLOCK=Appear Over Block
 vivecraft.options.FSAA=Lanczos Scaler
 vivecraft.options.MIRROR_DISPLAY=Desktop Mirror
@@ -235,6 +236,8 @@ vivecraft.options.PHYSICAL_KEYBOARD.tooltip=Which type of VR keyboard to use for
   Physical: A keyboard which you can type on like a real keyboard.\n\
   Pointer: A keyboard which you can use by pointing either controller's crosshair at and pressing buttons.
 
+vivecraft.options.PHYSICAL_KEYBOARD_SCALE.tooltip=How large the physical keyboard should be, relative to its base size.
+
 vivecraft.options.GUI_APPEAR_OVER_BLOCK.tooltip=If enabled, the GUI for blocks (such as chests and \
 furnaces) will be placed above the block. Otherwise, it will be at the usual position.
 
@@ -364,7 +367,8 @@ vivecraft.options.FREEMOVE_MODE.tooltip=The source for freemove direction.\n\
 \n\
   Controller: Offhand controller pointing direction.\n\
   HMD: Headset look direction.\n\
-  Run-In-Place: Direction is based on how controllers are swinging.
+  Run-In-Place: Yaw is based on how controllers are swinging. Pitch is your Headset. \n\
+  Room: Yaw is relative to your VR room forward. Pitch is your Headset. This mode is best only for 180 setups. \n\
 
 vivecraft.options.VEHICLE_ROTATION.tooltip=Riding in a vehicle will rotate the world \
 as the vehicle rotates. May be disorienting.
@@ -502,6 +506,7 @@ vivecraft.options.hmd=HMD
 vivecraft.options.crosshair=Crosshair
 vivecraft.options.controller=Controller
 vivecraft.options.runinplace=Run-In-Place
+vivecraft.options.runinplace=Room
 vivecraft.options.hold=Hold
 vivecraft.options.press=Press
 vivecraft.options.keyboard.physical=Physical

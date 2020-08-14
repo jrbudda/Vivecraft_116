@@ -19,7 +19,7 @@
  {
 @@ -81,7 +85,13 @@
  
-             RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::canImpact, RayTraceContext.BlockMode.COLLIDER);
+             RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_, RayTraceContext.BlockMode.COLLIDER);
  
 -            if (raytraceresult.getType() != RayTraceResult.Type.MISS)
 +            //Forge

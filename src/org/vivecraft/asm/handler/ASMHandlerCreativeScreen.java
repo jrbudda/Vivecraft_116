@@ -28,7 +28,7 @@ public class ASMHandlerCreativeScreen extends ASMClassHandler {
 	public static class AddTabsMethodHandler implements ASMMethodHandler {
 		@Override
 		public MethodTuple getDesiredMethod() {
-			return new MethodTuple("func_147050_b", "(Lnet/minecraft/item/ItemGroup;)V"); //setCurrentCreativeTab
+			return new MethodTuple("setCurrentCreativeTab", "(Lnet/minecraft/item/ItemGroup;)V"); //setCurrentCreativeTab
 		}
 
 		@Override
@@ -36,11 +36,11 @@ public class ASMHandlerCreativeScreen extends ASMClassHandler {
 			InsnList insnList = new InsnList();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", "field_147002_h", "Lnet/minecraft/inventory/container/Container;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", "container", "Lnet/minecraft/inventory/container/Container;"));
 			insnList.add(new TypeInsnNode(Opcodes.CHECKCAST, "net/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer"));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer", "field_148330_a", "Lnet/minecraft/util/NonNullList;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer", "itemList", "Lnet/minecraft/util/NonNullList;"));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/vivecraft/asm/ASMDelegator", "addCreativeItems", "(Lnet/minecraft/item/ItemGroup;Lnet/minecraft/util/NonNullList;)V", false));
-			AbstractInsnNode insertInsn = ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKEVIRTUAL, "net/minecraft/item/ItemGroup", "func_78018_a", "(Lnet/minecraft/util/NonNullList;)V", false);
+			AbstractInsnNode insertInsn = ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKEVIRTUAL, "net/minecraft/item/ItemGroup", "fill", "(Lnet/minecraft/util/NonNullList;)V", false);
 			methodNode.instructions.insert(insertInsn, insnList);
 			System.out.println("Inserted call to delegator");
 		}
@@ -49,21 +49,21 @@ public class ASMHandlerCreativeScreen extends ASMClassHandler {
 	public static class AddSearchMethodHandler implements ASMMethodHandler {
 		@Override
 		public MethodTuple getDesiredMethod() {
-			return new MethodTuple("func_147053_i", "()V"); //updateCreativeSearch
+			return new MethodTuple("updateCreativeSearch", "()V"); //updateCreativeSearch
 		}
 
 		@Override
 		public void patchMethod(MethodNode methodNode, ClassNode classNode) {
 			InsnList insnList = new InsnList();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", "field_147062_A", "Lnet/minecraft/client/gui/widget/TextFieldWidget;"));
-			insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/client/gui/widget/TextFieldWidget", "func_146179_b", "()Ljava/lang/String;", false));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", "searchField", "Lnet/minecraft/client/gui/widget/TextFieldWidget;"));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/client/gui/widget/TextFieldWidget", "getText", "()Ljava/lang/String;", false));
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", "field_147002_h", "Lnet/minecraft/inventory/container/Container;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", "container", "Lnet/minecraft/inventory/container/Container;"));
 			insnList.add(new TypeInsnNode(Opcodes.CHECKCAST, "net/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer"));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer", "field_148330_a", "Lnet/minecraft/util/NonNullList;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer", "itemList", "Lnet/minecraft/util/NonNullList;"));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/vivecraft/asm/ASMDelegator", "addCreativeSearch", "(Ljava/lang/String;Lnet/minecraft/util/NonNullList;)V", false));
-			AbstractInsnNode insertInsn = ASMUtil.findNthInstruction(methodNode, 1, Opcodes.PUTFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", "field_147067_x", "F");
+			AbstractInsnNode insertInsn = ASMUtil.findNthInstruction(methodNode, 1, Opcodes.PUTFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", "currentScroll", "F");
 			ASMUtil.insertInstructionsRelative(methodNode, insertInsn, -3, insnList);
 			System.out.println("Inserted call to delegator");
 		}

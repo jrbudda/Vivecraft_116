@@ -31,12 +31,12 @@
 -            p_renderRaw_2_.push();
 -            p_renderRaw_2_.scale(1.0F, -1.0F, -1.0F);
 -            RenderMaterial rendermaterial = flag ? ModelBakery.LOCATION_SHIELD_BASE : ModelBakery.LOCATION_SHIELD_NO_PATTERN;
--            IVertexBuilder ivertexbuilder1 = rendermaterial.getSprite().wrapBuffer(ItemRenderer.func_239391_c_(p_renderRaw_3_, this.modelShield.getRenderType(rendermaterial.getAtlasLocation()), true, p_renderRaw_1_.hasEffect()));
+-            IVertexBuilder ivertexbuilder1 = rendermaterial.getSprite().wrapBuffer(ItemRenderer.getEntityGlintVertexBuilder(p_renderRaw_3_, this.modelShield.getRenderType(rendermaterial.getAtlasLocation()), true, p_renderRaw_1_.hasEffect()));
 -            this.modelShield.func_228294_b_().render(p_renderRaw_2_, ivertexbuilder1, p_renderRaw_4_, p_renderRaw_5_, 1.0F, 1.0F, 1.0F, 1.0F);
 -
 -            if (flag)
 -            {
--                List<Pair<BannerPattern, DyeColor>> list = BannerTileEntity.func_230138_a_(ShieldItem.getColor(p_renderRaw_1_), BannerTileEntity.func_230139_a_(p_renderRaw_1_));
+-                List<Pair<BannerPattern, DyeColor>> list = BannerTileEntity.getPatternColorData(ShieldItem.getColor(p_renderRaw_1_), BannerTileEntity.getPatternData(p_renderRaw_1_));
 -                BannerTileEntityRenderer.func_241717_a_(p_renderRaw_2_, p_renderRaw_3_, p_renderRaw_4_, p_renderRaw_5_, this.modelShield.func_228293_a_(), rendermaterial, false, list, p_renderRaw_1_.hasEffect());
 -            }
 -            else
@@ -50,7 +50,7 @@
 -        {
 -            p_renderRaw_2_.push();
 -            p_renderRaw_2_.scale(1.0F, -1.0F, -1.0F);
--            IVertexBuilder ivertexbuilder = ItemRenderer.func_239391_c_(p_renderRaw_3_, this.trident.getRenderType(TridentModel.TEXTURE_LOCATION), false, p_renderRaw_1_.hasEffect());
+-            IVertexBuilder ivertexbuilder = ItemRenderer.getEntityGlintVertexBuilder(p_renderRaw_3_, this.trident.getRenderType(TridentModel.TEXTURE_LOCATION), false, p_renderRaw_1_.hasEffect());
 -            this.trident.render(p_renderRaw_2_, ivertexbuilder, p_renderRaw_4_, p_renderRaw_5_, 1.0F, 1.0F, 1.0F, 1.0F);
 -            p_renderRaw_2_.pop();
 +        	//Vivecraft
@@ -66,16 +66,16 @@
 +        		p_renderRaw_2_.push();
 +        		p_renderRaw_2_.scale(1.0F, -1.0F, -1.0F);
 +        		RenderMaterial rendermaterial = flag ? ModelBakery.LOCATION_SHIELD_BASE : ModelBakery.LOCATION_SHIELD_NO_PATTERN;
-+        		IVertexBuilder ivertexbuilder1 = rendermaterial.getSprite().wrapBuffer(ItemRenderer.func_239391_c_(p_renderRaw_3_, this.modelShield.getRenderType(rendermaterial.getAtlasLocation()), true, p_renderRaw_1_.hasEffect()));
++        		IVertexBuilder ivertexbuilder1 = rendermaterial.getSprite().wrapBuffer(ItemRenderer.getEntityGlintVertexBuilder(p_renderRaw_3_, this.modelShield.getRenderType(rendermaterial.getAtlasLocation()), true, p_renderRaw_1_.hasEffect()));
 +        		//Vivecraft
 +        		if(a<1)
-+        			ivertexbuilder1 = rendermaterial.getSprite().wrapBuffer(ItemRenderer.func_239391_c_(p_renderRaw_3_, RenderType.getEntityTranslucent(rendermaterial.getAtlasLocation()), true, p_renderRaw_1_.hasEffect()));
++        			ivertexbuilder1 = rendermaterial.getSprite().wrapBuffer(ItemRenderer.getEntityGlintVertexBuilder(p_renderRaw_3_, RenderType.getEntityTranslucent(rendermaterial.getAtlasLocation()), true, p_renderRaw_1_.hasEffect()));
 +        		this.modelShield.func_228294_b_().render(p_renderRaw_2_, ivertexbuilder1, p_renderRaw_4_, p_renderRaw_5_, 1.0F, 1.0F, 1.0F, a);
 +        		//
 +        		
 +        		if (flag)
 +        		{
-+        			List<Pair<BannerPattern, DyeColor>> list = BannerTileEntity.func_230138_a_(ShieldItem.getColor(p_renderRaw_1_), BannerTileEntity.func_230139_a_(p_renderRaw_1_));
++        			List<Pair<BannerPattern, DyeColor>> list = BannerTileEntity.getPatternColorData(ShieldItem.getColor(p_renderRaw_1_), BannerTileEntity.getPatternData(p_renderRaw_1_));
 +        			BannerTileEntityRenderer.func_241717_a_(p_renderRaw_2_, p_renderRaw_3_, p_renderRaw_4_, p_renderRaw_5_, this.modelShield.func_228293_a_(), rendermaterial, false, list, p_renderRaw_1_.hasEffect());
 +        		}
 +        		else
@@ -91,10 +91,10 @@
 +        	{
 +        		p_renderRaw_2_.push();
 +        		p_renderRaw_2_.scale(1.0F, -1.0F, -1.0F);
-+        		IVertexBuilder ivertexbuilder = ItemRenderer.func_239391_c_(p_renderRaw_3_, this.trident.getRenderType(TridentModel.TEXTURE_LOCATION), false, p_renderRaw_1_.hasEffect());
++        		IVertexBuilder ivertexbuilder = ItemRenderer.getEntityGlintVertexBuilder(p_renderRaw_3_, this.trident.getRenderType(TridentModel.TEXTURE_LOCATION), false, p_renderRaw_1_.hasEffect());
 +        		//Vivecraft
 +        		if(a<1)
-+        			ivertexbuilder = ItemRenderer.func_239391_c_(p_renderRaw_3_, RenderType.getEntityTranslucent(TridentModel.TEXTURE_LOCATION), false, p_renderRaw_1_.hasEffect());
++        			ivertexbuilder = ItemRenderer.getEntityGlintVertexBuilder(p_renderRaw_3_, RenderType.getEntityTranslucent(TridentModel.TEXTURE_LOCATION), false, p_renderRaw_1_.hasEffect());
 +        		this.trident.render(p_renderRaw_2_, ivertexbuilder, p_renderRaw_4_, p_renderRaw_5_, 1.0F, 1.0F, 1.0F, a);
 +        		//
 +        		p_renderRaw_2_.pop();

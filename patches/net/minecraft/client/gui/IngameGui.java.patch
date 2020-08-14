@@ -99,7 +99,7 @@
  
 -        if (!this.mc.player.isPotionActive(Effects.NAUSEA))
 -        {
--            float f = MathHelper.lerp(p_238445_2_, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
+-            float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
  
 -            if (f > 0.0F)
 -            {
@@ -109,7 +109,7 @@
 +        //Vivecraft oh no no no.
 +//        if (!this.mc.player.isPotionActive(Effects.NAUSEA))
 +//        {
-+//            float f = MathHelper.lerp(p_238445_2_, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
++//            float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
 +
 +//            if (f > 0.0F)
 +//            {
@@ -123,17 +123,17 @@
              this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
              RenderSystem.enableBlend();
              RenderSystem.enableAlphaTest();
--            this.renderAttackIndicator(p_238445_1_);
+-            this.func_238456_d_(matrixStack);
 +            //Vivecraft nope
-+            //this.renderAttackIndicator(p_238445_1_);
-+            //
++            //this.func_238456_d_(matrixStack);
              GlStateManager.enableAlphaTest();
 -            RenderSystem.defaultBlendFunc();
++            //RenderSystem.defaultBlendFunc();
 +            //Vivecraft blend
 +            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 +            ///
              this.mc.getProfiler().startSection("bossHealth");
-             this.overlayBoss.func_238484_a_(p_238445_1_);
+             this.overlayBoss.func_238484_a_(matrixStack);
              this.mc.getProfiler().endSection();
 @@ -285,7 +309,9 @@
                      RenderSystem.pushMatrix();
@@ -159,7 +159,7 @@
                      int l1 = j1 << 24 & -16777216;
 @@ -375,9 +403,30 @@
              {
-                 this.renderScoreboard(p_238445_1_, scoreobjective1);
+                 this.func_238447_a_(matrixStack, scoreobjective1);
              }
 +            
 +			if (mc.currentScreen != null) {
@@ -197,16 +197,16 @@
 +            if ((this.mc.gameSettings.keyBindPlayerList.isKeyDown() || showPlayerList) && (!this.mc.isIntegratedServerRunning() || this.mc.player.connection.getPlayerInfoMap().size() > 1 || scoreobjective1 != null))
              {
                  this.overlayPlayerList.setVisible(true);
-                 this.overlayPlayerList.func_238523_a_(p_238445_1_, this.scaledWidth, scoreboard, scoreobjective1);
+                 this.overlayPlayerList.func_238523_a_(matrixStack, this.scaledWidth, scoreboard, scoreobjective1);
 @@ -607,22 +656,45 @@
-             this.blit(p_238443_2_, i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
-             this.blit(p_238443_2_, i - 91 - 1 + playerentity.inventory.currentItem * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
+             this.blit(matrixStack, i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
+             this.blit(matrixStack, i - 91 - 1 + playerentity.inventory.currentItem * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
  
 -            if (!itemstack.isEmpty())
 +            //Vivecraft - render hotbar context selection.
 +            if(mc.interactTracker.hotbar >= 0 && mc.interactTracker.hotbar < 9 && playerentity.inventory.currentItem != mc.interactTracker.hotbar) {
 +                RenderSystem.color4f(0.0F, 1.0F, 0.0F, 1.0F);
-+                this.blit(p_238443_2_, i - 91 - 1 + mc.interactTracker.hotbar * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
++                this.blit(matrixStack, i - 91 - 1 + mc.interactTracker.hotbar * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
 +                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 +            }
 +            //
@@ -216,24 +216,24 @@
              {
                  if (handside == HandSide.LEFT)
                  {
--                    this.blit(p_238443_2_, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
+-                    this.blit(matrixStack, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
 +                    if(mc.interactTracker.hotbar == 9 ) {
 +                        RenderSystem.color4f(0.0F, 0.0F, 1.0F, 1.0F);
-+                        this.blit(p_238443_2_, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
++                        this.blit(matrixStack, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
 +                        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 +                    } else {
-+                        this.blit(p_238443_2_, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
++                        this.blit(matrixStack, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
 +                    }
                  }
                  else
                  {
--                    this.blit(p_238443_2_, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
+-                    this.blit(matrixStack, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
 +                    if(mc.interactTracker.hotbar == 9) {
 +                        RenderSystem.color4f(0.0F, 0.0F, 1.0F, 1.0F);
-+                        this.blit(p_238443_2_, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
++                        this.blit(matrixStack, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
 +                        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 +                    } else 
-+                        this.blit(p_238443_2_, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
++                        this.blit(matrixStack, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
                  }
              }
 -
@@ -255,7 +255,7 @@
              RenderSystem.disableBlend();
 +
 +            //Vivecraft
-+            renderViveHudIcons(p_238443_2_);
++            renderViveHudIcons(matrixStack);
 +            //
          }
      }
@@ -303,9 +303,9 @@
 +        	  int iconp = 0;    	  
 +        	
 +        	  Effect e = null;
-+        	  if(entityplayer.isSprinting()) e = Effects.SPEED;      	  
-+        	  if(entityplayer.isSneaking()) e = Effects.BLINDNESS;
++        	  if(entityplayer.isSprinting()) e = Effects.SPEED;      
 +        	  if(entityplayer.isActualySwimming()) e = Effects.DOLPHINS_GRACE;
++        	  if(entityplayer.isSneaking()) e = Effects.BLINDNESS;
 +        	  if(entityplayer.isElytraFlying()) iconp = -1;
 +        	  if(mc.crawlTracker.crawling) iconp = -2;
 +        	  
@@ -318,7 +318,7 @@
 +        	  } 
 +        	  else if(iconp == -2){
 +        		  if(entityplayer.isSneaking())
-+        			  w = this.mc.getMainWindow().getScaledWidth() / 2 - 109 - 16;
++        			  w -= 19;
 +        		  else
 +        			  e = null;
 +        		  mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.RABBIT_FOOT), w, h);

@@ -142,7 +142,7 @@ public class PhysicalItemSlot implements Interactable {
 
 	/**
 	 * The rotation of the slot, relative to the entity or blocks backwards vector (see {@link PhysicalItemSlot#position})<br>
-	 * Defines which way the *back-face* of the itemslot is looking, meaning lying flat is a 90Â° pitch down (so +90Â° in minecraft terms)
+	 * Defines which way the *back-face* of the itemslot is looking, meaning lying flat is a 90° pitch down (so +90° in minecraft terms)
 	 */
 	public Quaternion rotation = new Quaternion();
 

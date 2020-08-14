@@ -124,7 +124,7 @@
 -
 -        if (this.player.getChatVisibility() == ChatVisibility.HIDDEN)
 -        {
--            this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_240699_a_(TextFormatting.RED), ChatType.SYSTEM, Util.field_240973_b_));
+-            this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).mergeStyle(TextFormatting.RED), ChatType.SYSTEM, Util.DUMMY_UUID));
 -        }
 -        else
 -        {
@@ -160,7 +160,7 @@
 -        }
 +    	if (this.player.getChatVisibility() == ChatVisibility.HIDDEN)
 +    	{
-+    		this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_240699_a_(TextFormatting.RED), ChatType.SYSTEM, Util.field_240973_b_));
++    		this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).mergeStyle(TextFormatting.RED), ChatType.SYSTEM, Util.DUMMY_UUID));
 +    	}
 +    	else
 +    	{

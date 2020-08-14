@@ -54,6 +54,8 @@ public class InteractTracker extends Tracker{
 		if(p.isActiveItemStackBlocking() && hotbar < 0){
 			return false; 
 		}
+		if (mc.bowTracker.isNotched())
+			return false;
 		return true;    
 	}
 
@@ -72,6 +74,7 @@ public class InteractTracker extends Tracker{
 			inEntity[c] = null;
 			inEntityHit[c] = null;
 			active[c] = false;
+			MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).setEnabled(ControllerType.values()[c], false);
 		}
 	}
 
@@ -152,7 +155,7 @@ public class InteractTracker extends Tracker{
 				BlockState block = mc.world.getBlockState(bp);
 				//	Material material = block.getMaterial();
 
-				BlockRayTraceResult hit = block.func_235754_c_(mc.world, bp).rayTrace(hmdPos, handPos, bp);
+				BlockRayTraceResult hit = block.getRenderShapeTrue(mc.world, bp).rayTrace(hmdPos, handPos, bp);
 				inBlockPos[c] = bp;
 				inBlockHit[c] = hit;		     
 
@@ -185,7 +188,8 @@ public class InteractTracker extends Tracker{
 	public void processBindings() {
 		for(int c =0 ;c<2;c++){
 			if(MCOpenVR.keyVRInteract.isPressed(ControllerType.values()[c])) {
-				if (!active[c]) continue; //how tho?
+				if (!active[c]) 
+					continue; //how tho?
 				Hand hand = Hand.values()[c];
 				boolean success = false;
 				

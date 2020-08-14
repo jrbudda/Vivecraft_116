@@ -406,7 +406,7 @@
      {
          Random random = this.world.rand;
  
-+        boolean playernear =  mc.player !=null && mc.player.isAlive() && (mc.player.getBlockPos().distanceSq(blockPosIn) < 25); ///hmm sure why not.
++        boolean playernear =  mc.player !=null && mc.player.isAlive() && (mc.player.getPosition().distanceSq(blockPosIn) < 25); ///hmm sure why not.
 +        
          switch (type)
          {

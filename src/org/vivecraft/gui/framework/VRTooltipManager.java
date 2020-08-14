@@ -57,7 +57,7 @@ public class VRTooltipManager {
 							int k = 14540253;
 
 							FontRenderer fontrenderer = Minecraft.getInstance().fontRenderer;
-							fontrenderer.func_238405_a_(matrixStackIn, s, (float)(rectangle.x + 5), (float)(rectangle.y + 5 + l * 11), k);
+							fontrenderer.drawStringWithShadow(matrixStackIn, s, (float)(rectangle.x + 5), (float)(rectangle.y + 5 + l * 11), k);
 						}
 					}
 				}

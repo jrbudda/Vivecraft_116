@@ -202,7 +202,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.16.1 jrbudda-2-2";
++    public final String minecriftVerString = "Vivecraft 1.16.1 jrbudda-2-r4";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
@@ -245,8 +245,8 @@
 +        //LOGGER.debug("(Session ID is {})", (Object)this.session.getSessionID());
 +        //
          this.isDemo = p_i381_1_.gameInfo.isDemo;
-         this.field_238175_ae_ = !p_i381_1_.gameInfo.field_239099_d_;
-         this.field_238176_af_ = !p_i381_1_.gameInfo.field_239100_e_;
+         this.enableMultiplayer = !p_i381_1_.gameInfo.disableMultiplayer;
+         this.enableChat = !p_i381_1_.gameInfo.disableChat;
 @@ -394,6 +532,14 @@
          this.dataFixer = DataFixesManager.getDataFixer();
          this.toastGui = new ToastGui(this);
@@ -488,24 +488,23 @@
                      Util.acceptOrElse(p_238200_2_, this::restoreResourcePacks, () -> {
                          this.worldRenderer.loadRenderers();
                          completablefuture.complete((Void)null);
-@@ -899,10 +1129,12 @@
+@@ -899,10 +1129,11 @@
  
      public void displayGuiScreen(@Nullable Screen guiScreenIn)
      {
 -        if (this.currentScreen != null)
 -        {
--            this.currentScreen.removed();
+-            this.currentScreen.onClose();
 -        }
-+    	//Forge
-+//        if (this.currentScreen != null)
-+//        {
-+//            this.currentScreen.removed();
-+//        }
-+        //
++        //Forge
++    	//if (this.currentScreen != null)
++        //{
++        //    this.currentScreen.onClose();
++        //}
  
          if (guiScreenIn == null && this.world == null)
          {
-@@ -919,13 +1151,26 @@
+@@ -919,13 +1150,26 @@
                  this.player.respawnPlayer();
              }
          }
@@ -518,7 +517,7 @@
 +        	guiScreenIn = (Screen) Reflector.call(event,Reflector.GuiOpenEvent_getGui);
 +        }
 +        if (old != null && guiScreenIn != old)
-+           old.removed();
++           old.onClose();
 +        //
          if (guiScreenIn instanceof MainMenuScreen || guiScreenIn instanceof MultiplayerScreen)
          {
@@ -533,7 +532,7 @@
          this.currentScreen = guiScreenIn;
  
          if (guiScreenIn != null)
-@@ -987,6 +1232,12 @@
+@@ -987,6 +1231,12 @@
          finally
          {
              Util.nanoTimeSupplier = System::nanoTime;
@@ -546,7 +545,7 @@
  
              if (this.crashReporter == null)
              {
-@@ -1026,135 +1277,318 @@
+@@ -1026,135 +1276,318 @@
  
      private void runGameLoop(boolean renderWorldIn)
      {
@@ -899,7 +898,7 @@
 +    	while (Util.milliTime() >= this.debugUpdateTime + 1000L)
 +    	{
 +    		debugFPS = this.fpsCounter;
-+    		this.debug = String.format("%d fps T: %s%s%s%s B: %d", debugFPS, (double)this.gameSettings.framerateLimit == AbstractOption.FRAMERATE_LIMIT.getMaxValue() ? "inf" : this.gameSettings.framerateLimit, this.gameSettings.vsync ? " vsync" : "", this.gameSettings.field_238330_f_.toString(), this.gameSettings.cloudOption == CloudOption.OFF ? "" : (this.gameSettings.cloudOption == CloudOption.FAST ? " fast-clouds" : " fancy-clouds"), this.gameSettings.biomeBlendRadius);
++    		this.debug = String.format("%d fps T: %s%s%s%s B: %d", debugFPS, (double)this.gameSettings.framerateLimit == AbstractOption.FRAMERATE_LIMIT.getMaxValue() ? "inf" : this.gameSettings.framerateLimit, this.gameSettings.vsync ? " vsync" : "", this.gameSettings.graphicFanciness.toString(), this.gameSettings.cloudOption == CloudOption.OFF ? "" : (this.gameSettings.cloudOption == CloudOption.FAST ? " fast-clouds" : " fancy-clouds"), this.gameSettings.biomeBlendRadius);
 +    		this.debugUpdateTime += 1000L;
 +    		this.fpsCounter = 0;
 +    		this.snooper.addMemoryStatsToSnooper();
@@ -970,7 +969,7 @@
 -        while (Util.milliTime() >= this.debugUpdateTime + 1000L)
 -        {
 -            debugFPS = this.fpsCounter;
--            this.debug = String.format("%d fps T: %s%s%s%s B: %d", debugFPS, (double)this.gameSettings.framerateLimit == AbstractOption.FRAMERATE_LIMIT.getMaxValue() ? "inf" : this.gameSettings.framerateLimit, this.gameSettings.vsync ? " vsync" : "", this.gameSettings.field_238330_f_.toString(), this.gameSettings.cloudOption == CloudOption.OFF ? "" : (this.gameSettings.cloudOption == CloudOption.FAST ? " fast-clouds" : " fancy-clouds"), this.gameSettings.biomeBlendRadius);
+-            this.debug = String.format("%d fps T: %s%s%s%s B: %d", debugFPS, (double)this.gameSettings.framerateLimit == AbstractOption.FRAMERATE_LIMIT.getMaxValue() ? "inf" : this.gameSettings.framerateLimit, this.gameSettings.vsync ? " vsync" : "", this.gameSettings.graphicFanciness.toString(), this.gameSettings.cloudOption == CloudOption.OFF ? "" : (this.gameSettings.cloudOption == CloudOption.FAST ? " fast-clouds" : " fancy-clouds"), this.gameSettings.biomeBlendRadius);
 -            this.debugUpdateTime += 1000L;
 -            this.fpsCounter = 0;
 -            this.snooper.addMemoryStatsToSnooper();
@@ -986,7 +985,7 @@
      }
  
      private boolean func_238202_aF_()
-@@ -1206,14 +1640,14 @@
+@@ -1206,14 +1639,14 @@
          int i = this.mainWindow.calcGuiScale(this.gameSettings.guiScale, this.getForceUnicodeFont());
          this.mainWindow.setGuiScale((double)i);
  
@@ -1004,7 +1003,7 @@
          this.mouseHelper.setIgnoreFirstMove();
      }
  
-@@ -1295,8 +1729,17 @@
+@@ -1295,8 +1728,17 @@
              }
          }
      }
@@ -1023,7 +1022,7 @@
      {
          List<DataPoint> list = p_238183_2_.getDataPoints(this.debugProfilerName);
          DataPoint datapoint = list.remove(0);
-@@ -1312,14 +1755,15 @@
+@@ -1312,14 +1754,15 @@
          Tessellator tessellator = Tessellator.getInstance();
          BufferBuilder bufferbuilder = tessellator.getBuffer();
          int i = 160;
@@ -1042,19 +1041,19 @@
          tessellator.draw();
          RenderSystem.disableBlend();
          double d0 = 0.0D;
-@@ -1383,9 +1827,9 @@
+@@ -1383,9 +1826,9 @@
          }
  
          int k2 = 16777215;
--        this.fontRenderer.func_238405_a_(p_238183_1_, s1, (float)(j - 160), (float)(k - 80 - 16), 16777215);
-+            this.fontRenderer.func_238405_a_(p_238183_1_, s1, (float)(j - 160), (float)(k - 80 - 16), 16777215);
+-        this.fontRenderer.drawStringWithShadow(p_238183_1_, s1, (float)(j - 160), (float)(k - 80 - 16), 16777215);
++            this.fontRenderer.drawStringWithShadow(p_238183_1_, s1, (float)(j - 160), (float)(k - 80 - 16), 16777215);
          s1 = decimalformat.format(datapoint.rootRelTime) + "%";
--        this.fontRenderer.func_238405_a_(p_238183_1_, s1, (float)(j + 160 - this.fontRenderer.getStringWidth(s1)), (float)(k - 80 - 16), 16777215);
-+            this.fontRenderer.func_238405_a_(p_238183_1_, s1, (float)(j + 160 - this.fontRenderer.getStringWidth(s1)), (float)(k - 80 - 16), 16777215);
+-        this.fontRenderer.drawStringWithShadow(p_238183_1_, s1, (float)(j + 160 - this.fontRenderer.getStringWidth(s1)), (float)(k - 80 - 16), 16777215);
++            this.fontRenderer.drawStringWithShadow(p_238183_1_, s1, (float)(j + 160 - this.fontRenderer.getStringWidth(s1)), (float)(k - 80 - 16), 16777215);
  
          for (int j2 = 0; j2 < list.size(); ++j2)
          {
-@@ -1440,34 +1884,54 @@
+@@ -1440,34 +1883,54 @@
  
      private void sendClickBlockToController(boolean leftClick)
      {
@@ -1137,7 +1136,7 @@
      }
  
      private void clickMouse()
-@@ -1485,6 +1949,12 @@
+@@ -1485,6 +1948,12 @@
              }
              else if (!this.player.isRowingBoat())
              {
@@ -1150,7 +1149,7 @@
                  switch (this.objectMouseOver.getType())
                  {
                      case ENTITY:
-@@ -1495,7 +1965,7 @@
+@@ -1495,7 +1964,7 @@
                          BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
                          BlockPos blockpos = blockraytraceresult.getPos();
  
@@ -1159,7 +1158,7 @@
                          {
                              this.playerController.clickBlock(blockpos, blockraytraceresult.getFace());
                              break;
-@@ -1506,103 +1976,139 @@
+@@ -1506,103 +1975,139 @@
                          {
                              this.leftClickCounter = 10;
                          }
@@ -1395,7 +1394,7 @@
      }
  
      public MusicTicker getMusicTicker()
-@@ -1612,12 +2118,17 @@
+@@ -1612,12 +2117,17 @@
  
      public void runTick()
      {
@@ -1415,7 +1414,7 @@
  
          if (!this.isGamePaused)
          {
-@@ -1625,7 +2136,7 @@
+@@ -1625,7 +2135,7 @@
          }
  
          this.profiler.endSection();
@@ -1424,7 +1423,7 @@
          this.tutorial.onMouseHover(this.world, this.objectMouseOver);
          this.profiler.startSection("gameMode");
  
-@@ -1636,10 +2147,11 @@
+@@ -1636,10 +2146,11 @@
  
          this.profiler.endStartSection("textures");
  
@@ -1439,7 +1438,7 @@
  
          if (this.currentScreen == null && this.player != null)
          {
-@@ -1657,6 +2169,7 @@
+@@ -1657,6 +2168,7 @@
              this.displayGuiScreen((Screen)null);
          }
  
@@ -1447,7 +1446,7 @@
          if (this.currentScreen != null)
          {
              this.leftClickCounter = 10000;
-@@ -1674,6 +2187,11 @@
+@@ -1674,6 +2186,11 @@
          {
              this.ingameGUI.reset();
          }
@@ -1459,7 +1458,7 @@
  
          if (this.loadingGui == null && (this.currentScreen == null || this.currentScreen.passEvents))
          {
-@@ -1686,8 +2204,26 @@
+@@ -1686,8 +2203,26 @@
              }
          }
  
@@ -1488,7 +1487,7 @@
              this.profiler.endStartSection("gameRenderer");
  
              if (!this.isGamePaused)
-@@ -1713,14 +2249,20 @@
+@@ -1713,14 +2248,20 @@
  
                  this.world.tickEntities();
              }
@@ -1511,7 +1510,7 @@
              this.musicTicker.tick();
          }
  
-@@ -1780,27 +2322,32 @@
+@@ -1780,27 +2321,32 @@
          this.profiler.endStartSection("keyboard");
          this.keyboardListener.tick();
          this.profiler.endSection();
@@ -1565,7 +1564,7 @@
          }
  
          while (this.gameSettings.keyBindSmoothCamera.isPressed())
-@@ -1860,7 +2407,9 @@
+@@ -1860,7 +2406,9 @@
          {
              if (!this.player.isSpectator() && this.player.drop(Screen.hasControlDown()))
              {
@@ -1576,7 +1575,7 @@
              }
          }
  
-@@ -1868,7 +2417,7 @@
+@@ -1868,7 +2416,7 @@
  
          if (flag2)
          {
@@ -1585,7 +1584,7 @@
              {
                  this.func_238207_b_("");
              }
-@@ -1879,11 +2428,13 @@
+@@ -1879,11 +2427,13 @@
              }
          }
  
@@ -1604,29 +1603,30 @@
              }
  
              while (this.gameSettings.keyBindAttack.isPressed())
-@@ -1900,10 +2451,18 @@
+@@ -1900,10 +2450,18 @@
          }
          else
          {
 -            while (this.gameSettings.keyBindAttack.isPressed())
 -            {
-+			// VIVE SUPPORT HAND SWINGING
-+			if (this.gameSettings.keyBindAttack.isPressed() && currentScreen == null) {
-                 this.clickMouse();
+-                this.clickMouse();
 -            }
-+				lastClick = true;
-+			} else if (!this.gameSettings.keyBindAttack.isKeyDown()) {
-+				this.leftClickCounter = 0;
-+				if (lastClick) {
-+					this.playerController.resetBlockRemoving();
-+            }
-+				lastClick = false;
-+			}
++			// VIVE SUPPORT HAND SWINGING
++        	if (this.gameSettings.keyBindAttack.isPressed() && currentScreen == null) {
++        		this.clickMouse();
++        		lastClick = true;
++        	} else if (!this.gameSettings.keyBindAttack.isKeyDown()) {
++        		this.leftClickCounter = 0;
++        		if (lastClick) {
++        			this.playerController.resetBlockRemoving();
++        		}
++        		lastClick = false;
++        	}
 +			/// END VIVE
  
              while (this.gameSettings.keyBindUseItem.isPressed())
              {
-@@ -1921,7 +2480,7 @@
+@@ -1921,7 +2479,7 @@
              this.rightClickMouse();
          }
  
@@ -1635,7 +1635,7 @@
      }
  
      public static DatapackCodec func_238180_a_(SaveFormat.LevelSave p_238180_0_)
-@@ -2066,7 +2625,7 @@
+@@ -2066,7 +2624,7 @@
  
              while (!this.integratedServer.serverIsInRunLoop())
              {
@@ -1644,7 +1644,7 @@
                  this.runGameLoop(false);
  
                  try
-@@ -2091,6 +2650,13 @@
+@@ -2091,6 +2649,13 @@
              {
              }));
              networkmanager.sendPacket(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -1658,7 +1658,7 @@
              networkmanager.sendPacket(new CLoginStartPacket(this.getSession().getProfile()));
              this.networkManager = networkmanager;
          }
-@@ -2189,6 +2755,13 @@
+@@ -2189,6 +2754,13 @@
  
      public void loadWorld(ClientWorld worldClientIn)
      {
@@ -1672,7 +1672,7 @@
          WorkingScreen workingscreen = new WorkingScreen();
          workingscreen.displaySavingString(new TranslationTextComponent("connect.joining"));
          this.updateScreenTick(workingscreen);
-@@ -2225,12 +2798,18 @@
+@@ -2225,12 +2797,18 @@
          IntegratedServer integratedserver = this.integratedServer;
          this.integratedServer = null;
          this.gameRenderer.resetData();
@@ -1691,7 +1691,7 @@
              if (integratedserver != null)
              {
                  this.profiler.startSection("waitForServer");
-@@ -2247,6 +2826,9 @@
+@@ -2247,6 +2825,9 @@
              this.ingameGUI.resetPlayersOverlayFooterHeader();
              this.currentServerData = null;
              this.integratedServerIsRunning = false;
@@ -1701,7 +1701,7 @@
              this.game.leaveGameSession();
          }
  
-@@ -2280,6 +2862,9 @@
+@@ -2280,6 +2861,9 @@
          this.particles.clearEffects(worldIn);
          TileEntityRendererDispatcher.instance.setWorld(worldIn);
          this.func_230150_b_();
@@ -1711,7 +1711,7 @@
      }
  
      public boolean func_238216_r_()
-@@ -2339,6 +2924,16 @@
+@@ -2339,6 +2923,16 @@
      {
          if (this.objectMouseOver != null && this.objectMouseOver.getType() != RayTraceResult.Type.MISS)
          {
@@ -1728,7 +1728,7 @@
              boolean flag = this.player.abilities.isCreativeMode;
              TileEntity tileentity = null;
              RayTraceResult.Type raytraceresult$type = this.objectMouseOver.getType();
-@@ -2500,6 +3095,8 @@
+@@ -2500,6 +3094,8 @@
                  }
              }
          }
@@ -1737,7 +1737,7 @@
      }
  
      private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
-@@ -2997,8 +3594,12 @@
+@@ -2997,8 +3593,12 @@
          {
              supplier = wrapV4(supplier);
          }
@@ -1752,7 +1752,7 @@
      }
  
      private static Supplier<IResourcePack> wrapV3(Supplier<IResourcePack> p_228021_0_)
-@@ -3063,4 +3664,511 @@
+@@ -3063,4 +3663,511 @@
          CREATE,
          BACKUP;
      }

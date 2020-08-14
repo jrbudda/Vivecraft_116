@@ -841,7 +841,7 @@ public class MenuWorldRenderer {
 
 	public float getCelestialAngle()
 	{
-		return this.blockAccess.getDimensionType().func_236032_b_(time);
+		return this.blockAccess.func_230315_m_().func_236032_b_(time);
 	}
 
 	public float getCelestialAngleRadians()
@@ -852,7 +852,7 @@ public class MenuWorldRenderer {
 
 	public int getMoonPhase()
 	{
-		return this.blockAccess.getDimensionType().func_236035_c_(time);
+		return this.blockAccess.func_230315_m_().func_236035_c_(time);
 	}
 
 	public float getSunBrightness() {
@@ -939,7 +939,7 @@ public class MenuWorldRenderer {
 	{
 		float f = MathHelper.clamp(MathHelper.cos(this.getCelestialAngle() * ((float)Math.PI * 2F)) * 2.0F + 0.5F, 0.0F, 1.0F);
 		Vector3d scaledPos = pos.subtract(2.0D, 2.0D, 2.0D).scale(0.25D);
-		return CubicSampler.func_240807_a_(scaledPos, (x, y, z) -> this.dimensionInfo.func_230494_a_(Vector3d.func_237487_a_(this.blockAccess.getBiomeManager().func_235199_a_(x, y, z).func_235080_i_()), f));
+		return CubicSampler.func_240807_a_(scaledPos, (x, y, z) -> this.dimensionInfo.func_230494_a_(Vector3d.unpack(this.blockAccess.getBiomeManager().func_235199_a_(x, y, z).func_235080_i_()), f));
 	}
 
 	public Vector3d getCloudColour()
@@ -1174,8 +1174,8 @@ public class MenuWorldRenderer {
 			{
 				for (int j = 0; j < 16; ++j)
 				{
-					float f3 = this.blockAccess.getDimensionType().func_236021_a_(i) * f;
-					float f4 = this.blockAccess.getDimensionType().func_236021_a_(j) * (this.torchFlickerX * 0.1F + 1.5F);
+					float f3 = this.blockAccess.func_230315_m_().func_236021_a_(i) * f;
+					float f4 = this.blockAccess.func_230315_m_().func_236021_a_(j) * (this.torchFlickerX * 0.1F + 1.5F);
 
 					/*if (world.getLastLightningBolt() > 0)
 					{

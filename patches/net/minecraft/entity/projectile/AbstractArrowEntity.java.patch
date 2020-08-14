@@ -50,7 +50,7 @@
      }
  
 @@ -142,7 +161,15 @@
-         BlockPos blockpos = this.getBlockPos();
+         BlockPos blockpos = this.getPosition();
          BlockState blockstate = this.world.getBlockState(blockpos);
  
 -        if (!blockstate.isAir() && !flag)

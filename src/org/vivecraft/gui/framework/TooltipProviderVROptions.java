@@ -68,7 +68,7 @@ public class TooltipProviderVROptions implements TooltipProvider
 			StringTextComponent spaces = spaceCount > 0 ? new StringTextComponent(String.join("", Collections.nCopies(spaceCount, " "))) : null;
 			List<ITextProperties> list = Utils.wrapText(new StringTextComponent(line), width, Minecraft.getInstance().fontRenderer, spaces);
 
-			Style style = Style.field_240709_b_;
+			Style style = Style.EMPTY;
 			for (ITextProperties text : list) {
 				newLines.add(Utils.styleToFormatString(style) + text.getString());
 
@@ -81,7 +81,7 @@ public class TooltipProviderVROptions implements TooltipProvider
 						char c = s.charAt(i + 1);
 						TextFormatting format = TextFormatting.fromFormattingCode(c);
 						if (format != null)
-							style = style.func_240723_c_(format);
+							style = style.forceFormatting(format);
 
 						i++;
 					}

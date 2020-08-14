@@ -54,9 +54,9 @@ public class GuiRadialItemsList extends ExtendedList
         private final String labelText;
         private final int labelWidth;
 
-        public CategoryEntry(String p_i45028_2_)
+        public CategoryEntry(String name)
         {
-            this.labelText = I18n.format(p_i45028_2_, new Object[0]);
+            this.labelText = I18n.format(name, new Object[0]);
             this.labelWidth = GuiRadialItemsList.this.mc.fontRenderer.getStringWidth(this.labelText);
         }
 

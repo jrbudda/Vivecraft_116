@@ -79,7 +79,7 @@ public class MenuWorldExporter {
 		else
 			dos.writeBoolean((boolean)MCReflection.ClientWorldInfo_isFlat.get(world.getWorldInfo()));
 
-		dos.writeBoolean(world.getDimensionType().hasSkyLight()); // technically not needed now but keeping it just in case
+		dos.writeBoolean(world.func_230315_m_().hasSkyLight()); // technically not needed now but keeping it just in case
 
 		if (world instanceof ServerWorld)
 			dos.writeLong(((ServerWorld)world).getSeed());
@@ -166,8 +166,8 @@ public class MenuWorldExporter {
 		} else {
 			dimName = new ResourceLocation(dis.readUTF());
 		}
-		RegistryKey<DimensionType> dimKey = RegistryKey.func_240903_a_(Registry.field_239698_ad_, dimName);
-		DimensionType dimensionType = IDynamicRegistries.func_239770_b_().func_230520_a_().func_230516_a_(dimKey);
+		RegistryKey<DimensionType> dimKey = RegistryKey.func_240903_a_(Registry.DIMENSION_TYPE_KEY, dimName);
+		DimensionType dimensionType = IDynamicRegistries.func_239770_b_().func_230520_a_().getValueForKey(dimKey);
 		if (dimensionType == null)
 			dimensionType = DimensionType.func_236019_a_();
 

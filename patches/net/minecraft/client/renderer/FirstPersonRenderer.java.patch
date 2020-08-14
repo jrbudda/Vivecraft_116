@@ -899,7 +899,7 @@
 +    	
 +    	AxisAlignedBB eye = new AxisAlignedBB(in.subtract(dist, dist, dist), in.add(dist, dist, dist));
 +   
-+    	Stream<BlockPos> list = BlockPos.func_239581_a_(eye).filter((bp)-> {
++    	Stream<BlockPos> list = BlockPos.getAllInBox(eye).filter((bp)-> {
 +    		return mc.world.getBlockState(bp).isOpaqueCube(mc.world, bp);
 +    	});
 +    	

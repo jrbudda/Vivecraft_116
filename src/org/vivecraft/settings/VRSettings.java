@@ -16,6 +16,8 @@ import net.optifine.Lang;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+
+import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.settings.profile.ProfileManager;
@@ -89,6 +91,7 @@ public class VRSettings
     public static final int FREEMOVE_CONTROLLER= 1;
     public static final int FREEMOVE_HMD= 2;
     public static final int FREEMOVE_RUNINPLACE= 3;
+    public static final int FREEMOVE_ROOM= 5;
     @Deprecated
     public static final int FREEMOVE_JOYPAD = 4;
 
@@ -232,6 +235,7 @@ public class VRSettings
 	public int forceHardwareDetection = 0; // 0 = off, 1 = vive, 2 = oculus
 	public boolean radialModeHold = true;
 	public boolean physicalKeyboard = true;
+	public float physicalKeyboardScale = 1.0f;
 	public boolean allowAdvancedBindings = false;
 	public int chatNotifications = CHAT_NOTIFICATIONS_NONE; // 0 = off, 1 = haptic, 2 = sound, 3 = both
 	public String chatNotificationSound = "block.note_block.bell";
@@ -738,6 +742,10 @@ public class VRSettings
 					    this.physicalKeyboard = optionTokens[1].equals("true");
                     }
 
+                    if(optionTokens[0].equals("physicalKeyboardScale")){
+                        this.physicalKeyboardScale = parseFloat(optionTokens[1]);
+                    }
+
 					if(optionTokens[0].equals("originOffset")){
                         String[] split = optionTokens[1].split(",");
 					    MCOpenVR.offset = new Vector3(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
@@ -1098,6 +1106,8 @@ public class VRSettings
                 	return var4 + Lang.get("vivecraft.options.hmd");
                 case FREEMOVE_RUNINPLACE:
                 	return var4 + Lang.get("vivecraft.options.runinplace");
+                case FREEMOVE_ROOM:
+                	return var4 + Lang.get("vivecraft.options.room");
                 }
             case FOV_REDUCTION:
                 return this.useFOVReduction ? var4 + Lang.getOn() : var4 + Lang.getOff();
@@ -1119,6 +1129,8 @@ public class VRSettings
                 return this.radialModeHold ? var4 + Lang.get("vivecraft.options.hold") : var4 + Lang.get("vivecraft.options.press");
             case PHYSICAL_KEYBOARD:
                 return this.physicalKeyboard ? var4 + Lang.get("vivecraft.options.keyboard.physical") : var4 + Lang.get("vivecraft.options.keyboard.pointer");
+            case PHYSICAL_KEYBOARD_SCALE:
+                return var4 + Math.round(this.physicalKeyboardScale * 100) + "%";
             case BOW_MODE:
             	if(this.bowMode == BOW_MODE_OFF)
             		return var4 + Lang.getOff();
@@ -1257,6 +1269,8 @@ public class VRSettings
             	return this.fovReductionMin;
             case FOV_REDUCTION_OFFSET:          	
             	return this.fovRedutioncOffset;
+            case PHYSICAL_KEYBOARD_SCALE:
+                return this.physicalKeyboardScale;
             // VIVE END - new options
             default:
                 return 0.0f;
@@ -1351,7 +1365,7 @@ public class VRSettings
                 case HUD_LOCK_WRIST:
                    	this.vrHudLockMode = HUD_LOCK_HAND;
                 	break;
-                case HUD_LOCK_BODY:
+                default:
                     this.vrHudLockMode = HUD_LOCK_HAND;
                 }
                 break;
@@ -1477,6 +1491,9 @@ public class VRSettings
                    	this.vrFreeMoveMode = FREEMOVE_RUNINPLACE;
                 	break;
                 case FREEMOVE_RUNINPLACE:
+                   	this.vrFreeMoveMode = FREEMOVE_ROOM;
+                	break;
+                default:
                    	this.vrFreeMoveMode = FREEMOVE_CONTROLLER;
                 	break;
                 }
@@ -1529,7 +1546,7 @@ public class VRSettings
                     case MENU_WORLD_OFFICIAL:
                         this.menuWorldSelection = MENU_WORLD_NONE;
                         break;
-                    case MENU_WORLD_NONE:
+                    default:
                         this.menuWorldSelection = MENU_WORLD_BOTH;
                         break;
                 }
@@ -1652,6 +1669,10 @@ public class VRSettings
             case FOV_REDUCTION_OFFSET:
                 this.fovRedutioncOffset = par2;
             	break;
+            case PHYSICAL_KEYBOARD_SCALE:
+                this.physicalKeyboardScale = par2;
+                KeyboardHandler.physicalKeyboard.setScale(par2);
+                break;
             	// VIVE END - new options
                 
             default:
@@ -1787,6 +1808,7 @@ public class VRSettings
             var5.println("teleportLimitHoriz:" + this.vrTeleportHorizLimit);
             var5.println("radialModeHold:" + this.radialModeHold);
             var5.println("physicalKeyboard:" + this.physicalKeyboard);
+            var5.println("physicalKeyboardScale:" + this.physicalKeyboardScale);
             var5.println("originOffset:" + MCOpenVR.offset.getX() + "," + MCOpenVR.offset.getY() + "," + MCOpenVR.offset.getZ());
             var5.println("allowStandingOriginOffset:" + this.allowStandingOriginOffset);
             var5.println("seatedFreeMove:" + this.seatedFreeMove);
@@ -1888,6 +1910,7 @@ public class VRSettings
         AUTO_OPEN_KEYBOARD(false, true), // Always Open Keyboard
         RADIAL_MODE_HOLD(false, true), // Radial Menu Mode
         PHYSICAL_KEYBOARD(false, true), // Keyboard Type
+        PHYSICAL_KEYBOARD_SCALE(true, false, 0.75f, 1.5f, 0.01f), // Keyboard Size
         GUI_APPEAR_OVER_BLOCK(false, true), // Appear Over Block
         //HMD/render
         FSAA(false, true), // Lanczos Scaler

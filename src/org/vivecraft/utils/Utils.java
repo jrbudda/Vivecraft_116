@@ -35,6 +35,8 @@ import com.google.common.collect.Lists;
 import io.github.classgraph.ClassGraph;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.resources.IResource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.Style;
@@ -357,33 +359,45 @@ public class Utils
 	public static InputStream getAssetAsStream(String name, boolean required) {
 		InputStream is = null;
 		try {
-			is = VRShaders.class.getResourceAsStream("/assets/vivecraft/" + name);
+			try {
+				IResource resource = Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation("vivecraft", name));
+				is = resource.getInputStream();
+			} catch (FileNotFoundException | NullPointerException e) { // might be called super early
+				is = VRShaders.class.getResourceAsStream("/assets/vivecraft/" + name);
+			}
+
 			if (is == null) {
 				//uhh debugging?
 				Path dir = Paths.get(System.getProperty("user.dir")); // ../mcpxxx/jars/
-				Path p5 = dir.getParent().resolve("src/resources/assets/vivecraft/" + name);
-				if (!p5.toFile().exists()) {
-					p5 = dir.getParent().getParent().resolve("resources/assets/vivecraft/" + name);
-				}
-				if (p5.toFile().exists()) {
-					is = new FileInputStream(p5.toFile());
+				if (dir.getParent() != null) {
+					Path p5 = dir.getParent().resolve("src/resources/assets/vivecraft/" + name);
+					if (!p5.toFile().exists() && dir.getParent().getParent() != null)
+						p5 = dir.getParent().getParent().resolve("resources/assets/vivecraft/" + name);
+					if (p5.toFile().exists())
+						is = new FileInputStream(p5.toFile());
 				}
 			}
 		} catch (Exception e) {
 			handleAssetException(e, name, required);
+			return null;
 		}
+
+		if (is == null)
+			handleAssetException(new FileNotFoundException(name), name, required);
 
 		return is;
 	}
 
 	public static byte[] loadAsset(String name, boolean required) {
 		InputStream is = getAssetAsStream(name, required);
+		if (is == null)
+			return null;
 
 		try {
 			byte[] out = IOUtils.toByteArray(is);
 			is.close();
 			return out;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			handleAssetException(e, name, required);
 		}
 
@@ -391,15 +405,22 @@ public class Utils
 	}
 	
 	public static String loadAssetAsString(String name, boolean required) {
-		return new String(loadAsset(name, required), Charsets.UTF_8);
+		byte[] bytes = loadAsset(name, required);
+		if (bytes == null)
+			return null;
+
+		return new String(bytes, Charsets.UTF_8);
 	}
 
 	public static void loadAssetToFile(String name, File file, boolean required) {
 		InputStream is = getAssetAsStream(name, required);
+		if (is == null)
+			return;
+
 		try {
 			writeStreamToFile(is, file);
 			is.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			handleAssetException(e, name, required);
 		}
 	}
@@ -733,8 +754,8 @@ public class Utils
 		text.func_230439_a_((style, str) -> {
 			manager.func_238155_a_(ITextProperties.func_240653_a_(str, style));
 			return Optional.empty();
-		}, Style.field_240709_b_);
-		List<ITextProperties> list = fontRenderer.func_238420_b_().func_241570_a_(manager.func_238156_b_(), width, Style.field_240709_b_, linePrefix);
+		}, Style.EMPTY);
+		List<ITextProperties> list = fontRenderer.func_238420_b_().func_241570_a_(manager.func_238156_b_(), width, Style.EMPTY, linePrefix);
 		return list.isEmpty() ? Lists.newArrayList(ITextProperties.field_240651_c_) : list;
 	}
 
@@ -743,8 +764,8 @@ public class Utils
 			return new ArrayList<>();
 
 		ArrayList<TextFormatting> list = new ArrayList<>();
-		if (style.func_240711_a_() != null)
-			list.add(TextFormatting.getValueByName(style.func_240711_a_().func_240747_b_()));
+		if (style.getColor() != null)
+			list.add(TextFormatting.getValueByName(style.getColor().func_240747_b_()));
 		if (style.getBold())
 			list.add(TextFormatting.BOLD);
 		if (style.getItalic())

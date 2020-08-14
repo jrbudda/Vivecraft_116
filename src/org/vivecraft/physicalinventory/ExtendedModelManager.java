@@ -51,8 +51,8 @@ public class ExtendedModelManager {
 			ModelBlockDefinition modelblockdefinition =(ModelBlockDefinition) mgetDef.invoke(bakery,resourcelocation);
 			
 			
-			//Field variants=MCReflection.getDeclaredField(ModelBlockDefinition.class,"mapVariants","b","field_178332_b");
-			MCReflection.ReflectionField variants=new MCReflection.ReflectionField(ModelManager.class,"field_178332_b");
+			//Field variants=MCReflection.getDeclaredField(ModelBlockDefinition.class,"mapVariants","b","mapVariants");
+			MCReflection.ReflectionField variants=new MCReflection.ReflectionField(ModelManager.class,"mapVariants");
 			Map<String,VariantList> map=(Map<String,VariantList>) variants.get(modelblockdefinition);
 
 			for(String var: map.keySet()) {

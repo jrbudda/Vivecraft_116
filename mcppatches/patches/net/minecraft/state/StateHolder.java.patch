@@ -4,8 +4,8 @@
          return stringbuilder.toString();
      }
  
--    public Collection < Property<? >> func_235904_r_()
-+    public Collection < Property> func_235904_r_()
+-    public Collection < Property<? >> getProperties()
++    public Collection < Property> getProperties()
      {
-         return Collections.unmodifiableCollection(this.field_235891_b_.keySet());
+         return Collections.unmodifiableCollection(this.properties.keySet());
      }

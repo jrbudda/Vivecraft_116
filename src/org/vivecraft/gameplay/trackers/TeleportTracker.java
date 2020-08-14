@@ -466,7 +466,7 @@ public class TeleportTracker extends Tracker{
     		boolean emptySpotReq = mc.world.hasNoCollisions(player,bb);
 
     		if(!emptySpotReq){
-    			Vector3d center = Vector3d.fromBlockPosMiddleBottom(bp);
+    			Vector3d center = Vector3d.copyCenteredHorizontally(bp);
     			offset = center.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     			bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     			emptySpotReq = mc.world.hasNoCollisions(player,bb);	
@@ -522,7 +522,7 @@ public class TeleportTracker extends Tracker{
     				!mc.world.hasNoCollisions(player,bb.grow(0, .125 + ex, 0));     
 
     		if(!emptySpotReq){
-    			Vector3d center = Vector3d.fromBlockPosMiddleWithOffset(hitBlock, height);
+    			Vector3d center = Vector3d.copyCenteredWithVerticalOffset(hitBlock, height);
     			offset = center.subtract(player.getPosX(), player.getBoundingBox().minY, player.getPosZ());
     			bb = player.getBoundingBox().offset(offset.x, offset.y, offset.z);
     			emptySpotReq = mc.world.hasNoCollisions(player,bb) &&

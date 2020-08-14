@@ -288,9 +288,9 @@ public abstract class GuiVROptionsBase extends Screen
     }
     
     @Override
-    public boolean func_231042_a_(char p_charTyped_1_, int p_charTyped_2_) {
-    	if (visibleList != null && visibleList.func_231042_a_(p_charTyped_1_, p_charTyped_2_))
+    public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
+    	if (visibleList != null && visibleList.charTyped(p_charTyped_1_, p_charTyped_2_))
     		return true;
-    	return super.func_231042_a_(p_charTyped_1_, p_charTyped_2_);
+    	return super.charTyped(p_charTyped_1_, p_charTyped_2_);
     }
 }
