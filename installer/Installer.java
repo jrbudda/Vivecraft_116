@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.beans.*;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URI;
 import java.nio.channels.Channels;
@@ -861,8 +862,17 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				fos = new FileOutputStream(fo);
 				System.out.println(surl);
 				URL url = new URL(surl);
-				ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-				long bytes = fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+				HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+				conn.setConnectTimeout(15000);
+				conn.setReadTimeout(60000);
+				InputStream is = conn.getInputStream();
+
+				byte[] bytes = new byte[16384];
+				int count;
+				while ((count = is.read(bytes, 0, bytes.length)) != -1) {
+					fos.write(bytes, 0, count);
+				}
+
 				fos.flush();
 			}
 			catch(Exception ex) {
