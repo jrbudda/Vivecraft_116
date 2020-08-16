@@ -32,7 +32,7 @@ public class ASMHandlerContainerScreen extends ASMClassHandler {
 
 		@Override
 		public void patchMethod(MethodNode methodNode, ClassNode classNode) {
-			AbstractInsnNode findInsn = ASMUtil.findFirstInstruction(methodNode, Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/ContainerScreen", "dragSplitting", "Z");
+			AbstractInsnNode findInsn = ASMUtil.findFirstInstruction(methodNode, Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/ContainerScreen", "field_147007_t", "Z");
 			LabelNode label = ((JumpInsnNode)methodNode.instructions.get(methodNode.instructions.indexOf(findInsn) + 1)).label;
 			InsnList insnList = new InsnList();
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/minecraft/client/gui/screen/Screen", "hasShiftDown", "()Z", false));

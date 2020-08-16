@@ -165,6 +165,7 @@ vivecraft.options.MENU_WORLD_SELECTION=Worlds
 vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Reload External Camera
 vivecraft.options.RIGHT_CLICK_DELAY=Right Click Repeat
+vivecraft.options.ANIMAL_TOUCHING=Animal Touching
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=Relative size HUD takes up in field-of-view.\n\
@@ -367,8 +368,8 @@ vivecraft.options.FREEMOVE_MODE.tooltip=The source for freemove direction.\n\
 \n\
   Controller: Offhand controller pointing direction.\n\
   HMD: Headset look direction.\n\
-  Run-In-Place: Yaw is based on how controllers are swinging. Pitch is your Headset. \n\
-  Room: Yaw is relative to your VR room forward. Pitch is your Headset. This mode is best only for 180 setups. \n\
+  Run-In-Place: Yaw is based on how controllers are swinging. Pitch is your Headset.\n\
+  Room: Yaw is relative to your VR room forward. Pitch is your Headset. This mode is best only for 180 setups.
 
 vivecraft.options.VEHICLE_ROTATION.tooltip=Riding in a vehicle will rotate the world \
 as the vehicle rotates. May be disorienting.
@@ -459,6 +460,10 @@ vivecraft.options.RELOAD_EXTERNAL_CAMERA.tooltip=Reloads the camera config from 
 vivecraft.options.RIGHT_CLICK_DELAY.tooltip=The number of game ticks between "right clicks" \
 while holding the button down.
 
+vivecraft.options.ANIMAL_TOUCHING.tooltip=If enabled, touching a passive mob (animal) without a \
+weapon will right-click (interact) instead of attacking.\n\
+Turn off for Piggy Slapping, Josh.
+
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=I Can't See
 vivecraft.options.yes=YES
@@ -506,7 +511,7 @@ vivecraft.options.hmd=HMD
 vivecraft.options.crosshair=Crosshair
 vivecraft.options.controller=Controller
 vivecraft.options.runinplace=Run-In-Place
-vivecraft.options.runinplace=Room
+vivecraft.options.room=Room
 vivecraft.options.hold=Hold
 vivecraft.options.press=Press
 vivecraft.options.keyboard.physical=Physical

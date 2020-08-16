@@ -93,19 +93,20 @@
      }
  
      public void onDisconnect(ITextComponent reason)
-@@ -1019,8 +1050,35 @@
+@@ -1019,8 +1050,36 @@
  
      public void handleChat(SChatPacket packetIn)
      {
 -        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
 -        this.client.ingameGUI.func_238450_a_(packetIn.getType(), packetIn.getChatComponent(), packetIn.func_240810_e_());
++    	//Forge
 +    	PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
 +    	net.minecraft.util.text.ITextComponent message = (ITextComponent) Reflector.call(Reflector.ForgeEventFactory_onClientChat, packetIn.getType(), packetIn.getChatComponent(), packetIn.func_240810_e_());
 +    	if (message == null)     	
 +    		this.client.ingameGUI.func_238450_a_(packetIn.getType(), packetIn.getChatComponent(), packetIn.func_240810_e_());
 +    	else
 +    		this.client.ingameGUI.func_238450_a_(packetIn.getType(), message, packetIn.func_240810_e_());
-+
++		//
 +    	//Vivecraft
 +    	Minecraft mc = Minecraft.getInstance();
 +    	String tmp = mc.player.lastMsg;  		
@@ -131,7 +132,7 @@
      }
  
      public void handleAnimation(SAnimateHandPacket packetIn)
-@@ -1152,7 +1210,9 @@
+@@ -1152,7 +1211,9 @@
  
                      if (entity1 == this.client.player && !flag)
                      {
@@ -142,7 +143,7 @@
                      }
                  }
              }
-@@ -1249,6 +1309,10 @@
+@@ -1249,6 +1310,10 @@
              this.world.setScoreboard(scoreboard);
              this.client.loadWorld(this.world);
              this.client.displayGuiScreen(new DownloadTerrainScreen());
@@ -153,7 +154,7 @@
          }
  
          this.world.removeAllEntities();
-@@ -1273,9 +1337,14 @@
+@@ -1273,9 +1338,14 @@
  
          clientplayerentity1.preparePlayerToSpawn();
          clientplayerentity1.setServerBrand(s);
@@ -169,7 +170,7 @@
          this.client.playerController.setPlayerCapabilities(clientplayerentity1);
          clientplayerentity1.setReducedDebug(clientplayerentity.hasReducedDebug());
          clientplayerentity1.setShowDeathScreen(clientplayerentity.isShowDeathScreen());
-@@ -1373,7 +1442,7 @@
+@@ -1373,7 +1443,7 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
          Container container = null;
@@ -178,7 +179,7 @@
  
          if (packetIn.getWindowId() == 0)
          {
-@@ -1388,6 +1457,9 @@
+@@ -1388,6 +1458,9 @@
          {
              this.sendPacket(new CConfirmTransactionPacket(packetIn.getWindowId(), packetIn.getActionNumber(), true));
          }
@@ -188,7 +189,7 @@
      }
  
      public void handleWindowItems(SWindowItemsPacket packetIn)
-@@ -1430,7 +1502,15 @@
+@@ -1430,7 +1503,15 @@
          if (i == 1 && tileentity instanceof MobSpawnerTileEntity || flag || i == 3 && tileentity instanceof BeaconTileEntity || i == 4 && tileentity instanceof SkullTileEntity || i == 6 && tileentity instanceof BannerTileEntity || i == 7 && tileentity instanceof StructureBlockTileEntity || i == 8 && tileentity instanceof EndGatewayTileEntity || i == 9 && tileentity instanceof SignTileEntity || i == 11 && tileentity instanceof BedTileEntity || i == 5 && tileentity instanceof ConduitTileEntity || i == 12 && tileentity instanceof JigsawTileEntity || i == 13 && tileentity instanceof CampfireTileEntity || i == 14 && tileentity instanceof BeehiveTileEntity)
          {
              tileentity.read(this.client.world.getBlockState(blockpos), packetIn.getNbtCompound());
@@ -205,7 +206,7 @@
  
          if (flag && this.client.currentScreen instanceof CommandBlockScreen)
          {
-@@ -1670,6 +1750,9 @@
+@@ -1670,6 +1751,9 @@
          clientrecipebook.rebuildTable();
          clientrecipebook.getRecipes().forEach(imutablesearchtree::func_217872_a);
          imutablesearchtree.recalculate();
@@ -215,7 +216,7 @@
      }
  
      public void handlePlayerLook(SPlayerLookPacket packetIn)
-@@ -1773,7 +1856,7 @@
+@@ -1773,7 +1857,7 @@
  
          if (entity instanceof LivingEntity)
          {
@@ -224,7 +225,7 @@
  
              if (effect != null)
              {
-@@ -1795,6 +1878,9 @@
+@@ -1795,6 +1879,9 @@
          }
  
          this.client.getSearchTree(SearchTreeManager.TAGS).recalculate();
@@ -234,7 +235,7 @@
      }
  
      public void handleCombatEvent(SCombatPacket packetIn)
-@@ -2148,7 +2234,7 @@
+@@ -2148,7 +2235,7 @@
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
          ResourceLocation resourcelocation = packetIn.getChannelName();
          PacketBuffer packetbuffer = null;
@@ -243,7 +244,7 @@
          try
          {
              packetbuffer = packetIn.getBufferData();
-@@ -2421,14 +2507,125 @@
+@@ -2421,14 +2508,125 @@
                  int l5 = packetbuffer.readInt();
                  this.client.debugRenderer.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
              }
@@ -371,7 +372,7 @@
              {
                  packetbuffer.release();
              }
-@@ -2788,4 +2985,14 @@
+@@ -2788,4 +2986,14 @@
      {
          return this.field_239163_t_;
      }

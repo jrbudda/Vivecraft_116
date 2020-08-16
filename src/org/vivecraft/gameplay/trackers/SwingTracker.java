@@ -266,11 +266,12 @@ public class SwingTracker extends Tracker{
 								for (int i = 0; i < p; i++)
 								{	//send multiple ticks worth of 'holding left click' to it.
 																		
-									clearBlockHitDelay();
 									
 									if(mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace()))
 										mc.particles.addBlockHitEffects(blockHit.getPos(), blockHit.getFace());
 									
+									clearBlockHitDelay();
+
 									if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
 										break;
 								}
@@ -296,6 +297,8 @@ public class SwingTracker extends Tracker{
     // VIVE START - function to allow damaging blocks immediately
 	private void clearBlockHitDelay() {
 		MCReflection.PlayerController_blockHitDelay.set(Minecraft.getInstance().playerController, 0);
+		MCReflection.PlayerController_blocknoise.set(Minecraft.getInstance().playerController, 1);
+
 	}
 	
 	//Get the transparency for held items to indicate attack power or sneaking.

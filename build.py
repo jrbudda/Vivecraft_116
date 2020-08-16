@@ -85,7 +85,7 @@ def create_install(mcp_dir):
             for cur_file in fnmatch.filter(filelist, '*.class'):
                 #print arc_path + cur_file
                 flg = False
-                if not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
+                if not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'minecraftforge' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
                     flg = True
                     ok = False
                     v = (arc_path + cur_file).replace('/','\\').split('$')[0].replace('.class', '')
@@ -115,7 +115,7 @@ def create_install(mcp_dir):
             for cur_file in fnmatch.filter(filelist, '*.class'):
                 #print arc_path + cur_file
                 flg = False
-                if not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
+                if not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'minecraftforge' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
                     flg = True
                     ok = False
                     v = (arc_path + cur_file).replace('/','\\').split('$')[0].replace('.class', '')

@@ -51,7 +51,7 @@ public class LangHelper {
 
 			is.close();
 		} catch (Exception e) {
-			System.out.println("Failed reading locale data");
+			System.out.println("Failed reading locale data: " + path);
 			e.printStackTrace();
 		}
 	}
