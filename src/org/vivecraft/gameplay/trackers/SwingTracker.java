@@ -3,6 +3,7 @@ package org.vivecraft.gameplay.trackers;
 import java.util.Comparator;
 import java.util.List;
 
+import org.vivecraft.api.Vec3History;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
@@ -50,6 +51,7 @@ public class SwingTracker extends Tracker{
 	private Vector3d[] lastWeaponEndAir = new Vector3d[]{new Vector3d(0, 0, 0), new Vector3d(0,0,0)};
 	private boolean[] lastWeaponSolid = new boolean[2];
 	public Vector3d[] weaponEnd= new Vector3d[2];
+	public Vec3History[] tipHistory = new Vec3History[] { new Vec3History(), new Vec3History()};
 
 	public boolean[] canact= new boolean[2];
 
@@ -109,10 +111,10 @@ public class SwingTracker extends Tracker{
 	}
 
 	Vector3d forward = new Vector3d(0,0,-1);
-	double speedthresh = 3.8f;
+	double speedthresh = 2.0f;
 	
 	public void doProcess(ClientPlayerEntity player){ //on tick
-		speedthresh = 3.8f;
+		speedthresh = 2.0f;
 		mc.getProfiler().startSection("updateSwingAttack");
 
 		for(int c=0;c<2;c++){
@@ -172,10 +174,12 @@ public class SwingTracker extends Tracker{
 					handPos.y + handDirection.y * weaponLength,
 					handPos.z + handDirection.z * weaponLength);     
 
+			tipHistory[c].add(weaponEnd[c].subtract(mc.vrPlayer.vrdata_world_pre.origin));
 
 			boolean inAnEntity = false;
 
-			float speed = (float) MCOpenVR.controllerForwardHistory[c].averageSpeed(0.2);
+			float speed = (float) tipHistory[c].averageSpeed(0.33);
+
 			canact[c] = speed > speedthresh && !lastWeaponSolid[c];
 
 			//Check EntityCollisions first    	
@@ -248,17 +252,16 @@ public class SwingTracker extends Tracker{
 				
 				if (blockHit.getType() == Type.BLOCK && flag) {
 					if(canact[c] && !protectedBlock) { 
-						int p = 1;
+						int p = 3;
 						if(item instanceof HoeItem){
 							mc.physicalGuiManager.preClickAction();
 							mc.playerController.func_217292_a(player, (ClientWorld) player.world, c==0 ? Hand.MAIN_HAND:Hand.OFF_HAND, blockHit);
 						} else if(block.getBlock() instanceof NoteBlock) {
 							mc.playerController.onPlayerDamageBlock(blockHit.getPos(), blockHit.getFace());       								
 						} else{ //smack it
-							p += Math.min((speed - speedthresh) / 2, 6);			
+							p += Math.min((speed - speedthresh), 4);			
 							mc.physicalGuiManager.preClickAction();
 
-							//this comes from plaeyrControllerMP clickMouse and friends.
 							//this will either destroy the block if in creative or set it as the current block.
 							//does nothing in survival if you are already hitting this block.
 							mc.playerController.clickBlock(blockHit.getPos(), blockHit.getFace());						

@@ -74,8 +74,8 @@
                },
                "mode" : "button",
                "parameters" : {
-                  "click_activate_threshold" : "0.8",
-                  "click_deactivate_threshold" : "0.2",
+                  "click_activate_threshold" : "0.85",
+                  "click_deactivate_threshold" : "0.35",
                   "force_input" : "force",
                   "haptic_amplitude": "0"
                },
@@ -89,8 +89,8 @@
                },
                "mode" : "button",
                "parameters" : {
-                  "click_activate_threshold" : "0.8",
-                  "click_deactivate_threshold" : "0.2",
+                  "click_activate_threshold" : "0.85",
+                  "click_deactivate_threshold" : "0.35",
                   "force_input" : "force",
                   "haptic_amplitude": "0"
                },
@@ -177,7 +177,7 @@
                },
                "mode" : "button",
                "parameters" : {
-                  "click_activate_threshold" : "0.8",
+                  "click_activate_threshold" : "0.6",
                   "click_deactivate_threshold" : "0.2",
                   "force_input" : "force"
                },
@@ -191,7 +191,7 @@
                },
                "mode" : "button",
                "parameters" : {
-                  "click_activate_threshold" : "0.8",
+                  "click_activate_threshold" : "0.6",
                   "click_deactivate_threshold" : "0.2",
                   "force_input" : "force"
                },
@@ -251,8 +251,8 @@
                },
                "mode" : "button",
                "parameters" : {
-                  "click_activate_threshold" : "0.6",
-                  "click_deactivate_threshold" : "0.2",
+                  "click_activate_threshold" : "0.85",
+                  "click_deactivate_threshold" : "0.35",
                   "force_input" : "force"
                },
                "path" : "/user/hand/right/input/grip"
@@ -322,8 +322,8 @@
                },
                "mode" : "button",
                "parameters" : {
-                  "click_activate_threshold" : "0.6",
-                  "click_deactivate_threshold" : "0.2",
+                  "click_activate_threshold" : "0.85",
+                  "click_deactivate_threshold" : "0.35",
                   "force_input" : "force"
                },
                "path" : "/user/hand/left/input/grip"
@@ -379,7 +379,7 @@
                },
                "mode" : "button",
                "parameters" : {
-                  "click_activate_threshold" : "0.8",
+                  "click_activate_threshold" : "0.6",
                   "click_deactivate_threshold" : "0.2",
                   "force_input" : "force"
                },
@@ -393,7 +393,7 @@
                },
                "mode" : "button",
                "parameters" : {
-                  "click_activate_threshold" : "0.8",
+                  "click_activate_threshold" : "0.6",
                   "click_deactivate_threshold" : "0.2",
                   "force_input" : "force"
                },

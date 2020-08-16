@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FirstPersonRenderer.java
 +++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
-@@ -2,25 +2,75 @@
+@@ -2,25 +2,77 @@
  
  import com.google.common.base.MoreObjects;
  import com.mojang.blaze3d.matrix.MatrixStack;
@@ -13,8 +13,10 @@
  import java.util.Objects;
 +import java.util.stream.Stream;
 +
++import javax.annotation.Nullable;
 +import javax.management.relation.RelationServiceNotRegisteredException;
 +
++import org.apache.commons.lang3.tuple.Triple;
 +import org.lwjgl.opengl.GL11;
 +import org.vivecraft.control.ControllerType;
 +import org.vivecraft.gameplay.trackers.BowTracker;
@@ -76,7 +78,7 @@
  import net.minecraft.util.math.vector.Vector3f;
  import net.minecraft.world.storage.MapData;
  import net.optifine.Config;
-@@ -30,8 +80,8 @@
+@@ -30,8 +82,8 @@
  
  public class FirstPersonRenderer
  {
@@ -87,7 +89,7 @@
      private final Minecraft mc;
      private ItemStack itemStackMainHand = ItemStack.EMPTY;
      private ItemStack itemStackOffHand = ItemStack.EMPTY;
-@@ -41,12 +91,22 @@
+@@ -41,12 +93,22 @@
      private float prevEquippedProgressOffHand;
      private final EntityRendererManager renderManager;
      private final ItemRenderer itemRenderer;
@@ -111,7 +113,7 @@
      }
  
      public void renderItemSide(LivingEntity livingEntityIn, ItemStack itemStackIn, ItemCameraTransforms.TransformType transformTypeIn, boolean leftHand, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn)
-@@ -68,6 +128,7 @@
+@@ -68,6 +130,7 @@
          return -MathHelper.cos(f * (float)Math.PI) * 0.5F + 0.5F;
      }
  
@@ -119,7 +121,7 @@
      private void renderArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, HandSide side)
      {
          this.mc.getTextureManager().bindTexture(this.mc.player.getLocationSkin());
-@@ -91,6 +152,7 @@
+@@ -91,6 +154,7 @@
          matrixStackIn.pop();
      }
  
@@ -127,7 +129,7 @@
      private void renderMapFirstPersonSide(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, float equippedProgress, HandSide handIn, float swingProgress, ItemStack stack)
      {
          float f = handIn == HandSide.RIGHT ? 1.0F : -1.0F;
-@@ -118,6 +180,7 @@
+@@ -118,6 +182,7 @@
          matrixStackIn.pop();
      }
  
@@ -135,7 +137,7 @@
      private void renderMapFirstPerson(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, float pitch, float equippedProgress, float swingProgress)
      {
          float f = MathHelper.sqrt(swingProgress);
-@@ -143,6 +206,7 @@
+@@ -143,6 +208,7 @@
          this.renderMapFirstPerson(matrixStackIn, bufferIn, combinedLightIn, this.itemStackMainHand);
      }
  
@@ -143,7 +145,7 @@
      private void renderMapFirstPerson(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, ItemStack stack)
      {
          matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-@@ -168,24 +232,38 @@
+@@ -168,24 +234,38 @@
      {
          boolean flag = side != HandSide.LEFT;
          float f = flag ? 1.0F : -1.0F;
@@ -198,7 +200,7 @@
  
          if (flag)
          {
-@@ -195,6 +273,8 @@
+@@ -195,6 +275,8 @@
          {
              playerrenderer.renderLeftArm(matrixStackIn, bufferIn, combinedLightIn, abstractclientplayerentity);
          }
@@ -207,7 +209,7 @@
      }
  
      private void transformEatFirstPerson(MatrixStack matrixStackIn, float partialTicks, HandSide handIn, ItemStack stack)
-@@ -216,6 +296,7 @@
+@@ -216,6 +298,7 @@
          matrixStackIn.rotate(Vector3f.ZP.rotationDegrees((float)i * f3 * 30.0F));
      }
  
@@ -215,7 +217,7 @@
      private void transformFirstPerson(MatrixStack matrixStackIn, HandSide handIn, float swingProgress)
      {
          int i = handIn == HandSide.RIGHT ? 1 : -1;
-@@ -226,6 +307,44 @@
+@@ -226,6 +309,44 @@
          matrixStackIn.rotate(Vector3f.XP.rotationDegrees(f1 * -80.0F));
          matrixStackIn.rotate(Vector3f.YP.rotationDegrees((float)i * -45.0F));
      }
@@ -260,7 +262,7 @@
  
      private void transformSideFirstPerson(MatrixStack matrixStackIn, HandSide handIn, float equippedProg)
      {
-@@ -233,6 +352,7 @@
+@@ -233,6 +354,7 @@
          matrixStackIn.translate((double)((float)i * 0.56F), (double)(-0.52F + equippedProg * -0.6F), (double) - 0.72F);
      }
  
@@ -268,7 +270,7 @@
      public void renderItemInFirstPerson(float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, ClientPlayerEntity playerEntityIn, int combinedLightIn)
      {
          float f = playerEntityIn.getSwingProgress(partialTicks);
-@@ -310,186 +430,421 @@
+@@ -310,186 +432,421 @@
          bufferIn.finish();
      }
  
@@ -869,7 +871,7 @@
      }
  
      public void tick()
-@@ -571,4 +926,120 @@
+@@ -571,4 +928,121 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }
@@ -892,21 +894,22 @@
 +    	return false;
 +    }
 +
-+    public float isNearOpaqueBlock(Vector3d in, double dist)
++    @Nullable
++    public Triple<Float, BlockState, BlockPos> getNearOpaqueBlock(Vector3d in, double dist)
 +    {
-+    	if (mc.world == null) return 0;
++    	if (mc.world == null) return null;
 +
 +    	
 +    	AxisAlignedBB eye = new AxisAlignedBB(in.subtract(dist, dist, dist), in.add(dist, dist, dist));
 +   
 +    	Stream<BlockPos> list = BlockPos.getAllInBox(eye).filter((bp)-> {
-+    		return mc.world.getBlockState(bp).isOpaqueCube(mc.world, bp);
++    		return mc.world.getBlockState(bp).causesSuffocation(mc.world, bp);
 +    	});
 +    	
-+    	if (list.count() > 0)
-+    		return 1;  	
++    	if (list.findFirst().isPresent())
++    		return Triple.of(1f, mc.world.getBlockState(list.findFirst().get()), list.findFirst().get());
 +    	
-+    	return 0;
++    	return null;
 +    	
 +//    	BlockPos bp = new BlockPos(in);
 +//

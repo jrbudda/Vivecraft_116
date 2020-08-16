@@ -32,7 +32,10 @@ public class GuiHUDSettings extends GuiVROptionsBase
 				return false;
 			}),
 			new VROptionEntry(VRSettings.VrOptions.GUI_APPEAR_OVER_BLOCK),
-			new VROptionEntry(VRSettings.VrOptions.PHYSICAL_KEYBOARD_SCALE),
+			new VROptionEntry(VRSettings.VrOptions.PHYSICAL_KEYBOARD_SCALE, (button, mousePos) -> {
+				KeyboardHandler.physicalKeyboard.setScale(Minecraft.getInstance().vrSettings.physicalKeyboardScale);
+				return false;
+			}),
 			new VROptionEntry("vivecraft.options.screen.menuworld.button", (button, mousePos) -> {
 				Minecraft.getInstance().displayGuiScreen(new GuiMenuWorldSettings(this));
 				return true;

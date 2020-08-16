@@ -1671,7 +1671,6 @@ public class VRSettings
             	break;
             case PHYSICAL_KEYBOARD_SCALE:
                 this.physicalKeyboardScale = par2;
-                KeyboardHandler.physicalKeyboard.setScale(par2);
                 break;
             	// VIVE END - new options
                 
