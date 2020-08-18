@@ -502,9 +502,11 @@ def main(mcp_dir):
     
     #cleanup expected hunk failure artifacts
     print("Cleaning up...")
-    removeFilesByMatchingPattern(src_dir,"*~")
-    removeFilesByMatchingPattern(src_dir,"*#")
-    
+    if not nocompilefixpatch:
+        removeFilesByMatchingPattern(src_dir,"*~")
+        removeFilesByMatchingPattern(src_dir,"*#")
+        removeFilesByMatchingPattern(src_dir,"*.rej")
+        
     #Copy to org
     shutil.copytree( src_dir, org_src_dir )
 

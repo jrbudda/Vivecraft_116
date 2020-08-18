@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/FontRenderer.java
 +++ b/net/minecraft/client/gui/FontRenderer.java
-@@ -417,4 +417,5 @@
+@@ -442,4 +442,5 @@
              }
          }
      }

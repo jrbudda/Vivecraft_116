@@ -9,53 +9,38 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -128,22 +130,41 @@
+@@ -128,6 +130,12 @@
  
      protected void renderTooltip(MatrixStack matrixStack, ItemStack itemStack, int mouseX, int mouseY)
      {
--        this.renderTooltip(matrixStack, this.getTooltipFromItem(itemStack), mouseX, mouseY);
-+    	//Forge
++    	//Forge TODO fix
 +    	Reflector.call(Reflector.GuiUtils_preItemToolTip, itemStack);        
 +    	FontRenderer fon = (FontRenderer)Reflector.call(itemStack.getItem(), Reflector.IForgeItem_getFontRenderer, itemStack);
-+    	this.renderTooltip(matrixStack, this.getTooltipFromItem(itemStack), mouseX, mouseY, (fon == null ? this.font : fon));
++        this.renderToolTip(matrixStack, Lists.transform(this.getTooltipFromItem(itemStack), ITextComponent::func_241878_f), mouseX, mouseY, (font == null ? this.font : font));
 +    	Reflector.call(Reflector.GuiUtils_postItemToolTip);
 +    	//
+         this.func_243308_b(matrixStack, this.getTooltipFromItem(itemStack), mouseX, mouseY);
      }
  
-     public List<ITextComponent> getTooltipFromItem(ItemStack itemStack)
+@@ -145,8 +153,15 @@
      {
--        return itemStack.getTooltip(this.minecraft.player, this.minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
-+    	return itemStack.getTooltip(this.minecraft.player, this.minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
-     }
- 
-     public void renderTooltip(MatrixStack matrixStack, ITextProperties text, int mouseX, int mouseY)
-     {
-         this.renderTooltip(matrixStack, Arrays.asList(text), mouseX, mouseY);
+         this.renderTooltip(p_243308_1_, Lists.transform(p_243308_2_, ITextComponent::func_241878_f), p_243308_3_, p_243308_4_);
      }
 -
+-    public void renderTooltip(MatrixStack p_238654_1_, List <? extends IReorderingProcessor > p_238654_2_, int p_238654_3_, int p_238654_4_)
 +    
-+    //MC original renderToolTip
-     public void renderTooltip(MatrixStack p_238654_1_, List <? extends ITextProperties > p_238654_2_, int p_238654_3_, int p_238654_4_)
-     {
--        if (!p_238654_2_.isEmpty())
-+    	this.renderTooltip(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, font);
-+    }
++    //Forge vanilla method
++    public void renderTooltip(MatrixStack p_238654_1_, List<? extends IReorderingProcessor> p_238654_2_, int p_238654_3_, int p_238654_4_) {
++        this.renderToolTip(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, font);
++     }
 +    //
 +    
-+    //Forge Extended renderTooltip
-+    public void renderTooltip(MatrixStack p_238654_1_, List <? extends ITextProperties > p_238654_2_, int p_238654_3_, int p_238654_4_, FontRenderer font)
-+    {
-+    	//Forge
-+    	if (Reflector.GuiUtils_drawHoveringText.exists()) 
-+    	{
-+            Reflector.call(Reflector.GuiUtils_drawHoveringText, p_238654_1_, p_238654_2_, p_238654_3_, width, height, -1, font);
-+    	}
-+    	//
-+    	else if (!p_238654_2_.isEmpty())
++    //Forge change sig
++    public void renderToolTip(MatrixStack p_238654_1_, List<? extends IReorderingProcessor> p_238654_2_, int p_238654_3_, int p_238654_4_, FontRenderer font)
+     {
+         if (!p_238654_2_.isEmpty())
          {
-             int i = 0;
- 
-@@ -360,6 +381,11 @@
+@@ -365,6 +380,11 @@
  
      public void sendMessage(String text, boolean addToChat)
      {
@@ -67,7 +52,7 @@
          if (addToChat)
          {
              this.minecraft.ingameGUI.getChatGUI().addToSentMessages(text);
-@@ -375,10 +401,15 @@
+@@ -380,10 +400,15 @@
          this.font = minecraft.fontRenderer;
          this.width = width;
          this.height = height;
@@ -87,7 +72,7 @@
      }
  
      public List <? extends IGuiEventListener > getEventListeners()
-@@ -407,7 +438,17 @@
+@@ -412,7 +437,17 @@
      {
          if (this.minecraft.world != null)
          {
@@ -106,7 +91,7 @@
          }
          else
          {
-@@ -428,6 +469,7 @@
+@@ -433,6 +468,7 @@
          bufferbuilder.pos((double)this.width, 0.0D, 0.0D).tex((float)this.width / 32.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
          bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
          tessellator.draw();
@@ -114,7 +99,7 @@
      }
  
      public boolean isPauseScreen()
-@@ -543,4 +585,10 @@
+@@ -548,4 +584,10 @@
      public void func_230476_a_(List<Path> p_230476_1_)
      {
      }

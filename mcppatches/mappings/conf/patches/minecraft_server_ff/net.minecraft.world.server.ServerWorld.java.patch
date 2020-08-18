@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\world\server\ServerWorld.java minecraft_patched\net\minecraft\world\server\ServerWorld.java
 --- minecraft\net\minecraft\world\server\ServerWorld.java
 +++ minecraft_patched\net\minecraft\world\server\ServerWorld.java
-@@ -823,7 +823,7 @@
+@@ -853,7 +853,7 @@
  
     public void func_217466_a(Chunk p_217466_1_) {
        this.field_147483_b.addAll(p_217466_1_.func_177434_r().values());

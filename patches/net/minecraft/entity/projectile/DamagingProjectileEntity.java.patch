@@ -9,7 +9,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
  import net.minecraft.entity.LivingEntity;
-@@ -15,6 +18,7 @@
+@@ -14,6 +17,7 @@
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
@@ -17,9 +17,9 @@
  
  public abstract class DamagingProjectileEntity extends ProjectileEntity
  {
-@@ -81,7 +85,13 @@
+@@ -80,7 +84,13 @@
  
-             RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_, RayTraceContext.BlockMode.COLLIDER);
+             RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
  
 -            if (raytraceresult.getType() != RayTraceResult.Type.MISS)
 +            //Forge

@@ -1,3 +1,5 @@
+# Contributors: Kyasu_Aur, Romitus, jlsalvador, kerotan24, techroot
+
 # Key bindings
 vivecraft.key.hotbarNext=Barra rápida Siguiente
 vivecraft.key.hotbarPrev=Barra rápida Anterior
@@ -165,6 +167,7 @@ vivecraft.options.MENU_WORLD_SELECTION=Mundos
 vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Recargar Cámara Externa
 vivecraft.options.RIGHT_CLICK_DELAY=Repet. Clic dcho.
+vivecraft.options.ANIMAL_TOUCHING=Tocar Animales
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=Tamaño relativo que ocupa la Barra en el campo-de-visión.\nLas unidades son relativas, ni en grados o fracciones de campo-de-visión ni nada.
@@ -271,7 +274,7 @@ vivecraft.options.REALISTIC_ROW.tooltip=Rema, rema, rema tu barca... agitando lo
 
 vivecraft.options.WALK_MULTIPLIER.tooltip=Multiplica tu posición en la habitación por un factor.\nTe permite andar más alrededor, pero puede causar mareo por movimiento.
 
-vivecraft.options.FREEMOVE_MODE.tooltip=Origen de dirección del movimiento libre.\n\n  Mando: Dirección donde apunte el mando.\n  Visor: Dirección de la mirada.\n  Correr-Sin-Moverse: La dirección se basa en cómo se mueven los mandos.
+vivecraft.options.FREEMOVE_MODE.tooltip=Origen de dirección del movimiento libre.\n\n  Mando: Dirección donde apunte el mando.\n  Visor: Dirección de tu mirada.\n  Correr-Sin-Moverse: Guiñada basada en cómo se mueven los mandos. Cabeceo basado en tu Visor.\n  Habitación: Guiñada relativa a avanzar en la realidad. Cabeceo basado en tu Visor. Este modo sólo es mejor para RV de 180 grados.
 
 vivecraft.options.VEHICLE_ROTATION.tooltip=Viajar en un vehículo rotará el mundo con el giro del vehículo. Puede ser desorientador.
 
@@ -325,6 +328,8 @@ vivecraft.options.RELOAD_EXTERNAL_CAMERA.tooltip=Recarga la configuración de la
 
 vivecraft.options.RIGHT_CLICK_DELAY.tooltip=El número de tics del juego entre "clics derecho" mientras se mantiene presionado el botón.
 
+vivecraft.options.ANIMAL_TOUCHING.tooltip=Si está habilitado, tocar un animal (mob) pasivo sin un arma interactuará (clic dcho.) en vez de atacarlo.\nDeshabilitar para abofetear cerditos.
+
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=No Puedo Ver
 vivecraft.options.yes=SÍ
@@ -372,6 +377,7 @@ vivecraft.options.hmd=Visor
 vivecraft.options.crosshair=Mira
 vivecraft.options.controller=Mandos
 vivecraft.options.runinplace=Correr-Sin-Moverse
+vivecraft.options.room=Habitación
 vivecraft.options.hold=Mantener
 vivecraft.options.press=Presionar
 vivecraft.options.keyboard.physical=Físico

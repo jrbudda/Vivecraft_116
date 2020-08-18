@@ -16,13 +16,14 @@
                 }
              }
 +            }
-          } catch (SocketTimeoutException sockettimeoutexception) {
-             return;
           } catch (IOException ioexception) {
-@@ -97,9 +98,7 @@
+             return;
+          } catch (Exception exception1) {
+@@ -94,10 +95,7 @@
+             field_164005_h.info("Thread {} shutting down", (Object)this.field_164003_c);
              this.field_72619_a = false;
           }
- 
+-
 -         return;
        }
 -   }

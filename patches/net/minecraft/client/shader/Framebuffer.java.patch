@@ -19,37 +19,26 @@
  import net.minecraft.client.renderer.texture.TextureUtil;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  
-@@ -20,11 +27,18 @@
-     public int depthBuffer;
+@@ -17,10 +24,16 @@
+     public final boolean useDepth;
+     public int framebufferObject;
+     private int framebufferTexture;
+-    private int depthBuffer;
++    public int depthBuffer;
      public final float[] framebufferColor;
      public int framebufferFilter;
+-
 +    //Vivecraft
 +    public static final int NO_TEXTURE_ID = -1;
-+ 	private boolean depthisTex; //this is always true now.
-+ 	private int texid = NO_TEXTURE_ID;
-+ 	public String name = "Default";
-+ 	private boolean linearFilter;
-+ 	//
- 
--    public Framebuffer(int p_i2822_1_, int p_i2822_2_, boolean p_i2822_3_, boolean p_i2822_4_)
-+    public Framebuffer(int p_i1732_1_, int p_i1732_2_, boolean p_i1732_3_, boolean p_i1732_4_)
++    private int texid = NO_TEXTURE_ID;
++    public String name = "Default";
++    private boolean linearFilter;
++    //
++    
+     public Framebuffer(int p_i51175_1_, int p_i51175_2_, boolean p_i51175_3_, boolean p_i51175_4_)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
--        this.useDepth = p_i2822_3_;
-+        this.useDepth = p_i1732_3_;
-         this.framebufferObject = -1;
-         this.framebufferTexture = -1;
-         this.depthBuffer = -1;
-@@ -33,7 +47,7 @@
-         this.framebufferColor[1] = 1.0F;
-         this.framebufferColor[2] = 1.0F;
-         this.framebufferColor[3] = 0.0F;
--        this.resize(p_i2822_1_, p_i2822_2_, p_i2822_4_);
-+        this.resize(p_i1732_1_, p_i1732_2_, p_i1732_4_);
-     }
- 
-     public void resize(int p_216491_1_, int p_216491_2_, boolean p_216491_3_)
-@@ -90,7 +104,7 @@
+@@ -90,7 +103,7 @@
              this.framebufferObject = -1;
          }
      }
@@ -58,7 +47,7 @@
      public void func_237506_a_(Framebuffer p_237506_1_)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
-@@ -118,7 +132,8 @@
+@@ -118,7 +131,8 @@
  
          GlStateManager.bindFramebuffer(FramebufferConstants.GL_FRAMEBUFFER, 0);
      }
@@ -68,7 +57,7 @@
      public void createBuffers(int p_216492_1_, int p_216492_2_, boolean p_216492_3_)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
-@@ -127,21 +142,31 @@
+@@ -127,21 +141,31 @@
          this.framebufferTextureWidth = p_216492_1_;
          this.framebufferTextureHeight = p_216492_2_;
          this.framebufferObject = GlStateManager.genFramebuffers();
@@ -110,7 +99,7 @@
          GlStateManager.bindTexture(this.framebufferTexture);
          GlStateManager.texImage2D(3553, 0, 32856, this.framebufferTextureWidth, this.framebufferTextureHeight, 0, 6408, 5121, (IntBuffer)null);
          GlStateManager.bindFramebuffer(FramebufferConstants.GL_FRAMEBUFFER, this.framebufferObject);
-@@ -149,7 +174,8 @@
+@@ -149,7 +173,8 @@
  
          if (this.useDepth)
          {
@@ -120,7 +109,7 @@
          }
  
          this.checkFramebufferComplete();
-@@ -212,17 +238,17 @@
+@@ -212,17 +237,17 @@
      }
  
      public void bindFramebuffer(boolean setViewportIn)
@@ -141,7 +130,7 @@
          }
      }
  
-@@ -265,7 +291,8 @@
+@@ -265,7 +290,8 @@
          this.framebufferRenderExt(width, height, true);
      }
  
@@ -151,7 +140,7 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnGameThreadOrInit);
  
-@@ -273,16 +300,17 @@
+@@ -273,16 +299,17 @@
          {
              RenderSystem.recordRenderCall(() ->
              {
@@ -172,7 +161,7 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThread);
          GlStateManager.colorMask(true, true, true, false);
-@@ -294,30 +322,57 @@
+@@ -294,30 +321,57 @@
          GlStateManager.matrixMode(5888);
          GlStateManager.loadIdentity();
          GlStateManager.translatef(0.0F, 0.0F, -2000.0F);
@@ -238,9 +227,9 @@
          tessellator.draw();
          this.unbindFramebufferTexture();
          GlStateManager.depthMask(true);
-@@ -340,4 +395,72 @@
-         GlStateManager.clear(i, onMac);
-         this.unbindFramebuffer();
+@@ -350,4 +404,71 @@
+     {
+         return this.depthBuffer;
      }
 +    
 + 	//Vivecraft extended constructor
@@ -250,7 +239,6 @@
 +    	//
 +    	this.name = name;
 +    	this.texid = texid;
-+    	this.depthisTex = depthtex;
 +    	this.linearFilter = linearFilter;
 +    	//
 +        this.useDepth = usedepth;

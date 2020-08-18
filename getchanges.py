@@ -88,6 +88,8 @@ def main(mcp_dir, patch_dir = "patches", orig_dir = ".minecraft_orig"):
             org_file = os.path.join(mod_dir, file_)
 
             if mod_file[-4:]!="java":
+                print "Removing non-java file: %s" % (mod_file)
+                os.remove(mod_file)
                 continue
 
             if file_ == "Minecraft.java":

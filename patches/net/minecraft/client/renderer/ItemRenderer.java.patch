@@ -31,7 +31,7 @@
 +    private GlAlphaState alphaState = new GlAlphaState();
 +    //
  
-     public ItemRenderer(TextureManager p_i130_1_, ModelManager p_i130_2_, ItemColors p_i130_3_)
+     public ItemRenderer(TextureManager textureManagerIn, ModelManager modelManagerIn, ItemColors itemColorsIn)
      {
 @@ -150,6 +162,14 @@
  
@@ -59,7 +59,7 @@
  
                      if (itemStackIn.getItem() == Items.COMPASS && itemStackIn.hasEffect())
                      {
-@@ -310,7 +334,19 @@
+@@ -317,7 +341,19 @@
              {
                  k = this.itemColors.getColor(itemStackIn, bakedquad.getTintIndex());
              }
@@ -80,7 +80,7 @@
              float f = (float)(k >> 16 & 255) / 255.0F;
              float f1 = (float)(k >> 8 & 255) / 255.0F;
              float f2 = (float)(k & 255) / 255.0F;
-@@ -321,7 +357,7 @@
+@@ -328,7 +364,7 @@
              }
              else
              {
@@ -89,7 +89,7 @@
              }
          }
      }
-@@ -378,10 +414,15 @@
+@@ -385,10 +421,15 @@
          this.textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
          this.textureManager.getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
          RenderSystem.enableRescaleNormal();
@@ -106,7 +106,7 @@
          RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
          RenderSystem.translatef((float)x, (float)y, 100.0F + this.zLevel);
          RenderSystem.translatef(8.0F, 8.0F, 0.0F);
-@@ -395,7 +436,6 @@
+@@ -402,7 +443,6 @@
          {
              RenderHelper.setupGuiFlatDiffuseLighting();
          }
@@ -114,7 +114,7 @@
          this.renderItem(stack, ItemCameraTransforms.TransformType.GUI, false, matrixstack, irendertypebuffer$impl, 15728880, OverlayTexture.NO_OVERLAY, bakedmodel);
          irendertypebuffer$impl.finish();
          RenderSystem.enableDepthTest();
-@@ -559,4 +599,21 @@
+@@ -566,4 +606,21 @@
      {
          return VanillaResourceType.MODELS;
      }

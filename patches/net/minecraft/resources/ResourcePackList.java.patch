@@ -12,16 +12,19 @@
  import java.util.Collection;
  import java.util.List;
  import java.util.Map;
-@@ -24,15 +28,23 @@
-     public ResourcePackList(ResourcePackInfo.IFactory<T> p_i1984_1_, IPackFinder... p_i1984_2_)
+@@ -24,7 +28,10 @@
+     public ResourcePackList(ResourcePackInfo.IFactory p_i231423_1_, IPackFinder... p_i231423_2_)
      {
-         this.packInfoFactory = p_i1984_1_;
--        this.packFinders = ImmutableSet.copyOf(p_i1984_2_);
-+       // this.packFinders = ImmutableSet.copyOf(p_i1984_2_);
+         this.packInfoFactory = p_i231423_1_;
+-        this.packFinders = ImmutableSet.copyOf(p_i231423_2_);
++        //this.packFinders = ImmutableSet.copyOf(p_i231423_2_);
 +        //Forge
-+        this.packFinders = new java.util.HashSet<>(java.util.Arrays.asList(p_i1984_2_));
++        this.packFinders = new java.util.HashSet<>(java.util.Arrays.asList(p_i231423_2_));
 +        //
      }
+ 
+     public ResourcePackList(IPackFinder... p_i241886_1_)
+@@ -34,10 +41,15 @@
  
      public void reloadPacksFromFinders()
      {
@@ -30,7 +33,7 @@
 -        this.packNameToInfo = this.func_232624_g_();
 -        this.enabled = this.func_232618_b_(list);
 +    	// Vivecraft
-+    	List<T> oldEnabled = Lists.newLinkedList(this.enabled);
++    	List<ResourcePackInfo> oldEnabled = Lists.newLinkedList(this.enabled);
 +    	List<String> list = this.enabled.stream().map(ResourcePackInfo::getName).collect(ImmutableList.toImmutableList());
 +    	this.close();
 +    	this.packNameToInfo = this.func_232624_g_();
@@ -40,14 +43,14 @@
 +    		Minecraft.getInstance().resourcePacksChanged = true;
      }
  
-     private Map<String, T> func_232624_g_()
-@@ -52,7 +64,13 @@
+     private Map<String, ResourcePackInfo> func_232624_g_()
+@@ -57,7 +69,13 @@
  
      public void setEnabledPacks(Collection<String> p_198985_1_)
      {
 -        this.enabled = this.func_232618_b_(p_198985_1_);
 +    	// Vivecraft
-+    	List<T> oldEnabled = Lists.newLinkedList(this.enabled);
++    	List<ResourcePackInfo> oldEnabled = Lists.newLinkedList(this.enabled);
 +
 +    	this.enabled = this.func_232618_b_(p_198985_1_);
 +    	// Vivecraft
@@ -55,8 +58,8 @@
 +    		Minecraft.getInstance().resourcePacksChanged = true;
      }
  
-     private List<T> func_232618_b_(Collection<String> p_232618_1_)
-@@ -115,4 +133,11 @@
+     private List<ResourcePackInfo> func_232618_b_(Collection<String> p_232618_1_)
+@@ -120,4 +138,11 @@
      {
          return this.enabled.stream().map(ResourcePackInfo::getResourcePack).collect(ImmutableList.toImmutableList());
      }

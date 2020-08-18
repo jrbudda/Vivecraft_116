@@ -1,21 +1,6 @@
 --- a/net/minecraft/entity/player/ServerPlayerEntity.java
 +++ b/net/minecraft/entity/player/ServerPlayerEntity.java
-@@ -9,11 +9,14 @@
- import java.util.OptionalInt;
- import java.util.Random;
- import java.util.UUID;
-+import java.util.function.Function;
- import javax.annotation.Nullable;
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.advancements.PlayerAdvancements;
- import net.minecraft.block.BlockState;
-+import net.minecraft.block.Blocks;
- import net.minecraft.block.HorizontalBlock;
-+import net.minecraft.client.Minecraft;
- import net.minecraft.command.arguments.EntityAnchorArgument;
- import net.minecraft.crash.CrashReport;
- import net.minecraft.crash.CrashReportCategory;
-@@ -37,6 +40,7 @@
+@@ -41,6 +41,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.Items;
  import net.minecraft.item.MerchantOffers;
@@ -23,7 +8,7 @@
  import net.minecraft.item.WrittenBookItem;
  import net.minecraft.item.crafting.IRecipe;
  import net.minecraft.item.crafting.ServerRecipeBook;
-@@ -75,8 +79,13 @@
+@@ -79,8 +80,13 @@
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
  import net.minecraft.network.play.server.SWindowItemsPacket;
  import net.minecraft.network.play.server.SWindowPropertyPacket;
@@ -37,16 +22,8 @@
  import net.minecraft.scoreboard.Score;
  import net.minecraft.scoreboard.ScoreCriteria;
  import net.minecraft.scoreboard.ScorePlayerTeam;
-@@ -102,6 +111,7 @@
- import net.minecraft.util.ServerCooldownTracker;
- import net.minecraft.util.SoundCategory;
- import net.minecraft.util.SoundEvent;
-+import net.minecraft.util.SoundEvents;
- import net.minecraft.util.Unit;
- import net.minecraft.util.Util;
- import net.minecraft.util.math.AxisAlignedBB;
-@@ -119,12 +129,19 @@
- import net.minecraft.world.DimensionType;
+@@ -123,12 +129,19 @@
+ import net.minecraft.util.text.event.HoverEvent;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
 +import net.minecraft.world.Teleporter;
@@ -65,7 +42,7 @@
  
  public class ServerPlayerEntity extends PlayerEntity implements IContainerListener
  {
-@@ -359,6 +376,22 @@
+@@ -366,6 +379,22 @@
      public void addSelfToInternalCraftingInventory()
      {
          this.openContainer.addListener(this);
@@ -88,7 +65,7 @@
      }
  
      public void sendEnterCombat()
-@@ -454,6 +487,7 @@
+@@ -461,6 +490,7 @@
              if (!this.isSpectator() || this.world.isBlockLoaded(this.getPosition()))
              {
                  super.tick();
@@ -96,7 +73,7 @@
              }
  
              for (int i = 0; i < this.inventory.getSizeInventory(); ++i)
-@@ -545,6 +579,10 @@
+@@ -552,6 +582,10 @@
  
      public void onDeath(DamageSource cause)
      {
@@ -107,270 +84,72 @@
          boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
  
          if (flag)
-@@ -724,122 +762,147 @@
+@@ -746,9 +780,20 @@
+         }
      }
  
-     @Nullable
--    public Entity changeDimension(ServerWorld server)
--    {
--        this.invulnerableDimensionChange = true;
--        ServerWorld serverworld = this.getServerWorld();
--        RegistryKey<World> registrykey = serverworld.getDimensionKey();
--
--        if (registrykey == World.THE_END && server.getDimensionKey() == World.OVERWORLD)
--        {
--            this.detach();
--            this.getServerWorld().removePlayer(this);
--
--            if (!this.queuedEndExit)
--            {
--                this.queuedEndExit = true;
--                this.connection.sendPacket(new SChangeGameStatePacket(SChangeGameStatePacket.field_241768_e_, this.seenCredits ? 0.0F : 1.0F));
--                this.seenCredits = true;
--            }
--
--            return this;
--        }
--        else
--        {
--            IWorldInfo iworldinfo = server.getWorldInfo();
--            this.connection.sendPacket(new SRespawnPacket(server.getDimensionTypeKey(), server.getDimensionKey(), BiomeManager.func_235200_a_(server.getSeed()), this.interactionManager.getGameType(), this.interactionManager.func_241815_c_(), server.isDebug(), server.func_241109_A_(), true));
--            this.connection.sendPacket(new SServerDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
--            PlayerList playerlist = this.server.getPlayerList();
--            playerlist.updatePermissionLevel(this);
--            serverworld.removePlayer(this);
--            this.removed = false;
--            double d0 = this.getPosX();
--            double d1 = this.getPosY();
--            double d2 = this.getPosZ();
--            float f = this.rotationPitch;
--            float f1 = this.rotationYaw;
--            float f2 = f1;
--            serverworld.getProfiler().startSection("moving");
--
--            if (server.getDimensionKey() == World.THE_END)
--            {
--                BlockPos blockpos = ServerWorld.field_241108_a_;
--                d0 = (double)blockpos.getX();
--                d1 = (double)blockpos.getY();
--                d2 = (double)blockpos.getZ();
--                f1 = 90.0F;
--                f = 0.0F;
--            }
--            else
--            {
--                if (registrykey == World.OVERWORLD && server.getDimensionKey() == World.THE_NETHER)
--                {
--                    this.enteredNetherPosition = this.getPositionVec();
--                }
--
--                DimensionType dimensiontype1 = serverworld.func_230315_m_();
--                DimensionType dimensiontype = server.func_230315_m_();
--                double d3 = 8.0D;
--
--                if (!dimensiontype1.func_236045_g_() && dimensiontype.func_236045_g_())
--                {
--                    d0 /= 8.0D;
--                    d2 /= 8.0D;
--                }
--                else if (dimensiontype1.func_236045_g_() && !dimensiontype.func_236045_g_())
--                {
--                    d0 *= 8.0D;
--                    d2 *= 8.0D;
--                }
--            }
--
--            this.setLocationAndAngles(d0, d1, d2, f1, f);
--            serverworld.getProfiler().endSection();
--            serverworld.getProfiler().startSection("placing");
--            double d6 = Math.min(-2.9999872E7D, server.getWorldBorder().minX() + 16.0D);
--            double d7 = Math.min(-2.9999872E7D, server.getWorldBorder().minZ() + 16.0D);
--            double d4 = Math.min(2.9999872E7D, server.getWorldBorder().maxX() - 16.0D);
--            double d5 = Math.min(2.9999872E7D, server.getWorldBorder().maxZ() - 16.0D);
--            d0 = MathHelper.clamp(d0, d6, d4);
--            d2 = MathHelper.clamp(d2, d7, d5);
--            this.setLocationAndAngles(d0, d1, d2, f1, f);
--
--            if (server.getDimensionKey() == World.THE_END)
--            {
--                int i = MathHelper.floor(this.getPosX());
--                int j = MathHelper.floor(this.getPosY()) - 1;
--                int k = MathHelper.floor(this.getPosZ());
--                ServerWorld.func_241121_a_(server);
--                this.setLocationAndAngles((double)i, (double)j, (double)k, f1, 0.0F);
--                this.setMotion(Vector3d.ZERO);
--            }
--            else if (!server.getDefaultTeleporter().placeInPortal(this, f2))
--            {
--                server.getDefaultTeleporter().makePortal(this);
--                server.getDefaultTeleporter().placeInPortal(this, f2);
--            }
--
--            serverworld.getProfiler().endSection();
--            this.setWorld(server);
--            server.addDuringPortalTeleport(this);
--            this.func_213846_b(serverworld);
--            this.connection.setPlayerLocation(this.getPosX(), this.getPosY(), this.getPosZ(), f1, f);
--            this.interactionManager.setWorld(server);
--            this.connection.sendPacket(new SPlayerAbilitiesPacket(this.abilities));
--            playerlist.sendWorldInfo(this, server);
--            playerlist.sendInventory(this);
--
--            for (EffectInstance effectinstance : this.getActivePotionEffects())
--            {
--                this.connection.sendPacket(new SPlayEntityEffectPacket(this.getEntityId(), effectinstance));
--            }
++    //Forge - vanilla method
++    @Nullable
 +    public Entity changeDimension(ServerWorld server) {
 +        return changeDimension(server, Reflector.ForgeHooks.exists() ? (ITeleporter)server.getDefaultTeleporter() : null);
 +    }
- 
--            this.connection.sendPacket(new SPlaySoundEventPacket(1032, BlockPos.ZERO, 0, false));
--            this.lastExperience = -1;
--            this.lastHealth = -1.0F;
--            this.lastFoodLevel = -1;
--            return this;
--        }
-+    @Nullable
++    //
++    
+     @Nullable
+-    public Entity changeDimension(ServerWorld server)
++    //Forge add ITeleporter
 +    public Entity changeDimension(ServerWorld server, ITeleporter teleporter)
-+    {
++    //
+     {
 +    	if (Reflector.ForgeHooks.exists() && !Reflector.callBoolean(Reflector.ForgeHooks_onTravelToDimension, this, server.getDimensionKey()))
 +    		return null;
-+    	this.invulnerableDimensionChange = true;
-+    	ServerWorld serverworld = this.getServerWorld();
-+    	RegistryKey<World> registrykey = serverworld.getDimensionKey();
-+
-+    	if (registrykey == World.THE_END && server.getDimensionKey() == World.OVERWORLD && (!Reflector.ForgeHooks.exists() || teleporter instanceof Teleporter))
-+    	{
-+    		this.detach();
+         this.invulnerableDimensionChange = true;
+         ServerWorld serverworld = this.getServerWorld();
+         RegistryKey<World> registrykey = serverworld.getDimensionKey();
+@@ -756,8 +801,13 @@
+         if (registrykey == World.THE_END && server.getDimensionKey() == World.OVERWORLD)
+         {
+             this.detach();
+-            this.getServerWorld().removePlayer(this);
+-
++            //Forge
 +    		if (Reflector.ForgeHooks.exists()) {
 +    			Reflector.callVoid(this.getServerWorld(), Reflector.ServerWorld_removePlayer, this, true);
 +    		} else {
 +    			this.getServerWorld().removePlayer(this);
 +    		}
-+
-+    		if (!this.queuedEndExit)
-+    		{
-+    			this.queuedEndExit = true;
-+    			this.connection.sendPacket(new SChangeGameStatePacket(SChangeGameStatePacket.field_241768_e_, this.seenCredits ? 0.0F : 1.0F));
-+    			this.seenCredits = true;
-+    		}
-+
-+    		return this;
-+    	}
-+    	else
-+    	{
-+    		IWorldInfo iworldinfo = server.getWorldInfo();
-+    		this.connection.sendPacket(new SRespawnPacket(server.getDimensionTypeKey(), server.getDimensionKey(), BiomeManager.func_235200_a_(server.getSeed()), this.interactionManager.getGameType(), this.interactionManager.func_241815_c_(), server.isDebug(), server.func_241109_A_(), true));
-+    		this.connection.sendPacket(new SServerDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
-+    		PlayerList playerlist = this.server.getPlayerList();
-+    		playerlist.updatePermissionLevel(this);
-+    		if (Reflector.ForgeHooks.exists()) {
++    		//
+             if (!this.queuedEndExit)
+             {
+                 this.queuedEndExit = true;
+@@ -774,7 +824,15 @@
+             this.connection.sendPacket(new SServerDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
+             PlayerList playerlist = this.server.getPlayerList();
+             playerlist.updatePermissionLevel(this);
+-            serverworld.removePlayer(this);
++    		//Forge
++            if (Reflector.ForgeHooks.exists()) {
 +    			Reflector.callVoid(serverworld, Reflector.ServerWorld_removePlayer, this, true);
 +    			Reflector.callVoid(this, Reflector.Entity_revive);
 +    		} else {
 +    			serverworld.removePlayer(this);
 +    			this.removed = false;
 +    		}
-+
-+    		Function<Boolean, Entity> func = spawnPortal -> {
-+    			double d0 = this.getPosX();
-+    			double d1 = this.getPosY();
-+    			double d2 = this.getPosZ();
-+    			float f = this.rotationPitch;
-+    			float f1 = this.rotationYaw;
-+    			float f2 = f1;
-+    			serverworld.getProfiler().startSection("moving");
-+
-+    			if (server.getDimensionKey() == World.THE_END) {
-+    				BlockPos blockpos = ServerWorld.field_241108_a_;
-+    				d0 = (double)blockpos.getX();
-+    				d1 = (double)blockpos.getY();
-+    				d2 = (double)blockpos.getZ();
-+    				f1 = 90.0F;
-+    				f = 0.0F;
-+    			} else {
-+    				if (registrykey == World.OVERWORLD && server.getDimensionKey() == World.THE_NETHER) 
-+    					this.enteredNetherPosition = this.getPositionVec();
-+
-+    				DimensionType dimensiontype1 = serverworld.func_230315_m_();
-+    				DimensionType dimensiontype = server.func_230315_m_();
-+    				double d3 = 8.0D;
-+
-+    				if (!dimensiontype1.func_236045_g_() && dimensiontype.func_236045_g_())
-+    				{
-+    					d0 /= 8.0D;
-+    					d2 /= 8.0D;
-+    				}
-+    				else if (dimensiontype1.func_236045_g_() && !dimensiontype.func_236045_g_())
-+    				{
-+    					d0 *= 8.0D;
-+    					d2 *= 8.0D;
-+    				}
-+    			}
-+
-+    			this.setLocationAndAngles(d0, d1, d2, f1, f);
-+    			serverworld.getProfiler().endSection();
-+    			serverworld.getProfiler().startSection("placing");
-+    			double d6 = Math.min(-2.9999872E7D, server.getWorldBorder().minX() + 16.0D);
-+    			double d7 = Math.min(-2.9999872E7D, server.getWorldBorder().minZ() + 16.0D);
-+    			double d4 = Math.min(2.9999872E7D, server.getWorldBorder().maxX() - 16.0D);
-+    			double d5 = Math.min(2.9999872E7D, server.getWorldBorder().maxZ() - 16.0D);
-+    			d0 = MathHelper.clamp(d0, d6, d4);
-+    			d2 = MathHelper.clamp(d2, d7, d5);
-+    			this.setLocationAndAngles(d0, d1, d2, f1, f);
-+
-+    			if (server.getDimensionKey() == World.THE_END)
-+    			{
-+    				int i = MathHelper.floor(this.getPosX());
-+    				int j = MathHelper.floor(this.getPosY()) - 1;
-+    				int k = MathHelper.floor(this.getPosZ());
-+    				ServerWorld.func_241121_a_(server);
-+    				this.setLocationAndAngles((double)i, (double)j, (double)k, f1, 0.0F);
-+    				this.setMotion(Vector3d.ZERO);
-+    			}
-+    			else if (spawnPortal && !server.getDefaultTeleporter().placeInPortal(this, f2))
-+    			{
-+    				server.getDefaultTeleporter().makePortal(this);
-+    				server.getDefaultTeleporter().placeInPortal(this, f2);
-+    			}
-+
-+    			serverworld.getProfiler().endSection();
-+    			this.setWorld(server);
-+    			server.addDuringPortalTeleport(this);
-+    			this.func_213846_b(serverworld);
-+    			this.connection.setPlayerLocation(this.getPosX(), this.getPosY(), this.getPosZ(), f1, f);
-+    			return this;
-+    		};
-+
-+    		if (Reflector.ForgeHooks.exists()) {
-+    			Entity e = teleporter.placeEntity(this, serverworld, server, this.rotationYaw, func);
-+    			if (e != this)
-+    				throw new IllegalArgumentException(String.format("Teleporter %s returned not the player entity but instead %s, expected PlayerEntity %s", teleporter, e, this));
-+    		} else {
-+    			func.apply(true);
-+    		}
-+
-+    		this.interactionManager.setWorld(server);
-+    		this.connection.sendPacket(new SPlayerAbilitiesPacket(this.abilities));
-+    		playerlist.sendWorldInfo(this, server);
-+    		playerlist.sendInventory(this);
-+
-+    		for (EffectInstance effectinstance : this.getActivePotionEffects())
-+    		{
-+    			this.connection.sendPacket(new SPlayEntityEffectPacket(this.getEntityId(), effectinstance));
-+    		}
-+
-+    		this.connection.sendPacket(new SPlaySoundEventPacket(1032, BlockPos.ZERO, 0, false));
-+    		this.lastExperience = -1;
-+    		this.lastHealth = -1.0F;
-+    		this.lastFoodLevel = -1;
-+    		Reflector.call(Reflector.BasicEventHooks_firePlayerChangedDimensionEvent, this, registrykey, server.getDimensionKey());
-+    		return this;
-+    	}
-     }
++    		//
+             this.removed = false;
+             PortalInfo portalinfo = this.func_241829_a(server);
  
-     private void func_213846_b(ServerWorld p_213846_1_)
-@@ -892,6 +955,12 @@
+@@ -813,6 +871,9 @@
+                 this.lastExperience = -1;
+                 this.lastHealth = -1.0F;
+                 this.lastFoodLevel = -1;
++                //Forge
++                Reflector.call(Reflector.BasicEventHooks_firePlayerChangedDimensionEvent, this, registrykey, server.getDimensionKey());
++                //
+             }
+ 
+             return this;
+@@ -908,6 +969,12 @@
  
      public Either<PlayerEntity.SleepResult, Unit> trySleep(BlockPos at)
      {
@@ -383,9 +162,9 @@
          Direction direction = this.world.getBlockState(at).get(HorizontalBlock.HORIZONTAL_FACING);
  
          if (!this.isSleeping() && this.isAlive())
-@@ -912,7 +981,11 @@
+@@ -928,7 +995,11 @@
              {
-                 this.func_241153_a_(this.world.getDimensionKey(), at, false, true);
+                 this.func_242111_a(this.world.getDimensionKey(), at, this.rotationYaw, false, true);
  
 -                if (this.world.isDaytime())
 +                boolean sflag = this.world.isDaytime();
@@ -396,7 +175,7 @@
                  {
                      return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
                  }
-@@ -958,6 +1031,7 @@
+@@ -974,6 +1045,7 @@
  
      private boolean func_241147_a_(BlockPos p_241147_1_, Direction p_241147_2_)
      {
@@ -404,7 +183,7 @@
          return this.func_241158_g_(p_241147_1_) || this.func_241158_g_(p_241147_1_.offset(p_241147_2_.getOpposite()));
      }
  
-@@ -1089,6 +1163,7 @@
+@@ -1105,6 +1177,7 @@
                  this.connection.sendPacket(new SOpenWindowPacket(container.windowId, container.getType(), p_213829_1_.getDisplayName()));
                  container.addListener(this);
                  this.openContainer = container;
@@ -412,7 +191,7 @@
                  return OptionalInt.of(this.currentWindowId);
              }
          }
-@@ -1110,6 +1185,7 @@
+@@ -1126,6 +1199,7 @@
          this.connection.sendPacket(new SOpenHorseWindowPacket(this.currentWindowId, inventoryIn.getSizeInventory(), horse.getEntityId()));
          this.openContainer = new HorseInventoryContainer(this.currentWindowId, this.inventory, inventoryIn, horse);
          this.openContainer.addListener(this);
@@ -420,7 +199,7 @@
      }
  
      public void openBook(ItemStack stack, Hand hand)
-@@ -1182,6 +1258,7 @@
+@@ -1198,6 +1272,7 @@
      public void closeContainer()
      {
          this.openContainer.onContainerClosed(this);
@@ -428,7 +207,7 @@
          this.openContainer = this.container;
      }
  
-@@ -1331,6 +1408,24 @@
+@@ -1345,6 +1420,24 @@
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.setLeftShoulderEntity(that.getLeftShoulderEntity());
          this.setRightShoulderEntity(that.getRightShoulderEntity());
@@ -453,7 +232,7 @@
      }
  
      protected void onNewPotionEffect(EffectInstance id)
-@@ -1463,6 +1558,8 @@
+@@ -1477,6 +1570,8 @@
          this.chatColours = packetIn.isColorsEnabled();
          this.getDataManager().set(PLAYER_MODEL_FLAG, (byte)packetIn.getModelPartFlags());
          this.getDataManager().set(MAIN_HAND, (byte)(packetIn.getMainHand() == HandSide.LEFT ? 0 : 1));
@@ -462,8 +241,8 @@
      }
  
      public ChatVisibility getChatVisibility()
-@@ -1610,8 +1707,13 @@
-             this.connection.sendPacket(new SRespawnPacket(newWorld.getDimensionTypeKey(), newWorld.getDimensionKey(), BiomeManager.func_235200_a_(newWorld.getSeed()), this.interactionManager.getGameType(), this.interactionManager.func_241815_c_(), newWorld.isDebug(), newWorld.func_241109_A_(), true));
+@@ -1624,8 +1719,13 @@
+             this.connection.sendPacket(new SRespawnPacket(newWorld.func_230315_m_(), newWorld.getDimensionKey(), BiomeManager.func_235200_a_(newWorld.getSeed()), this.interactionManager.getGameType(), this.interactionManager.func_241815_c_(), newWorld.isDebug(), newWorld.func_241109_A_(), true));
              this.connection.sendPacket(new SServerDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
              this.server.getPlayerList().updatePermissionLevel(this);
 +            if (Reflector.ForgeHooks.exists()) {
@@ -476,7 +255,7 @@
              this.setLocationAndAngles(x, y, z, yaw, pitch);
              this.setWorld(newWorld);
              newWorld.addDuringCommandTeleport(this);
-@@ -1620,9 +1722,82 @@
+@@ -1634,9 +1734,82 @@
              this.interactionManager.setWorld(newWorld);
              this.server.getPlayerList().sendWorldInfo(this, newWorld);
              this.server.getPlayerList().sendInventory(this);
@@ -559,17 +338,17 @@
      @Nullable
      public BlockPos func_241140_K_()
      {
-@@ -1641,6 +1816,9 @@
+@@ -1660,6 +1833,9 @@
  
-     public void func_241153_a_(RegistryKey<World> p_241153_1_, @Nullable BlockPos p_241153_2_, boolean p_241153_3_, boolean p_241153_4_)
+     public void func_242111_a(RegistryKey<World> p_242111_1_, @Nullable BlockPos p_242111_2_, float p_242111_3_, boolean p_242111_4_, boolean p_242111_5_)
      {
 +    	//Forge
-+    	if(Reflector.callBoolean(Reflector.ForgeEventFactory_onPlayerSpawnSet, this, p_241153_2_ == null ? World.OVERWORLD : p_241153_1_, p_241153_2_, p_241153_3_)) return;
-+		//
-         if (p_241153_2_ != null)
++    	if(Reflector.callBoolean(Reflector.ForgeEventFactory_onPlayerSpawnSet, this, p_242111_2_ == null ? World.OVERWORLD : p_242111_1_, p_242111_2_, p_242111_3_)) return;
++    	//
+         if (p_242111_2_ != null)
          {
-             boolean flag = p_241153_2_.equals(this.field_241138_cr_) && p_241153_1_.equals(this.field_241137_cq_);
-@@ -1696,6 +1874,7 @@
+             boolean flag = p_242111_2_.equals(this.field_241138_cr_) && p_242111_1_.equals(this.field_241137_cq_);
+@@ -1717,6 +1893,7 @@
          return new SSpawnPlayerPacket(this);
      }
  
@@ -577,7 +356,7 @@
      public ItemEntity dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
      {
          ItemEntity itementity = super.dropItem(droppedItem, dropAround, traceItem);
-@@ -1706,7 +1885,28 @@
+@@ -1727,7 +1904,28 @@
          }
          else
          {
@@ -606,7 +385,7 @@
              ItemStack itemstack = itementity.getItem();
  
              if (traceItem)
-@@ -1722,4 +1922,9 @@
+@@ -1743,4 +1941,9 @@
              return itementity;
          }
      }

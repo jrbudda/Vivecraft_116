@@ -43,7 +43,7 @@
  import net.minecraft.network.PacketThreadUtil;
  import net.minecraft.network.play.client.CAnimateHandPacket;
  import net.minecraft.network.play.client.CChatMessagePacket;
-@@ -140,9 +151,18 @@
+@@ -141,9 +152,18 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -62,17 +62,17 @@
  public class ServerPlayNetHandler implements IServerPlayNetHandler
  {
      private static final Logger LOGGER = LogManager.getLogger();
-@@ -186,6 +206,9 @@
-         p_i392_2_.setNetHandler(this);
-         this.player = p_i392_3_;
-         p_i392_3_.connection = this;
+@@ -187,6 +207,9 @@
+         networkManagerIn.setNetHandler(this);
+         this.player = playerIn;
+         playerIn.connection = this;
 +        // VIVECRAFT
-+        ((Channel)MCReflection.NetworkManager_channel.get(p_i392_2_)).pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
++        ((Channel)MCReflection.NetworkManager_channel.get(networkManagerIn)).pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
 +        //
      }
  
      public void tick()
-@@ -281,6 +304,8 @@
+@@ -282,6 +305,8 @@
          {
              this.disconnect(new TranslationTextComponent("multiplayer.disconnect.idling"));
          }
@@ -81,7 +81,7 @@
      }
  
      public void captureCurrentPosition()
-@@ -396,11 +421,17 @@
+@@ -397,11 +422,17 @@
                  }
  
                  entity.setPositionAndRotation(d3, d4, d5, f, f1);
@@ -99,7 +99,7 @@
                      this.netManager.sendPacket(new SMoveVehiclePacket(entity));
                      return;
                  }
-@@ -1105,7 +1136,15 @@
+@@ -1097,7 +1128,15 @@
  
          if (blockpos.getY() < this.server.getBuildLimit())
          {
@@ -116,7 +116,7 @@
              {
                  ActionResultType actionresulttype = this.player.interactionManager.func_219441_a(this.player, serverworld, itemstack, hand, blockraytraceresult);
  
-@@ -1259,43 +1298,51 @@
+@@ -1251,43 +1290,51 @@
  
      public void processChatMessage(CChatMessagePacket packetIn)
      {
@@ -204,7 +204,7 @@
      }
  
      private void handleSlashCommand(String command)
-@@ -1409,6 +1456,9 @@
+@@ -1402,6 +1449,9 @@
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.INTERACT_AT)
                  {
@@ -214,7 +214,7 @@
                      optional = Optional.of(entity.applyPlayerInteraction(this.player, packetIn.getHitVec(), hand));
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.ATTACK)
-@@ -1681,6 +1731,117 @@
+@@ -1674,6 +1724,117 @@
  
      public void processCustomPayload(CCustomPayloadPacket packetIn)
      {

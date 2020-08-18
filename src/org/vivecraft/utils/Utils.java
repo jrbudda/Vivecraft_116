@@ -36,9 +36,12 @@ import io.github.classgraph.ClassGraph;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.resources.IResource;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.LanguageMap;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TextPropertiesManager;
@@ -755,7 +758,19 @@ public class Utils
 			manager.func_238155_a_(ITextProperties.func_240653_a_(str, style));
 			return Optional.empty();
 		}, Style.EMPTY);
-		List<ITextProperties> list = fontRenderer.func_238420_b_().func_241570_a_(manager.func_238156_b_(), width, Style.EMPTY, linePrefix);
+		//List<IReorderingProcessor> list = Lists.newArrayList();
+		//IReorderingProcessor prefixer = IReorderingProcessor.func_242239_a(linePrefix, Style.EMPTY);
+		//fontRenderer.func_238420_b_().func_243242_a(manager.func_238156_b_(), width, Style.EMPTY, (p_243256_1_, p_243256_2_) ->
+		//{
+		//	IReorderingProcessor ireorderingprocessor = LanguageMap.getInstance().func_241870_a(p_243256_1_);
+		//	list.add(p_243256_2_ ? IReorderingProcessor.func_242234_a(prefixer, ireorderingprocessor) : ireorderingprocessor);
+		//});
+		//return list.isEmpty() ? Lists.newArrayList(IReorderingProcessor.field_242232_a) : list;
+		List<ITextProperties> list = Lists.newArrayList();
+		fontRenderer.func_238420_b_().func_243242_a(manager.func_238156_b_(), width, Style.EMPTY, (lineText, sameLine) ->
+		{
+			list.add(sameLine && linePrefix != null ? ITextProperties.func_240655_a_(linePrefix, lineText) : lineText);
+		});
 		return list.isEmpty() ? Lists.newArrayList(ITextProperties.field_240651_c_) : list;
 	}
 

@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\inventory\container\AbstractFurnaceContainer.java minecraft_patched\net\minecraft\inventory\container\AbstractFurnaceContainer.java
 --- minecraft\net\minecraft\inventory\container\AbstractFurnaceContainer.java
 +++ minecraft_patched\net\minecraft\inventory\container\AbstractFurnaceContainer.java
-@@ -64,7 +64,7 @@
+@@ -67,7 +67,7 @@
     }
  
     public void func_217056_a(boolean p_217056_1_, IRecipe<?> p_217056_2_, ServerPlayerEntity p_217056_3_) {
@@ -10,7 +10,7 @@
     }
  
     public boolean func_201769_a(IRecipe<? super IInventory> p_201769_1_) {
-@@ -136,7 +136,7 @@
+@@ -139,7 +139,7 @@
     }
  
     protected boolean func_217057_a(ItemStack p_217057_1_) {

@@ -1,3 +1,5 @@
+# Contributors: BlockBanana123, Lelebees, marijnessen
+
 # Key bindings
 vivecraft.key.hotbarNext=Hotbar Volgende
 vivecraft.key.hotbarPrev=Hotbar Vorige
@@ -103,6 +105,7 @@ vivecraft.options.RENDER_BLOCK_OUTLINE_MODE=Toon Blokomlijning
 vivecraft.options.AUTO_OPEN_KEYBOARD=Toetsenbord Altijd Openen
 vivecraft.options.RADIAL_MODE_HOLD=Radiaal Menu Modus
 vivecraft.options.PHYSICAL_KEYBOARD=Toetsenbordtype
+vivecraft.options.PHYSICAL_KEYBOARD_SCALE=Toetsenbordgrootte
 vivecraft.options.GUI_APPEAR_OVER_BLOCK=Verschijnen boven blok
 vivecraft.options.FSAA=Lanczos Scaler
 vivecraft.options.MIRROR_DISPLAY=Desktop Mirror
@@ -164,6 +167,7 @@ vivecraft.options.MENU_WORLD_SELECTION=Werelden
 vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Laad de externe camera opnieuw
 vivecraft.options.RIGHT_CLICK_DELAY=Klik met de rechtermuisknop op Herhalen
+vivecraft.options.ANIMAL_TOUCHING=Dier Betasting
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=Relatieve grootte HUD neemt in gezichtsveld in beslag.\nDe eenheden zijn slechts relatief, niet in graden of een fractie van FOV of zoiets.
@@ -199,6 +203,8 @@ vivecraft.options.AUTO_OPEN_KEYBOARD.tooltip=Indien uitgeschakeld, wordt het toe
 vivecraft.options.RADIAL_MODE_HOLD.tooltip=Gedrag van het radiale menu bij het indrukken van de knop.\n  Houd ingedrukt: houd de radiale menuknop ingedrukt, beweeg over de selectie en laat los.\n  Druk op: Druk op de radiale menuknop, klik op de knoppen en druk nogmaals op de radiale menuknop om te sluiten.
 
 vivecraft.options.PHYSICAL_KEYBOARD.tooltip=Welk type VR-toetsenbord om te gebruiken om te typen.\n  Fysiek: een toetsenbord waarop u kunt typen als een echt toetsenbord.\n  Pointer: Een toetsenbord dat u kunt gebruiken door het dradenkruis van een van beide controllers te richten en op knoppen te drukken.
+
+vivecraft.options.PHYSICAL_KEYBOARD_SCALE.tooltip=Hoe groot het fysieke toetsenbord moet zijn, in verhouding tot zijn basismaat.
 
 vivecraft.options.GUI_APPEAR_OVER_BLOCK.tooltip=Indien ingeschakeld, wordt de GUI voor blokken (zoals kisten en ovens) boven het blok geplaatst. Anders bevindt het zich op de gebruikelijke positie.
 
@@ -268,7 +274,7 @@ vivecraft.options.REALISTIC_ROW.tooltip=Roei, roei, roei je boot ... door met je
 
 vivecraft.options.WALK_MULTIPLIER.tooltip=Vermenigvuldigt uw positie in de kamer met een factor.\nLaat je meer rondlopen, maar kan bewegingsziekte veroorzaken.
 
-vivecraft.options.FREEMOVE_MODE.tooltip=De bron voor freemove richting.\n\n  Controller: Offhand controller richtingsrichting.\n  HMD: Headset-kijkrichting.\n  Run-In-Place: Direction is gebaseerd op hoe controllers zwaaien.
+vivecraft.options.FREEMOVE_MODE.tooltip=De bron voor freemove-richting.\n\n  Controller: Offhand controller wijzende richting.\n  HMD: kijkrichting headset.\n  Run-In-Place: Yaw is gebaseerd op hoe controllers slingeren. Pitch is uw headset.\n  Kamer: Yaw is relatief ten opzichte van je VR-kamer vooruit. Pitch is uw headset. Deze modus is alleen het beste voor 180 opstellingen.
 
 vivecraft.options.VEHICLE_ROTATION.tooltip=Rijden in een voertuig zal de wereld draaien terwijl het voertuig draait. Kan desoriënterend zijn.
 
@@ -322,6 +328,8 @@ vivecraft.options.RELOAD_EXTERNAL_CAMERA.tooltip=Laadt de camera-configuratie op
 
 vivecraft.options.RIGHT_CLICK_DELAY.tooltip=Het aantal van het spel tikt tussen 'rechtsklikken' terwijl je de knop ingedrukt houdt.
 
+vivecraft.options.ANIMAL_TOUCHING.tooltip=Indien ingeschakeld, zal het aanraken van een passieve menigte (dier) zonder wapen met de rechtermuisknop klikken (interactie) in plaats van aanvallen.\nZet uit voor varken Spanking, Bert.
+
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=Ik kan het niet zien
 vivecraft.options.yes=JA
@@ -369,6 +377,7 @@ vivecraft.options.hmd=HMD
 vivecraft.options.crosshair=Crosshair
 vivecraft.options.controller=Controller
 vivecraft.options.runinplace=Run-In-Place
+vivecraft.options.room=Kamer
 vivecraft.options.hold=Houden
 vivecraft.options.press=Druk
 vivecraft.options.keyboard.physical=Fysiek
@@ -405,7 +414,7 @@ vivecraft.gui.movethirdpersoncam=Verplaats Derde Camera
 # Items
 vivecraft.item.jumpboots=Spring Schoenen
 vivecraft.item.climbclaws=Beklim klauwen
-vivecraft.item.telescope=Oog van de Farseer
+vivecraft.item.telescope=Oog van de telescoop
 
 # Messages
 vivecraft.messages.seatedmode=Overschakelen naar de zittende modus, Controllerinvoer wordt hierdoor uitgeschakeld. Doorgaan?

@@ -17,7 +17,7 @@
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.Tessellator;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-@@ -449,6 +453,10 @@
+@@ -451,6 +455,10 @@
                  this.setFocused2(flag);
              }
  
@@ -28,12 +28,17 @@
              if (this.isFocused() && flag && button == 0)
              {
                  int i = MathHelper.floor(mouseX) - this.x;
-@@ -504,7 +512,12 @@
+@@ -504,9 +512,15 @@
+ 
+             if (!s.isEmpty())
              {
-                 String s1 = flag ? s.substring(0, j) : s;
-                 j1 = this.fontRenderer.drawStringWithShadow(matrixStack, this.textFormatter.apply(s1, this.lineScrollOffset), (float)l, (float)i1, i2);
-+                //VIVECRAFT
-+            } else {
+-                String s1 = flag ? s.substring(0, j) : s;
+-                j1 = this.fontRenderer.func_238407_a_(matrixStack, this.textFormatter.apply(s1, this.lineScrollOffset), (float)l, (float)i1, i2);
++            	String s1 = flag ? s.substring(0, j) : s;
++            	j1 = this.fontRenderer.func_238407_a_(matrixStack, this.textFormatter.apply(s1, this.lineScrollOffset), (float)l, (float)i1, i2);
++            }                 
++            //VIVECRAFT
++            else {
 +            	if(!Minecraft.getInstance().vrSettings.seated && !KeyboardHandler.Showing)
 +            		this.fontRenderer.drawStringWithShadow(matrixStack,"Click to open keyboard", (float)l, (float)i1, this.disabledColor);
              }
@@ -41,7 +46,7 @@
  
              boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
              int k1 = j1;
-@@ -647,6 +660,12 @@
+@@ -649,6 +663,12 @@
          if (focused)
          {
              this.cursorCounter = 0;
@@ -54,7 +59,7 @@
          }
      }
  
-@@ -701,7 +720,8 @@
+@@ -703,7 +723,8 @@
  
      public void setCanLoseFocus(boolean canLoseFocusIn)
      {

@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\monster\piglin\PiglinEntity.java minecraft_patched\net\minecraft\entity\monster\piglin\PiglinEntity.java
 --- minecraft\net\minecraft\entity\monster\piglin\PiglinEntity.java
 +++ minecraft_patched\net\minecraft\entity\monster\piglin\PiglinEntity.java
-@@ -194,7 +194,7 @@
+@@ -174,7 +174,7 @@
     }
  
     public Brain<PiglinEntity> func_213375_cj() {

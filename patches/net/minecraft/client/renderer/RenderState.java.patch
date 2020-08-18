@@ -1,15 +1,14 @@
 --- a/net/minecraft/client/renderer/RenderState.java
 +++ b/net/minecraft/client/renderer/RenderState.java
-@@ -679,8 +679,10 @@
-                 RenderSystem.translatef(17.0F / (float)p_i149_1_, (2.0F + (float)p_i149_1_ / 1.5F) * ((float)(Util.milliTime() % 800000L) / 800000.0F), 0.0F);
-                 RenderSystem.rotatef(((float)(p_i149_1_ * p_i149_1_) * 4321.0F + (float)p_i149_1_ * 9.0F) * 2.0F, 0.0F, 0.0F, 1.0F);
-                 RenderSystem.scalef(4.5F - (float)p_i149_1_ / 4.0F, 4.5F - (float)p_i149_1_ / 4.0F, 1.0F);
+@@ -670,7 +670,10 @@
+                 RenderSystem.translatef(17.0F / (float)p_i225986_1_, (2.0F + (float)p_i225986_1_ / 1.5F) * ((float)(Util.milliTime() % 800000L) / 800000.0F), 0.0F);
+                 RenderSystem.rotatef(((float)(p_i225986_1_ * p_i225986_1_) * 4321.0F + (float)p_i225986_1_ * 9.0F) * 2.0F, 0.0F, 0.0F, 1.0F);
+                 RenderSystem.scalef(4.5F - (float)p_i225986_1_ / 4.0F, 4.5F - (float)p_i225986_1_ / 4.0F, 1.0F);
 -                RenderSystem.mulTextureByProjModelView();
--                RenderSystem.matrixMode(5888);
 +                //Vivecraft fix end portals
 +                //RenderSystem.mulTextureByProjModelView();
 +                GlStateManager.mulTextureByModelView();
 +                //RenderSystem.matrixMode(5888);
+                 RenderSystem.matrixMode(5888);
                  RenderSystem.setupEndPortalTexGen();
              }, () ->
-             {

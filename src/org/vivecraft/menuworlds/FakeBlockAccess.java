@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.DimensionRenderInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.server.IDynamicRegistries;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -18,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.CubeCoordinateIterator;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.LightType;
@@ -62,7 +62,7 @@ public class FakeBlockAccess implements IWorldReader {
 		this.isFlat = isFlat;
 
 		this.biomeManager = new BiomeManager(this, BiomeManager.func_235200_a_(seed), dimensionType.getMagnifier());
-		this.dimensionInfo = DimensionRenderInfo.func_239215_a_(IDynamicRegistries.func_239770_b_().func_230520_a_().func_230519_c_(dimensionType));
+		this.dimensionInfo = DimensionRenderInfo.func_243495_a(dimensionType);
 	}
 	
 	private int encodeCoords(int x, int z) {

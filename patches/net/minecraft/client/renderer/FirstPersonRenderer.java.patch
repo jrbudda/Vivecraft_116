@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FirstPersonRenderer.java
 +++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
-@@ -2,25 +2,77 @@
+@@ -2,25 +2,78 @@
  
  import com.google.common.base.MoreObjects;
  import com.mojang.blaze3d.matrix.MatrixStack;
@@ -11,6 +11,7 @@
 +import java.util.HashMap;
 +import java.util.Map;
  import java.util.Objects;
++import java.util.Optional;
 +import java.util.stream.Stream;
 +
 +import javax.annotation.Nullable;
@@ -78,7 +79,7 @@
  import net.minecraft.util.math.vector.Vector3f;
  import net.minecraft.world.storage.MapData;
  import net.optifine.Config;
-@@ -30,8 +82,8 @@
+@@ -30,8 +83,8 @@
  
  public class FirstPersonRenderer
  {
@@ -89,7 +90,7 @@
      private final Minecraft mc;
      private ItemStack itemStackMainHand = ItemStack.EMPTY;
      private ItemStack itemStackOffHand = ItemStack.EMPTY;
-@@ -41,12 +93,22 @@
+@@ -41,12 +94,22 @@
      private float prevEquippedProgressOffHand;
      private final EntityRendererManager renderManager;
      private final ItemRenderer itemRenderer;
@@ -99,12 +100,12 @@
 +    private final Map<String, VRArmRenderer> renderVRPlayerSkinMap = new HashMap<>();
 +    public VRFirstPersonArmSwing swingType = VRFirstPersonArmSwing.Attack;  
 +    public float xdist = -0;
-+    
-     public FirstPersonRenderer(Minecraft p_i88_1_)
++    //
+     public FirstPersonRenderer(Minecraft mcIn)
      {
-         this.mc = p_i88_1_;
-         this.renderManager = p_i88_1_.getRenderManager();
-         this.itemRenderer = p_i88_1_.getItemRenderer();
+         this.mc = mcIn;
+         this.renderManager = mcIn.getRenderManager();
+         this.itemRenderer = mcIn.getItemRenderer();
 +        //Vivecraft
 +        myRenderVRPlayer = new VRArmRenderer(this.renderManager);
 +        renderVRPlayerSkinMap.put("default", this.myRenderVRPlayer);
@@ -113,7 +114,7 @@
      }
  
      public void renderItemSide(LivingEntity livingEntityIn, ItemStack itemStackIn, ItemCameraTransforms.TransformType transformTypeIn, boolean leftHand, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn)
-@@ -68,6 +130,7 @@
+@@ -68,6 +131,7 @@
          return -MathHelper.cos(f * (float)Math.PI) * 0.5F + 0.5F;
      }
  
@@ -121,7 +122,7 @@
      private void renderArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, HandSide side)
      {
          this.mc.getTextureManager().bindTexture(this.mc.player.getLocationSkin());
-@@ -91,6 +154,7 @@
+@@ -91,6 +155,7 @@
          matrixStackIn.pop();
      }
  
@@ -129,7 +130,7 @@
      private void renderMapFirstPersonSide(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, float equippedProgress, HandSide handIn, float swingProgress, ItemStack stack)
      {
          float f = handIn == HandSide.RIGHT ? 1.0F : -1.0F;
-@@ -118,6 +182,7 @@
+@@ -118,6 +183,7 @@
          matrixStackIn.pop();
      }
  
@@ -137,7 +138,7 @@
      private void renderMapFirstPerson(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, float pitch, float equippedProgress, float swingProgress)
      {
          float f = MathHelper.sqrt(swingProgress);
-@@ -143,6 +208,7 @@
+@@ -143,6 +209,7 @@
          this.renderMapFirstPerson(matrixStackIn, bufferIn, combinedLightIn, this.itemStackMainHand);
      }
  
@@ -145,7 +146,7 @@
      private void renderMapFirstPerson(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, ItemStack stack)
      {
          matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-@@ -168,24 +234,38 @@
+@@ -168,24 +235,38 @@
      {
          boolean flag = side != HandSide.LEFT;
          float f = flag ? 1.0F : -1.0F;
@@ -200,7 +201,7 @@
  
          if (flag)
          {
-@@ -195,6 +275,8 @@
+@@ -195,6 +276,8 @@
          {
              playerrenderer.renderLeftArm(matrixStackIn, bufferIn, combinedLightIn, abstractclientplayerentity);
          }
@@ -209,7 +210,7 @@
      }
  
      private void transformEatFirstPerson(MatrixStack matrixStackIn, float partialTicks, HandSide handIn, ItemStack stack)
-@@ -216,6 +298,7 @@
+@@ -216,6 +299,7 @@
          matrixStackIn.rotate(Vector3f.ZP.rotationDegrees((float)i * f3 * 30.0F));
      }
  
@@ -217,7 +218,7 @@
      private void transformFirstPerson(MatrixStack matrixStackIn, HandSide handIn, float swingProgress)
      {
          int i = handIn == HandSide.RIGHT ? 1 : -1;
-@@ -226,6 +309,44 @@
+@@ -226,6 +310,44 @@
          matrixStackIn.rotate(Vector3f.XP.rotationDegrees(f1 * -80.0F));
          matrixStackIn.rotate(Vector3f.YP.rotationDegrees((float)i * -45.0F));
      }
@@ -262,7 +263,7 @@
  
      private void transformSideFirstPerson(MatrixStack matrixStackIn, HandSide handIn, float equippedProg)
      {
-@@ -233,6 +354,7 @@
+@@ -233,6 +355,7 @@
          matrixStackIn.translate((double)((float)i * 0.56F), (double)(-0.52F + equippedProg * -0.6F), (double) - 0.72F);
      }
  
@@ -270,7 +271,7 @@
      public void renderItemInFirstPerson(float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, ClientPlayerEntity playerEntityIn, int combinedLightIn)
      {
          float f = playerEntityIn.getSwingProgress(partialTicks);
-@@ -310,186 +432,421 @@
+@@ -310,186 +433,421 @@
          bufferIn.finish();
      }
  
@@ -871,7 +872,7 @@
      }
  
      public void tick()
-@@ -571,4 +928,121 @@
+@@ -571,4 +929,41 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }
@@ -899,97 +900,17 @@
 +    {
 +    	if (mc.world == null) return null;
 +
-+    	
 +    	AxisAlignedBB eye = new AxisAlignedBB(in.subtract(dist, dist, dist), in.add(dist, dist, dist));
-+   
++
 +    	Stream<BlockPos> list = BlockPos.getAllInBox(eye).filter((bp)-> {
 +    		return mc.world.getBlockState(bp).causesSuffocation(mc.world, bp);
 +    	});
-+    	
-+    	if (list.findFirst().isPresent())
-+    		return Triple.of(1f, mc.world.getBlockState(list.findFirst().get()), list.findFirst().get());
-+    	
++
++    	Optional<BlockPos> pos = list.findFirst();
++    	if (pos.isPresent())
++    		return Triple.of(1f, mc.world.getBlockState(pos.get()), pos.get());
++
 +    	return null;
-+    	
-+//    	BlockPos bp = new BlockPos(in);
-+//
-+//    	if(mc.world.getBlockState(bp).isOpaqueCube(mc.world, bp)) {
-+//    		return 1;
-+//    	}
-+
-+//    	Vector3d pos = in.add(0, 0, 0);
-+//    	float per = 0;
-+//    	float buffer = .12f;	
-+//    	float out; 
-+//
-+//    	if((pos.x - Math.floor(pos.x)) < buffer) 
-+//    	{
-+//    		per = (float) (pos.x - Math.floor(pos.x));
-+//    		if (mc.world.getBlockState(bp.west()).isOpaqueCube(mc.world, bp.west()))
-+//    			return (buffer - per) / buffer;
-+//    	}
-+//
-+//    	if(pos.x - Math.floor(pos.x) > 1-buffer){
-+//    		per = 1f - (float) (pos.x - Math.floor(pos.x));
-+//    		if (mc.world.getBlockState(bp.east()).isOpaqueCube(mc.world, bp.east()))
-+//    			return (buffer - per) / buffer;
-+//    	}
-+//
-+//    	if((pos.y - Math.floor(pos.y)) < buffer) 
-+//    	{
-+//    		per = (float) (pos.y - Math.floor(pos.y));
-+//    		if (mc.world.getBlockState(bp.down()).isOpaqueCube(mc.world, bp.down())) 
-+//    			return (buffer - per) / buffer;
-+//    	} 
-+//
-+//    	if(pos.y - Math.floor(pos.y) > 1-buffer){
-+//    		per = 1f - (float) (pos.y - Math.floor(pos.y));
-+//    		if (mc.world.getBlockState(bp.up()).isOpaqueCube(mc.world,bp.up()))
-+//    			return (buffer - per) / buffer;
-+//    	}
-+//
-+//    	if((pos.z - Math.floor(pos.z)) < buffer) 
-+//    	{
-+//    		per = (float) (pos.z - Math.floor(pos.z));
-+//    		if (mc.world.getBlockState(bp.north()).isOpaqueCube(mc.world, bp.north()))
-+//    			return (buffer - per) / buffer;
-+//    	} 
-+//
-+//    	if(pos.z - Math.floor(pos.z) > 1-buffer){
-+//    		per = 1f - (float) (pos.z - Math.floor(pos.z));
-+//    		System.out.println(per + " " + buffer + " " + (buffer - per) / buffer);
-+//    		if (mc.world.getBlockState(bp.south()).isOpaqueCube(mc.world, bp.south()))
-+//    			return (buffer - per) / buffer;
-+//    	}
-+//
-+//    	return 0;
-+
 +    }
-+    
-+    
-+//    public boolean isInsideOfMaterial(Vector3d pos, Material materialIn)
-+//    {
-+//    	BlockPos blockpos = new BlockPos(pos);
-+//    	BlockState BlockState = mc.world.getBlockState(blockpos);
-+//    	BlockState BlockStateup = mc.world.getBlockState(blockpos.up());
-+//
-+//    	if (BlockState.getMaterial() == materialIn)
-+//    	{
-+//    		float f = BlockLiquid.getLiquidHeightPercent(BlockState.getBlock().getMetaFromState(BlockState)) -0.11111111F;;
-+//    		if(BlockStateup.getMaterial() != materialIn && materialIn instanceof MaterialLiquid) f+=0.09F;
-+//    		
-+//    		//float f1 = (float)(blockpos.getY() + 1) - f;
-+//    		boolean flag = (pos.y-blockpos.getY()) < (1-f);
-+//    		return flag;
-+//    	}
-+//    	else
-+//    	{
-+//    		return false;
-+//    	}
-+//   }
-+    //
-+    
-+    
-+
  }
 +

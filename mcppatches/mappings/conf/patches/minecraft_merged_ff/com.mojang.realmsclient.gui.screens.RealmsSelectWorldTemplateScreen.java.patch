@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\com\mojang\realmsclient\gui\screens\RealmsSelectWorldTemplateScreen.java minecraft_patched\com\mojang\realmsclient\gui\screens\RealmsSelectWorldTemplateScreen.java
 --- minecraft\com\mojang\realmsclient\gui\screens\RealmsSelectWorldTemplateScreen.java
 +++ minecraft_patched\com\mojang\realmsclient\gui\screens\RealmsSelectWorldTemplateScreen.java
-@@ -207,8 +207,10 @@
+@@ -212,8 +212,10 @@
           public void run() {
              WorldTemplatePaginatedList worldtemplatepaginatedlist = p_224497_1_;
  
@@ -14,7 +14,7 @@
                 if (either.right().isPresent()) {
                    RealmsSelectWorldTemplateScreen.field_224515_a.error("Couldn't fetch templates: {}", either.right().get());
                    if (RealmsSelectWorldTemplateScreen.this.field_224517_c.func_223878_a()) {
-@@ -235,10 +237,8 @@
+@@ -240,10 +242,8 @@
                       return worldtemplatepaginatedlist1;
                    }
                 }

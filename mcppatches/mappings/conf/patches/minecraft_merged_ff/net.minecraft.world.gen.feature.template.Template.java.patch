@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\world\gen\feature\template\Template.java minecraft_patched\net\minecraft\world\gen\feature\template\Template.java
 --- minecraft\net\minecraft\world\gen\feature\template\Template.java
 +++ minecraft_patched\net\minecraft\world\gen\feature\template\Template.java
-@@ -119,7 +119,7 @@
+@@ -120,7 +120,7 @@
     }
  
     private static List<Template.BlockInfo> func_237151_a_(List<Template.BlockInfo> p_237151_0_, List<Template.BlockInfo> p_237151_1_, List<Template.BlockInfo> p_237151_2_) {

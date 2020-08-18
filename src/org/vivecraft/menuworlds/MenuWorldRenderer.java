@@ -39,7 +39,6 @@ import net.minecraft.client.world.DimensionRenderInfo;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.server.IDynamicRegistries;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.CubicSampler;
@@ -1755,7 +1754,7 @@ public class MenuWorldRenderer {
 				float f1 = 0.05F - this.menuWorldRenderer.getWaterBrightness() * this.menuWorldRenderer.getWaterBrightness() * 0.03F;
 				Biome biome = this.menuWorldRenderer.getWorld().getBiome(new BlockPos(eyePos));
 
-				if (biome == Biomes.SWAMP || biome == Biomes.SWAMP_HILLS)
+				if (biome.getCategory() == Biome.Category.SWAMP)
 				{
 					f1 += 0.005F;
 				}

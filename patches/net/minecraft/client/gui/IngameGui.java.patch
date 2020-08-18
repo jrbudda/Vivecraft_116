@@ -36,7 +36,7 @@
  import net.minecraft.client.renderer.texture.AtlasTexture;
  import net.minecraft.client.renderer.texture.PotionSpriteUploader;
  import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-@@ -44,6 +52,7 @@
+@@ -43,6 +51,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.inventory.container.INamedContainerProvider;
  import net.minecraft.item.ItemStack;
@@ -44,7 +44,7 @@
  import net.minecraft.potion.Effect;
  import net.minecraft.potion.EffectInstance;
  import net.minecraft.potion.Effects;
-@@ -67,6 +76,7 @@
+@@ -66,6 +75,7 @@
  import net.minecraft.util.text.IFormattableTextComponent;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.StringTextComponent;
@@ -59,67 +59,58 @@
 +    // Vivecraft
 +    public boolean showPlayerList;
  
-     public IngameGui(Minecraft p_i33_1_)
+     public IngameGui(Minecraft mcIn)
      {
-@@ -155,32 +167,40 @@
+@@ -154,30 +166,32 @@
+         this.scaledHeight = this.mc.getMainWindow().getScaledHeight();
          FontRenderer fontrenderer = this.getFontRenderer();
          RenderSystem.enableBlend();
- 
+-
 -        if (Config.isVignetteEnabled())
--        {
--            this.renderVignette(this.mc.getRenderViewEntity());
--        }
--        else
--        {
++        
 +        //Vivecraft no no
-+//        if (Config.isVignetteEnabled())
-+//        {
-+//            this.renderVignette(this.mc.getRenderViewEntity());
-+//        }
-+//        else
-+//        {
-+//        	
-+//        }
-+
++        if (false && Config.isVignetteEnabled())
+         {
+             this.renderVignette(this.mc.getRenderViewEntity());
+         }
+         else
+         {
              RenderSystem.enableDepthTest();
 -            RenderSystem.defaultBlendFunc();
--        }
-+      //''  RenderSystem.defaultBlendFunc();
-+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-+
- 
-         ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
- 
-         if (this.mc.gameSettings.thirdPersonView == 0 && itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem())
-         {
--            this.renderPumpkinOverlay();
-+            //this.renderPumpkinOverlay();
++            //RenderSystem.defaultBlendFunc();
++            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
          }
-+        //
++//		  Vivecraft none of this.
++//        ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
  
--        if (!this.mc.player.isPotionActive(Effects.NAUSEA))
+-        ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
+-
+-        if (this.mc.gameSettings.func_243230_g().func_243192_a() && itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem())
 -        {
--            float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
- 
--            if (f > 0.0F)
--            {
--                this.renderPortal(f);
--            }
+-            this.renderPumpkinOverlay();
 -        }
-+        //Vivecraft oh no no no.
-+//        if (!this.mc.player.isPotionActive(Effects.NAUSEA))
+-
+-        float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
+-
+-        if (f > 0.0F && !this.mc.player.isPotionActive(Effects.NAUSEA))
+-        {
+-            this.renderPortal(f);
+-        }
++//        if (this.mc.gameSettings.func_243230_g().func_243192_a() && itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem())
 +//        {
-+//            float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
++//            this.renderPumpkinOverlay();
++//        }
 +
-+//            if (f > 0.0F)
-+//            {
-+//                this.renderPortal(f);
-+//            }
++//        float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
++//
++//        if (f > 0.0F && !this.mc.player.isPotionActive(Effects.NAUSEA))
++//        {
++//            this.renderPortal(f);
 +//        }
  
          if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
          {
-@@ -197,9 +217,13 @@
+@@ -194,9 +208,13 @@
              this.mc.getTextureManager().bindTexture(GUI_ICONS_LOCATION);
              RenderSystem.enableBlend();
              RenderSystem.enableAlphaTest();
@@ -135,7 +126,7 @@
              this.mc.getProfiler().startSection("bossHealth");
              this.overlayBoss.func_238484_a_(matrixStack);
              this.mc.getProfiler().endSection();
-@@ -285,7 +309,9 @@
+@@ -282,7 +300,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight - 68), 0.0F);
                      RenderSystem.enableBlend();
@@ -146,7 +137,7 @@
                      int k1 = 16777215;
  
                      if (this.animateOverlayMessageColor)
-@@ -328,7 +354,9 @@
+@@ -325,7 +345,9 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.translatef((float)(this.scaledWidth / 2), (float)(this.scaledHeight / 2), 0.0F);
                      RenderSystem.enableBlend();
@@ -157,7 +148,7 @@
                      RenderSystem.pushMatrix();
                      RenderSystem.scalef(4.0F, 4.0F, 4.0F);
                      int l1 = j1 << 24 & -16777216;
-@@ -375,9 +403,30 @@
+@@ -372,9 +394,30 @@
              {
                  this.func_238447_a_(matrixStack, scoreobjective1);
              }
@@ -189,7 +180,7 @@
              RenderSystem.disableAlphaTest();
              RenderSystem.pushMatrix();
              RenderSystem.translatef(0.0F, (float)(this.scaledHeight - 48), 0.0F);
-@@ -387,7 +436,7 @@
+@@ -384,7 +427,7 @@
              RenderSystem.popMatrix();
              scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
  
@@ -198,7 +189,7 @@
              {
                  this.overlayPlayerList.setVisible(true);
                  this.overlayPlayerList.func_238523_a_(matrixStack, this.scaledWidth, scoreboard, scoreobjective1);
-@@ -607,22 +656,45 @@
+@@ -604,22 +647,45 @@
              this.blit(matrixStack, i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
              this.blit(matrixStack, i - 91 - 1 + playerentity.inventory.currentItem * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
  
@@ -249,7 +240,7 @@
              CustomItems.setRenderOffHand(false);
  
              for (int i1 = 0; i1 < 9; ++i1)
-@@ -673,6 +745,10 @@
+@@ -670,6 +736,10 @@
  
              RenderSystem.disableRescaleNormal();
              RenderSystem.disableBlend();
@@ -260,7 +251,7 @@
          }
      }
  
-@@ -1212,6 +1288,7 @@
+@@ -1209,6 +1279,7 @@
          }
      }
  
@@ -268,7 +259,7 @@
      private void renderPumpkinOverlay()
      {
          RenderSystem.disableDepthTest();
-@@ -1243,6 +1320,8 @@
+@@ -1240,6 +1311,8 @@
          }
      }
  
@@ -277,7 +268,7 @@
      private void renderVignette(Entity entityIn)
      {
          if (!Config.isVignetteEnabled())
-@@ -1295,6 +1374,7 @@
+@@ -1292,6 +1365,7 @@
          }
      }
  
@@ -285,7 +276,7 @@
      private void renderPortal(float timeInPortal)
      {
          if (timeInPortal < 1.0F)
-@@ -1520,4 +1600,79 @@
+@@ -1517,4 +1591,79 @@
      {
          this.overlayDebug.resetChunk();
      }

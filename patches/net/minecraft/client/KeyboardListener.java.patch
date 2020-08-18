@@ -11,9 +11,9 @@
 +import org.vivecraft.settings.VRHotkeys;
 +
  import net.minecraft.block.BlockState;
- import net.minecraft.client.gui.AccessibilityScreen;
  import net.minecraft.client.gui.IGuiEventListener;
-@@ -340,6 +346,23 @@
+ import net.minecraft.client.gui.INestedGuiEventHandler;
+@@ -339,6 +345,23 @@
      {
          if (windowPointer == this.mc.getMainWindow().getHandle())
          {
@@ -37,7 +37,7 @@
              if (this.debugCrashKeyPressTime > 0L)
              {
                  if (!InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 67) || !InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 292))
-@@ -374,13 +397,14 @@
+@@ -373,13 +396,14 @@
                          if (Screen.hasControlDown())
                          {
                          }
@@ -54,7 +54,7 @@
                          return;
                      }
                  }
-@@ -459,8 +483,9 @@
+@@ -453,8 +477,9 @@
                      return;
                  }
              }
@@ -66,7 +66,7 @@
              {
                  InputMappings.Input inputmappings$input = InputMappings.getInputByCode(key, scanCode);
  
-@@ -518,6 +543,7 @@
+@@ -512,6 +537,7 @@
                          if (key == 290)
                          {
                              this.mc.gameSettings.hideGUI = !this.mc.gameSettings.hideGUI;
@@ -74,7 +74,7 @@
                          }
                      }
  
-@@ -542,7 +568,7 @@
+@@ -536,7 +562,7 @@
          }
      }
  

@@ -12217,7 +12217,6 @@ func_228331_m_,getHorizonHeight,2
 func_228332_n_,getTimeLightningFlash,2
 func_228345_a_,renderParticles,2
 func_228353_F_,isShowDeathScreen,2
-func_228354_I_,isSwimming,2
 func_228355_a_,setShowDeathScreen,2
 func_228356_eG_,canAutoJump,2
 func_228357_eH_,isMoving,2

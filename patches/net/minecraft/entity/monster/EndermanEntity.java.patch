@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/EndermanEntity.java
 +++ b/net/minecraft/entity/monster/EndermanEntity.java
-@@ -6,6 +6,10 @@
+@@ -6,7 +6,12 @@
  import java.util.UUID;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
@@ -9,24 +9,24 @@
 +import org.vivecraft.api.ServerVivePlayer;
 +
  import net.minecraft.block.Block;
++import net.minecraft.block.BlockRenderType;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
-@@ -51,12 +55,14 @@
+ import net.minecraft.entity.Entity;
+@@ -52,10 +57,12 @@
  import net.minecraft.util.math.BlockRayTraceResult;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.RayTraceContext;
 +import net.minecraft.util.math.RayTraceResult.Type;
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.GameRules;
- import net.minecraft.world.IWorld;
- import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
 +import net.optifine.reflect.Reflector;
  
  public class EndermanEntity extends MonsterEntity implements IAngerable
  {
-@@ -126,6 +132,9 @@
+@@ -124,6 +131,9 @@
                  modifiableattributeinstance.applyNonPersistentModifier(ATTACKING_SPEED_BOOST);
              }
          }
@@ -36,7 +36,7 @@
      }
  
      protected void registerData()
-@@ -226,15 +235,33 @@
+@@ -224,15 +234,33 @@
          }
          else
          {
@@ -75,7 +75,7 @@
      protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
      {
          return 2.55F;
-@@ -322,6 +349,16 @@
+@@ -320,6 +348,16 @@
  
          if (flag && !flag1)
          {
@@ -92,7 +92,7 @@
              boolean flag2 = this.attemptTeleport(x, y, z, true);
  
              if (flag2 && !this.isSilent())
-@@ -535,11 +572,16 @@
+@@ -533,11 +571,16 @@
  
          public boolean shouldExecute()
          {
@@ -110,34 +110,21 @@
              {
                  return false;
              }
-@@ -561,8 +603,11 @@
+@@ -559,8 +602,11 @@
              BlockPos blockpos1 = blockpos.down();
-             BlockState blockstate1 = iworld.getBlockState(blockpos1);
+             BlockState blockstate1 = world.getBlockState(blockpos1);
              BlockState blockstate2 = this.enderman.getHeldBlockState();
 -
--            if (blockstate2 != null && this.func_220836_a(iworld, blockpos, blockstate2, blockstate, blockstate1, blockpos1))
+-            if (blockstate2 != null)
 +            //Forge
-+            Object snapshot = Reflector.newInstance(Reflector.BlockSnapshot_Constructor, iworld, blockpos, blockstate1);
++            Object snapshot = Reflector.newInstance(Reflector.BlockSnapshot_Constructor, world, blockpos, blockstate1);
 +            boolean flag = Reflector.callBoolean(Reflector.ForgeEventFactory_onBlockPlace, enderman, snapshot, net.minecraft.util.Direction.UP);
 +            //
-+            if (blockstate2 != null && this.func_220836_a(iworld, blockpos, blockstate2, blockstate, blockstate1, blockpos1)  && !flag) 
++            if (blockstate2 != null && !flag)
              {
-                 iworld.setBlockState(blockpos, blockstate2, 3);
-                 this.enderman.setHeldBlockState((BlockState)null);
-@@ -571,7 +616,11 @@
+                 blockstate2 = Block.getValidBlockForPosition(blockstate2, this.enderman.world, blockpos);
  
-         private boolean func_220836_a(IWorldReader p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_)
-         {
--            return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.hasOpaqueCollisionShape(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
-+        	if(Reflector.IForgeBlockState_isAir2.exists()) {
-+        		boolean flag = Reflector.callBoolean(p_220836_4_, Reflector.IForgeBlockState_isAir2, p_220836_1_, p_220836_2_);
-+        		return !flag && p_220836_5_.hasOpaqueCollisionShape(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
-+        	}else
-+         	   return p_220836_4_.isAir() && !p_220836_5_.isAir() && p_220836_5_.hasOpaqueCollisionShape(p_220836_1_, p_220836_6_) && p_220836_3_.isValidPosition(p_220836_1_, p_220836_2_);
-         }
-     }
- 
-@@ -623,11 +672,16 @@
+@@ -626,11 +672,16 @@
  
          public boolean shouldExecute()
          {

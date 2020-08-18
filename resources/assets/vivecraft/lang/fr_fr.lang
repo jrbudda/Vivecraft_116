@@ -105,6 +105,7 @@ vivecraft.options.RENDER_BLOCK_OUTLINE_MODE=Afficher Contours Blocs
 vivecraft.options.AUTO_OPEN_KEYBOARD=Toujours afficher clavier
 vivecraft.options.RADIAL_MODE_HOLD=Mode du menu radiale
 vivecraft.options.PHYSICAL_KEYBOARD=Type du clavier
+vivecraft.options.PHYSICAL_KEYBOARD_SCALE=Taille du clavier
 vivecraft.options.GUI_APPEAR_OVER_BLOCK=Apparaître sur bloc
 vivecraft.options.FSAA=Algorithme de Lanczos
 vivecraft.options.MIRROR_DISPLAY=Miroiter jeu sur bureau
@@ -166,6 +167,7 @@ vivecraft.options.MENU_WORLD_SELECTION=Mondes
 vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Recharger la caméra externe
 vivecraft.options.RIGHT_CLICK_DELAY=Répéter clic droit
+vivecraft.options.ANIMAL_TOUCHING=Toucher les animales
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=La taille relative que l'ATH prend dans le champ de vision. Les unités sont relatives, ni des degrés ni des fractions du champ de vision etc..
@@ -201,6 +203,8 @@ vivecraft.options.AUTO_OPEN_KEYBOARD.tooltip=Si désactivé, le clavier ne s'ouv
 vivecraft.options.RADIAL_MODE_HOLD.tooltip=Le comportement du menu radial lorsque la touche est appuyée.\n  Maintenir: Il faut garder la touche enfoncée, glisser sur la sélection et relâcher.\n  Appuyer: Il faut appuyer sur le bouton, cliquer sur la sélection et de nouveau appuyer sur la touche.
 
 vivecraft.options.PHYSICAL_KEYBOARD.tooltip=Le type de clavier VR que vous souhaitez utiliser.\n  Physique: Un clavier apparaîtra dans lequel vous pourrez taper comme un vrai clavier.\n  Pointeur: Un clavier qu'on utilise en cliquant sur des lettres avec les touches des manettes.
+
+vivecraft.options.PHYSICAL_KEYBOARD_SCALE.tooltip=La taille du clavier physique, par rapport à sa taille par défaut.
 
 vivecraft.options.GUI_APPEAR_OVER_BLOCK.tooltip=Si activé, l'interface graphique pour les blocs (tels que les coffres et les fours)  sera placée au dessus du bloc. Sinon, elle sera dans la position habituelle.
 
@@ -270,7 +274,7 @@ vivecraft.options.REALISTIC_ROW.tooltip=Permet de ramer en bougeant vos bras vac
 
 vivecraft.options.WALK_MULTIPLIER.tooltip=Multiplie votre position dans la salle par un facteur.\nVous permet de marcher un peu plus, mais peut causer la nausée.\n(Si vous vomissez, c'est pas notre faute!)
 
-vivecraft.options.FREEMOVE_MODE.tooltip=Ce qui contrôle la direction en déplacement libre.\n  Manette: La manette de la main secondaire contrôle la direction.\n  Casque: Le casque contrôle la direction.\n  Sur-place: La direction est déterminée par comment les manettes bougent.
+vivecraft.options.FREEMOVE_MODE.tooltip=Ce qui contrôle la direction en déplacement libre.\n\n  Manette: la manette de la main secondaire contrôle la direction.\n  Casque: le casque contrôle la direction.\n  Sur-place: la direction est déterminée par comment les manettes bougent.\n  Salle: Lacet est relatif a la salle, Tangage est le casque. Utilise pour le VR en configuration 180 dégrée.
 
 vivecraft.options.VEHICLE_ROTATION.tooltip=Conduire dans un véhicule va changer la rotation du monde avec le véhicule. Peut désorienter.
 
@@ -324,6 +328,8 @@ vivecraft.options.RELOAD_EXTERNAL_CAMERA.tooltip=Recharge la configuration de la
 
 vivecraft.options.RIGHT_CLICK_DELAY.tooltip=Le nombre de "ticks" entre chaque clic droit lorsque la touche est enfoncée.
 
+vivecraft.options.ANIMAL_TOUCHING.tooltip=Si activé, vous permet de toucher les animaux pour faire les actions du clic droit. Désactiver pour donner des coups de poing à des pauvres cochons.
+
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=Je ne peux pas voir
 vivecraft.options.yes=Oui
@@ -371,6 +377,7 @@ vivecraft.options.hmd=HMD
 vivecraft.options.crosshair=Réticule
 vivecraft.options.controller=Manette
 vivecraft.options.runinplace=Sur-place (Run-In-Place)
+vivecraft.options.room=Salle
 vivecraft.options.hold=Tenir
 vivecraft.options.press=Appuyer
 vivecraft.options.keyboard.physical=Physique

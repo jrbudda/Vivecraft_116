@@ -109,22 +109,22 @@
  import net.minecraft.client.renderer.ScreenSize;
  import net.minecraft.client.renderer.Tessellator;
 @@ -124,6 +184,7 @@
- import net.minecraft.client.settings.GraphicsFanciness;
  import net.minecraft.client.settings.KeyBinding;
+ import net.minecraft.client.settings.PointOfView;
  import net.minecraft.client.shader.Framebuffer;
 +import net.minecraft.client.shader.FramebufferConstants;
  import net.minecraft.client.tutorial.Tutorial;
  import net.minecraft.client.util.IMutableSearchTree;
  import net.minecraft.client.util.ITooltipFlag;
-@@ -210,6 +271,7 @@
+@@ -209,6 +270,7 @@
  import net.minecraft.util.math.EntityRayTraceResult;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.RayTraceResult;
 +import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.util.registry.Bootstrap;
+ import net.minecraft.util.registry.DynamicRegistries;
  import net.minecraft.util.registry.Registry;
- import net.minecraft.util.registry.SimpleRegistry;
-@@ -230,12 +292,83 @@
+@@ -229,12 +291,83 @@
  import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
  import net.minecraft.world.storage.ServerWorldInfo;
@@ -202,13 +202,13 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.16.1 jrbudda-3-r1";
++    public final String minecriftVerString = "Vivecraft 1.16.2 jrbudda-4-r1b2";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
      public static final boolean IS_RUNNING_ON_MAC = Util.getOSType() == Util.OS.OSX;
      public static final ResourceLocation DEFAULT_FONT_RENDERER_NAME = new ResourceLocation("default");
-@@ -263,7 +396,7 @@
+@@ -262,7 +395,7 @@
      public final DebugRenderer debugRenderer;
      private final AtomicReference<TrackingChunkStatusListener> refChunkStatusListener = new AtomicReference<>();
      public final IngameGui ingameGUI;
@@ -217,7 +217,7 @@
      private final CreativeSettings creativeSettings;
      public final MouseHelper mouseHelper;
      public final KeyboardListener keyboardListener;
-@@ -283,7 +416,7 @@
+@@ -282,7 +415,7 @@
      private final LanguageManager languageManager;
      private final BlockColors blockColors;
      private final ItemColors itemColors;
@@ -226,28 +226,35 @@
      private final SoundHandler soundHandler;
      private final MusicTicker musicTicker;
      private final FontResourceManager fontResourceMananger;
-@@ -358,6 +491,9 @@
+@@ -355,9 +488,12 @@
+ 
+     public Minecraft(GameConfiguration gameConfig)
      {
-         super("Client");
-         instance = this;
-+        //Forge
-+        Reflector.call(Reflector.ForgeHooksClient_invalidateLog4jThreadCache);
-+        //
-         this.gameDir = p_i381_1_.folderInfo.gameDir;
-         File file1 = p_i381_1_.folderInfo.assetsDir;
-         this.fileResourcepacks = p_i381_1_.folderInfo.resourcePacksDir;
-@@ -370,7 +506,9 @@
+-        super("Client");
+-        instance = this;
+-        this.gameDir = gameConfig.folderInfo.gameDir;
++    	super("Client");
++    	instance = this;
++    	//Forge
++    	Reflector.call(Reflector.ForgeHooksClient_invalidateLog4jThreadCache);
++    	//
++    	this.gameDir = gameConfig.folderInfo.gameDir;
+         File file1 = gameConfig.folderInfo.assetsDir;
+         this.fileResourcepacks = gameConfig.folderInfo.resourcePacksDir;
+         this.launchedVersion = gameConfig.gameInfo.version;
+@@ -368,8 +504,9 @@
+         this.proxy = gameConfig.userInfo.proxy;
          this.sessionService = (new YggdrasilAuthenticationService(this.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
-         this.session = p_i381_1_.userInfo.session;
-         LOGGER.info("Setting user: {}", (Object)this.session.getUsername());
+         this.session = gameConfig.userInfo.session;
+-        LOGGER.info("Setting user: {}", (Object)this.session.getUsername());
 -        LOGGER.debug("(Session ID is {})", (Object)this.session.getSessionID());
 +        //Forge
 +        //LOGGER.debug("(Session ID is {})", (Object)this.session.getSessionID());
 +        //
-         this.isDemo = p_i381_1_.gameInfo.isDemo;
-         this.enableMultiplayer = !p_i381_1_.gameInfo.disableMultiplayer;
-         this.enableChat = !p_i381_1_.gameInfo.disableChat;
-@@ -394,6 +532,14 @@
+         this.isDemo = gameConfig.gameInfo.isDemo;
+         this.enableMultiplayer = !gameConfig.gameInfo.disableMultiplayer;
+         this.enableChat = !gameConfig.gameInfo.disableChat;
+@@ -393,6 +530,14 @@
          this.dataFixer = DataFixesManager.getDataFixer();
          this.toastGui = new ToastGui(this);
          this.tutorial = new Tutorial(this);
@@ -262,7 +269,7 @@
          this.thread = Thread.currentThread();
          this.gameSettings = new GameSettings(this, this.gameDir);
          this.creativeSettings = new CreativeSettings(this.gameDir, this.dataFixer);
-@@ -427,14 +573,23 @@
+@@ -426,14 +571,23 @@
  
          this.mainWindow.setFramerateLimit(this.gameSettings.framerateLimit);
          this.mouseHelper = new MouseHelper(this);
@@ -288,7 +295,7 @@
          this.gameSettings.fillResourcePackList(this.resourcePackRepository);
          this.languageManager = new LanguageManager(this.gameSettings.language);
          this.resourceManager.addReloadListener(this.languageManager);
-@@ -451,10 +606,17 @@
+@@ -450,10 +604,17 @@
          this.fontRenderer = this.fontResourceMananger.func_238548_a_();
          this.resourceManager.addReloadListener(this.fontResourceMananger.getReloadListener());
          this.func_238209_b_(this.getForceUnicodeFont());
@@ -307,7 +314,7 @@
          this.mainWindow.setRenderPhase("Post startup");
          this.blockColors = BlockColors.init();
          this.itemColors = ItemColors.init(this.blockColors);
-@@ -474,6 +636,9 @@
+@@ -473,6 +634,9 @@
          this.populateSearchTreeManager();
          this.resourceManager.addReloadListener(this.searchTreeManager);
          this.particles = new ParticleManager(this.world, this.textureManager);
@@ -317,7 +324,7 @@
          this.resourceManager.addReloadListener(this.particles);
          this.paintingSprites = new PaintingSpriteUploader(this.textureManager);
          this.resourceManager.addReloadListener(this.paintingSprites);
-@@ -481,7 +646,16 @@
+@@ -480,7 +644,16 @@
          this.resourceManager.addReloadListener(this.potionSprites);
          this.field_241557_ar_ = new GPUWarning();
          this.resourceManager.addReloadListener(this.field_241557_ar_);
@@ -335,7 +342,7 @@
          this.debugRenderer = new DebugRenderer(this);
          RenderSystem.setErrorCallback(this::disableVSyncAfterGlError);
  
-@@ -496,42 +670,72 @@
+@@ -495,42 +668,72 @@
          this.mainWindow.setLogOnGlError();
          this.updateWindowSize();
  
@@ -423,7 +430,7 @@
          stringbuilder.append(" ");
          stringbuilder.append(SharedConstants.getVersion().getName());
          ClientPlayNetHandler clientplaynethandler = this.getConnection();
-@@ -561,6 +765,7 @@
+@@ -560,6 +763,7 @@
          return stringbuilder.toString();
      }
  
@@ -431,7 +438,7 @@
      public boolean func_230151_c_()
      {
          return !"vanilla".equals(ClientBrandRetriever.getClientModName()) || Minecraft.class.getSigners() == null;
-@@ -675,7 +880,12 @@
+@@ -679,7 +883,12 @@
          });
          SearchTreeReloadable<ItemStack> searchtreereloadable = new SearchTreeReloadable<>((p_213235_0_) ->
          {
@@ -444,7 +451,7 @@
          });
          NonNullList<ItemStack> nonnulllist = NonNullList.create();
  
-@@ -761,16 +971,25 @@
+@@ -765,16 +974,25 @@
          if (report.getFile() != null)
          {
              Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + report.getFile());
@@ -470,7 +477,7 @@
              System.exit(-2);
          }
      }
-@@ -801,6 +1020,17 @@
+@@ -805,6 +1023,17 @@
                  List<IResourcePack> list = this.resourcePackRepository.func_232623_f_();
                  this.setLoadingGui(new ResourceLoadProgressGui(this, this.resourceManager.reloadResources(Util.getServerExecutor(), this, RESOURCE_RELOAD_INIT_TASK, list), (p_238200_2_) ->
                  {
@@ -488,7 +495,7 @@
                      Util.acceptOrElse(p_238200_2_, this::restoreResourcePacks, () -> {
                          this.worldRenderer.loadRenderers();
                          completablefuture.complete((Void)null);
-@@ -899,10 +1129,11 @@
+@@ -903,10 +1132,11 @@
  
      public void displayGuiScreen(@Nullable Screen guiScreenIn)
      {
@@ -504,7 +511,7 @@
  
          if (guiScreenIn == null && this.world == null)
          {
-@@ -919,13 +1150,26 @@
+@@ -923,13 +1153,26 @@
                  this.player.respawnPlayer();
              }
          }
@@ -532,7 +539,7 @@
          this.currentScreen = guiScreenIn;
  
          if (guiScreenIn != null)
-@@ -987,6 +1231,12 @@
+@@ -991,6 +1234,12 @@
          finally
          {
              Util.nanoTimeSupplier = System::nanoTime;
@@ -545,7 +552,7 @@
  
              if (this.crashReporter == null)
              {
-@@ -1026,135 +1276,318 @@
+@@ -1030,135 +1279,318 @@
  
      private void runGameLoop(boolean renderWorldIn)
      {
@@ -566,23 +573,10 @@
 -                completablefuture.complete((Void)null);
 -            });
 -        }
--
--        Runnable runnable;
--
--        while ((runnable = this.queueChunkTracking.poll()) != null)
--        {
--            runnable.run();
--        }
 +    	this.mainWindow.setRenderPhase("Pre render");
 +    	long i = Util.nanoTime();
  
--        if (renderWorldIn)
--        {
--            int j = this.timer.func_238400_a_(Util.milliTime());
--            this.profiler.startSection("scheduledExecutables");
--            this.drainTasks();
--            this.profiler.endSection();
--            this.profiler.startSection("tick");
+-        Runnable runnable;
 +    	if (this.mainWindow.shouldClose())
 +    	{
 +    		this.shutdown();
@@ -692,6 +686,19 @@
 +    	}
 +    	// 1
  
+-        while ((runnable = this.queueChunkTracking.poll()) != null)
+-        {
+-            runnable.run();
+-        }
+-
+-        if (renderWorldIn)
+-        {
+-            int j = this.timer.func_238400_a_(Util.milliTime());
+-            this.profiler.startSection("scheduledExecutables");
+-            this.drainTasks();
+-            this.profiler.endSection();
+-            this.profiler.startSection("tick");
+-
 -            for (int k = 0; k < Math.min(10, j); ++k)
 -            {
 -                this.profiler.func_230035_c_("clientTick");
@@ -985,7 +992,7 @@
      }
  
      private boolean func_238202_aF_()
-@@ -1206,14 +1639,14 @@
+@@ -1210,14 +1642,14 @@
          int i = this.mainWindow.calcGuiScale(this.gameSettings.guiScale, this.getForceUnicodeFont());
          this.mainWindow.setGuiScale((double)i);
  
@@ -1003,7 +1010,7 @@
          this.mouseHelper.setIgnoreFirstMove();
      }
  
-@@ -1295,8 +1728,17 @@
+@@ -1299,8 +1731,17 @@
              }
          }
      }
@@ -1022,7 +1029,7 @@
      {
          List<DataPoint> list = p_238183_2_.getDataPoints(this.debugProfilerName);
          DataPoint datapoint = list.remove(0);
-@@ -1312,14 +1754,15 @@
+@@ -1316,14 +1757,15 @@
          Tessellator tessellator = Tessellator.getInstance();
          BufferBuilder bufferbuilder = tessellator.getBuffer();
          int i = 160;
@@ -1041,7 +1048,7 @@
          tessellator.draw();
          RenderSystem.disableBlend();
          double d0 = 0.0D;
-@@ -1383,9 +1826,9 @@
+@@ -1387,9 +1829,9 @@
          }
  
          int k2 = 16777215;
@@ -1053,7 +1060,7 @@
  
          for (int j2 = 0; j2 < list.size(); ++j2)
          {
-@@ -1440,34 +1883,54 @@
+@@ -1444,34 +1886,54 @@
  
      private void sendClickBlockToController(boolean leftClick)
      {
@@ -1136,7 +1143,7 @@
      }
  
      private void clickMouse()
-@@ -1485,6 +1948,12 @@
+@@ -1489,6 +1951,12 @@
              }
              else if (!this.player.isRowingBoat())
              {
@@ -1149,7 +1156,7 @@
                  switch (this.objectMouseOver.getType())
                  {
                      case ENTITY:
-@@ -1495,7 +1964,7 @@
+@@ -1499,7 +1967,7 @@
                          BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
                          BlockPos blockpos = blockraytraceresult.getPos();
  
@@ -1158,7 +1165,7 @@
                          {
                              this.playerController.clickBlock(blockpos, blockraytraceresult.getFace());
                              break;
-@@ -1506,103 +1975,139 @@
+@@ -1510,103 +1978,139 @@
                          {
                              this.leftClickCounter = 10;
                          }
@@ -1394,177 +1401,413 @@
      }
  
      public MusicTicker getMusicTicker()
-@@ -1612,12 +2117,17 @@
+@@ -1616,187 +2120,230 @@
  
      public void runTick()
      {
+-        if (this.rightClickDelayTimer > 0)
+-        {
+-            --this.rightClickDelayTimer;
+-        }
+-
+-        this.profiler.startSection("gui");
+-
+-        if (!this.isGamePaused)
+-        {
+-            this.ingameGUI.tick();
+-        }
+-
+-        this.profiler.endSection();
+-        this.gameRenderer.getMouseOver(1.0F);
+-        this.tutorial.onMouseHover(this.world, this.objectMouseOver);
+-        this.profiler.startSection("gameMode");
+-
+-        if (!this.isGamePaused && this.world != null)
+-        {
+-            this.playerController.tick();
+-        }
+-
+-        this.profiler.endStartSection("textures");
+-
+-        if (this.world != null)
+-        {
+-            this.textureManager.tick();
+-        }
+-
+-        if (this.currentScreen == null && this.player != null)
+-        {
+-            if (this.player.getShouldBeDead() && !(this.currentScreen instanceof DeathScreen))
+-            {
+-                this.displayGuiScreen((Screen)null);
+-            }
+-            else if (this.player.isSleeping() && this.world != null)
+-            {
+-                this.displayGuiScreen(new SleepInMultiplayerScreen());
+-            }
+-        }
+-        else if (this.currentScreen != null && this.currentScreen instanceof SleepInMultiplayerScreen && !this.player.isSleeping())
+-        {
+-            this.displayGuiScreen((Screen)null);
+-        }
+-
+-        if (this.currentScreen != null)
+-        {
+-            this.leftClickCounter = 10000;
+-        }
+-
+-        if (this.currentScreen != null)
+-        {
+-            Screen.wrapScreenError(() ->
+-            {
+-                this.currentScreen.tick();
+-            }, "Ticking screen", this.currentScreen.getClass().getCanonicalName());
+-        }
+-
+-        if (!this.gameSettings.showDebugInfo)
+-        {
+-            this.ingameGUI.reset();
+-        }
+-
+-        if (this.loadingGui == null && (this.currentScreen == null || this.currentScreen.passEvents))
+-        {
+-            this.profiler.endStartSection("Keybindings");
+-            this.processKeyBinds();
+-
+-            if (this.leftClickCounter > 0)
+-            {
+-                --this.leftClickCounter;
+-            }
+-        }
+-
+-        if (this.world != null)
+-        {
+-            this.profiler.endStartSection("gameRenderer");
+-
+-            if (!this.isGamePaused)
+-            {
+-                this.gameRenderer.tick();
+-            }
+-
+-            this.profiler.endStartSection("levelRenderer");
+-
+-            if (!this.isGamePaused)
+-            {
+-                this.worldRenderer.tick();
+-            }
+-
+-            this.profiler.endStartSection("level");
+-
+-            if (!this.isGamePaused)
+-            {
+-                if (this.world.getTimeLightningFlash() > 0)
+-                {
+-                    this.world.setTimeLightningFlash(this.world.getTimeLightningFlash() - 1);
+-                }
+-
+-                this.world.tickEntities();
+-            }
+-        }
+-        else if (this.gameRenderer.getShaderGroup() != null)
+-        {
+-            this.gameRenderer.stopUseShader();
+-        }
+-
+-        if (!this.isGamePaused)
+-        {
+-            this.musicTicker.tick();
+-        }
+-
+-        this.soundHandler.tick(this.isGamePaused);
+-
+-        if (this.world != null)
+-        {
+-            if (!this.isGamePaused)
+-            {
+-                this.tutorial.tick();
+-
+-                try
+-                {
+-                    this.world.tick(() ->
+-                    {
+-                        return true;
+-                    });
+-                }
+-                catch (Throwable throwable)
+-                {
+-                    CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception in world tick");
+-
+-                    if (this.world == null)
+-                    {
+-                        CrashReportCategory crashreportcategory = crashreport.makeCategory("Affected level");
+-                        crashreportcategory.addDetail("Problem", "Level is null!");
+-                    }
+-                    else
+-                    {
+-                        this.world.fillCrashReport(crashreport);
+-                    }
+-
+-                    throw new ReportedException(crashreport);
+-                }
+-            }
+-
+-            this.profiler.endStartSection("animateTick");
+-
+-            if (!this.isGamePaused && this.world != null)
+-            {
+-                this.world.animateTick(MathHelper.floor(this.player.getPosX()), MathHelper.floor(this.player.getPosY()), MathHelper.floor(this.player.getPosZ()));
+-            }
+-
+-            this.profiler.endStartSection("particles");
+-
+-            if (!this.isGamePaused)
+-            {
+-                this.particles.tick();
+-            }
+-        }
+-        else if (this.networkManager != null)
+-        {
+-            this.profiler.endStartSection("pendingConnection");
+-            this.networkManager.tick();
+-        }
+-
+-        this.profiler.endStartSection("keyboard");
+-        this.keyboardListener.tick();
+-        this.profiler.endSection();
 +    	//Vivecraft y do we put this here
 +    	this.tickCounter++;
 +    	//
-         if (this.rightClickDelayTimer > 0)
-         {
-             --this.rightClickDelayTimer;
-         }
--
--        this.profiler.startSection("gui");
-+        //Forge
-+        Reflector.call(Reflector.BasicEventHooks_onPreClientTick);
-+        //
-+        this.profiler.startSection("guitick");
- 
-         if (!this.isGamePaused)
-         {
-@@ -1625,7 +2135,7 @@
-         }
- 
-         this.profiler.endSection();
--        this.gameRenderer.getMouseOver(1.0F);
-+        //this.gameRenderer.getMouseOver(1.0F);
-         this.tutorial.onMouseHover(this.world, this.objectMouseOver);
-         this.profiler.startSection("gameMode");
- 
-@@ -1636,10 +2146,11 @@
- 
-         this.profiler.endStartSection("textures");
- 
--        if (this.world != null)
--        {
-+		// Vivecraft tick the main menu too
-+		// if (this.world != null)
-+		// {
-             this.textureManager.tick();
--        }
-+		// }
- 
-         if (this.currentScreen == null && this.player != null)
-         {
-@@ -1657,6 +2168,7 @@
-             this.displayGuiScreen((Screen)null);
-         }
- 
++    	if (this.rightClickDelayTimer > 0)
++    	{
++    		--this.rightClickDelayTimer;
++    	}
++    	//Forge
++    	Reflector.call(Reflector.BasicEventHooks_onPreClientTick);
++    	//
++    	this.profiler.startSection("guitick");
 +
-         if (this.currentScreen != null)
-         {
-             this.leftClickCounter = 10000;
-@@ -1674,6 +2186,11 @@
-         {
-             this.ingameGUI.reset();
-         }
-+		// Vivecraft
-+		this.profiler.endStartSection("vrProcessInputs");
-+		MCOpenVR.processInputs();
-+		MCOpenVR.processBindings();
-+		///
- 
-         if (this.loadingGui == null && (this.currentScreen == null || this.currentScreen.passEvents))
-         {
-@@ -1686,8 +2203,26 @@
-             }
-         }
- 
--        if (this.world != null)
--        {
-+		// Vivecraft
-+		this.profiler.endStartSection("vrInputActionsTick");
-+		for (VRInputAction action : MCOpenVR.getInputActions()) {
-+			action.tick();
-+		}
++    	if (!this.isGamePaused)
++    	{
++    		this.ingameGUI.tick();
++    	}
 +
-+		if (vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY
-+				|| vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)
-+			VRHotkeys.handleMRKeys();
++    	this.profiler.endSection();
++    	//this.gameRenderer.getMouseOver(1.0F);
++    	this.tutorial.onMouseHover(this.world, this.objectMouseOver);
++    	this.profiler.startSection("gameMode");
 +
-+		if (this.world != null) {
-+			if (this.player != null) {
-+				// Vivecraft
-+				this.vrPlayer.updateFreeMove();
-+				if (this.vrPlayer.teleportWarningTimer >= 0) {
-+					if (--this.vrPlayer.teleportWarningTimer == 0) {
-+						this.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.noserverplugin"));
-+					}
-+				}
-+			}
-             this.profiler.endStartSection("gameRenderer");
++    	if (!this.isGamePaused && this.world != null)
++    	{
++    		this.playerController.tick();
++    	}
++
++    	this.profiler.endStartSection("textures");
++
++    	// Vivecraft tick the main menu too
++    	// if (this.world != null)
++    	// {
++    	this.textureManager.tick();
++    	// }
++
++    	if (this.currentScreen == null && this.player != null)
++    	{
++    		if (this.player.getShouldBeDead() && !(this.currentScreen instanceof DeathScreen))
++    		{
++    			this.displayGuiScreen((Screen)null);
++    		}
++    		else if (this.player.isSleeping() && this.world != null)
++    		{
++    			this.displayGuiScreen(new SleepInMultiplayerScreen());
++    		}
++    	}
++    	else if (this.currentScreen != null && this.currentScreen instanceof SleepInMultiplayerScreen && !this.player.isSleeping())
++    	{
++    		this.displayGuiScreen((Screen)null);
++    	}
++
++
++    	if (this.currentScreen != null)
++    	{
++    		this.leftClickCounter = 10000;
++    	}
++
++    	if (this.currentScreen != null)
++    	{
++    		Screen.wrapScreenError(() ->
++    		{
++    			this.currentScreen.tick();
++    		}, "Ticking screen", this.currentScreen.getClass().getCanonicalName());
++    	}
++
++    	if (!this.gameSettings.showDebugInfo)
++    	{
++    		this.ingameGUI.reset();
++    	}
++    	// Vivecraft
++    	this.profiler.endStartSection("vrProcessInputs");
++    	MCOpenVR.processInputs();
++    	MCOpenVR.processBindings();
++    	///
++
++    	if (this.loadingGui == null && (this.currentScreen == null || this.currentScreen.passEvents))
++    	{
++    		this.profiler.endStartSection("Keybindings");
++    		this.processKeyBinds();
++
++    		if (this.leftClickCounter > 0)
++    		{
++    			--this.leftClickCounter;
++    		}
++    	}
++
++    	// Vivecraft
++    	this.profiler.endStartSection("vrInputActionsTick");
++    	for (VRInputAction action : MCOpenVR.getInputActions()) {
++    		action.tick();
++    	}
++
++    	if (vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY
++    			|| vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)
++    		VRHotkeys.handleMRKeys();
++
++    	if (this.world != null) {
++    		if (this.player != null) {
++    			// Vivecraft
++    			this.vrPlayer.updateFreeMove();
++    			if (this.vrPlayer.teleportWarningTimer >= 0) {
++    				if (--this.vrPlayer.teleportWarningTimer == 0) {
++    					this.ingameGUI.getChatGUI().printChatMessage(new TranslationTextComponent("vivecraft.messages.noserverplugin"));
++    				}
++    			}
++    		}
++    		this.profiler.endStartSection("gameRenderer");
++
++    		if (!this.isGamePaused)
++    		{
++    			this.gameRenderer.tick();
++    		}
++
++    		this.profiler.endStartSection("levelRenderer");
++
++    		if (!this.isGamePaused)
++    		{
++    			this.worldRenderer.tick();
++    		}
++
++    		this.profiler.endStartSection("level");
++
++    		if (!this.isGamePaused)
++    		{
++    			if (this.world.getTimeLightningFlash() > 0)
++    			{
++    				this.world.setTimeLightningFlash(this.world.getTimeLightningFlash() - 1);
++    			}
++
++    			this.world.tickEntities();
++    		}
++
++    	}
++    	else if (this.gameRenderer.getShaderGroup() != null)
++    	{
++    		this.gameRenderer.stopUseShader();
++    	}
++
++    	// Vivecraft
++    	if (this.menuWorldRenderer != null)
++    		this.menuWorldRenderer.tick();
++    	PlayerModelController.getInstance().tick();
++    	//
++
++    	if (!this.isGamePaused) {
++    		this.musicTicker.tick();
++    	}
++
++    	this.soundHandler.tick(this.isGamePaused);
++
++    	if (this.world != null)
++    	{
++    		if (!this.isGamePaused)
++    		{
++    			this.tutorial.tick();
++
++    			try
++    			{
++    				this.world.tick(() ->
++    				{
++    					return true;
++    				});
++    			}
++    			catch (Throwable throwable)
++    			{
++    				CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception in world tick");
++
++    				if (this.world == null)
++    				{
++    					CrashReportCategory crashreportcategory = crashreport.makeCategory("Affected level");
++    					crashreportcategory.addDetail("Problem", "Level is null!");
++    				}
++    				else
++    				{
++    					this.world.fillCrashReport(crashreport);
++    				}
++
++    				throw new ReportedException(crashreport);
++    			}
++    		}
++
++    		this.profiler.endStartSection("animateTick");
++
++    		if (!this.isGamePaused && this.world != null)
++    		{
++    			this.world.animateTick(MathHelper.floor(this.player.getPosX()), MathHelper.floor(this.player.getPosY()), MathHelper.floor(this.player.getPosZ()));
++    		}
++
++    		this.profiler.endStartSection("particles");
++
++    		if (!this.isGamePaused)
++    		{
++    			this.particles.tick();
++    		}
++    	}
++    	else if (this.networkManager != null)
++    	{
++    		this.profiler.endStartSection("pendingConnection");
++    		this.networkManager.tick();
++    	}
++
++    	this.profiler.endStartSection("keyboard");
++    	this.keyboardListener.tick();
++    	this.profiler.endSection();
++    	//Forge
++    	Reflector.call(Reflector.BasicEventHooks_onPostClientTick);
++    	//
+     }
  
-             if (!this.isGamePaused)
-@@ -1713,14 +2248,20 @@
- 
-                 this.world.tickEntities();
-             }
-+            
-         }
-         else if (this.gameRenderer.getShaderGroup() != null)
+     private void processKeyBinds()
+     {
+         for (; this.gameSettings.keyBindTogglePerspective.isPressed(); this.worldRenderer.setDisplayListEntitiesDirty())
          {
-             this.gameRenderer.stopUseShader();
-         }
- 
--        if (!this.isGamePaused)
--        {
-+		// Vivecraft
-+		if (this.menuWorldRenderer != null)
-+			this.menuWorldRenderer.tick();
-+		PlayerModelController.getInstance().tick();
-+		//
-+		
-+		if (!this.isGamePaused) {
-             this.musicTicker.tick();
-         }
- 
-@@ -1780,27 +2321,32 @@
-         this.profiler.endStartSection("keyboard");
-         this.keyboardListener.tick();
-         this.profiler.endSection();
--    }
+-            PointOfView pointofview = this.gameSettings.func_243230_g();
+-            this.gameSettings.func_243229_a(this.gameSettings.func_243230_g().func_243194_c());
 -
--    private void processKeyBinds()
--    {
--        for (; this.gameSettings.keyBindTogglePerspective.isPressed(); this.worldRenderer.setDisplayListEntitiesDirty())
--        {
--            ++this.gameSettings.thirdPersonView;
--
--            if (this.gameSettings.thirdPersonView > 2)
+-            if (pointofview.func_243192_a() != this.gameSettings.func_243230_g().func_243192_a())
 -            {
--                this.gameSettings.thirdPersonView = 0;
+-                this.gameRenderer.loadEntityShader(this.gameSettings.func_243230_g().func_243192_a() ? this.getRenderViewEntity() : null);
 -            }
--
--            if (this.gameSettings.thirdPersonView == 0)
--            {
--                this.gameRenderer.loadEntityShader(this.getRenderViewEntity());
--            }
--            else if (this.gameSettings.thirdPersonView == 1)
--            {
--                this.gameRenderer.loadEntityShader((Entity)null);
--            }
-+        //Forge
-+        Reflector.call(Reflector.BasicEventHooks_onPostClientTick);
-+        //
-+    }
-+
-+	private void processKeyBinds() {
-+		for (; this.gameSettings.keyBindTogglePerspective.isPressed(); this.worldRenderer
-+				.setDisplayListEntitiesDirty()) {
-+			vrSettings.setOptionValue(VrOptions.MIRROR_DISPLAY);
-+			notifyMirror(vrSettings.getButtonDisplayString(VrOptions.MIRROR_DISPLAY), false, 3000);
-+
-+			// VIVECRAFT: Credits debug
-+			// this.displayScreen(new GuiWinGame(true,
-+			// com.google.common.util.concurrent.Runnables.doNothing()));
-+
-+			/*
-+			 * Vivecraft override F5 ++this.gameSettings.thirdPersonView;
-+			 * 
-+			 * if (this.gameSettings.thirdPersonView > 2) {
-+			 * this.gameSettings.thirdPersonView = 0; }
-+			 * 
-+			 * if (this.gameSettings.thirdPersonView == 0) {
-+			 * this.gameRenderer.loadEntityShader(this.getRenderViewEntity()); } else if
-+			 * (this.gameSettings.thirdPersonView == 1) {
-+			 * this.gameRenderer.loadEntityShader((Entity)null); }
-+			 */
++        	//Vivecraft cycle mirror mode
++        	vrSettings.setOptionValue(VrOptions.MIRROR_DISPLAY);
++        	notifyMirror(vrSettings.getButtonDisplayString(VrOptions.MIRROR_DISPLAY), false, 3000);
++        	//
++        	//            PointOfView pointofview = this.gameSettings.func_243230_g();
++        	//            this.gameSettings.func_243229_a(this.gameSettings.func_243230_g().func_243194_c());
++        	//
++        	//            if (pointofview.func_243192_a() != this.gameSettings.func_243230_g().func_243192_a())
++        	//            {
++        	//                this.gameRenderer.loadEntityShader(this.gameSettings.func_243230_g().func_243192_a() ? this.getRenderViewEntity() : null);
++        	//            }
          }
  
          while (this.gameSettings.keyBindSmoothCamera.isPressed())
-@@ -1860,7 +2406,9 @@
+@@ -1856,7 +2403,9 @@
          {
              if (!this.player.isSpectator() && this.player.drop(Screen.hasControlDown()))
              {
@@ -1575,7 +1818,7 @@
              }
          }
  
-@@ -1868,7 +2416,7 @@
+@@ -1864,7 +2413,7 @@
  
          if (flag2)
          {
@@ -1584,7 +1827,7 @@
              {
                  this.func_238207_b_("");
              }
-@@ -1879,11 +2427,13 @@
+@@ -1875,11 +2424,13 @@
              }
          }
  
@@ -1603,7 +1846,7 @@
              }
  
              while (this.gameSettings.keyBindAttack.isPressed())
-@@ -1900,10 +2450,18 @@
+@@ -1896,10 +2447,18 @@
          }
          else
          {
@@ -1626,7 +1869,7 @@
  
              while (this.gameSettings.keyBindUseItem.isPressed())
              {
-@@ -1921,7 +2479,7 @@
+@@ -1917,7 +2476,7 @@
              this.rightClickMouse();
          }
  
@@ -1635,7 +1878,7 @@
      }
  
      public static DatapackCodec func_238180_a_(SaveFormat.LevelSave p_238180_0_)
-@@ -2066,7 +2624,7 @@
+@@ -2065,7 +2624,7 @@
  
              while (!this.integratedServer.serverIsInRunLoop())
              {
@@ -1644,7 +1887,7 @@
                  this.runGameLoop(false);
  
                  try
-@@ -2091,6 +2649,13 @@
+@@ -2090,6 +2649,13 @@
              {
              }));
              networkmanager.sendPacket(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -1658,7 +1901,7 @@
              networkmanager.sendPacket(new CLoginStartPacket(this.getSession().getProfile()));
              this.networkManager = networkmanager;
          }
-@@ -2189,6 +2754,13 @@
+@@ -2188,6 +2754,13 @@
  
      public void loadWorld(ClientWorld worldClientIn)
      {
@@ -1672,7 +1915,7 @@
          WorkingScreen workingscreen = new WorkingScreen();
          workingscreen.displaySavingString(new TranslationTextComponent("connect.joining"));
          this.updateScreenTick(workingscreen);
-@@ -2225,12 +2797,18 @@
+@@ -2224,12 +2797,18 @@
          IntegratedServer integratedserver = this.integratedServer;
          this.integratedServer = null;
          this.gameRenderer.resetData();
@@ -1691,7 +1934,7 @@
              if (integratedserver != null)
              {
                  this.profiler.startSection("waitForServer");
-@@ -2247,6 +2825,9 @@
+@@ -2246,6 +2825,9 @@
              this.ingameGUI.resetPlayersOverlayFooterHeader();
              this.currentServerData = null;
              this.integratedServerIsRunning = false;
@@ -1701,7 +1944,7 @@
              this.game.leaveGameSession();
          }
  
-@@ -2280,6 +2861,9 @@
+@@ -2279,6 +2861,9 @@
          this.particles.clearEffects(worldIn);
          TileEntityRendererDispatcher.instance.setWorld(worldIn);
          this.func_230150_b_();
@@ -1711,7 +1954,7 @@
      }
  
      public boolean func_238216_r_()
-@@ -2339,6 +2923,16 @@
+@@ -2338,6 +2923,16 @@
      {
          if (this.objectMouseOver != null && this.objectMouseOver.getType() != RayTraceResult.Type.MISS)
          {
@@ -1728,7 +1971,7 @@
              boolean flag = this.player.abilities.isCreativeMode;
              TileEntity tileentity = null;
              RayTraceResult.Type raytraceresult$type = this.objectMouseOver.getType();
-@@ -2500,6 +3094,8 @@
+@@ -2499,6 +3094,8 @@
                  }
              }
          }
@@ -1737,22 +1980,22 @@
      }
  
      private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
-@@ -2997,8 +3593,12 @@
+@@ -3007,8 +3604,12 @@
          {
              supplier = wrapV4(supplier);
          }
 -
--        return new ClientResourcePackInfo(name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority, p_228011_6_);
-+    	//Forge
-+    	if(Reflector.IForgeIResourcePack_isHidden.exists())
-+    		return (ClientResourcePackInfo) Reflector.newInstance(Reflector.ClientResourcePackInfo_Constructor, name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority, p_228011_6_, Reflector.callBoolean(p_228011_3_,Reflector.IForgeIResourcePack_isHidden));
-+    	else 
-+            return new ClientResourcePackInfo(name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority, p_228011_6_);
-+    	//
+-        return new ResourcePackInfo(name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority, p_228011_6_);
++        //Forge
++        if(Reflector.IForgeIResourcePack_isHidden.exists())
++        	return (ResourcePackInfo) Reflector.newInstance(Reflector.ClientResourcePackInfo_Constructor, name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority, p_228011_6_, Reflector.callBoolean(p_228011_3_,Reflector.IForgeIResourcePack_isHidden));
++        else 
++            return new ResourcePackInfo(name, isAlwaysEnabled, supplier, p_228011_3_, p_228011_4_, priority, p_228011_6_);
++        //
      }
  
      private static Supplier<IResourcePack> wrapV3(Supplier<IResourcePack> p_228021_0_)
-@@ -3063,4 +3663,511 @@
+@@ -3073,4 +3674,511 @@
          CREATE,
          BACKUP;
      }

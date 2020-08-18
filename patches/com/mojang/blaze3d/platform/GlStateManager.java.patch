@@ -37,7 +37,7 @@
      @Deprecated
      public static void enableFog()
      {
-@@ -1513,7 +1525,18 @@
+@@ -1537,7 +1549,18 @@
          RenderSystem.assertThread(RenderSystem::isOnRenderThread);
          GL11.glGetFloatv(pname, params);
      }
@@ -57,7 +57,7 @@
      @Deprecated
      public static void ortho(double left, double right, double bottom, double top, double zNear, double zFar)
      {
-@@ -2027,7 +2050,7 @@
+@@ -2051,7 +2074,7 @@
          }
      }
  
@@ -66,7 +66,7 @@
      {
          public final GlStateManager.BooleanState blend = new GlStateManager.BooleanState(3042);
          public int srcFactorRgb = 1;
-@@ -2081,6 +2104,7 @@
+@@ -2105,6 +2128,7 @@
      }
  
      @Deprecated

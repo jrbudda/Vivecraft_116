@@ -10,7 +10,7 @@
  {
      private final Minecraft minecraft;
 @@ -39,7 +39,7 @@
-         this.minecraft = p_i3813_1_;
+         this.minecraft = minecraftIn;
      }
  
 -    private void mouseButtonCallback(long handle, int button, int action, int mods)

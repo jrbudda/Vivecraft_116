@@ -26,7 +26,7 @@
      private final FontRenderer textRenderer;
      public final TextureManager textureManager;
      private World world;
-@@ -221,13 +233,49 @@
+@@ -222,13 +234,49 @@
          }
      }
  
@@ -80,7 +80,7 @@
          }
          else
          {
-@@ -561,9 +609,47 @@
+@@ -562,9 +610,47 @@
  
      public Quaternion getCameraOrientation()
      {

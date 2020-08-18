@@ -19,12 +19,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.server.IDynamicRegistries;
 import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
@@ -59,7 +60,7 @@ public class MenuWorldExporter {
 					if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
 						int indexBiome = ((y / 4) * (zSize / 4) + (zl / 4)) * (xSize / 4) + (xl / 4);
 						// getNoiseBiome expects pre-divided coordinates
-						biomemap[indexBiome] = Registry.BIOME.getId(world.getNoiseBiome(x / 4, y / 4, z / 4));
+						biomemap[indexBiome] = WorldGenRegistries.field_243657_i.getId(world.getNoiseBiome(x / 4, y / 4, z / 4));
 					}
 				}
 			}
@@ -72,7 +73,7 @@ public class MenuWorldExporter {
 		dos.writeInt(ySize);
 		dos.writeInt(zSize);
 		dos.writeInt(ground);
-		dos.writeUTF(world.getDimensionTypeKey().func_240901_a_().toString());
+		dos.writeUTF(world.func_230315_m_().func_242725_p().toString());
 
 		if (world instanceof ServerWorld)
 			dos.writeBoolean(((ServerWorld)world).func_241109_A_());
@@ -166,10 +167,11 @@ public class MenuWorldExporter {
 		} else {
 			dimName = new ResourceLocation(dis.readUTF());
 		}
+		Registry<DimensionType> dimRegistry = DynamicRegistries.func_239770_b_().func_230520_a_();
 		RegistryKey<DimensionType> dimKey = RegistryKey.func_240903_a_(Registry.DIMENSION_TYPE_KEY, dimName);
-		DimensionType dimensionType = IDynamicRegistries.func_239770_b_().func_230520_a_().getValueForKey(dimKey);
+		DimensionType dimensionType = dimRegistry.getValueForKey(dimKey);
 		if (dimensionType == null)
-			dimensionType = DimensionType.func_236019_a_();
+			dimensionType = dimRegistry.getValueForKey(DimensionType.OVERWORLD);
 
 		boolean isFlat;
 		if (header.version < 4) // old format
@@ -243,8 +245,8 @@ public class MenuWorldExporter {
 
 	private static Biome getBiome(int biomeId)
 	{
-		Biome biome = Registry.BIOME.getByValue(biomeId);
-		return biome == null ? Biomes.DEFAULT : biome;
+		Biome biome = WorldGenRegistries.field_243657_i.getByValue(biomeId);
+		return biome != null ? biome : WorldGenRegistries.field_243657_i.getValueForKey(Biomes.PLAINS);
 	}
 
 	// Just version for now, but could have future use

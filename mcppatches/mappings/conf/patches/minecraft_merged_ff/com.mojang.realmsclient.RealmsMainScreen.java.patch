@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\com\mojang\realmsclient\RealmsMainScreen.java minecraft_patched\com\mojang\realmsclient\RealmsMainScreen.java
 --- minecraft\com\mojang\realmsclient\RealmsMainScreen.java
 +++ minecraft_patched\com\mojang\realmsclient\RealmsMainScreen.java
-@@ -1094,9 +1094,12 @@
+@@ -1111,9 +1111,12 @@
     @OnlyIn(Dist.CLIENT)
     class CloseButton extends Button {
        public CloseButton() {
@@ -16,7 +16,7 @@
        }
  
        public void func_230431_b_(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
-@@ -1114,9 +1117,11 @@
+@@ -1131,9 +1134,11 @@
     @OnlyIn(Dist.CLIENT)
     class InfoButton extends Button {
        public InfoButton() {
@@ -30,7 +30,7 @@
        }
  
        public void func_230431_b_(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
-@@ -1133,7 +1138,11 @@
+@@ -1150,7 +1155,11 @@
     @OnlyIn(Dist.CLIENT)
     class NewsButton extends Button {
        public NewsButton() {
@@ -43,7 +43,7 @@
              if (RealmsMainScreen.this.field_223996_D != null) {
                 Util.func_110647_a().func_195640_a(RealmsMainScreen.this.field_223996_D);
                 if (RealmsMainScreen.this.field_223995_C) {
-@@ -1144,8 +1153,6 @@
+@@ -1161,8 +1170,6 @@
                 }
  
              }
@@ -52,7 +52,7 @@
        }
  
        public void func_230431_b_(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
-@@ -1156,11 +1163,14 @@
+@@ -1173,11 +1180,14 @@
     @OnlyIn(Dist.CLIENT)
     class PendingInvitesButton extends Button implements IScreen {
        public PendingInvitesButton() {

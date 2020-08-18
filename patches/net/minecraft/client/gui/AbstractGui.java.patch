@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/AbstractGui.java
 +++ b/net/minecraft/client/gui/AbstractGui.java
-@@ -181,6 +181,11 @@
+@@ -183,6 +183,11 @@
  
      private static void innerBlit(Matrix4f matrix, int x1, int x2, int y1, int y2, int blitOffset, float minU, float maxU, float minV, float maxV)
      {
@@ -12,7 +12,7 @@
          BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
          bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
          bufferbuilder.pos(matrix, (float)x1, (float)y2, (float)blitOffset).tex(minU, maxV).endVertex();
-@@ -190,6 +195,9 @@
+@@ -192,6 +197,9 @@
          bufferbuilder.finishDrawing();
          RenderSystem.enableAlphaTest();
          WorldVertexBufferUploader.draw(bufferbuilder);
