@@ -115,6 +115,9 @@ public class SwingTracker extends Tracker{
 	
 	public void doProcess(ClientPlayerEntity player){ //on tick
 		speedthresh = 2.0f;
+		if(player.isCreative())
+			speedthresh *= 2;
+		
 		mc.getProfiler().startSection("updateSwingAttack");
 
 		for(int c=0;c<2;c++){

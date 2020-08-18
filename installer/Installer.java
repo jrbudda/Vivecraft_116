@@ -42,7 +42,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final boolean ALLOW_KATVR_INSTALL  = true;
     private static final boolean ALLOW_KIOSK_INSTALL  = true;
     private static final boolean ALLOW_ZGC_INSTALL    = true;
-    private static final boolean ALLOW_HRTF_INSTALL   = true;
+    private static final boolean ALLOW_HRTF_INSTALL   = false;
     private static final boolean PROMPT_REMOVE_HRTF   = false;
     private static final String MINECRAFT_VERSION     = "1.16.2";
     private static final String MC_VERSION            = "1.16.2";
@@ -408,8 +408,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		kiosk.setAlignmentX(LEFT_ALIGNMENT);
 
 		useZGC = new JCheckBox();
-		useZGC.setToolTipText("<html>Enables experimental nearly stutter-free Java 14 garbage collector.</html>");
-		useZGC.setAlignmentX(LEFT_ALIGNMENT);
 		AbstractAction zgcAction = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -436,7 +434,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		};
 		zgcAction.putValue(AbstractAction.NAME, "Enable ZGC (Experimental)");
 		useZGC.setAction(zgcAction);
-
+		useZGC.setToolTipText("<html>Enables experimental stutter-free Java 14 garbage collector.</html>");
+		useZGC.setAlignmentX(LEFT_ALIGNMENT);
+		
 		this.add(forgePanel);
 		this.add(createProfile);
 		this.add(ramPanel);

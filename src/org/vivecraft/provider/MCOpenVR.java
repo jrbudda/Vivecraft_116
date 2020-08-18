@@ -2583,7 +2583,7 @@ public class MCOpenVR
 				float vRange = 180;
 				double h = mc.mouseHelper.getMouseX() / (double) mc.getMainWindow().getWidth() * hRange - (hRange / 2);
 			
-				h = MathHelper.clamp(h, -hRange/2, hRange/2);
+				//h = MathHelper.clamp(h, -hRange/2, hRange/2);
 
 				int hei  = mc.getMainWindow().getHeight();
 				if(hei % 2 != 0)
@@ -2594,11 +2594,11 @@ public class MCOpenVR
 				double nPitch=-v;
 				if(mc.isGameFocused()){
 					float rotStart = mc.vrSettings.keyholeX;
-					float rotSpeed = 2000 * mc.vrSettings.xSensitivity;
+					float rotSpeed = 1000 * mc.vrSettings.xSensitivity;
 					int leftedge=(int)((-rotStart + (hRange / 2)) *(double) mc.getMainWindow().getWidth() / hRange )+1;
 					int rightedge=(int)((rotStart + (hRange / 2)) *(double) mc.getMainWindow().getWidth() / hRange )-1;
 					float rotMul = ((float)Math.abs(h) - rotStart) / ((hRange / 2) - rotStart); // Scaled 0...1 from rotStart to FOV edge
-					if(rotMul > 0.15) rotMul = 0.15f;
+					//if(rotMul > 0.15) rotMul = 0.15f;
 
 					double xpos = mc.mouseHelper.getMouseX();
 					

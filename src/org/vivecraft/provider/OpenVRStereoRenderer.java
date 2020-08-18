@@ -709,10 +709,11 @@ public class OpenVRStereoRenderer
 				VRShaders.setupFOVReduction();
 				ShaderHelper.checkGLError("init FOV shader");
 
+				List<ShaderGroup> old = new ArrayList<>();
+				old.addAll(entityShaders.values());
+				
 				//vanilla entity outline shader
-				for (ShaderGroup s : entityShaders.values()) {
-					s.close();
-				}
+
 				entityShaders.clear();
 				ResourceLocation outline = new ResourceLocation("shaders/post/entity_outline.json");
 				entityShaders.put(framebufferVrRender.name, createShaderGroup(outline, framebufferVrRender));
@@ -722,12 +723,17 @@ public class OpenVRStereoRenderer
 					entityShaders.put(framebufferUndistorted.name, createShaderGroup(outline, framebufferUndistorted));
 				entityShaders.put(telescopeFramebufferL.name, createShaderGroup(outline, telescopeFramebufferL));
 				entityShaders.put(telescopeFramebufferR.name, createShaderGroup(outline, telescopeFramebufferR));
-				//
-
-				//Vanilla alpha sort shader
-				for (ShaderGroup s : alphaShaders.values()) {
+				
+				for (ShaderGroup s : old) {
 					s.close();
 				}
+				old.clear();
+				//
+
+				
+				old.addAll(alphaShaders.values());
+				//Vanilla alpha sort shader
+	
 				alphaShaders.clear();
 				if (Minecraft.func_238218_y_()) { //Fabulous
 					ResourceLocation resourcelocation = new ResourceLocation("shaders/post/vrtransparency.json");
@@ -741,6 +747,10 @@ public class OpenVRStereoRenderer
 				} else {//not fabulous!
 
 				}
+				
+				for (ShaderGroup s : old) {
+					s.close();
+				}			
 				//
 
 				//Vanilla mob spectator shader

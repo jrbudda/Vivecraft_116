@@ -439,7 +439,7 @@
                  vector3d2 = new Vector3d((double)(f2 * f5 - f3 * f4), vector3d2.y, (double)(f3 * f5 + f2 * f4));
                  f1 = (float)vector3d2.lengthSquared();
  
-@@ -1237,4 +1495,413 @@
+@@ -1237,4 +1495,405 @@
              return super.func_241843_o(p_241843_1_);
          }
      }
@@ -604,33 +604,25 @@
 +
 +    			speed =  jkatvr.getSpeed() * jkatvr.walkDirection() * mc.vrSettings.movementSpeedMultiplier;
 +    			directionVec = new Vector3d(0, 0,speed);
-+    			directionVec=directionVec.rotateYaw(-jkatvr.getYaw()* PIOVER180 + mc.vrPlayer.vrdata_world_pre.rotation_radians);	    		
-+
-+    			if(doPitch) {
++    			if(doPitch) 
 +    				directionVec=directionVec.rotatePitch(con.vrdata_world_pre.hmd.getPitch()* PIOVER180);				
-+    			}else{
-+
-+    			}
++    			directionVec=directionVec.rotateYaw(-jkatvr.getYaw()* PIOVER180 + mc.vrPlayer.vrdata_world_pre.rotation_radians);	    		
 +    		}     		
 +    		else if(Main.infinadeck){
 +    			jinfinadeck.query();
 +
 +    			speed =  jinfinadeck.getSpeed() * jinfinadeck.walkDirection() * mc.vrSettings.movementSpeedMultiplier;
 +    			directionVec = new Vector3d(0, 0,speed);
++    			if(doPitch) 
++    				directionVec=directionVec.rotatePitch(con.vrdata_world_pre.hmd.getPitch()* PIOVER180);				
 +    			directionVec=directionVec.rotateYaw(-jinfinadeck.getYaw()* PIOVER180 + mc.vrPlayer.vrdata_world_pre.rotation_radians);	    		
 +
-+    			if(doPitch) {
-+    				directionVec=directionVec.rotatePitch(con.vrdata_world_pre.hmd.getPitch()* PIOVER180);				
-+    			}else{
-+
-+    			}
 +    		}else if(mc.vrSettings.seated){
 +    			int c = 0;
 +    			if(mc.vrSettings.seatedUseHMD) c = 1;
-+    			directionVec=directionVec.rotateYaw(-con.vrdata_world_pre.getController(c).getYaw() * PIOVER180);	    	
-+    			if(doPitch) {
++    			if(doPitch) 
 +    				directionVec=directionVec.rotatePitch(con.vrdata_world_pre.getController(c).getPitch()* PIOVER180);				
-+    			}
++    			directionVec=directionVec.rotateYaw(-con.vrdata_world_pre.getController(c).getYaw() * PIOVER180);	    	
 +    		}else{
 +
 +    			if(doPitch) {
