@@ -47,8 +47,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MINECRAFT_VERSION     = "1.16.2";
     private static final String MC_VERSION            = "1.16.2";
     private static final String MC_MD5                = "114f460c5ba72d0dd66a16ed399c0f6d";
-    private static final String OF_FILE_NAME          = "1.16.2_HD_U_G3_pre1";
-    private static final String OF_MD5                = "a061306600eefbc9b3053d91bd94db71";
+    private static final String OF_FILE_NAME          = "1.16.2_HD_U_G3_pre2";
+    private static final String OF_MD5                = "4a9988e83f85782cd40c80038c9b42b9";
     private static final String OF_VERSION_EXT        = ".jar";
     private static String FORGE_VERSION               = "33.0.5";
     private static final String HOMEPAGE_LINK         = "http://www.vivecraft.org";
@@ -824,7 +824,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				// Need to attempt download...
-				success = downloadFile("http://vivecraft.org/jar/Optifine/OptiFine_" + OF_FILE_NAME + "_LIB" + OF_VERSION_EXT, fo);
+				success = downloadFile("http://vivecraft.org/jar/Optifine/OptiFine-" + OF_FILE_NAME + "_LIB" + OF_VERSION_EXT, fo);
 				// Check (potentially) downloaded optifine md5
 				optOnDiskMd5 = GetMd5(fo);
 				if (success == false || optOnDiskMd5 == null || !optOnDiskMd5.equalsIgnoreCase(OF_MD5)) {

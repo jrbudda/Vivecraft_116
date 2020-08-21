@@ -334,32 +334,32 @@
          irendertypebuffer$impl.finish(Atlases.getTranslucentCullBlockType());
          irendertypebuffer$impl.finish(Atlases.getBannerType());
          irendertypebuffer$impl.finish(Atlases.getShieldType());
-@@ -1833,13 +1917,21 @@
- 
+@@ -1834,13 +1918,21 @@
          if (flag1)
          {
+             irendertypebuffer$impl.finish();
 -            Shaders.preRenderHand();
 -            ShadersRender.renderHand0(gameRendererIn, matrixStackIn, activeRenderInfoIn, partialTicks);
 +            //Shaders.preRenderHand();
 +            //ShadersRender.renderHand0(gameRendererIn, matrixStackIn, activeRenderInfoIn, partialTicks);
              Shaders.preWater();
          }
-+        
+ 
 +        //Temporary hack til I can figure out whats wrong with this
 +        if(mc.currentPass ==RenderPass.SCOPEL || mc.currentPass == RenderPass.SCOPER )
 +        	this.field_239227_K_ = null;
 +        //
-+
++        
 +        boolean menuHandleft = gameRendererIn.isInMenuRoom() || mc.currentScreen != null || KeyboardHandler.Showing;
 +        boolean menuhandright = menuHandleft || (mc.interactTracker.hotbar >= 0 && mc.vrSettings.vrTouchHotbar);
- 
++
          if (this.field_239227_K_ != null)
 -        {
 +        { //fabulous!
              irendertypebuffer$impl.finish(RenderType.getLines());
              irendertypebuffer$impl.finish();
              this.field_239222_F_.framebufferClear(Minecraft.IS_RUNNING_ON_MAC);
-@@ -1853,10 +1945,17 @@
+@@ -1854,10 +1946,17 @@
              RenderState.field_239237_T_.setupRenderState();
              iprofiler.endStartSection("particles");
              this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks);
@@ -379,7 +379,7 @@
              iprofiler.endStartSection("translucent");
  
              if (flag1)
-@@ -1883,7 +1982,11 @@
+@@ -1884,7 +1983,11 @@
              }
  
              this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks);
@@ -392,7 +392,7 @@
              if (flag1)
              {
                  Shaders.endParticles();
-@@ -3189,10 +3292,11 @@
+@@ -3190,10 +3293,11 @@
      {
          bufferIn.pos(xIn - camX, (double)yIn - camY, zIn - camZ).tex(texU, texV).endVertex();
      }
@@ -406,7 +406,7 @@
      }
  
      public static void drawVoxelShapeParts(MatrixStack matrixStackIn, IVertexBuilder bufferIn, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
-@@ -3656,6 +3760,8 @@
+@@ -3661,6 +3765,8 @@
      {
          Random random = this.world.rand;
  
@@ -415,7 +415,7 @@
          switch (type)
          {
              case 1000:
-@@ -3718,18 +3824,26 @@
+@@ -3723,18 +3829,26 @@
                  break;
  
              case 1011:
@@ -442,7 +442,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3750,14 +3864,26 @@
+@@ -3755,14 +3869,26 @@
                  break;
  
              case 1019:
@@ -469,7 +469,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3786,10 +3912,17 @@
+@@ -3791,10 +3917,17 @@
                  break;
  
              case 1030:
@@ -487,7 +487,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3810,6 +3943,9 @@
+@@ -3815,6 +3948,9 @@
                  break;
  
              case 1036:
@@ -497,7 +497,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -4402,4 +4538,40 @@
+@@ -4407,4 +4543,40 @@
              super(p_i232463_1_, p_i232463_2_);
          }
      }

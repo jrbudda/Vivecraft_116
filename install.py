@@ -214,25 +214,13 @@ def download_deps( mcp_dir, download_mc, forgedep=False ):
         optifine_jar = "OptiFine-"+of_file_name+".jar"
         optifine_dest_file = os.path.join( optifine_dest_dir, optifine_jar )
     
-        download_optifine = False
-        optifine_md5 = ''
-        if not is_non_zero_file( optifine_dest_file ):
-            print 'Optifine not Found at' + optifine_dest_file
-            download_optifine = True
-        else:
-            optifine_md5 = get_md5( optifine_dest_file )
-            print 'Optifine md5: %s' % optifine_md5
-            if optifine_md5 != of_build_md5:
-                download_optifine = True
-                print 'Bad MD5!'
-            else:
-                print 'MD5 good!'
+        download_optifine = True
         
         if download_optifine: 
             # Use optifine filename for URL
             optifine_url = "http://vivecraft.org/jar/build/OptiFine-"+of_file_name+of_file_extension
             print 'Downloading Optifine from ' + optifine_url
-            if not download_file( optifine_url, optifine_dest_file):
+            if not download_file( optifine_url, optifine_dest_file, of_build_md5):
                 print 'FAILED to download Optifine!'
                 sys.exit(1)
             else:
@@ -567,6 +555,8 @@ def reallyrmtree(path):
         if os.path.exists(path):
             shutil.rmtree(path)
     else:
+        os.rename(path, path + "temp")
+        path = path + "temp"
         i = 0
         try:
             while os.stat(path) and i < 20:

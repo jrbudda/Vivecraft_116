@@ -20,7 +20,7 @@
      public static boolean isInitializedOnce = false;
      public static boolean isShaderPackInitialized = false;
      public static GLCapabilities capabilities;
-@@ -340,12 +345,12 @@
+@@ -341,12 +346,12 @@
      static final int MaxShadowColorBuffers = 8;
      static final int MaxShadowDepthBuffers = 2;
      static int usedColorBuffers = 0;
@@ -35,7 +35,7 @@
      static int sfb = 0;
      private static int[] gbuffersFormat = new int[8];
      public static boolean[] gbuffersClear = new boolean[8];
-@@ -435,7 +440,7 @@
+@@ -436,7 +441,7 @@
      private static ShaderOption[] shaderPackOptions = null;
      private static Set<String> shaderPackOptionSliders = null;
      static ShaderProfile[] shaderPackProfiles = null;
@@ -44,7 +44,7 @@
      static Map<String, IExpressionBool> shaderPackProgramConditions = new HashMap<>();
      public static final String PATH_SHADERS_PROPERTIES = "/shaders/shaders.properties";
      public static PropertyDefaultFastFancyOff shaderPackClouds = new PropertyDefaultFastFancyOff("clouds", "Clouds", 0);
-@@ -511,7 +516,7 @@
+@@ -512,7 +517,7 @@
      static final FloatBuffer tempMatrixDirectBuffer = nextFloatBuffer(16);
      static final FloatBuffer tempDirectFloatBuffer = nextFloatBuffer(16);
      static final IntBuffer dfbColorTextures = nextIntBuffer(16);
@@ -53,7 +53,7 @@
      static final IntBuffer sfbColorTextures = nextIntBuffer(8);
      static final IntBuffer sfbDepthTextures = nextIntBuffer(2);
      static final IntBuffer dfbDrawBuffers = nextIntBuffer(8);
-@@ -530,6 +535,11 @@
+@@ -531,6 +536,11 @@
      {
      }
  
@@ -65,7 +65,7 @@
      private static ByteBuffer nextByteBuffer(int size)
      {
          ByteBuffer bytebuffer = bigBuffer;
-@@ -832,7 +842,7 @@
+@@ -833,7 +843,7 @@
              shaderPackOptions = null;
              shaderPackOptionSliders = null;
              shaderPackProfiles = null;
@@ -74,7 +74,7 @@
              shaderPackProgramConditions.clear();
              shaderPackClouds.resetValue();
              shaderPackOldHandLight.resetValue();
-@@ -888,6 +898,27 @@
+@@ -889,6 +899,27 @@
          loadShaderPackResources();
          loadShaderPackDimensions();
          shaderPackOptions = loadShaderPackOptions();
@@ -102,7 +102,7 @@
          loadShaderPackProperties();
          boolean flag3 = shaderPackLoaded != flag;
          boolean flag4 = isOldLighting() != flag1;
-@@ -1061,7 +1092,7 @@
+@@ -1062,7 +1093,7 @@
                  shaderPackFrustumCulling.loadFrom(properties);
                  shaderPackOptionSliders = ShaderPackParser.parseOptionSliders(properties, shaderPackOptions);
                  shaderPackProfiles = ShaderPackParser.parseProfiles(properties, shaderPackOptions);
@@ -111,7 +111,7 @@
                  shaderPackProgramConditions = ShaderPackParser.parseProgramConditions(properties, shaderPackOptions);
                  customTexturesGbuffers = loadCustomTextures(properties, 0);
                  customTexturesComposite = loadCustomTextures(properties, 1);
-@@ -1564,7 +1595,7 @@
+@@ -1565,7 +1596,7 @@
      {
          ShaderOption[] ashaderoption = (ShaderOption[])shaderPackOptions.clone();
  
@@ -120,7 +120,7 @@
          {
              if (shaderPackProfiles != null)
              {
-@@ -1577,7 +1608,7 @@
+@@ -1578,7 +1609,7 @@
          else
          {
              String s = screenName != null ? "screen." + screenName : "screen";
@@ -129,7 +129,7 @@
  
              if (screenshaderoptions == null)
              {
-@@ -1598,7 +1629,7 @@
+@@ -1599,7 +1630,7 @@
                      }
                      else if (shaderoption instanceof ShaderOptionRest)
                      {
@@ -138,7 +138,7 @@
                          list.addAll(Arrays.asList(ashaderoption2));
                      }
                      else
-@@ -1616,13 +1647,13 @@
+@@ -1617,13 +1648,13 @@
      {
          String s = screenName != null ? "screen." + screenName : "screen";
  
@@ -154,7 +154,7 @@
              return screenshaderoptions == null ? def : screenshaderoptions.getColumns();
          }
      }
-@@ -2395,6 +2426,8 @@
+@@ -2396,6 +2427,8 @@
              }
  
              checkGLError("Shaders.init");
@@ -163,7 +163,7 @@
          }
      }
  
-@@ -3512,8 +3545,14 @@
+@@ -3514,8 +3547,14 @@
                  setProgramUniform1f(uniform_viewWidth, (float)renderWidth);
                  setProgramUniform1f(uniform_viewHeight, (float)renderHeight);
                  setProgramUniform1f(uniform_near, 0.05F);
@@ -180,7 +180,7 @@
                  setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
                  setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
                  setProgramUniform3f(uniform_upPosition, upPosition[0], upPosition[1], upPosition[2]);
-@@ -3881,8 +3920,9 @@
+@@ -3884,8 +3923,9 @@
      {
          renderDisplayWidth = mc.getMainWindow().getFramebufferWidth();
          renderDisplayHeight = mc.getMainWindow().getFramebufferHeight();
@@ -192,7 +192,7 @@
          setupFrameBuffer();
      }
  
-@@ -3912,20 +3952,23 @@
+@@ -3915,20 +3955,23 @@
          GL32.glDrawBuffers(0);
          GL32.glReadBuffer(0);
  
@@ -225,7 +225,7 @@
          checkGLError("FT d");
  
          for (int k = 0; k < usedColorBuffers; ++k)
-@@ -4083,7 +4126,7 @@
+@@ -4086,7 +4129,7 @@
          checkWorldChanged(mc.world);
          mc = minecraft;
          mc.getProfiler().startSection("init");
@@ -234,7 +234,7 @@
  
          if (!isShaderPackInitialized)
          {
-@@ -4103,9 +4146,10 @@
+@@ -4106,9 +4149,10 @@
              }
          }
  
@@ -246,7 +246,7 @@
          }
  
          if (needResizeShadow)
-@@ -4157,7 +4201,7 @@
+@@ -4160,7 +4204,7 @@
  
              if (entity != null)
              {
@@ -255,7 +255,7 @@
                  eyePosY = (float)activeRenderInfo.getProjectedView().getY();
                  eyeBrightness = mc.getRenderManager().getPackedLight(entity, partialTicks);
                  float f2 = (float)diffSystemTime * 0.01F;
-@@ -4186,7 +4230,6 @@
+@@ -4189,7 +4233,6 @@
  
                      if (livingentity.isPotionActive(Effects.NIGHT_VISION))
                      {
@@ -263,7 +263,7 @@
                          nightVision = GameRenderer.getNightVisionBrightness(livingentity, partialTicks);
                      }
  
-@@ -4229,7 +4272,9 @@
+@@ -4232,7 +4275,9 @@
          ((Buffer)previousModelView).position(0);
          ((Buffer)modelView).position(0);
          checkGLError("beginRender");
@@ -274,7 +274,7 @@
          mc.getProfiler().endSection();
          EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
  
-@@ -4496,9 +4541,14 @@
+@@ -4499,9 +4544,14 @@
          ((Buffer)projection).position(0);
          ((Buffer)projectionInverse).position(0);
          Matrix4f matrix4f = matrixStackIn.getLast().getMatrix();
@@ -292,7 +292,7 @@
          ((Buffer)modelView).position(0);
          modelView.put(tempMat);
          SMath.invertMat4FBFA((FloatBuffer)((Buffer)modelViewInverse).position(0), (FloatBuffer)((Buffer)modelView).position(0), faModelViewInverse, faModelView);
-@@ -4638,13 +4688,24 @@
+@@ -4641,13 +4691,24 @@
          Matrix4f matrix4f1 = new Matrix4f(matrix4f);
          matrix4f1.transpose();
          matrix4f1.write(tempMat);
@@ -318,7 +318,7 @@
          if (customUniforms != null)
          {
              customUniforms.update();
-@@ -5739,7 +5800,7 @@
+@@ -5742,7 +5803,7 @@
      private static void loadShaderPackResources()
      {
          shaderPackResources = new HashMap<>();
@@ -327,7 +327,7 @@
          if (shaderPackLoaded)
          {
              List<String> list = new ArrayList<>();
-@@ -5772,6 +5833,7 @@
+@@ -5775,6 +5836,7 @@
                          {
                              String s6 = properties.getProperty(s5);
                              shaderPackResources.put(s5, s6);

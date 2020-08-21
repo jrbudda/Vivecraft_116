@@ -50,7 +50,10 @@ public class SwingTracker extends Tracker{
 	//VIVECRAFT SWINGING SUPPORT
 	private Vector3d[] lastWeaponEndAir = new Vector3d[]{new Vector3d(0, 0, 0), new Vector3d(0,0,0)};
 	private boolean[] lastWeaponSolid = new boolean[2];
-	public Vector3d[] weaponEnd= new Vector3d[2];
+	
+	public Vector3d[] miningPoint= new Vector3d[2];
+	public Vector3d[] attackingPoint= new Vector3d[2];
+
 	public Vec3History[] tipHistory = new Vec3History[] { new Vec3History(), new Vec3History()};
 
 	public boolean[] canact= new boolean[2];
@@ -111,12 +114,12 @@ public class SwingTracker extends Tracker{
 	}
 
 	Vector3d forward = new Vector3d(0,0,-1);
-	double speedthresh = 2.0f;
+	double speedthresh = 3.0f;
 	
 	public void doProcess(ClientPlayerEntity player){ //on tick
-		speedthresh = 2.0f;
+		speedthresh = 3.0f;
 		if(player.isCreative())
-			speedthresh *= 2;
+			speedthresh *= 1.5;
 		
 		mc.getProfiler().startSection("updateSwingAttack");
 
@@ -155,12 +158,12 @@ public class SwingTracker extends Tracker{
 			//            }    
 
 			if (sword){
-				entityReachAdd = 1.8f;
-				weaponLength = 0.7f;
+				entityReachAdd = 1.9f;
+				weaponLength = 0.6f;
 				tool = true;
 			} else if (tool){
-				entityReachAdd = 1.0f;
-				weaponLength = 0.5f;
+				entityReachAdd = 1.2f;
+				weaponLength = 0.3f;
 				tool = true;
 			} else if (!is.isEmpty()){
 				weaponLength = 0.1f;
@@ -172,26 +175,31 @@ public class SwingTracker extends Tracker{
 
 			weaponLength *= mc.vrPlayer.vrdata_world_pre.worldScale;
 
-			weaponEnd[c] = new Vector3d(
-					handPos.x + handDirection.x * weaponLength,
-					handPos.y + handDirection.y * weaponLength,
-					handPos.z + handDirection.z * weaponLength);     
+			miningPoint[c] = handPos.add(handDirection.scale(weaponLength));	 
 
-			tipHistory[c].add(weaponEnd[c].subtract(mc.vrPlayer.vrdata_world_pre.origin));
-
-			boolean inAnEntity = false;
-
+			{//do speed calc in actual room coords
+			Vector3d vel = mc.vrPlayer.vrdata_room_pre.getController(c).getPosition().add(mc.vrPlayer.vrdata_room_pre.getHand(c).getCustomVector(forward).scale(0.3));		
+			tipHistory[c].add(vel);
+			} // at a 0.3m offset on index controllers a speed of 3m/s is a intended smack, 7 m/s is about as high as your arm can go.
+			
 			float speed = (float) tipHistory[c].averageSpeed(0.33);
-
+			boolean inAnEntity = false;
 			canact[c] = speed > speedthresh && !lastWeaponSolid[c];
-
+					
 			//Check EntityCollisions first    	
 			{
-				AxisAlignedBB weaponBB = new AxisAlignedBB(handPos, weaponEnd[c]);      
-				Vector3d extWeapon = new Vector3d(
-						handPos.x + handDirection.x * (weaponLength + entityReachAdd),
-						handPos.y + handDirection.y * (weaponLength + entityReachAdd),
-						handPos.z + handDirection.z * (weaponLength + entityReachAdd));
+				boolean entityact = canact[c];
+				if(entityact) {
+					BlockRayTraceResult test = mc.world.rayTraceBlocks(new RayTraceContext(mc.vrPlayer.vrdata_world_pre.hmd.getPosition(), handPos, BlockMode.OUTLINE, FluidMode.NONE, mc.player));
+					if(test.getType() != Type.MISS) 
+						entityact = false;
+				}
+				attackingPoint[c] = constrain(handPos, miningPoint[c]);
+				
+				Vector3d extWeapon = handPos.add(handDirection.scale(weaponLength + entityReachAdd));
+				extWeapon = constrain(handPos, extWeapon);
+				
+				AxisAlignedBB weaponBB = new AxisAlignedBB(handPos, attackingPoint[c]);      
 				AxisAlignedBB weaponBBEXT = new AxisAlignedBB(handPos, extWeapon);     
 
 				List<Entity> mobs = mc.world.getEntitiesWithinAABBExcludingEntity(mc.player, weaponBBEXT);       	      		
@@ -206,7 +214,7 @@ public class SwingTracker extends Tracker{
 				for (Entity hitEntity : mobs) {
 					if (hitEntity.canBeCollidedWith() && !(hitEntity == mc.getRenderViewEntity().getRidingEntity()) )
 					{       			       			
-						if(canact[c]){
+						if(entityact){
 							Minecraft.getInstance().physicalGuiManager.preClickAction();
 							mc.playerController.attackEntity(player, hitEntity);
 							MCOpenVR.triggerHapticPulse(c, 1000);
@@ -234,15 +242,15 @@ public class SwingTracker extends Tracker{
 					if(c == 1 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) || !tool ) continue;
 				}
 
-				BlockPos bp = new BlockPos(weaponEnd[c]);
+				BlockPos bp = new BlockPos(miningPoint[c]);
 				BlockState block = mc.world.getBlockState(bp);
 			
 				// every time end of weapon enters a solid for the first time, trace from our previous air position
 				// and damage the block it collides with... 
-				BlockRayTraceResult blockHit = mc.world.rayTraceBlocks(new RayTraceContext(lastWeaponEndAir[c], weaponEnd[c], BlockMode.OUTLINE, FluidMode.NONE, mc.player));
+				BlockRayTraceResult blockHit = mc.world.rayTraceBlocks(new RayTraceContext(lastWeaponEndAir[c], miningPoint[c], BlockMode.OUTLINE, FluidMode.NONE, mc.player));
 		
 				if(block.isAir() || blockHit.getType() != Type.BLOCK || lastWeaponEndAir[c].length() == 0) { //reset				
-					this.lastWeaponEndAir[c] = weaponEnd[c];
+					this.lastWeaponEndAir[c] = miningPoint[c];
 					lastWeaponSolid[c] = false;
 					continue;
 				}
@@ -305,6 +313,15 @@ public class SwingTracker extends Tracker{
 		MCReflection.PlayerController_blockHitDelay.set(Minecraft.getInstance().playerController, 0);
 		MCReflection.PlayerController_blocknoise.set(Minecraft.getInstance().playerController, 1);
 
+	}
+	
+	public Vector3d constrain(Vector3d start, Vector3d end) {
+		BlockRayTraceResult test = mc.world.rayTraceBlocks(new RayTraceContext(start, end, BlockMode.OUTLINE, FluidMode.NONE, mc.player));
+		if(test.getType() == Type.BLOCK) {
+			return test.getHitVec();
+		} else {
+			return end;
+		}	
 	}
 	
 	//Get the transparency for held items to indicate attack power or sneaking.

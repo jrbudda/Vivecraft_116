@@ -744,7 +744,7 @@
          }
      }
  
-@@ -1359,4 +1370,2195 @@
+@@ -1359,4 +1370,2224 @@
      {
          return this.overlayTexture;
      }
@@ -2432,13 +2432,38 @@
 +        return this.colorBuffer;
 +    }
 +    
-+
++    private void renderSwingDebug(int c) {	
++    	if(true) return;
++    	if(mc.swingTracker.miningPoint[c] == null) return;
++    	//Swing debug
++    	GlStateManager.pushMatrix();
++    		GlStateManager.loadIdentity();
++	    	applyVRModelViewLegacy(mc.currentPass);
++	    	Vector3d eye = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
++	    	GlStateManager.pushMatrix();
++		    	GlStateManager.translated(mc.swingTracker.attackingPoint[c].x - eye.x, mc.swingTracker.attackingPoint[c].y - eye.y, mc.swingTracker.attackingPoint[c].z-eye.z);
++		    	if(mc.swingTracker.canact[c])
++		    		renderDebugAxes(0, 255, 0, 0.03f);
++		    	else
++		    		renderDebugAxes(255, 0, 0, 0.03f);
++	    	GlStateManager.popMatrix();
++	    	GlStateManager.pushMatrix();
++	    		GlStateManager.translated(mc.swingTracker.miningPoint[c].x - eye.x, mc.swingTracker.miningPoint[c].y - eye.y, mc.swingTracker.miningPoint[c].z-eye.z);
++		    	if(mc.swingTracker.canact[c])
++		    		renderDebugAxes(0, 255, 0, 0.02f);
++		    	else
++		    		renderDebugAxes(255, 255, 0, 0.02f);
++		    GlStateManager.popMatrix();
++    	GlStateManager.popMatrix();
++    }
++    
 +    void renderVRHands(float partialTicks, boolean renderright, boolean renderleft, boolean menuhandright, boolean menuhandleft) {
 +    	this.mc.getProfiler().startSection("hands");
 +
 +    	//Render Physical Inventories
 +    	//mc.physicalGuiManager.doRender(partialTicks);
 +    	//
++    	
 +    	
 +    	if(renderright) {
 +	    	mc.getItemRenderer().ismainhand = true;
@@ -2451,6 +2476,8 @@
 +	    		mat.getLast().getMatrix().setIdentity();
 +	    		applyVRModelView(mc.currentPass, mat); 	
 +	    		this.renderVRHand_Main(mat, partialTicks);
++	        	//Testing
++	    		renderSwingDebug(0);
 +	    	}
 +	    	mc.getItemRenderer().ismainhand = false;
 +    	}
@@ -2465,6 +2492,8 @@
 +	    		mat.getLast().getMatrix().setIdentity();
 +	    		applyVRModelView(mc.currentPass, mat); 	
 +	        	this.renderVRHand_Offhand(partialTicks, true, mat);
++	        	//Testing
++	    		renderSwingDebug(1);
 +	    	}
 +    	}
 +    	this.mc.getProfiler().endSection();
@@ -2475,7 +2504,7 @@
 +    	matrix.push();
 +	    	//from HMD to controller
 +	    	SetupRenderingAtController(0, matrix);
-+	
++		    	
 +	    	ItemStack item = mc.player.getHeldItemMainhand();
 +	    	ItemStack override=mc.physicalGuiManager.getHeldItemOverride();
 +	    	if(override!=null)
