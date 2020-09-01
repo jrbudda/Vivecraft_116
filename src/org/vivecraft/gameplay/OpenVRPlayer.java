@@ -257,8 +257,8 @@ public class OpenVRPlayer
 	{
 		if (Thread.currentThread().getName().equals("Server thread"))
 			return;
-
-		if(player.getPositionVec() ==  Vector3d.ZERO) return;
+		
+		if(player == null || player.getPositionVec() ==  Vector3d.ZERO) return;
 		
 		Minecraft mc = Minecraft.getInstance();
 		

@@ -99,7 +99,7 @@
                      this.netManager.sendPacket(new SMoveVehiclePacket(entity));
                      return;
                  }
-@@ -1097,7 +1128,15 @@
+@@ -1097,7 +1128,18 @@
  
          if (blockpos.getY() < this.server.getBuildLimit())
          {
@@ -107,8 +107,11 @@
 +        	double dist = 8D;
 +        	
 +        	//Forge
-+        	if(Reflector.ForgePlayer_REACH_DISTANCE.exists())
-+        		dist = player.getAttribute((Attribute) Reflector.getFieldValue(Reflector.ForgePlayer_REACH_DISTANCE)).getValue() + 3;
++        	
++        	Object attrib =Reflector.call(Reflector.getFieldValue(Reflector.ForgeMod_REACH_DISTANCE), Reflector.RegistryObject_get);
++        	
++        	if(attrib != null)
++        		dist = player.getAttribute((Attribute) attrib).getValue() + 3;
 +        	//
 +        	
 +            dist *= dist;
@@ -116,7 +119,7 @@
              {
                  ActionResultType actionresulttype = this.player.interactionManager.func_219441_a(this.player, serverworld, itemstack, hand, blockraytraceresult);
  
-@@ -1251,43 +1290,51 @@
+@@ -1251,43 +1293,51 @@
  
      public void processChatMessage(CChatMessagePacket packetIn)
      {
@@ -204,7 +207,7 @@
      }
  
      private void handleSlashCommand(String command)
-@@ -1402,6 +1449,9 @@
+@@ -1402,6 +1452,9 @@
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.INTERACT_AT)
                  {
@@ -214,7 +217,7 @@
                      optional = Optional.of(entity.applyPlayerInteraction(this.player, packetIn.getHitVec(), hand));
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.ATTACK)
-@@ -1674,6 +1724,117 @@
+@@ -1674,6 +1727,117 @@
  
      public void processCustomPayload(CCustomPayloadPacket packetIn)
      {

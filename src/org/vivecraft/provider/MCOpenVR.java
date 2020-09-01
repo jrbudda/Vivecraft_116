@@ -1748,9 +1748,14 @@ public class MCOpenVR
 		if (keyMoveThirdPersonCam.isPressed() && !Main.kiosk && !mc.vrSettings.seated && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)) {
 			TrackedController controller = MCOpenVR.findActiveBindingController(keyMoveThirdPersonCam);
 			if (controller != null)
-				VRHotkeys.startMovingThirdPersonCam(controller.getType().ordinal());
+				VRHotkeys.startMovingThirdPersonCam(controller.getType().ordinal(), VRHotkeys.Triggerer.BINDING);
 		}
-		if (!keyMoveThirdPersonCam.isKeyDown() && VRHotkeys.isMovingThirdPersonCam()) {
+		if (!keyMoveThirdPersonCam.isKeyDown() && VRHotkeys.isMovingThirdPersonCam() && VRHotkeys.getMovingThirdPersonCamTriggerer() == VRHotkeys.Triggerer.BINDING) {
+			VRHotkeys.stopMovingThirdPersonCam();
+			mc.vrSettings.saveOptions();
+		}
+
+		if (VRHotkeys.isMovingThirdPersonCam() && VRHotkeys.getMovingThirdPersonCamTriggerer() == VRHotkeys.Triggerer.MENUBUTTON && keyMenuButton.isPressed()) { //super special case.
 			VRHotkeys.stopMovingThirdPersonCam();
 			mc.vrSettings.saveOptions();
 		}
@@ -2056,7 +2061,7 @@ public class MCOpenVR
 		}
 		return "Unknown";
 	}
-	private static boolean dbg = false;
+	private static boolean dbg = true;
 	private static void updatePose()
 	{
 		if ( vrsystem == null || vrCompositor == null )
@@ -2073,7 +2078,7 @@ public class MCOpenVR
 		}
 
 		if (getXforms == true) { //set null by events.
-			dbg = true;
+			//dbg = true;
 			getTransforms(); //do we want the dynamic info? I don't think so...
 			//findControllerDevices();
 		} else {

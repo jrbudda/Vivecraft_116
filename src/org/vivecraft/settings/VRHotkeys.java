@@ -44,6 +44,7 @@ public class VRHotkeys {
 	private static float startCamposY;
 	private static float startCamposZ;
 	private static Quaternion startCamrotQuat;
+	private static Triggerer camTriggerer;
 
 	public static boolean handleKeyboardInputs(int key, int scanCode, int action, int modifiers)
 	{
@@ -338,7 +339,7 @@ public class VRHotkeys {
 		}
 	}
 
-	public static void startMovingThirdPersonCam(int controller) {
+	public static void startMovingThirdPersonCam(int controller, Triggerer triggerer) {
 		Minecraft mc = Minecraft.getInstance();
 		startController = controller;
 		startControllerPose = mc.vrPlayer.vrdata_room_pre.getController(controller);
@@ -346,6 +347,7 @@ public class VRHotkeys {
 		startCamposY = mc.vrSettings.vrFixedCamposY;
 		startCamposZ = mc.vrSettings.vrFixedCamposZ;
 		startCamrotQuat = mc.vrSettings.vrFixedCamrotQuat.copy();
+		camTriggerer = triggerer;
 	}
 
 	public static void stopMovingThirdPersonCam() {
@@ -354,6 +356,14 @@ public class VRHotkeys {
 
 	public static boolean isMovingThirdPersonCam() {
 		return startControllerPose != null;
+	}
+
+	public static int getMovingThirdPersonCamController() {
+		return startController;
+	}
+
+	public static Triggerer getMovingThirdPersonCamTriggerer() {
+		return camTriggerer;
 	}
 
 	public static void loadExternalCameraConfig() {
@@ -415,5 +425,11 @@ public class VRHotkeys {
 
 	public static boolean hasExternalCameraConfig() {
 		return new File("ExternalCamera.cfg").exists();
+	}
+
+	public static enum Triggerer {
+		BINDING,
+		MENUBUTTON,
+		INTERACTION
 	}
 }

@@ -1,11 +1,18 @@
 package org.vivecraft.asm;
 
+import org.vivecraft.api.NetworkHelper;
+import org.vivecraft.api.VRData;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.potion.Potions;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -46,6 +53,32 @@ public class ASMDelegator {
 			if (query.isEmpty() || stack.getDisplayName().toString().toLowerCase().contains(query.toLowerCase()))
 				list.add(stack);
 		}
+	}
+
+	public static float itemRayTracePitch(PlayerEntity player, float orig) {
+		if (player instanceof ClientPlayerEntity) {
+			VRData.VRDevicePose controller = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0);
+			Vector3d aim = controller.getDirection();
+			return (float)Math.toDegrees(Math.asin(-aim.y / aim.length()));
+		}
+		return orig;
+	}
+
+	public static float itemRayTraceYaw(PlayerEntity player, float orig) {
+		if (player instanceof ClientPlayerEntity) {
+			VRData.VRDevicePose controller = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0);
+			Vector3d aim = controller.getDirection();
+			return (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));
+		}
+		return orig;
+	}
+
+	public static Vector3d itemRayTracePos(PlayerEntity player, Vector3d orig) {
+		if (player instanceof ClientPlayerEntity) {
+			VRData.VRDevicePose controller = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0);
+			return controller.getPosition();
+		}
+		return orig;
 	}
 	
 	public static void dummy(float f) {

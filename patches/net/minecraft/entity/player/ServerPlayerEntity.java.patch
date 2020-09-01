@@ -207,18 +207,10 @@
          this.openContainer = this.container;
      }
  
-@@ -1345,6 +1420,24 @@
+@@ -1345,6 +1420,16 @@
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.setLeftShoulderEntity(that.getLeftShoulderEntity());
          this.setRightShoulderEntity(that.getRightShoulderEntity());
-+        //Forge
-+    	Reflector.setFieldValue(this, Reflector.ForgePlayerEntity_spawnPosMap, Reflector.getFieldValue(that, Reflector.ForgePlayerEntity_spawnPosMap));
-+		Reflector.setFieldValue(this, Reflector.ForgePlayerEntity_spawnForcedMap, Reflector.getFieldValue(that, Reflector.ForgePlayerEntity_spawnForcedMap));
-+   
-+//		if(that.dimension != DimensionType.OVERWORLD) {
-+//			MCReflection.PlayerEntity_spawnPos.set(this, MCReflection.PlayerEntity_spawnPos.get(that));
-+//			MCReflection.PlayerEntity_spawnForced.set(this, MCReflection.PlayerEntity_spawnForced.get(that));
-+//        }
 +
 +        //Copy over a section of the Entity Data from the old player.
 +        //Allows mods to specify data that persists after players respawn.       
@@ -232,7 +224,7 @@
      }
  
      protected void onNewPotionEffect(EffectInstance id)
-@@ -1477,6 +1570,8 @@
+@@ -1477,6 +1562,8 @@
          this.chatColours = packetIn.isColorsEnabled();
          this.getDataManager().set(PLAYER_MODEL_FLAG, (byte)packetIn.getModelPartFlags());
          this.getDataManager().set(MAIN_HAND, (byte)(packetIn.getMainHand() == HandSide.LEFT ? 0 : 1));
@@ -241,7 +233,7 @@
      }
  
      public ChatVisibility getChatVisibility()
-@@ -1624,8 +1719,13 @@
+@@ -1624,8 +1711,13 @@
              this.connection.sendPacket(new SRespawnPacket(newWorld.func_230315_m_(), newWorld.getDimensionKey(), BiomeManager.func_235200_a_(newWorld.getSeed()), this.interactionManager.getGameType(), this.interactionManager.func_241815_c_(), newWorld.isDebug(), newWorld.func_241109_A_(), true));
              this.connection.sendPacket(new SServerDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
              this.server.getPlayerList().updatePermissionLevel(this);
@@ -255,15 +247,15 @@
              this.setLocationAndAngles(x, y, z, yaw, pitch);
              this.setWorld(newWorld);
              newWorld.addDuringCommandTeleport(this);
-@@ -1634,9 +1734,82 @@
+@@ -1634,8 +1726,81 @@
              this.interactionManager.setWorld(newWorld);
              this.server.getPlayerList().sendWorldInfo(this, newWorld);
              this.server.getPlayerList().sendInventory(this);
 +            //Forge
 +            Reflector.call(Reflector.BasicEventHooks_firePlayerChangedDimensionEvent, this, serverworld.getDimensionKey(), newWorld.getDimensionKey());
 +            //
-+        }
-+    }
+         }
+     }
 +	@Override
 +	public void spawnSweepParticles() {
 +		ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
@@ -305,9 +297,9 @@
 +                this.addItemParticles(stack, count);
 +                this.playSound(this.getEatSound(stack), 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
 +            }
-         }
-     }
- 
++        }
++    }
++
 +    private void addItemParticles(ItemStack stack, int count)
 +    {
 +    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
@@ -334,11 +326,10 @@
 +    		this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vector3d1.x, vector3d1.y, vector3d1.z, vector3d.x, vector3d.y + 0.05D, vector3d.z);
 +    	}
 +    }
-+
+ 
      @Nullable
      public BlockPos func_241140_K_()
-     {
-@@ -1660,6 +1833,9 @@
+@@ -1660,6 +1825,9 @@
  
      public void func_242111_a(RegistryKey<World> p_242111_1_, @Nullable BlockPos p_242111_2_, float p_242111_3_, boolean p_242111_4_, boolean p_242111_5_)
      {
@@ -348,7 +339,7 @@
          if (p_242111_2_ != null)
          {
              boolean flag = p_242111_2_.equals(this.field_241138_cr_) && p_242111_1_.equals(this.field_241137_cq_);
-@@ -1717,6 +1893,7 @@
+@@ -1717,6 +1885,7 @@
          return new SSpawnPlayerPacket(this);
      }
  
@@ -356,7 +347,7 @@
      public ItemEntity dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
      {
          ItemEntity itementity = super.dropItem(droppedItem, dropAround, traceItem);
-@@ -1727,7 +1904,28 @@
+@@ -1727,7 +1896,28 @@
          }
          else
          {
@@ -385,7 +376,7 @@
              ItemStack itemstack = itementity.getItem();
  
              if (traceItem)
-@@ -1743,4 +1941,9 @@
+@@ -1743,4 +1933,9 @@
              return itementity;
          }
      }

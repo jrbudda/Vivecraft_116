@@ -202,7 +202,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.16.2 jrbudda-4-r1b5";
++    public final String minecriftVerString = "Vivecraft 1.16.2 jrbudda-4-r2";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
@@ -1995,7 +1995,7 @@
      }
  
      private static Supplier<IResourcePack> wrapV3(Supplier<IResourcePack> p_228021_0_)
-@@ -3073,4 +3674,511 @@
+@@ -3073,4 +3674,512 @@
          CREATE,
          BACKUP;
      }
@@ -2357,7 +2357,8 @@
 +						portaleffect = 0;
 +				}
 +
-+				if (player.inventory.armorItemInSlot(3).getItem() == Blocks.CARVED_PUMPKIN.asItem()) {
++				ItemStack headItem = player.inventory.armorItemInSlot(3);
++				if (headItem.getItem() == Blocks.CARVED_PUMPKIN.asItem() && (!headItem.hasTag() || headItem.getTag().getInt("CustomModelData") == 0)) {
 +					pumpkineffect = 1f;
 +				}
 +

@@ -163,7 +163,7 @@ public class SwingTracker extends Tracker{
 				tool = true;
 			} else if (tool){
 				entityReachAdd = 1.2f;
-				weaponLength = 0.3f;
+				weaponLength = 0.35f;
 				tool = true;
 			} else if (!is.isEmpty()){
 				weaponLength = 0.1f;
@@ -289,6 +289,7 @@ public class SwingTracker extends Tracker{
 									if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
 										break;
 								}
+								MCReflection.PlayerController_blocknoise.set(Minecraft.getInstance().playerController, 0);
 							}						
 							mc.vrPlayer.blockDust(blockHit.getHitVec().x, blockHit.getHitVec().y, blockHit.getHitVec().z, 3*p, bp, block, 0.6f, 1f);
 						}

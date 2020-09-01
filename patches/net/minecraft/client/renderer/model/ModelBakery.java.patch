@@ -1,6 +1,17 @@
 --- a/net/minecraft/client/renderer/model/ModelBakery.java
 +++ b/net/minecraft/client/renderer/model/ModelBakery.java
-@@ -71,6 +71,7 @@
+@@ -39,8 +39,10 @@
+ import net.minecraft.block.BlockRenderType;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.client.renderer.Atlases;
+ import net.minecraft.client.renderer.BlockModelShapes;
++import net.minecraft.client.renderer.GameRenderer;
+ import net.minecraft.client.renderer.RenderType;
+ import net.minecraft.client.renderer.color.BlockColors;
+ import net.minecraft.client.renderer.model.multipart.Multipart;
+@@ -71,6 +73,7 @@
  import org.apache.commons.lang3.tuple.Triple;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -8,7 +19,7 @@
  
  public class ModelBakery
  {
-@@ -202,7 +203,11 @@
+@@ -203,7 +206,13 @@
                  this.loadTopModel(BlockModelShapes.getModelLocation(p_lambda$processLoading$8_1_));
              });
          }
@@ -16,6 +27,8 @@
 +        
 +        //Vivecraft custom models
 +		this.loadTopModel(TelescopeTracker.scopeModel);
++        this.loadTopModel(GameRenderer.thirdPersonCameraModel);
++        this.loadTopModel(GameRenderer.thirdPersonCameraDisplayModel);
 +        //
 +		
          p_processLoading_1_.endStartSection("items");

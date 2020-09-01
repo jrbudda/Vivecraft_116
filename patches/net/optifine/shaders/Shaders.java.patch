@@ -318,7 +318,7 @@
          if (customUniforms != null)
          {
              customUniforms.update();
-@@ -5742,7 +5803,7 @@
+@@ -5762,7 +5823,7 @@
      private static void loadShaderPackResources()
      {
          shaderPackResources = new HashMap<>();
@@ -327,7 +327,7 @@
          if (shaderPackLoaded)
          {
              List<String> list = new ArrayList<>();
-@@ -5775,6 +5836,7 @@
+@@ -5795,6 +5856,7 @@
                          {
                              String s6 = properties.getProperty(s5);
                              shaderPackResources.put(s5, s6);

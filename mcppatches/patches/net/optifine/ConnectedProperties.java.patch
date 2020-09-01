@@ -8,7 +8,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
-@@ -311,7 +312,7 @@
+@@ -312,7 +313,7 @@
                  list.add(s);
              }
  
@@ -17,7 +17,7 @@
  
              for (int i1 = 0; i1 < astring2.length; ++i1)
              {
-@@ -473,7 +474,7 @@
+@@ -474,7 +475,7 @@
  
      public static Property getProperty(String key, Collection properties)
      {
@@ -26,7 +26,7 @@
          {
              if (key.equals(property.getName()))
              {
-@@ -1226,7 +1227,7 @@
+@@ -1227,7 +1228,7 @@
                  }
              }
  

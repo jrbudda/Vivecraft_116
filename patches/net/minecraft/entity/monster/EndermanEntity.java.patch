@@ -36,7 +36,18 @@
      }
  
      protected void registerData()
-@@ -224,15 +234,33 @@
+@@ -217,22 +227,42 @@
+     private boolean shouldAttackPlayer(PlayerEntity player)
+     {
+         ItemStack itemstack = player.inventory.armorInventory.get(3);
+-
+-        if (itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem())
++//Forge
++        boolean mask = Reflector.callBoolean(itemstack, Reflector.ForgeItemStack_isEnderMask, player, this);
++        if (mask || itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem())
++        //
+         {
+             return false;
          }
          else
          {
@@ -75,7 +86,7 @@
      protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
      {
          return 2.55F;
-@@ -320,6 +348,16 @@
+@@ -320,6 +350,16 @@
  
          if (flag && !flag1)
          {
@@ -92,7 +103,7 @@
              boolean flag2 = this.attemptTeleport(x, y, z, true);
  
              if (flag2 && !this.isSilent())
-@@ -533,11 +571,16 @@
+@@ -533,11 +573,16 @@
  
          public boolean shouldExecute()
          {
@@ -110,21 +121,21 @@
              {
                  return false;
              }
-@@ -559,8 +602,11 @@
+@@ -559,8 +604,11 @@
              BlockPos blockpos1 = blockpos.down();
              BlockState blockstate1 = world.getBlockState(blockpos1);
              BlockState blockstate2 = this.enderman.getHeldBlockState();
 -
 -            if (blockstate2 != null)
 +            //Forge
-+            Object snapshot = Reflector.newInstance(Reflector.BlockSnapshot_Constructor, world, blockpos, blockstate1);
++            Object snapshot = Reflector.call(Reflector.BlockSnapshot_create, world.getDimensionKey(), world, blockpos);
 +            boolean flag = Reflector.callBoolean(Reflector.ForgeEventFactory_onBlockPlace, enderman, snapshot, net.minecraft.util.Direction.UP);
 +            //
 +            if (blockstate2 != null && !flag)
              {
                  blockstate2 = Block.getValidBlockForPosition(blockstate2, this.enderman.world, blockpos);
  
-@@ -626,11 +672,16 @@
+@@ -626,11 +674,16 @@
  
          public boolean shouldExecute()
          {

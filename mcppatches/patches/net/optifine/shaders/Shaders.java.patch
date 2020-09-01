@@ -8,7 +8,7 @@
  import org.lwjgl.opengl.ARBGeometryShader4;
  import org.lwjgl.opengl.ARBShaderObjects;
  import org.lwjgl.opengl.ARBVertexShader;
-@@ -811,6 +812,7 @@
+@@ -812,6 +813,7 @@
  
      public static void loadShaderPack()
      {
@@ -16,7 +16,7 @@
          boolean flag = shaderPackLoaded;
          boolean flag1 = isOldLighting();
  
-@@ -1090,7 +1092,7 @@
+@@ -1091,7 +1093,7 @@
          Set set = props.keySet();
          List<ICustomTexture> list = new ArrayList<>();
  
@@ -25,7 +25,7 @@
          {
              if (s1.startsWith(s))
              {
-@@ -2453,11 +2455,11 @@
+@@ -2454,11 +2456,11 @@
  
      private static int getDrawBuffer(Program p, String str, int i)
      {
@@ -39,7 +39,7 @@
          }
          else
          {
-@@ -4304,15 +4306,15 @@
+@@ -4307,15 +4309,15 @@
          GlStateManager.activeTexture(33984);
      }
  
@@ -61,7 +61,7 @@
  
              if (j != i)
              {
-@@ -5766,7 +5768,7 @@
+@@ -5789,7 +5791,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

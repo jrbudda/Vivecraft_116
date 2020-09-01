@@ -1,0 +1,51 @@
+--- a/net/optifine/player/PlayerItemsLayer.java
++++ b/net/optifine/player/PlayerItemsLayer.java
+@@ -3,8 +3,12 @@
+ import com.mojang.blaze3d.matrix.MatrixStack;
+ import java.util.Map;
+ import java.util.Set;
++
++import org.vivecraft.render.VRPlayerRenderer;
++
+ import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+ import net.minecraft.client.renderer.IRenderTypeBuffer;
++import net.minecraft.client.renderer.entity.LivingRenderer;
+ import net.minecraft.client.renderer.entity.PlayerRenderer;
+ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+ import net.minecraft.client.renderer.entity.model.BipedModel;
+@@ -14,9 +18,9 @@
+ 
+ public class PlayerItemsLayer extends LayerRenderer
+ {
+-    private PlayerRenderer renderPlayer = null;
++    private LivingRenderer renderPlayer = null;
+ 
+-    public PlayerItemsLayer(PlayerRenderer renderPlayer)
++    public PlayerItemsLayer(LivingRenderer renderPlayer)
+     {
+         super(renderPlayer);
+         this.renderPlayer = renderPlayer;
+@@ -34,7 +38,7 @@
+             if (entityLiving instanceof AbstractClientPlayerEntity)
+             {
+                 AbstractClientPlayerEntity abstractclientplayerentity = (AbstractClientPlayerEntity)entityLiving;
+-                BipedModel bipedmodel = this.renderPlayer.getEntityModel();
++                BipedModel bipedmodel = (BipedModel) this.renderPlayer.getEntityModel();
+                 PlayerConfigurations.renderPlayerItems(bipedmodel, abstractclientplayerentity, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
+             }
+         }
+@@ -55,6 +59,14 @@
+                 playerrenderer.addLayer(new PlayerItemsLayer(playerrenderer));
+                 flag = true;
+             }
++            //Vivecraft
++            else if (object1 instanceof VRPlayerRenderer)
++            {
++            	VRPlayerRenderer playerrenderer = (VRPlayerRenderer)object1;
++                playerrenderer.addLayer(new PlayerItemsLayer(playerrenderer));
++                flag = true;
++            }
++            //
+         }
+ 
+         if (!flag)

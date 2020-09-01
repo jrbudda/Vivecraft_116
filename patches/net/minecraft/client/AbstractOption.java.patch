@@ -1,8 +1,8 @@
 --- a/net/minecraft/client/AbstractOption.java
 +++ b/net/minecraft/client/AbstractOption.java
-@@ -193,7 +193,9 @@
-         double d0 = p_lambda$static$35_1_.get(p_lambda$static$35_0_);
-         return d0 == p_lambda$static$35_1_.getMaxValue() ? p_lambda$static$35_1_.func_243222_a(new TranslationTextComponent("options.framerateLimit.max")) : p_lambda$static$35_1_.func_243222_a(new TranslationTextComponent("options.framerate", (int)d0));
+@@ -199,7 +199,9 @@
+             return d0 == p_lambda$static$35_1_.getMaxValue() ? p_lambda$static$35_1_.func_243222_a(new TranslationTextComponent("options.framerateLimit.max")) : p_lambda$static$35_1_.func_243222_a(new TranslationTextComponent("options.framerate", (int)d0));
+         }
      });
 -    public static final SliderPercentageOption GAMMA = new SliderPercentageOption("options.gamma", 0.0D, 1.0D, 0.0F, (p_lambda$static$36_0_) ->
 +    //Vivecraft cant see shit min
@@ -11,7 +11,7 @@
      {
          return p_lambda$static$36_0_.gamma;
      }, (p_lambda$static$37_0_, p_lambda$static$37_1_) ->
-@@ -202,14 +204,24 @@
+@@ -208,14 +210,24 @@
      }, (p_lambda$static$38_0_, p_lambda$static$38_1_) ->
      {
          double d0 = p_lambda$static$38_1_.normalizeValue(p_lambda$static$38_1_.get(p_lambda$static$38_0_));
@@ -41,7 +41,7 @@
      });
      public static final SliderPercentageOption MIPMAP_LEVELS = new SliderPercentageOption("options.mipmapLevels", 0.0D, 4.0D, 1.0F, (p_lambda$static$39_0_) ->
      {
-@@ -350,6 +362,9 @@
+@@ -356,6 +368,9 @@
  
              p_lambda$static$65_0_.updateRenderClouds();
              minecraft.worldRenderer.loadRenderers();
@@ -51,7 +51,7 @@
          }
      }, (p_lambda$static$66_0_, p_lambda$static$66_1_) ->
      {
-@@ -372,11 +387,13 @@
+@@ -378,11 +393,13 @@
      });
      public static final IteratableOption GUI_SCALE = new IteratableOption("options.guiScale", (p_lambda$static$67_0_, p_lambda$static$67_1_) ->
      {

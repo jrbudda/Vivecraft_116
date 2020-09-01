@@ -24,6 +24,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.network.play.client.CPlayerPacket;
 import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 
@@ -240,7 +241,7 @@ public class NetworkHelper {
 	public static int getTeleportHorizLimit() {
 		return Minecraft.getInstance().vrSettings.overrides.getSetting(VRSettings.VrOptions.TELEPORT_HORIZ_LIMIT).getInt();
 	}
-	
+
 	public static void sendActiveHand(byte c) {
 		if(!serverWantsData) return;
 		CCustomPayloadPacket pack =	NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.ACTIVEHAND, new byte[]{c});

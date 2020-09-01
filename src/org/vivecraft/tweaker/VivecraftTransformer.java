@@ -40,7 +40,7 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
     public List<ITransformer> lostMethodTransformers = new ArrayList<ITransformer>();
     public List<ITransformer> fieldTransformersOftheDamned  = new ArrayList<ITransformer>();
     public Set<Target> ofTargets = null;
-    
+
     private List<String> exclusions = Arrays.asList(
             "net/minecraft/item/Item",
             "net/minecraft/item/Item$Properties",
@@ -87,37 +87,37 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
         ClassNode classnode = input;
         String s = context.getClassName();
         String s1 = s.replace('.', '/');
+            
         byte[] abyte = this.getResourceBytes("srg/" + s1 + ".clsrg");
-
+    	        
         if (abyte != null)
         {
-            InputStream inputstream = new ByteArrayInputStream(abyte);
-            ClassNode classnode1 = this.loadClass(inputstream);
-        	System.out.println("Vivecraft Replacing " + s + " History ... ");
-			ITransformerActivity a;
-		
+        	System.out.println("Class Debug " + s + " History ... ");
+            ITransformerActivity a;	
         	for (ITransformerActivity act : context.getAuditActivities()){
         	  	System.out.println("... " + act.getActivityString());
         	}
-			
-            if (classnode1 != null)
-            {
-                this.debugClass(classnode1);
-                AccessFixer.fixMemberAccess(input, classnode1);
-                classnode = classnode1;
-            }
-        }
+        	InputStream inputstream = new ByteArrayInputStream(abyte);
+        	ClassNode classnode1 = this.loadClass(inputstream);
+        	System.out.println("Vivecraft Replacing " + s);		
+        	if (classnode1 != null)
+        	{
+        		this.debugClass(classnode1);
+        		AccessFixer.fixMemberAccess(input, classnode1);
+        		classnode = classnode1;
+        	}
 
-        for(ITransformer<ClassNode> it: undeadClassTransformers) {
-        	TransformerHolder<ClassNode> t = (TransformerHolder<ClassNode>) it;
-        	if(t.owner().name().contains("OptiFine")) //NOT U
-        		continue;
-        	if(t.owner().name().contains("Vivecraft")) //NOT U EITHER *not needed*
-        		continue;
-        	for(Target target: t.targets()) {
-        		if(target.getClassName().equals(context.getClassName())) {
-        			classnode = t.transform(classnode, context);
-            	  	System.out.println("ARISE! " + target.getClassName() + " " + target.getElementName() + " " + target.getElementDescriptor());
+        	for(ITransformer<ClassNode> it: undeadClassTransformers) {
+        		TransformerHolder<ClassNode> t = (TransformerHolder<ClassNode>) it;
+        		if(t.owner().name().contains("OptiFine")) //NOT U
+        			continue;
+        		if(t.owner().name().contains("Vivecraft")) //NOT U EITHER *not needed*
+        			continue;
+        		for(Target target: t.targets()) {
+        			if(target.getClassName().equals(context.getClassName())) {
+        				classnode = t.transform(classnode, context);
+        				System.out.println("ARISE! " + t.owner().name() + " " + target.getClassName() + " " + target.getElementName() + " " + target.getElementDescriptor());
+        			}
         		}
         	}
         }

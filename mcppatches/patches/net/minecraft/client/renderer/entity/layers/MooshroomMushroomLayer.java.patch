@@ -8,4 +8,4 @@
 +        IEntityRenderer<T, CowModel<T>> mooshroomrenderer = rendererIn;
          this.modelRendererMushroom = new ModelRenderer(mooshroomrenderer.getEntityModel());
          this.modelRendererMushroom.setTextureSize(16, 16);
-         this.modelRendererMushroom.rotationPointX = -6.0F;
+         this.modelRendererMushroom.rotationPointX = 8.0F;

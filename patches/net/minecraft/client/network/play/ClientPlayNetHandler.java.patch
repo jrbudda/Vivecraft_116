@@ -225,17 +225,16 @@
  
              if (effect != null)
              {
-@@ -1765,6 +1849,9 @@
+@@ -1764,7 +1848,7 @@
+                 itagcollectionsupplier.func_242212_e();
              }
  
-             this.client.getSearchTree(SearchTreeManager.TAGS).recalculate();
-+            //Forge
-+            Reflector.postForgeBusEvent(Reflector.TagsUpdatedEvent_Constructor, this.networkTagManager);
-+            //          
+-            this.client.getSearchTree(SearchTreeManager.TAGS).recalculate();
++            this.client.getSearchTree(SearchTreeManager.TAGS).recalculate();      
          }
      }
  
-@@ -2119,7 +2206,7 @@
+@@ -2119,7 +2203,7 @@
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
          ResourceLocation resourcelocation = packetIn.getChannelName();
          PacketBuffer packetbuffer = null;
@@ -244,7 +243,7 @@
          try
          {
              packetbuffer = packetIn.getBufferData();
-@@ -2392,14 +2479,125 @@
+@@ -2392,14 +2476,125 @@
                  int l5 = packetbuffer.readInt();
                  this.client.debugRenderer.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
              }
@@ -372,7 +371,7 @@
              {
                  packetbuffer.release();
              }
-@@ -2759,4 +2957,14 @@
+@@ -2759,4 +2954,14 @@
      {
          return this.field_239163_t_;
      }

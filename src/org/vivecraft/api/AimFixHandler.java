@@ -27,7 +27,6 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		ServerPlayerEntity player = ((ServerPlayNetHandler)netManager.getNetHandler()).player;
 		boolean isCapturedPacket = msg instanceof CPlayerTryUseItemPacket || msg instanceof CPlayerTryUseItemOnBlockPacket || msg instanceof CPlayerDiggingPacket;
-		boolean useActiveHand = !(msg instanceof CPlayerDiggingPacket) || ((CPlayerDiggingPacket)msg).getAction() == CPlayerDiggingPacket.Action.RELEASE_USE_ITEM;
 
 		if (!NetworkHelper.isVive(player) || !isCapturedPacket || player.getServer() == null) {
 			// we don't need to handle this packet, just defer to the next handler in the pipeline
@@ -50,8 +49,8 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 			ServerVivePlayer data = null;
 			if (NetworkHelper.isVive(player)) { // Check again in case of race condition
 				data = NetworkHelper.vivePlayers.get(player.getGameProfile().getId());
-				Vector3d pos = data.getControllerPos(useActiveHand ? data.activeHand : 0, player);
-				Vector3d aim = data.getControllerDir(useActiveHand ? data.activeHand : 0);
+				Vector3d pos = data.getControllerPos(0, player);
+				Vector3d aim = data.getControllerDir(0);
 
 				// Inject our custom orientation data
 				player.setRawPosition(pos.x, pos.y, pos.z);

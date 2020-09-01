@@ -18,7 +18,7 @@
                  {
                      TextureAtlasSprite textureatlassprite6 = textureatlassprite3.spriteSpecular;
  
-@@ -778,7 +778,7 @@
+@@ -779,7 +779,7 @@
                              }
                              else
                              {
@@ -27,7 +27,7 @@
                                  map.put(j, k + 1);
                              }
                          }
-@@ -791,12 +791,12 @@
+@@ -792,12 +792,12 @@
          }
  
          int l = 0;
@@ -43,7 +43,7 @@
              l += l1;
          }
  
-@@ -806,7 +806,7 @@
+@@ -807,7 +807,7 @@
  
          for (int j2 : set1)
          {

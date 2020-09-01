@@ -1619,6 +1619,7 @@ public class VRSettings
                	else if(par2 == 29) vrWorldScale = 100f;           	         	
             	else vrWorldScale = 1;
             	vrWorldScale = MathHelper.clamp(vrWorldScale, overrides.getSetting(par1EnumOptions).getValueMin(), overrides.getSetting(par1EnumOptions).getValueMax());
+            	mc.vrPlayer.snapRoomOriginToPlayerEntity(mc.player, false, true);
                 break;
             case WORLD_ROTATION:
                 this.vrWorldRotation = par2;

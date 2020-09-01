@@ -3,11 +3,15 @@ package org.vivecraft.gameplay.trackers;
 import java.util.HashSet;
 
 import org.vivecraft.api.NetworkHelper;
+import org.vivecraft.api.VRData;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.reflection.MCReflection.ReflectionMethod;
+import org.vivecraft.render.RenderPass;
 import org.vivecraft.render.VRFirstPersonArmSwing;
+import org.vivecraft.settings.VRHotkeys;
+import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -63,19 +67,27 @@ public class InteractTracker extends Tracker{
 	BlockPos[] inBlockPos = new BlockPos[2];
 	Entity[] inEntity = new Entity[2];
 	private EntityRayTraceResult[] inEntityHit = new EntityRayTraceResult[2];
+	private boolean[] inCamera = new boolean[2];
 	boolean[] active = new boolean[2];
 	boolean[] wasactive = new boolean[2];
 
 	@Override
 	public void reset(ClientPlayerEntity player) {
 		for(int c =0 ;c<2;c++){
-			inBlockPos[c] = null;
-			inBlockHit[c] = null;
-			inEntity[c] = null;
-			inEntityHit[c] = null;
-			active[c] = false;
-			MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).setEnabled(ControllerType.values()[c], false);
+			reset(player, c);
 		}
+	}
+
+	private void reset(ClientPlayerEntity player, int c) {
+		if (inCamera[c] && VRHotkeys.isMovingThirdPersonCam() && VRHotkeys.getMovingThirdPersonCamTriggerer() == VRHotkeys.Triggerer.INTERACTION && VRHotkeys.getMovingThirdPersonCamController() == c)
+			VRHotkeys.stopMovingThirdPersonCam();
+		inBlockPos[c] = null;
+		inBlockHit[c] = null;
+		inEntity[c] = null;
+		inEntityHit[c] = null;
+		inCamera[c] = false;
+		active[c] = false;
+		MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).setEnabled(ControllerType.values()[c], false);
 	}
 
 	private HashSet<Class> rightClickable = null;
@@ -107,9 +119,11 @@ public class InteractTracker extends Tracker{
 
 		Vector3d forward = new Vector3d(0,0,-1);
 
-		reset(player);
-
 		for(int c =0 ;c<2;c++){
+			if (inCamera[c] && MCOpenVR.keyVRInteract.isKeyDown(ControllerType.values()[c]))
+				continue;
+
+			reset(player, c);
 
 			if(c == 0) {
 				if(hotbar >= 0) {
@@ -122,6 +136,18 @@ public class InteractTracker extends Tracker{
 			Vector3d handDirection = mc.vrPlayer.vrdata_world_pre.getHand(c).getCustomVector(forward);
 			ItemStack is = player.getHeldItem(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);
 			Item item = null;
+
+			if (!active[c] && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)) {
+				VRData.VRDevicePose camData = mc.vrPlayer.vrdata_world_pre.getEye(RenderPass.THIRD);
+				Vector3d camPos = camData.getPosition();
+				camPos = camPos.subtract(camData.getCustomVector(new Vector3d(0, 0, -1)).scale(0.15f));
+				camPos = camPos.subtract(camData.getCustomVector(new Vector3d(0, -1, 0)).scale(0.05f));
+
+				if (handPos.distanceTo(camPos) < 0.15f) {
+					inCamera[c] = true;
+					active[c] = true;
+				}
+			}
 
 			if(!active[c]) {
 
@@ -185,6 +211,10 @@ public class InteractTracker extends Tracker{
 		return active[controller];
 	}
 
+	public boolean isInCamera() {
+		return inCamera[0] || inCamera[1];
+	}
+
 	public void processBindings() {
 		for(int c =0 ;c<2;c++){
 			if(MCOpenVR.keyVRInteract.isPressed(ControllerType.values()[c])) {
@@ -199,6 +229,10 @@ public class InteractTracker extends Tracker{
 				}
 				else if(hotbar == 9 && hand == Hand.MAIN_HAND) {
 					mc.player.connection.sendPacket(new CPlayerDiggingPacket(CPlayerDiggingPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ZERO, Direction.DOWN));
+					success = true;
+				}
+				else if (inCamera[c]) {
+					VRHotkeys.startMovingThirdPersonCam(c, VRHotkeys.Triggerer.INTERACTION);
 					success = true;
 				}
 				else if(inEntityHit[c]!=null) {     

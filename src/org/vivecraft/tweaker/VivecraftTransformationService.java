@@ -156,10 +156,10 @@ public class VivecraftTransformationService implements ITransformationService
 	        for(List<ITransformer<?>> c: classTransformers.values()) {
 	        	for(ITransformer ct:c) {
 	        		TransformerHolder it = (TransformerHolder) ct;
-	        		if(transformer.ofTargets == null && it.owner().name().equals(("OptiFine")))
+	        		if(transformer.ofTargets == null && it.owner().name().equals(("OptiFine"))) 
 	        			transformer.ofTargets = it.targets();
 	        		else
-	        			transformer.undeadClassTransformers.addAll(c);
+	        			transformer.undeadClassTransformers.add(ct);
 	        	}
 	        }
 	        LOGGER.info("VivecraftTransformationService.necromancy: Reviving " + transformer.undeadClassTransformers.size() + " classTransformers ");

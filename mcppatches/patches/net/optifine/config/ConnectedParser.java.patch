@@ -1,6 +1,6 @@
 --- a/net/optifine/config/ConnectedParser.java
 +++ b/net/optifine/config/ConnectedParser.java
-@@ -105,7 +105,7 @@
+@@ -104,7 +104,7 @@
                  }
              }
  
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -376,7 +376,7 @@
+@@ -375,7 +375,7 @@
  
      public static Comparable getPropertyValue(String value, Collection propertyValues)
      {
@@ -18,12 +18,3 @@
          {
              if (getValueName(comparable).equals(value))
              {
-@@ -491,7 +491,7 @@
-                 list = list1;
-             }
- 
--            return list.toArray(new Biome[list.size()]);
-+            return (Biome[]) list.toArray(new Biome[list.size()]);
-         }
-     }
- 
