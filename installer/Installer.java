@@ -1418,6 +1418,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 					if(l.startsWith("OverrideMemory"))
 						continue;
+					
+					if(l.startsWith("OverrideJavaLocation") && setupJavaPath)
+						continue;
 
 					if (l.startsWith("JavaPath") && setupJavaPath) {
 						javaPath = l.split("=", 2)[1];
@@ -1437,6 +1440,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				if (setupJavaPath) {
 					javaPath = checkForJava14(javaPath);
 					lines.add("JavaPath=" + javaPath);
+					lines.add("OverrideJavaLocation=true");
 				}
 
 				r.close();
