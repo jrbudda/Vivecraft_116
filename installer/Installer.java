@@ -1438,7 +1438,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				lines.add("JvmArgs=" + getGCOptions());
 
 				if (setupJavaPath) {
+					javaPath = javaPath.replace("\\\\", "\\");
 					javaPath = checkForJava14(javaPath);
+					javaPath = javaPath.replace("\\", "\\\\");
 					lines.add("JavaPath=" + javaPath);
 					lines.add("OverrideJavaLocation=true");
 				}
