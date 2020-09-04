@@ -25,7 +25,7 @@
 		"MMC-hint": "local"
 	}
 	],
-	"mainClass": "cpw.mods.modlauncher.Launcher",
+	"mainClass": "io.github.zekerzhayard.forgewrapper.installer.Main",
 	"name": "Vivecraft(Forge)",
 	"releaseTime": "2017-09-21T12:32:20+00:00",
 	"uid": "vivecraft",
