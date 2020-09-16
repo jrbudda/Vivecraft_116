@@ -35,9 +35,11 @@ import com.google.common.collect.Lists;
 import io.github.classgraph.ClassGraph;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.LanguageMap;
@@ -749,6 +751,13 @@ public class Utils
 			light |= minLight << 4;
 		}
 		return light;
+	}
+
+	public static void takeScreenshot(Framebuffer fb) {
+		Minecraft mc = Minecraft.getInstance();
+		ScreenShotHelper.saveScreenshot(mc.gameDir, fb.framebufferWidth, fb.framebufferHeight, fb, text -> {
+			mc.execute(() -> mc.ingameGUI.getChatGUI().printChatMessage(text));
+		});
 	}
 
 	public static List<ITextProperties> wrapText(ITextProperties text, int width, FontRenderer fontRenderer, @Nullable ITextProperties linePrefix)

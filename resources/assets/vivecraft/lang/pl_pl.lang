@@ -24,6 +24,7 @@ vivecraft.key.swapMirrorView=Przełącz widok w oknie
 vivecraft.key.toggleKeyboard=Pokaż/Ukryj klawiaturę
 vivecraft.key.moveThirdPersonCam=Porusz kamerę trzecioosobową
 vivecraft.key.togglePlayerList=Pokaż/Ukryj listę graczy
+vivecraft.key.toggleHandheldCam=Przełącz kamerę
 vivecraft.key.trackpadTouch=Dotyk trackpada
 vivecraft.key.vrInteract=Interakcja
 vivecraft.key.guiLeftClick=Lewe kliknięcie
@@ -115,7 +116,7 @@ vivecraft.options.MIXED_REALITY_RENDER_HANDS=Pokaż dłonie
 vivecraft.options.MIXED_REALITY_UNITY_LIKE=Ułożenie
 vivecraft.options.MIXED_REALITY_UNDISTORTED=Niezdeformowane pole
 vivecraft.options.MIXED_REALITY_ALPHA_MASK=Maska alpha
-vivecraft.options.MIXED_REALITY_FOV=FOV kamery
+vivecraft.options.MIXED_REALITY_FOV=Trzecioosobowy FOV
 vivecraft.options.WALK_UP_BLOCKS=Wchodzenie na bloki
 vivecraft.options.MOVEMENT_MULTIPLIER=Ruch. Mnożnik szybkości
 vivecraft.options.INERTIA_FACTOR=Bezwładność gracza
@@ -168,6 +169,8 @@ vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Przeładuj zewnętrzną kamerę
 vivecraft.options.RIGHT_CLICK_DELAY=Powtórzenie prawego kliknięcia
 vivecraft.options.ANIMAL_TOUCHING=Dotykanie zwierząt
+vivecraft.options.HANDHELD_CAMERA_FOV=FOV kamery
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=Rozdzielczość kamery
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=Względna wielkość HUD. \nWartość jest względna, nie w stopniach, części FOV lub czegokolwiek.
@@ -329,6 +332,10 @@ vivecraft.options.RELOAD_EXTERNAL_CAMERA.tooltip=Ponownie ładuje konfigurację 
 vivecraft.options.RIGHT_CLICK_DELAY.tooltip=Ilość ticków pomiędzy kliknięciami prawego guzika gdy przytrzymujesz guzik wciścięty.
 
 vivecraft.options.ANIMAL_TOUCHING.tooltip=Jeśli włączone, dotykanie pasywnego moba (rzwierzęcia), nie trzymając broni w ręku, zadziała jak PPM (interakcja) zamiast ataku. \nWyłącz dla Klepania Świnek, Josh. 
+
+vivecraft.options.HANDHELD_CAMERA_FOV.tooltip=FOV podręcznej kamery do zrzutów ekranu. 
+
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE.tooltip=Rozdzielczość podręcznej kamery do zrzutów ekranu, aby móc robić większe zrzuty od normalnej rozdzielczości gry. \nNie może być używana z shaderami. \n§cUWAGA: Ustawienie tego bardzo wysoko może stopić twój komputer!
 
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=Nie widzę

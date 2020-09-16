@@ -11,15 +11,17 @@
  import net.minecraft.client.renderer.RenderType;
  import net.minecraft.client.renderer.color.BlockColors;
  import net.minecraft.client.renderer.model.multipart.Multipart;
-@@ -71,6 +73,7 @@
- import org.apache.commons.lang3.tuple.Triple;
+@@ -72,6 +74,9 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.vivecraft.gameplay.trackers.TelescopeTracker;
  
++import org.vivecraft.gameplay.trackers.CameraTracker;
++import org.vivecraft.gameplay.trackers.TelescopeTracker;
++
  public class ModelBakery
  {
-@@ -203,7 +206,13 @@
+     public static final RenderMaterial LOCATION_FIRE_0 = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("block/fire_0"));
+@@ -203,7 +208,15 @@
                  this.loadTopModel(BlockModelShapes.getModelLocation(p_lambda$processLoading$8_1_));
              });
          }
@@ -29,6 +31,8 @@
 +		this.loadTopModel(TelescopeTracker.scopeModel);
 +        this.loadTopModel(GameRenderer.thirdPersonCameraModel);
 +        this.loadTopModel(GameRenderer.thirdPersonCameraDisplayModel);
++        this.loadTopModel(CameraTracker.cameraModel);
++        this.loadTopModel(CameraTracker.cameraDisplayModel);
 +        //
 +		
          p_processLoading_1_.endStartSection("items");

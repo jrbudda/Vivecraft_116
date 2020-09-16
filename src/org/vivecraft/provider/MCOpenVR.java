@@ -32,6 +32,8 @@ import net.optifine.Lang;
 import net.optifine.reflect.Reflector;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.glfw.GLFW;
+
+import org.vivecraft.api.VRData;
 import org.vivecraft.api.Vec3History;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.control.HandedKeyBinding;
@@ -295,6 +297,7 @@ public class MCOpenVR
 	public static final KeyBinding keyToggleKeyboard = new KeyBinding("vivecraft.key.toggleKeyboard", GLFW.GLFW_KEY_UNKNOWN, "key.categories.ui");
 	public static final KeyBinding keyMoveThirdPersonCam = new KeyBinding("vivecraft.key.moveThirdPersonCam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.misc");
 	public static final KeyBinding keyTogglePlayerList = new KeyBinding("vivecraft.key.togglePlayerList", GLFW.GLFW_KEY_UNKNOWN, "key.categories.multiplayer");
+	public static final KeyBinding keyToggleHandheldCam = new KeyBinding("vivecraft.key.toggleHandheldCam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.misc");
 	public static final HandedKeyBinding keyTrackpadTouch = new HandedKeyBinding("vivecraft.key.trackpadTouch", GLFW.GLFW_KEY_UNKNOWN, "key.categories.misc"); // used for swipe sampler
 	public static final HandedKeyBinding keyVRInteract = new HandedKeyBinding("vivecraft.key.vrInteract", GLFW.GLFW_KEY_UNKNOWN,"key.categories.gameplay");
 	public static final HandedKeyBinding keyClimbeyGrab = new HandedKeyBinding("vivecraft.key.climbeyGrab", GLFW.GLFW_KEY_UNKNOWN,"vivecraft.key.category.climbey");
@@ -489,6 +492,7 @@ public class MCOpenVR
 			keyBindingSet.add(keyToggleKeyboard);
 			keyBindingSet.add(keyMoveThirdPersonCam);
 			keyBindingSet.add(keyTogglePlayerList);
+			keyBindingSet.add(keyToggleHandheldCam);
 			keyBindingSet.add(keyTrackpadTouch);
 			keyBindingSet.add(GuiHandler.keyLeftClick);
 			keyBindingSet.add(GuiHandler.keyRightClick);
@@ -649,6 +653,7 @@ public class MCOpenVR
 		addActionParams(map, MCOpenVR.keySwapMirrorView, "optional", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyToggleKeyboard, "optional", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyMoveThirdPersonCam, "optional", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, MCOpenVR.keyToggleHandheldCam, "optional", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyTrackpadTouch, "optional", "boolean", VRInputActionSet.TECHNICAL);
 		addActionParams(map, MCOpenVR.keyVRInteract, "suggested", "boolean", VRInputActionSet.CONTEXTUAL);
 		addActionParams(map, MCOpenVR.keyClimbeyGrab, "suggested", "boolean", null);
@@ -1827,6 +1832,18 @@ public class MCOpenVR
 			mc.ingameGUI.showPlayerList = !mc.ingameGUI.showPlayerList;
 		}
 
+		if (keyToggleHandheldCam.isPressed() && mc.player != null) {
+			mc.cameraTracker.toggleVisibility();
+			if (mc.cameraTracker.isVisible()) {
+				ControllerType hand = findActiveBindingControllerType(keyToggleHandheldCam);
+				if (hand == null)
+					hand = ControllerType.RIGHT;
+				VRData.VRDevicePose handPose = mc.vrPlayer.vrdata_world_pre.getController(hand.ordinal());
+				mc.cameraTracker.setPosition(handPose.getPosition());
+				mc.cameraTracker.setRotation(new Quaternion(handPose.getMatrix().transposed()));
+			}
+		}
+
 		GuiHandler.processBindingsGui();
 		RadialHandler.processBindings();
 		KeyboardHandler.processBindings();
@@ -2559,7 +2576,7 @@ public class MCOpenVR
 			Vector3 controllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPoseTip[0]);
 			aimSource[0] = controllerPos.toVector3d();
 
-			controllerHistory[0].add(aimSource[0]);
+			controllerHistory[0].add(getAimSource(0));
 
 			// build matrix describing controller rotation
 			controllerRotation[0].M[0][0] = controllerPoseTip[0].M[0][0];
@@ -2686,7 +2703,7 @@ public class MCOpenVR
 
 			Vector3 leftControllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPoseTip[1]);
 			aimSource[1] = leftControllerPos.toVector3d();
-			controllerHistory[1].add(aimSource[1]);
+			controllerHistory[1].add(getAimSource(1));
 
 			// build matrix describing controller rotation
 			controllerRotation[1].M[0][0] = controllerPoseTip[1].M[0][0];

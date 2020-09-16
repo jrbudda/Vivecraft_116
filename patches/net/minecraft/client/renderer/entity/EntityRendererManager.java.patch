@@ -97,8 +97,8 @@
 +    	if(renderedEntity == null) return info.getRotation(); //how did u get here, boo?
 +    	
 +    	Vector3d src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(RenderPass.CENTER).getPosition();    	
-+    	if(Minecraft.getInstance().currentPass == RenderPass.THIRD)
-+    		src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(RenderPass.THIRD).getPosition();
++    	if(Minecraft.getInstance().currentPass == RenderPass.THIRD || Minecraft.getInstance().currentPass == RenderPass.CAMERA)
++    		src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(Minecraft.getInstance().currentPass).getPosition();
 +   	
 +    	//To not have sprite appear differently in 3rd person, let's have them always point at the player. 
 +    	Vector3d dir = renderedEntity.getPositionVec().add(0,renderedEntity.getHeight()/2,0).subtract(src).normalize();
@@ -119,8 +119,8 @@
 +    	Entity renderedEntity = Minecraft.getInstance().worldRenderer.renderedEntity;
 +    	if(renderedEntity == null) return info.getRotation(); //how did u get here, boo? 	
 +    	Vector3d src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(RenderPass.CENTER).getPosition();    	
-+    	if(Minecraft.getInstance().currentPass == RenderPass.THIRD)
-+    		src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(RenderPass.THIRD).getPosition();	
++    	if(Minecraft.getInstance().currentPass == RenderPass.THIRD || Minecraft.getInstance().currentPass == RenderPass.CAMERA)
++    		src = Minecraft.getInstance().vrPlayer.getVRDataWorld().getEye(Minecraft.getInstance().currentPass).getPosition();
 +    	Vector3d dir = renderedEntity.getPositionVec().add(0,renderedEntity.getHeight() + offset ,0).subtract(src).normalize();
 +        this.cameraOrientation.set(0.0F, 0.0F, 0.0F, 1.0F);   
 +        this.cameraOrientation.multiply(Vector3f.YP.rotationDegrees((float)-Math.toDegrees(Math.atan2(-dir.x, dir.z))));

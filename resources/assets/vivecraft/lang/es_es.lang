@@ -24,6 +24,7 @@ vivecraft.key.swapMirrorView=Cambiar Vista Duplicada
 vivecraft.key.toggleKeyboard=Mostrar/Ocultar Teclado
 vivecraft.key.moveThirdPersonCam=Mover cámara en tercera persona
 vivecraft.key.togglePlayerList=Alternar Lista de Jugadores
+vivecraft.key.toggleHandheldCam=Cambiar Cámara
 vivecraft.key.trackpadTouch=Tocar Panel Táctil
 vivecraft.key.vrInteract=Interacción Contextual
 vivecraft.key.guiLeftClick=Clic izdo.
@@ -115,7 +116,7 @@ vivecraft.options.MIXED_REALITY_RENDER_HANDS=Mostrar Manos
 vivecraft.options.MIXED_REALITY_UNITY_LIKE=Distribución
 vivecraft.options.MIXED_REALITY_UNDISTORTED=Sin distorsiones
 vivecraft.options.MIXED_REALITY_ALPHA_MASK=Máscara Transparencia
-vivecraft.options.MIXED_REALITY_FOV=Campo de Visión Cámara
+vivecraft.options.MIXED_REALITY_FOV=CdV 3ª Pers.
 vivecraft.options.WALK_UP_BLOCKS=Auto-subir bloques
 vivecraft.options.MOVEMENT_MULTIPLIER=Multiplicador Vel. Mov.
 vivecraft.options.INERTIA_FACTOR=Inercia del Jugador
@@ -168,6 +169,8 @@ vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Recargar Cámara Externa
 vivecraft.options.RIGHT_CLICK_DELAY=Repet. Clic dcho.
 vivecraft.options.ANIMAL_TOUCHING=Tocar Animales
+vivecraft.options.HANDHELD_CAMERA_FOV=Campo de Visión Cámara
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=Resolución Cámara
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=Tamaño relativo que ocupa la Barra en el campo-de-visión.\nLas unidades son relativas, ni en grados o fracciones de campo-de-visión ni nada.
@@ -329,6 +332,10 @@ vivecraft.options.RELOAD_EXTERNAL_CAMERA.tooltip=Recarga la configuración de la
 vivecraft.options.RIGHT_CLICK_DELAY.tooltip=El número de tics del juego entre "clics derecho" mientras se mantiene presionado el botón.
 
 vivecraft.options.ANIMAL_TOUCHING.tooltip=Si está habilitado, tocar un animal (mob) pasivo sin un arma interactuará (clic dcho.) en vez de atacarlo.\nDeshabilitar para abofetear cerditos.
+
+vivecraft.options.HANDHELD_CAMERA_FOV.tooltip=CdV de la cámara de fotos.
+
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE.tooltip=Resolución de la cámara de fotos, para tomar capturas de pantalla a mayor resolución de lo normal.\nNo puede ser usado con sombreados activados.\n§cATENCIÓN: ¡Valores muy altos pueden derretir tu ordenador!
 
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=No Puedo Ver

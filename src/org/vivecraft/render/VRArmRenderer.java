@@ -46,15 +46,15 @@ public class VRArmRenderer extends PlayerRenderer
 
     private void renderItem(ControllerType side, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, AbstractClientPlayerEntity playerIn, ModelRenderer rendererArmIn, ModelRenderer rendererArmwearIn)
     {
-    	
-        if (MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).isEnabledRaw(side) ||
-        		MCOpenVR.keyVRInteract.isKeyDown(side)|| 
-        		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).isEnabledRaw(side) ||
-        		MCOpenVR.keyClimbeyGrab.isKeyDown(side)) {
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_COMBINE);
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_COMBINE_RGB_ARB, GL13.GL_MODULATE);
-        	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_RGB_SCALE_ARB, 2);      	
-        }
+    	// TODO: find a different way to highlight the hand
+        //if (MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).isEnabledRaw(side) ||
+        //		MCOpenVR.keyVRInteract.isKeyDown(side)||
+        //		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).isEnabledRaw(side) ||
+        //		MCOpenVR.keyClimbeyGrab.isKeyDown(side)) {
+        //	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_COMBINE);
+        //	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_COMBINE_RGB_ARB, GL13.GL_MODULATE);
+        //	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_RGB_SCALE_ARB, 2);
+        //}
         
         PlayerModel<AbstractClientPlayerEntity> playermodel = this.getEntityModel();
 		MCReflection.RenderPlayer_setModelVisibilities.invoke(this, playerIn);

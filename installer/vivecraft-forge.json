@@ -98,13 +98,13 @@
             }
         },
         {
-            "name": "cpw.mods:modlauncher:6.1.1",
+            "name": "cpw.mods:modlauncher:7.0.1",
             "downloads": {
                 "artifact": {
-                    "path": "cpw/mods/modlauncher/6.1.1/modlauncher-6.1.1.jar",
-                    "url": "https://files.minecraftforge.net/maven/cpw/mods/modlauncher/6.1.1/modlauncher-6.1.1.jar",
-                    "sha1": "aa2b9b88c70e6857009de2143ddf2a6d27a39bdd",
-                    "size": 117621
+                    "path": "cpw/mods/modlauncher/7.0.1/modlauncher-7.0.1.jar",
+                    "url": "https://files.minecraftforge.net/maven/cpw/mods/modlauncher/7.0.1/modlauncher-7.0.1.jar",
+                    "sha1": "e66e347c2a4c61781198f86be5cc43f19c1dfb92",
+                    "size": 122080
                 }
             }
         },

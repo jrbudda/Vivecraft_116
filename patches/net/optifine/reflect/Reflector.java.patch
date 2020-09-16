@@ -139,6 +139,15 @@
      public static ReflectorClass Loader = new ReflectorClass("net.minecraftforge.fml.common.Loader");
      public static ReflectorMethod Loader_getActiveModList = new ReflectorMethod(Loader, "getActiveModList");
      public static ReflectorMethod Loader_instance = new ReflectorMethod(Loader, "instance");
+@@ -364,7 +397,7 @@
+     public static ReflectorClass RenderLivingEvent_Post = new ReflectorClass("net.minecraftforge.client.event.RenderLivingEvent$Post");
+     public static ReflectorConstructor RenderLivingEvent_Post_Constructor = new ReflectorConstructor(RenderLivingEvent_Post, new Class[] {LivingEntity.class, LivingRenderer.class, Float.TYPE, MatrixStack.class, IRenderTypeBuffer.class, Integer.TYPE});
+     public static ReflectorClass RenderNameplateEvent = new ReflectorClass("net.minecraftforge.client.event.RenderNameplateEvent");
+-    public static ReflectorConstructor RenderNameplateEvent_Constructor = new ReflectorConstructor(RenderNameplateEvent, new Class[] {Entity.class, ITextComponent.class, EntityRenderer.class, MatrixStack.class, IRenderTypeBuffer.class, Integer.TYPE});
++    public static ReflectorConstructor RenderNameplateEvent_Constructor = new ReflectorConstructor(RenderNameplateEvent, new Class[] {Entity.class, ITextComponent.class, EntityRenderer.class, MatrixStack.class, IRenderTypeBuffer.class, Integer.TYPE, Float.TYPE});
+     public static ReflectorMethod RenderNameplateEvent_getContent = new ReflectorMethod(RenderNameplateEvent, "getContent");
+     public static ReflectorClass ScreenshotEvent = new ReflectorClass("net.minecraftforge.client.event.ScreenshotEvent");
+     public static ReflectorMethod ScreenshotEvent_getCancelMessage = new ReflectorMethod(ScreenshotEvent, "getCancelMessage");
 @@ -382,6 +415,8 @@
      public static ReflectorField EnderDragonRenderer_model = new ReflectorField(EnderDragonRenderer, EnderDragonRenderer.EnderDragonModel.class);
      public static ReflectorClass GuiMainMenu = new ReflectorClass(MainMenuScreen.class);

@@ -22,6 +22,7 @@ vivecraft.key.swapMirrorView=Swap Mirror View
 vivecraft.key.toggleKeyboard=Show/Hide Keyboard
 vivecraft.key.moveThirdPersonCam=Move Third Person Camera
 vivecraft.key.togglePlayerList=Toggle Player List
+vivecraft.key.toggleHandheldCam=Toggle Camera
 vivecraft.key.trackpadTouch=Trackpad Touch
 vivecraft.key.vrInteract=Contextual Interact
 vivecraft.key.guiLeftClick=Left Click
@@ -113,7 +114,7 @@ vivecraft.options.MIXED_REALITY_RENDER_HANDS=Show Hands
 vivecraft.options.MIXED_REALITY_UNITY_LIKE=Layout
 vivecraft.options.MIXED_REALITY_UNDISTORTED=Undistorted Pass
 vivecraft.options.MIXED_REALITY_ALPHA_MASK=Alpha Mask
-vivecraft.options.MIXED_REALITY_FOV=Camera FOV
+vivecraft.options.MIXED_REALITY_FOV=Third Person FOV
 vivecraft.options.WALK_UP_BLOCKS=Walk Up Blocks
 vivecraft.options.MOVEMENT_MULTIPLIER=Move. Speed Multiplier
 vivecraft.options.INERTIA_FACTOR=Player Inertia
@@ -166,6 +167,8 @@ vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Reload External Camera
 vivecraft.options.RIGHT_CLICK_DELAY=Right Click Repeat
 vivecraft.options.ANIMAL_TOUCHING=Animal Touching
+vivecraft.options.HANDHELD_CAMERA_FOV=Camera FOV
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=Camera Resolution
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=Relative size HUD takes up in field-of-view.\n\
@@ -463,6 +466,12 @@ while holding the button down.
 vivecraft.options.ANIMAL_TOUCHING.tooltip=If enabled, touching a passive mob (animal) without a \
 weapon will right-click (interact) instead of attacking.\n\
 Turn off for Piggy Slapping, Josh.
+
+vivecraft.options.HANDHELD_CAMERA_FOV.tooltip=FOV of the handheld screenshot camera.
+
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE.tooltip=Resolution of the handheld screenshot camera, for taking screenshots much larger than normal render resolution.\n\
+Cannot be used when shaders are enabled.\n\
+§cWARNING: Setting this very high may melt your computer!
 
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=I Can't See

@@ -271,7 +271,7 @@
      public void renderItemInFirstPerson(float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, ClientPlayerEntity playerEntityIn, int combinedLightIn)
      {
          float f = playerEntityIn.getSwingProgress(partialTicks);
-@@ -310,186 +433,421 @@
+@@ -310,186 +433,424 @@
          bufferIn.finish();
      }
  
@@ -466,6 +466,9 @@
 +
 +    		boolean shouldrenderhand = true;
 +    		if(mc.currentPass == RenderPass.THIRD && mc.vrSettings.mixedRealityRenderHands == false)
++    			shouldrenderhand = false;
++
++    		if (mc.currentPass == RenderPass.CAMERA)
 +    			shouldrenderhand = false;
 +
 +    		if(BowTracker.isBow(stack) && mc.bowTracker.isActive((ClientPlayerEntity) player))
@@ -872,7 +875,7 @@
      }
  
      public void tick()
-@@ -571,4 +929,41 @@
+@@ -571,4 +932,41 @@
              this.equippedProgressOffHand = 0.0F;
          }
      }

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Supplier;
 
+import net.optifine.Config;
 import net.optifine.Lang;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -210,6 +211,8 @@ public class VRSettings
     public float mrMovingCamOffsetZ = 0;
     public Quaternion mrMovingCamOffsetRotQuat = new Quaternion();
     public Angle.Order externalCameraAngleOrder = Angle.Order.XZY;
+    public float handCameraFov = 70;
+    public float handCameraResScale = 1.0f;
     //
     
     //HUD/GUI
@@ -798,6 +801,14 @@ public class VRSettings
                     if(optionTokens[0].equals("guiAppearOverBlock")){
                         this.guiAppearOverBlock = optionTokens[1].equals("true");
                     }
+
+                    if(optionTokens[0].equals("handCameraFov")){
+                        this.handCameraFov = parseFloat(optionTokens[1]);
+                    }
+
+                    if(optionTokens[0].equals("handCameraResScale")){
+                        this.handCameraResScale = parseFloat(optionTokens[1]);
+                    }
                     
                     if(optionTokens[0].equals("firstRun")){
                     	this.firstRun = optionTokens[1].equals("true");
@@ -1189,6 +1200,15 @@ public class VRSettings
                     case 10:
                         return var4 + Lang.get("vivecraft.options.rightclickdelay.slowest");
                 }
+            case HANDHELD_CAMERA_FOV:
+                return var4 + String.format("%.0f\u00B0", this.handCameraFov);
+            case HANDHELD_CAMERA_RENDER_SCALE:
+                if (Config.isShaders()) {
+                    Framebuffer camfb = mc.stereoProvider.cameraFramebuffer;
+                    return var4 + camfb.framebufferWidth + "x" + camfb.framebufferHeight;
+                } else {
+                    return var4 + Math.round(1920 * this.handCameraResScale) + "x" + Math.round(1080 * this.handCameraResScale);
+                }
             case RELOAD_EXTERNAL_CAMERA:
                 return var2;
             default:
@@ -1271,6 +1291,10 @@ public class VRSettings
             	return this.fovRedutioncOffset;
             case PHYSICAL_KEYBOARD_SCALE:
                 return this.physicalKeyboardScale;
+            case HANDHELD_CAMERA_FOV:
+                return this.handCameraFov;
+            case HANDHELD_CAMERA_RENDER_SCALE:
+                return this.handCameraResScale;
             // VIVE END - new options
             default:
                 return 0.0f;
@@ -1673,6 +1697,12 @@ public class VRSettings
             case PHYSICAL_KEYBOARD_SCALE:
                 this.physicalKeyboardScale = par2;
                 break;
+            case HANDHELD_CAMERA_FOV:
+                this.handCameraFov = par2;
+                break;
+            case HANDHELD_CAMERA_RENDER_SCALE:
+                this.handCameraResScale = par2;
+                break;
             	// VIVE END - new options
                 
             default:
@@ -1822,6 +1852,8 @@ public class VRSettings
             var5.println("hrtfSelection:" + this.hrtfSelection);
             var5.println("rightclickDelay:" + this.rightclickDelay);
             var5.println("guiAppearOverBlock:" + this.guiAppearOverBlock);
+            var5.println("handCameraFov:" + this.handCameraFov);
+            var5.println("handCameraResScale:" + this.handCameraResScale);
 
             var5.println("firstRun:" + this.firstRun);
             
@@ -1921,7 +1953,7 @@ public class VRSettings
         MIXED_REALITY_UNITY_LIKE(false, true), // Layout
         MIXED_REALITY_UNDISTORTED(false, true), // Undistorted Pass
         MIXED_REALITY_ALPHA_MASK(false, true), // Alpha Mask
-        MIXED_REALITY_FOV(true, false, 0, 179, 1), // Camera FOV
+        MIXED_REALITY_FOV(true, false, 0, 179, 1), // Third Person FOV
         WALK_UP_BLOCKS(false, true), // Walk up blocks
         //Movement/aiming controls
         MOVEMENT_MULTIPLIER(true, false, 0.15f, 1.3f, 0.01f), // Move. Speed Multiplier
@@ -1943,6 +1975,8 @@ public class VRSettings
         PLAY_MODE_SEATED(false, true), // Play Mode
         RENDER_SCALEFACTOR(true, false, 0.1f, 9f, 0.1f), // Resolution
         MONO_FOV(true, false, 0, 179, 1), // Undistorted FOV
+        HANDHELD_CAMERA_FOV(true, false, 0, 179, 1), // Camera FOV
+        HANDHELD_CAMERA_RENDER_SCALE(true, false, 0.5f, 3.0f, 0.25f), // Camera Resolution
         //END JRBUDDA
         REALISTIC_JUMP(false, true), // Roomscale Jumping
         REALISTIC_SNEAK(false, true), // Roomscale Sneaking
@@ -2254,7 +2288,7 @@ public class VRSettings
     	out[1] = "key.chat";
     	out[2] = "vivecraft.key.rotateRight";
     	out[3] = "key.pickItem";
-    	out[4] = "vivecraft.key.toggleMovement";
+    	out[4] = "vivecraft.key.toggleHandheldCam";
     	out[5] = "vivecraft.key.togglePlayerList";
     	out[6] = "vivecraft.key.rotateLeft";
     	out[7] = "vivecraft.key.quickTorch";

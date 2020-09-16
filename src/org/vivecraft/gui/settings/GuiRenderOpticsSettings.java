@@ -15,6 +15,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
+import net.optifine.Config;
 
 public class GuiRenderOpticsSettings  extends GuiVROptionsBase
 {
@@ -29,8 +30,10 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
             VRSettings.VrOptions.MIRROR_DISPLAY,     
             VRSettings.VrOptions.FSAA,
             VRSettings.VrOptions.STENCIL_ON,
+			VRSettings.VrOptions.HANDHELD_CAMERA_RENDER_SCALE,
+			VRSettings.VrOptions.HANDHELD_CAMERA_FOV,
 			VRSettings.VrOptions.RELOAD_EXTERNAL_CAMERA,
-			VRSettings.VrOptions.MIRROR_EYE
+			VRSettings.VrOptions.MIRROR_EYE,
     };
     
     static VRSettings.VrOptions[] MROptions = new VRSettings.VrOptions[] {
@@ -52,11 +55,13 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     };
 
     private float prevRenderScaleFactor;
+    private float prevHandCameraResScale;
 
     public GuiRenderOpticsSettings(Screen par1Screen)
     {
     	super( par1Screen);
 		prevRenderScaleFactor = settings.renderScaleFactor;
+		prevHandCameraResScale = settings.handCameraResScale;
     }
 
     @Override
@@ -101,6 +106,12 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     		super.init(TUDOptions, false);
     	}
     	super.addDefaultButtons();
+
+    	this.buttons.stream().filter(w -> w instanceof GuiVROptionButton).forEach(w -> {
+    		GuiVROptionButton butt = (GuiVROptionButton)w;
+    		if (butt.getOption() == VRSettings.VrOptions.HANDHELD_CAMERA_RENDER_SCALE && Config.isShaders())
+    			butt.active = false;
+		});
     }
     
     @Override
@@ -140,8 +151,9 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
 		// Hacky way of making the render scale slider only reinit on mouse release
-    	if (settings.renderScaleFactor != prevRenderScaleFactor) {
+    	if (settings.renderScaleFactor != prevRenderScaleFactor || settings.handCameraResScale != prevHandCameraResScale) {
 			prevRenderScaleFactor = settings.renderScaleFactor;
+			prevHandCameraResScale = settings.handCameraResScale;
 			this.minecraft.stereoProvider.reinitFrameBuffers("Render Setting Changed");
 		}
 

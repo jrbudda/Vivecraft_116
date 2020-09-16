@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL13;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.gameplay.screenhandlers.RadialHandler;
+import org.vivecraft.gameplay.trackers.CameraTracker;
 import org.vivecraft.gameplay.trackers.TelescopeTracker;
 import org.vivecraft.render.RenderConfigException;
 import org.vivecraft.render.RenderPass;
@@ -56,6 +57,8 @@ public class OpenVRStereoRenderer
 	public Framebuffer framebufferUndistorted;
 	public Framebuffer telescopeFramebufferR;
 	public Framebuffer telescopeFramebufferL;
+	public Framebuffer cameraFramebuffer;
+	public Framebuffer cameraRenderFramebuffer;
 	
 	//intermediate fbs
 	public Framebuffer fsaaFirstPassResultFBO;
@@ -279,7 +282,7 @@ public class OpenVRStereoRenderer
 	}
 
 	public float[] getStencilMask(RenderPass eye) {
-		if(hiddenMesheVertecies == null || eye == RenderPass.CENTER || eye == RenderPass.THIRD) return null;
+		if(hiddenMesheVertecies == null || (eye != RenderPass.LEFT && eye != RenderPass.RIGHT)) return null;
 		return eye == RenderPass.LEFT ? hiddenMesheVertecies[0] : hiddenMesheVertecies[1];
 	}
 
@@ -547,6 +550,10 @@ public class OpenVRStereoRenderer
 				KeyboardHandler.Framebuffer.deleteFramebuffer();
 				KeyboardHandler.Framebuffer = null;
 			}
+			if (RadialHandler.Framebuffer != null) {
+				RadialHandler.Framebuffer.deleteFramebuffer();
+				RadialHandler.Framebuffer = null;
+			}
 			if (telescopeFramebufferL != null) {
 				telescopeFramebufferL.deleteFramebuffer();
 				telescopeFramebufferL = null;
@@ -554,6 +561,14 @@ public class OpenVRStereoRenderer
 			if (telescopeFramebufferR != null) {
 				telescopeFramebufferR.deleteFramebuffer();
 				telescopeFramebufferR = null;
+			}
+			if (cameraFramebuffer != null) {
+				cameraFramebuffer.deleteFramebuffer();
+				cameraFramebuffer = null;
+			}
+			if (cameraRenderFramebuffer != null) {
+				cameraRenderFramebuffer.deleteFramebuffer();
+				cameraRenderFramebuffer = null;
 			}
 			//if (loadingScreen != null) {
 			//	loadingScreen.deleteFramebuffer();
@@ -670,6 +685,33 @@ public class OpenVRStereoRenderer
 			mc.print(telescopeFramebufferL.toString());
 			checkGLError("TelescopeL framebuffer setup");
 
+			int cameraW = Math.round(1920 * mc.vrSettings.handCameraResScale);
+			int cameraH = Math.round(1080 * mc.vrSettings.handCameraResScale);
+			int cameraRenderW = cameraW;
+			int cameraRenderH = cameraH;
+
+			if (Config.isShaders()) { //double ugh.
+				float aspect = (float)cameraW / (float)cameraH;
+				if (aspect > (displayFBWidth / displayFBHeight)) {
+					cameraW = displayFBWidth;
+					cameraH = Math.round(displayFBWidth / aspect);
+				} else {
+					cameraW = Math.round(displayFBHeight * aspect);
+					cameraH = displayFBHeight;
+				}
+
+				cameraRenderW = displayFBWidth;
+				cameraRenderH = displayFBHeight;
+			}
+
+			cameraFramebuffer = new Framebuffer("Handheld Camera", cameraW, cameraH, true, false, Framebuffer.NO_TEXTURE_ID, true, false);
+			mc.print(cameraFramebuffer.toString());
+			checkGLError("Camera framebuffer setup");
+
+			cameraRenderFramebuffer = new Framebuffer("Handheld Camera Render", cameraRenderW, cameraRenderH, true, false, Framebuffer.NO_TEXTURE_ID, true, true);
+			mc.print(cameraRenderFramebuffer.toString());
+			checkGLError("Camera render framebuffer setup");
+
 			mc.gameRenderer.setupClipPlanes();
 
 			eyeproj[0] = getProjectionMatrix(0, mc.gameRenderer.minClipDistance, mc.gameRenderer.clipDistance * 4);
@@ -723,6 +765,7 @@ public class OpenVRStereoRenderer
 					entityShaders.put(framebufferUndistorted.name, createShaderGroup(outline, framebufferUndistorted));
 				entityShaders.put(telescopeFramebufferL.name, createShaderGroup(outline, telescopeFramebufferL));
 				entityShaders.put(telescopeFramebufferR.name, createShaderGroup(outline, telescopeFramebufferR));
+				entityShaders.put(cameraRenderFramebuffer.name, createShaderGroup(outline, cameraRenderFramebuffer));
 				
 				for (ShaderGroup s : old) {
 					s.close();
@@ -744,6 +787,7 @@ public class OpenVRStereoRenderer
 						alphaShaders.put(framebufferUndistorted.name, createShaderGroup(resourcelocation, framebufferUndistorted));
 					alphaShaders.put(telescopeFramebufferL.name, createShaderGroup(resourcelocation, telescopeFramebufferL));
 					alphaShaders.put(telescopeFramebufferR.name, createShaderGroup(resourcelocation, telescopeFramebufferR));
+					alphaShaders.put(cameraRenderFramebuffer.name, createShaderGroup(resourcelocation, cameraRenderFramebuffer));
 				} else {//not fabulous!
 
 				}
@@ -821,7 +865,9 @@ public class OpenVRStereoRenderer
 			if (TelescopeTracker.isTelescope(mc.player.getHeldItemOffhand())) {
 				if(TelescopeTracker.isViewing(1))
 					passes.add(RenderPass.SCOPEL);
-			}	
+			}
+			if (mc.cameraTracker.isVisible())
+				passes.add(RenderPass.CAMERA);
 		}
 		return passes;
 	}
@@ -888,8 +934,10 @@ public class OpenVRStereoRenderer
 
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
 		GL11.glStencilMask(0xFF); // Write to stencil buffer
+		GL11.glClearStencil(0xFF);
 		GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
-		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 1); // Set any stencil to 1
+		GL11.glClearStencil(0);
+		GL11.glStencilFunc(GL11.GL_ALWAYS, 0, 0xFF); // Set any stencil to 1
 		RenderSystem.colorMask(false, false, false, true); //do write to alpha.
 		RenderSystem.depthMask(false); // Don't write to depth buffer
 		
@@ -935,7 +983,7 @@ public class OpenVRStereoRenderer
 		RenderSystem.enableTexture();
 		RenderSystem.enableCull();
 
-		GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 1);
+		GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0xFF, 1);
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 		GL11.glStencilMask(0x0); // Dont Write to stencil buffer
 

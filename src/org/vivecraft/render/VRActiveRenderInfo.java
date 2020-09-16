@@ -23,7 +23,7 @@ public class VRActiveRenderInfo extends ActiveRenderInfo {
 		
 		RenderPass p = mc.currentPass;
 		
-		if (Shaders.isShadowPass && p != RenderPass.THIRD)
+		if (Shaders.isShadowPass && p != RenderPass.THIRD && p != RenderPass.CAMERA)
 			p = RenderPass.CENTER;
 		
 		VRDevicePose src = mc.vrPlayer.vrdata_world_render.getEye(p);	

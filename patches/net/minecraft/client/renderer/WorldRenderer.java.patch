@@ -56,8 +56,8 @@
 +            
 +            //Vivecraft - fix which block column doesnt get rain.
 +            Vector3d me = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition();
-+            if(mc.currentPass == RenderPass.THIRD)
-+                 me = mc.vrPlayer.vrdata_world_render.getEye(RenderPass.THIRD).getPosition();           
++            if(mc.currentPass == RenderPass.THIRD || mc.currentPass == RenderPass.CAMERA)
++                 me = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
 +            int i = MathHelper.floor(me.x);
 +            int j = MathHelper.floor(me.y);
 +            int k = MathHelper.floor(me.z);
@@ -244,7 +244,7 @@
          }
  
 +        //Vivecraft
-+        boolean selfRender = mc.currentPass == RenderPass.THIRD && mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON;
++        boolean selfRender = (mc.currentPass == RenderPass.THIRD && mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON) || mc.currentPass == RenderPass.CAMERA;
 +        selfRender |= mc.vrSettings.shouldRenderSelf || mc.vrSettings.tmpRenderSelf;
 +        //
 +
@@ -334,7 +334,7 @@
          irendertypebuffer$impl.finish(Atlases.getTranslucentCullBlockType());
          irendertypebuffer$impl.finish(Atlases.getBannerType());
          irendertypebuffer$impl.finish(Atlases.getShieldType());
-@@ -1836,13 +1920,21 @@
+@@ -1836,13 +1920,16 @@
          if (flag1)
          {
              irendertypebuffer$impl.finish();
@@ -344,22 +344,17 @@
 +            //ShadersRender.renderHand0(gameRendererIn, matrixStackIn, activeRenderInfoIn, partialTicks);
              Shaders.preWater();
          }
- 
-+        //Temporary hack til I can figure out whats wrong with this
-+        if(mc.currentPass ==RenderPass.SCOPEL || mc.currentPass == RenderPass.SCOPER )
-+        	this.field_239227_K_ = null;
-+        //
 +        
 +        boolean menuHandleft = gameRendererIn.isInMenuRoom() || mc.currentScreen != null || KeyboardHandler.Showing;
 +        boolean menuhandright = menuHandleft || (mc.interactTracker.hotbar >= 0 && mc.vrSettings.vrTouchHotbar);
-+
+ 
          if (this.field_239227_K_ != null)
 -        {
 +        { //fabulous!
              irendertypebuffer$impl.finish(RenderType.getLines());
              irendertypebuffer$impl.finish();
              this.field_239222_F_.framebufferClear(Minecraft.IS_RUNNING_ON_MAC);
-@@ -1856,10 +1948,17 @@
+@@ -1856,10 +1943,17 @@
              RenderState.field_239237_T_.setupRenderState();
              iprofiler.endStartSection("particles");
              this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks);
@@ -379,7 +374,7 @@
              iprofiler.endStartSection("translucent");
  
              if (flag1)
-@@ -1886,7 +1985,11 @@
+@@ -1886,7 +1980,11 @@
              }
  
              this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks);
@@ -392,7 +387,7 @@
              if (flag1)
              {
                  Shaders.endParticles();
-@@ -3192,10 +3295,11 @@
+@@ -3192,10 +3290,11 @@
      {
          bufferIn.pos(xIn - camX, (double)yIn - camY, zIn - camZ).tex(texU, texV).endVertex();
      }
@@ -406,7 +401,7 @@
      }
  
      public static void drawVoxelShapeParts(MatrixStack matrixStackIn, IVertexBuilder bufferIn, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
-@@ -3663,6 +3767,8 @@
+@@ -3663,6 +3762,8 @@
      {
          Random random = this.world.rand;
  
@@ -415,7 +410,7 @@
          switch (type)
          {
              case 1000:
-@@ -3725,18 +3831,26 @@
+@@ -3725,18 +3826,26 @@
                  break;
  
              case 1011:
@@ -442,7 +437,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3757,14 +3871,26 @@
+@@ -3757,14 +3866,26 @@
                  break;
  
              case 1019:
@@ -469,7 +464,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3793,10 +3919,17 @@
+@@ -3793,10 +3914,17 @@
                  break;
  
              case 1030:
@@ -487,7 +482,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3817,6 +3950,9 @@
+@@ -3817,6 +3945,9 @@
                  break;
  
              case 1036:
@@ -497,7 +492,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -4409,4 +4545,40 @@
+@@ -4409,4 +4540,40 @@
              super(p_i232463_1_, p_i232463_2_);
          }
      }

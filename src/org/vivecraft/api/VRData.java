@@ -4,6 +4,7 @@ import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.Utils;
+import org.vivecraft.utils.math.Axis;
 import org.vivecraft.utils.math.Matrix4f;
 import org.vivecraft.utils.math.Vector3;
 
@@ -78,6 +79,7 @@ public class VRData{
 	public VRDevicePose h1;
 	public VRDevicePose t0;
 	public VRDevicePose t1;
+	public VRDevicePose cam;
 	
 	public Vector3d origin;
 	public float rotation_radians;
@@ -107,6 +109,9 @@ public class VRData{
 		Matrix4f s2 = getSmoothedRotation(1,0.33f);
 		t0 = new VRDevicePose(this, s1, MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), s1.transform(Vector3.forward()).toVector3d());
 		t1 = new VRDevicePose(this, s2, MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), s2.transform(Vector3.forward()).toVector3d());
+
+		Matrix4f camRot = Matrix4f.multiply(Matrix4f.rotationY(-rotation), new Matrix4f(Minecraft.getInstance().cameraTracker.getRotation()).transposed());
+		cam = new VRDevicePose(this, camRot, Minecraft.getInstance().cameraTracker.getPosition().subtract(origin).rotateYaw(-rotation).subtract(hmd_raw).add(scaledPos), camRot.transform(Vector3.forward()).toVector3d());
 
 		if (MCOpenVR.mrMovingCamActive)
 			c2 = new VRDevicePose(this, MCOpenVR.getAimRotation(2),MCOpenVR.getAimSource(2).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(2));
@@ -188,6 +193,8 @@ public class VRData{
 			return t0;
 		case SCOPEL:
 			return t1;
+		case CAMERA:
+			return cam;
 		}
 		return hmd;
 

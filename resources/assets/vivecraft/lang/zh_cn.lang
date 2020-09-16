@@ -24,6 +24,7 @@ vivecraft.key.swapMirrorView=切换桌面镜像
 vivecraft.key.toggleKeyboard=显示/隐藏虚拟键盘
 vivecraft.key.moveThirdPersonCam=移动第三人称摄像机
 vivecraft.key.togglePlayerList=切换显示玩家列表
+vivecraft.key.toggleHandheldCam=切换摄像机
 vivecraft.key.trackpadTouch=触摸触控板
 vivecraft.key.vrInteract=情景交互
 vivecraft.key.guiLeftClick=左键点击
@@ -115,7 +116,7 @@ vivecraft.options.MIXED_REALITY_RENDER_HANDS=显示双手
 vivecraft.options.MIXED_REALITY_UNITY_LIKE=布局
 vivecraft.options.MIXED_REALITY_UNDISTORTED=不失真渲染(无形变)
 vivecraft.options.MIXED_REALITY_ALPHA_MASK=透明度遮罩
-vivecraft.options.MIXED_REALITY_FOV=视野(相机)
+vivecraft.options.MIXED_REALITY_FOV=第三人称视野
 vivecraft.options.WALK_UP_BLOCKS=自动上方块
 vivecraft.options.MOVEMENT_MULTIPLIER=移动速度倍率
 vivecraft.options.INERTIA_FACTOR=玩家惯性
@@ -168,19 +169,21 @@ vivecraft.options.HRTF_SELECTION=3D环绕音效（头部相关传递函数）
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=重载外部摄像机
 vivecraft.options.RIGHT_CLICK_DELAY=重复右键点击
 vivecraft.options.ANIMAL_TOUCHING=动物触摸识别
+vivecraft.options.HANDHELD_CAMERA_FOV=视野(相机)
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=摄像机解析度
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=视野内状态栏(HUD)占据的相对大小。\n是相对单位，不是具体大小也不会影响FOV或者其它什么。
 
 vivecraft.options.HUD_DISTANCE.tooltip=悬浮的状态栏(HUD)与玩家身体之间的距离。\nHUD的相对大小不会被这个设置所改变。\n以现实中的米（m）为单位（而不是以一个方块为单位）\n[PS：在Vivecraft中，默认一个方块为1米，\n而Java版客户端可以通过改变视角调整观感。]
 
-vivecraft.options.HUD_LOCK_TO.tooltip=(HUD:状态栏，包括物品栏和生命值等内容)\n指定HUD的锁定位置！\n  手柄上方：HUD会出现在你的副手(默认左手)上方。\n  头部：HUD会出现并锁定在你的头显视野中！\n  手臂(推荐)：HUD被设置在你的副手手腕内侧。\n  [转动你的手腕！当你看向它时它便会出现！]
+vivecraft.options.HUD_LOCK_TO.tooltip=(HUD:状态栏，包括物品栏和生命值等内容)\n指定HUD的锁定位置！\n手柄上方：HUD会出现在你的副手(默认左手)上方。\n头部：HUD会出现并锁定在你的头显视野中！\n手臂(推荐)：HUD被设置在你的副手手腕内侧。\n[转动你的手腕！当你看向它时它便会出现！]
 
 vivecraft.options.HUD_OPACITY.tooltip=调整状态栏(HUD)和用户界面(UI)在游戏内的透明度\n【0.15透明←[]→完全不透明(默认)】
 
-vivecraft.options.RENDER_MENU_BACKGROUND.tooltip=设置游戏内呼出的菜单(GUI)是否有一个半透明的背景\n  开：呼出的菜单会带有按钮和半透明的背景\n  关：呼出游戏内菜单时，只会出现按钮（推荐）
+vivecraft.options.RENDER_MENU_BACKGROUND.tooltip=设置游戏内呼出的菜单(GUI)是否有一个半透明的背景\n开：呼出的菜单会带有按钮和半透明的背景\n关：呼出游戏内菜单时，只会出现按钮（推荐）
 
-vivecraft.options.HUD_OCCLUSION.tooltip=设置状态栏(HUD)是否会被遮挡。\n  开(默认)：HUD会被游戏内的物体方块所遮挡，乃至完全隐藏。\n  关：HUD不会被游戏内的物体方块所遮挡。
+vivecraft.options.HUD_OCCLUSION.tooltip=设置状态栏(HUD)是否会被遮挡。\n开(默认)：HUD会被游戏内的物体方块所遮挡，乃至完全隐藏。\n关：HUD不会被游戏内的物体方块所遮挡。
 
 vivecraft.options.MENU_ALWAYS_FOLLOW_FACE.tooltip=设定主菜单是否会跟随着你的视线而转动！\n就座：仅在就座游玩时，启用该功能。\n总是：主菜单总是会跟随你的视线转动！
 
@@ -188,21 +191,21 @@ vivecraft.options.CROSSHAIR_SCALE.tooltip=设定游戏内十字指针的大小�
 
 vivecraft.options.MENU_CROSSHAIR_SCALE.tooltip=设置菜单页面中十字指针的大小。
 
-vivecraft.options.RENDER_CROSSHAIR_MODE.tooltip=设置游戏内指针的显示方式：\n  总是：指针永远会显示，就算HUD被关闭了也是这样！\n  仅启用状态栏时：指针只会在启用了HUD时显示\n  从不：从不显示指针
+vivecraft.options.RENDER_CROSSHAIR_MODE.tooltip=设置游戏内指针的显示方式：\n总是：指针永远会显示，就算HUD被关闭了也是这样！\n仅启用状态栏时：指针只会在启用了HUD时显示\n从不：从不显示指针
 
-vivecraft.options.CHAT_NOTIFICATIONS.tooltip=设置当你收到一条聊天信息是将会发生什么【慎用】\n  无：什么都不会发生~（欸嘿~）\n  震动：你的手柄会通过震动提示你\n  声音：收到消息时会播放信息提示音\n  全部：不仅手柄会震动，你还会听到提示音
+vivecraft.options.CHAT_NOTIFICATIONS.tooltip=设置当你收到一条聊天信息是将会发生什么【慎用】\n无：什么都不会发生~（欸嘿~）\n震动：你的手柄会通过震动提示你\n声音：收到消息时会播放信息提示音\n全部：不仅手柄会震动，你还会听到提示音
 
 vivecraft.options.CHAT_NOTIFICATION_SOUND.tooltip=设置聊天信息提示音
 
-vivecraft.options.CROSSHAIR_SCALES_WITH_DISTANCE.tooltip=这个设置决定着指针是否会因为距离而放大缩小。\n  开：你视野中的指针将会一直保持同一个大小。\n  关：你视野中的指针大小将会受到距离的影响而变大缩小。
+vivecraft.options.CROSSHAIR_SCALES_WITH_DISTANCE.tooltip=这个设置决定着指针是否会因为距离而放大缩小。\n开：你视野中的指针将会一直保持同一个大小。\n关：你视野中的指针大小将会受到距离的影响而变大缩小。
 
-vivecraft.options.RENDER_BLOCK_OUTLINE_MODE.tooltip=设置当你指向一个方块时，方块边缘的显示方式：\n  总是：方块边缘永远会加黑加粗显示，就算HUD被关闭了也是这样！\n  仅启用状态栏时：方块边缘会加黑加粗只会在启用了HUD时显示\n  从不：方块边缘从不加黑加粗显示
+vivecraft.options.RENDER_BLOCK_OUTLINE_MODE.tooltip=设置当你指向一个方块时，方块边缘的显示方式：\n总是：方块边缘永远会加黑加粗显示，就算HUD被关闭了也是这样！\n仅启用状态栏时：方块边缘会加黑加粗只会在启用了HUD时显示\n从不：方块边缘从不加黑加粗显示
 
 vivecraft.options.AUTO_OPEN_KEYBOARD.tooltip=如果禁用该选项，则只有你单击聊天栏中的文字部分、或一直注视着一段文字时，才会呼出键盘。\n如果启用该选项，则每当你注视一段文字时，都会自动呼出键盘。\n【在安装了部分MOD的情况下，启用该选项可能会造成键盘的误呼出】
 
-vivecraft.options.RADIAL_MODE_HOLD.tooltip=选择扇形菜单的使用方法：\n  按住：按住扇形菜单按钮时显示扇形按钮菜单；呼出菜单期间把指针移动到选项上并松开按钮来做出选择。\n  单击：按下扇形菜单按钮呼出菜单，再按一次隐藏；把指针移动到选项上，扣动扳机进行选择。
+vivecraft.options.RADIAL_MODE_HOLD.tooltip=选择扇形菜单的使用方法：\n按住：按住扇形菜单按钮时显示扇形按钮菜单；呼出菜单期间把指针移动到选项上并松开按钮来做出选择。\n单击：按下扇形菜单按钮呼出菜单，再按一次隐藏；把指针移动到选项上，扣动扳机进行选择。
 
-vivecraft.options.PHYSICAL_KEYBOARD.tooltip=选择哪一种VR键盘来打字：\n  物理碰撞键盘：呼出键盘时，双手会变成亮♂棒♂棒，用他们去戳戳戳、并享受带感的音效吧！【推荐】\n  指针键盘：将你的手柄指向键盘上的按键，按动扳机就可以输入字符了！
+vivecraft.options.PHYSICAL_KEYBOARD.tooltip=选择哪一种VR键盘来打字：\n物理碰撞键盘：呼出键盘时，双手会变成亮♂棒♂棒，用他们去戳戳戳、并享受带感的音效吧！【推荐】\n指针键盘：将你的手柄指向键盘上的按键，按动扳机就可以输入字符了！
 
 vivecraft.options.PHYSICAL_KEYBOARD_SCALE.tooltip=设置物理碰撞键盘的大小，这个数值将改变它的基础大小。
 
@@ -226,7 +229,7 @@ vivecraft.options.MIXED_REALITY_ALPHA_MASK.tooltip=在Unity布局中：\n如果�
 
 vivecraft.options.MIXED_REALITY_FOV.tooltip=在MR混合现实模式中使用的视野角度（FOV）
 
-vivecraft.options.WALK_UP_BLOCKS.tooltip=这个选项允许你设置角色不用跳就能上一格高的方块的能力。\n[快捷键：右侧Ctrl+B]\n§c警告！可能会触发多人服务器中的防作弊系统！\n  关：(默认)你需要跳跃来登上一格高的方块\n  开：你不用跳，只要行走就能上到一格高的方块。也许可以减轻一些自由移动模式带来的晕眩
+vivecraft.options.WALK_UP_BLOCKS.tooltip=这个选项允许你设置角色不用跳就能上一格高的方块的能力。\n[快捷键：右侧Ctrl+B]\n§c警告！可能会触发多人服务器中的防作弊系统！\n关：(默认)你需要跳跃来登上一格高的方块\n开：你不用跳，只要行走就能上到一格高的方块。也许可以减轻一些自由移动模式带来的晕眩
 
 vivecraft.options.MOVEMENT_MULTIPLIER.tooltip=调整这个数值，可以让你比默认设置移动地慢一些。这也许可以帮助你减轻一些自由移动模式带来的晕眩感。\n§c警告！改变这个设置可能会触发多人服务器防作弊程序！\n默认设置为Minecraft标准移动速度(1.0)
 
@@ -240,7 +243,7 @@ vivecraft.options.ALLOW_CRAWLING.tooltip=如果启用这个功能，玩家将可
 
 vivecraft.options.LIMIT_TELEPORT.tooltip=如果启用该设置，传送移动在生存模式中将会受到限制。你不能使用传送从你站立的方块边缘传送到你头顶的方块上；传送移动也会消耗食物；传送移动将会内置一个隐藏的、随时间回复的能量条，能量越多，可以传送的距离越远。
 
-vivecraft.options.REVERSE_HANDS.tooltip=切换主手（默认主手为右手）\n  开：左手为主手\n  关：右手为主手\n\n切换主手后，重启游戏以应用双手键位的互换；同时请确认你在SteamVR中选择了默认键位设置(default bindings)
+vivecraft.options.REVERSE_HANDS.tooltip=切换主手（默认主手为右手）\n开：左手为主手\n关：右手为主手\n\n切换主手后，重启游戏以应用双手键位的互换；同时请确认你在SteamVR中选择了默认键位设置(default bindings)
 
 vivecraft.options.STENCIL_ON.tooltip=【屏幕黑边】\n开启后在频幕上显示镜片黑边，遮盖头显镜片外视野范围外的区域。\n可以略微增加帧数。
 
@@ -274,7 +277,7 @@ vivecraft.options.REALISTIC_ROW.tooltip=让我们荡起双桨~小船儿———
 
 vivecraft.options.WALK_MULTIPLIER.tooltip=倍乘你现实中一步走出去后，在游戏中移动的距离；\n让你可以在不动用移动按键的前提下走得更远一些；\n但是可能会导致晕眩\n【不建议更改】
 
-vivecraft.options.FREEMOVE_MODE.tooltip=自由移动模式下人物移动的方向。\n\n  控制器：副手(默认左手)手柄前端指向的方向【推荐】\n  头显：你的VR头显看向的方向\n  原地摆臂移动：转向取决于你的VR手柄(控制器)是怎么甩的，向上向下取决于你的头显。\n  [Run-In-Place: Yaw is based on how controllers are swinging. Pitch is your Headset.]\n  房间：转向取决于你的VR游玩空间。向上向下取决于你的头显。这个设置最适合那些无法追踪到背后、或者只有180度视野的人（比如不想转身的站立模式玩家）\n  [Room: Yaw is relative to your VR room forward. Pitch is your Headset. This mode is best only for 180 setups.]
+vivecraft.options.FREEMOVE_MODE.tooltip=自由移动模式下人物移动的方向。\n\n控制器：副手(默认左手)手柄前端指向的方向【推荐】\n头显：你的VR头显看向的方向\n  原地摆臂移动：转向取决于你的VR手柄(控制器)是怎么甩的，向上向下取决于你的头显。\n[Run-In-Place: Yaw is based on how controllers are swinging. Pitch is your Headset.]\n房间：转向取决于你的VR游玩空间。向上向下取决于你的头显。这个设置最适合那些无法追踪到背后、或者只有180度视野的人（比如不想转身的站立模式玩家）\n[Room: Yaw is relative to your VR room forward. Pitch is your Headset. This mode is best only for 180 setups.]
 
 vivecraft.options.VEHICLE_ROTATION.tooltip=在载具（如船和矿车）中，玩家视角会随着载具旋转而旋转。\n别玩太狠了，这个可能会使人失去方向感
 
@@ -304,7 +307,7 @@ vivecraft.options.AUTO_SPRINT.tooltip=使用自由移动模式时，摇杆角度
 
 vivecraft.options.AUTO_SPRINT_THRESHOLD.tooltip=设置激活自动冲刺的摇杆角度阈值\n超过即激发\n\nThe axis threshold at which auto-sprint activates.
 
-vivecraft.options.BOW_MODE.tooltip=你可以设置在什么情况下进行射箭的动作识别\n  关：从不。（我就是要做按键英雄！）\n  原版：仅在使用原版弓(Bow)时使用射箭动作识别；不识别MOD道具。\n  开：对所有使用"弓(BOW)"动作的物品都启用射箭动作识别。\n【请注意该设置最好只用于那些有可交互拉弓射击动作的弓类武器】\n【虽然可以上膛，但弩和枪械(+MOD)没有弓(BOW)那样的可交互射击动作】
+vivecraft.options.BOW_MODE.tooltip=你可以设置在什么情况下进行射箭的动作识别\n关：从不。（我就是要做按键英雄！）\n原版：仅在使用原版弓(Bow)时使用射箭动作识别；不识别MOD道具。\n开：对所有使用"弓(BOW)"动作的物品都启用射箭动作识别。\n【请注意该设置最好只用于那些有可交互拉弓射击动作的弓类武器】\n【虽然可以上膛，但弩和枪械(+MOD)没有弓(BOW)那样的可交互射击动作】
 
 vivecraft.options.TELEPORT_DOWN_LIMIT.tooltip=限制你每次传送能把你送往多低的地方\n以方块(blocks)为单位
 
@@ -314,7 +317,7 @@ vivecraft.options.TELEPORT_HORIZ_LIMIT.tooltip=限制你传送的距离\n以方�
 
 vivecraft.options.ALLOW_STANDING_ORIGIN_OFFSET.tooltip=允许玩家在”站立游玩模式“下使用”复位“按钮。\n这个选项通常是给那些在站立模式下游玩，却又想坐搬个椅子坐着的玩家。\n（-说到底就是条懒狗……-懒狗怎么了？看不起懒狗啊？）
 
-vivecraft.options.SEATED_FREE_MOVE.tooltip=选择在就座游玩模式中，你想使用的移动方式\n\n  传送移动：按下→松开！使用WASD四键中任意一个键即可进行传送移动！键盘上的”←“”→“方向键可以控制人物视角向左向右旋转！\n  自由移动：操作方法与JAVA版Minecraft客户端相同。
+vivecraft.options.SEATED_FREE_MOVE.tooltip=选择在就座游玩模式中，你想使用的移动方式\n\n传送移动：按下→松开！使用WASD四键中任意一个键即可进行传送移动！键盘上的”←“”→“方向键可以控制人物视角向左向右旋转！\n自由移动：操作方法与JAVA版Minecraft客户端相同。
 
 vivecraft.options.FORCE_STANDING_FREE_MOVE.tooltip=强制使用备用的自由移动模式绑定按键(默认启用按键为左扳机)。\n如果想使用更多的移动选项，请在SteamVR设置中”控制器“栏目的”管理控制器按键设置“中进行编辑。\n\n请注意，启用这项设置将禁用传送模式中绑定的触发按键。
 
@@ -322,13 +325,17 @@ vivecraft.options.ALLOW_ADVANCED_BINDINGS.tooltip=显示可以通过SteamVR绑�
 
 vivecraft.options.MENU_WORLD_SELECTION.tooltip=选择想要作为主菜单背景显示出来的世界！\n如果系统没有找到任何自订世界的话，会强制使用官方世界。
 
-vivecraft.options.HRTF_SELECTION.tooltip=【HRTF=Head Related Transfer Function (3D Audio)】\n选择你想使用的HRTF配置文件。HRTF技术可以允许你聆听3D空间音效。\n声音质量可能会因为设备和驱动而产生差别。\n  关：完全禁用HRTF\n  默认：使用默认的HRTF配置文件\n  其它：使用某个特殊的HRTF配置文件
+vivecraft.options.HRTF_SELECTION.tooltip=【HRTF=Head Related Transfer Function (3D Audio)】\n选择你想使用的HRTF配置文件。HRTF技术可以允许你聆听3D空间音效。\n声音质量可能会因为设备和驱动而产生差别。\n关：完全禁用HRTF\n默认：使用默认的HRTF配置文件\n其它：使用某个特殊的HRTF配置文件
 
 vivecraft.options.RELOAD_EXTERNAL_CAMERA.tooltip=读取ExternalCamera.cfg文件并重新载入相机配置
 
 vivecraft.options.RIGHT_CLICK_DELAY.tooltip=按住扳机时，作右键连击判定，此设置更改右键连击之间游戏刻(tick)的数量\n1刻(tick)=1/20秒(sec)
 
 vivecraft.options.ANIMAL_TOUCHING.tooltip=如果开启了这个设置，在你手上未持有武器时，触碰一只被动(passive)的生物(mob)的动作将会判定为鼠标右键（使用物品），而不是鼠标左键（攻击）。\n——妈妈再也不用担心我一巴掌掴死半个农场的动物了（草）
+
+vivecraft.options.HANDHELD_CAMERA_FOV.tooltip=手持摄像机视野
+
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE.tooltip=设定手持摄像机的解析度，越大的设置会导致更大的图片大小。\n当光影启用时不可使用。\n§c警告：过高的设置可能会烧坏你的显卡！
 
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=黑不拉几
