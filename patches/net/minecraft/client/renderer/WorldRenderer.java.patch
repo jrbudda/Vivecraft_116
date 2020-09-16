@@ -317,16 +317,16 @@
              BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).getPos();
              BlockState blockstate = this.world.getBlockState(blockpos);
              boolean flag6;
-@@ -1812,7 +1895,7 @@
-                 irendertypebuffer$impl.finish(RenderType.getLines());
-             }
+@@ -1816,7 +1899,7 @@
+         {
+             Reflector.ForgeHooksClient_onDrawBlockHighlight.call(this, activeRenderInfoIn, raytraceresult, partialTicks, matrixStackIn, irendertypebuffer$impl);
          }
 -
 +   
          RenderSystem.pushMatrix();
          RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
          boolean flag5 = GlStateManager.isFogEnabled();
-@@ -1820,6 +1903,7 @@
+@@ -1824,6 +1907,7 @@
          this.mc.debugRenderer.render(matrixStackIn, irendertypebuffer$impl, d0, d1, d2);
          GlStateManager.setFogEnabled(flag5);
          RenderSystem.popMatrix();
@@ -334,7 +334,7 @@
          irendertypebuffer$impl.finish(Atlases.getTranslucentCullBlockType());
          irendertypebuffer$impl.finish(Atlases.getBannerType());
          irendertypebuffer$impl.finish(Atlases.getShieldType());
-@@ -1836,13 +1920,16 @@
+@@ -1840,13 +1924,16 @@
          if (flag1)
          {
              irendertypebuffer$impl.finish();
@@ -354,40 +354,36 @@
              irendertypebuffer$impl.finish(RenderType.getLines());
              irendertypebuffer$impl.finish();
              this.field_239222_F_.framebufferClear(Minecraft.IS_RUNNING_ON_MAC);
-@@ -1856,10 +1943,17 @@
-             RenderState.field_239237_T_.setupRenderState();
+@@ -1861,10 +1948,15 @@
              iprofiler.endStartSection("particles");
-             this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks);
--            RenderState.field_239237_T_.clearRenderState();
-+            RenderState.field_239237_T_.clearRenderState();       
+             this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks, clippinghelper);
+             RenderState.field_239237_T_.clearRenderState();
 +            
 +            gameRendererIn.renderVRFabulous(partialTicks, this, menuhandright, menuHandleft);
          }
          else
 -        {
+-            iprofiler.endStartSection("translucent");
 +        { //Fast, Fancy
-+        	
 +        	//Vivecraft do it once.
-+            gameRendererIn.renderVrFast(partialTicks, false, menuhandright, menuHandleft);
-+            //
-+            
-             iprofiler.endStartSection("translucent");
++        	gameRendererIn.renderVrFast(partialTicks, false, menuhandright, menuHandleft);
++        	//
++        	iprofiler.endStartSection("translucent");
  
              if (flag1)
-@@ -1886,7 +1980,11 @@
+             {
+@@ -1890,7 +1982,9 @@
              }
  
-             this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks);
+             this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks, clippinghelper);
 -
-+        
-+        	//Vivecraft do it again. Come at be bro.
++            //Vivecraft do it again. Come at me bro.
 +            gameRendererIn.renderVrFast(partialTicks, true, menuhandright, menuHandleft);
 +            //
-+            
              if (flag1)
              {
                  Shaders.endParticles();
-@@ -3192,10 +3290,11 @@
+@@ -3196,10 +3290,11 @@
      {
          bufferIn.pos(xIn - camX, (double)yIn - camY, zIn - camZ).tex(texU, texV).endVertex();
      }
@@ -401,7 +397,7 @@
      }
  
      public static void drawVoxelShapeParts(MatrixStack matrixStackIn, IVertexBuilder bufferIn, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
-@@ -3663,6 +3762,8 @@
+@@ -3667,6 +3762,8 @@
      {
          Random random = this.world.rand;
  
@@ -410,7 +406,7 @@
          switch (type)
          {
              case 1000:
-@@ -3725,18 +3826,26 @@
+@@ -3729,18 +3826,26 @@
                  break;
  
              case 1011:
@@ -437,7 +433,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3757,14 +3866,26 @@
+@@ -3761,14 +3866,26 @@
                  break;
  
              case 1019:
@@ -464,7 +460,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3793,10 +3914,17 @@
+@@ -3797,10 +3914,17 @@
                  break;
  
              case 1030:
@@ -482,7 +478,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3817,6 +3945,9 @@
+@@ -3821,6 +3945,9 @@
                  break;
  
              case 1036:
@@ -492,7 +488,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -4409,4 +4540,40 @@
+@@ -4413,4 +4540,40 @@
              super(p_i232463_1_, p_i232463_2_);
          }
      }

@@ -27,7 +27,7 @@
             "--fml.forgeGroup",
             "net.minecraftforge",
             "--fml.mcpVersion",
-            "20200812.004259"
+            "20200911.084530"
         ]
     },
     "libraries": [
