@@ -1244,7 +1244,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 		private int parseJavaVersion(String version) {
 			try {
-				return Integer.parseInt(version.substring(0, version.indexOf('.')));
+				if (version.indexOf('.') != -1)
+					return Integer.parseInt(version.substring(0, version.indexOf('.')));
+				else
+					return Integer.parseInt(version);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				return 0;
