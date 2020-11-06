@@ -504,7 +504,7 @@ public class OpenVRStereoRenderer
 			}
 
 			if (!isInitialized()) {
-				throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), getinitError());
+				throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), LangHelper.get(getinitError()));
 			}
 
 			Tuple<Integer, Integer> renderTextureInfo = getRenderTextureSizes();

@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/Util.java
++++ b/net/minecraft/util/Util.java
+@@ -102,7 +102,7 @@
+ 
+     private static ExecutorService createNamedService(String serviceName)
+     {
+-        int i = MathHelper.clamp(Runtime.getRuntime().availableProcessors() - 1, 1, 7);
++        int i = MathHelper.clamp(Runtime.getRuntime().availableProcessors() - 2, 1, 7); // VIVECRAFT: leave 2 cpu cores available
+         ExecutorService executorservice;
+ 
+         if (i <= 0)

@@ -571,6 +571,7 @@ vivecraft.messages.noserverplugin=Vivecraft server mod not detected. This server
 vivecraft.messages.calibrateheight=Please calibrate your height in the pause menu.
 vivecraft.messages.rendersetupfailed=Render setup failed: %s
 vivecraft.messages.intelgraphics=Intel Integrated Graphics are not supported. If this is a laptop, please force the high-performance GPU. Detected GPU: %s
+vivecraft.messages.nosteamvr=OpenVR runtime not detected. Did you install SteamVR?
 vivecraft.messages.menuworldexportcomplete.1=World export complete... area size: %d
 vivecraft.messages.menuworldexportcomplete.2=Saved to %s
 vivecraft.messages.menuworldexportclientwarning=WARNING: Saving menu world using a client world. Data may be incomplete. It is recommended to save menu worlds in singleplayer.
