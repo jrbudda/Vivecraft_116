@@ -22,8 +22,8 @@
  import net.minecraft.scoreboard.Score;
  import net.minecraft.scoreboard.ScoreCriteria;
  import net.minecraft.scoreboard.ScorePlayerTeam;
-@@ -123,12 +129,19 @@
- import net.minecraft.util.text.event.HoverEvent;
+@@ -124,12 +130,19 @@
+ import net.minecraft.util.text.filter.IChatFilter;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
 +import net.minecraft.world.Teleporter;
@@ -42,7 +42,7 @@
  
  public class ServerPlayerEntity extends PlayerEntity implements IContainerListener
  {
-@@ -366,6 +379,22 @@
+@@ -386,6 +399,22 @@
      public void addSelfToInternalCraftingInventory()
      {
          this.openContainer.addListener(this);
@@ -64,8 +64,8 @@
 +		}
      }
  
-     public void sendEnterCombat()
-@@ -461,6 +490,7 @@
+     /**
+@@ -490,6 +519,7 @@
              if (!this.isSpectator() || this.world.isBlockLoaded(this.getPosition()))
              {
                  super.tick();
@@ -73,8 +73,8 @@
              }
  
              for (int i = 0; i < this.inventory.getSizeInventory(); ++i)
-@@ -552,6 +582,10 @@
- 
+@@ -584,6 +614,10 @@
+      */
      public void onDeath(DamageSource cause)
      {
 +        //Forge
@@ -84,7 +84,7 @@
          boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
  
          if (flag)
-@@ -746,9 +780,20 @@
+@@ -784,9 +818,20 @@
          }
      }
  
@@ -106,7 +106,7 @@
          this.invulnerableDimensionChange = true;
          ServerWorld serverworld = this.getServerWorld();
          RegistryKey<World> registrykey = serverworld.getDimensionKey();
-@@ -756,8 +801,13 @@
+@@ -794,8 +839,13 @@
          if (registrykey == World.THE_END && server.getDimensionKey() == World.OVERWORLD)
          {
              this.detach();
@@ -122,7 +122,7 @@
              if (!this.queuedEndExit)
              {
                  this.queuedEndExit = true;
-@@ -774,7 +824,15 @@
+@@ -812,7 +862,15 @@
              this.connection.sendPacket(new SServerDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
              PlayerList playerlist = this.server.getPlayerList();
              playerlist.updatePermissionLevel(this);
@@ -139,7 +139,7 @@
              this.removed = false;
              PortalInfo portalinfo = this.func_241829_a(server);
  
-@@ -813,6 +871,9 @@
+@@ -851,6 +909,9 @@
                  this.lastExperience = -1;
                  this.lastHealth = -1.0F;
                  this.lastFoodLevel = -1;
@@ -149,7 +149,7 @@
              }
  
              return this;
-@@ -908,6 +969,12 @@
+@@ -949,6 +1010,12 @@
  
      public Either<PlayerEntity.SleepResult, Unit> trySleep(BlockPos at)
      {
@@ -162,7 +162,7 @@
          Direction direction = this.world.getBlockState(at).get(HorizontalBlock.HORIZONTAL_FACING);
  
          if (!this.isSleeping() && this.isAlive())
-@@ -928,7 +995,11 @@
+@@ -969,7 +1036,11 @@
              {
                  this.func_242111_a(this.world.getDimensionKey(), at, this.rotationYaw, false, true);
  
@@ -175,7 +175,7 @@
                  {
                      return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
                  }
-@@ -974,6 +1045,7 @@
+@@ -1015,6 +1086,7 @@
  
      private boolean func_241147_a_(BlockPos p_241147_1_, Direction p_241147_2_)
      {
@@ -183,7 +183,7 @@
          return this.func_241158_g_(p_241147_1_) || this.func_241158_g_(p_241147_1_.offset(p_241147_2_.getOpposite()));
      }
  
-@@ -1105,6 +1177,7 @@
+@@ -1158,6 +1230,7 @@
                  this.connection.sendPacket(new SOpenWindowPacket(container.windowId, container.getType(), p_213829_1_.getDisplayName()));
                  container.addListener(this);
                  this.openContainer = container;
@@ -191,7 +191,7 @@
                  return OptionalInt.of(this.currentWindowId);
              }
          }
-@@ -1126,6 +1199,7 @@
+@@ -1179,6 +1252,7 @@
          this.connection.sendPacket(new SOpenHorseWindowPacket(this.currentWindowId, inventoryIn.getSizeInventory(), horse.getEntityId()));
          this.openContainer = new HorseInventoryContainer(this.currentWindowId, this.inventory, inventoryIn, horse);
          this.openContainer.addListener(this);
@@ -199,7 +199,7 @@
      }
  
      public void openBook(ItemStack stack, Hand hand)
-@@ -1198,6 +1272,7 @@
+@@ -1272,6 +1346,7 @@
      public void closeContainer()
      {
          this.openContainer.onContainerClosed(this);
@@ -207,7 +207,7 @@
          this.openContainer = this.container;
      }
  
-@@ -1345,6 +1420,16 @@
+@@ -1429,6 +1504,16 @@
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.setLeftShoulderEntity(that.getLeftShoulderEntity());
          this.setRightShoulderEntity(that.getRightShoulderEntity());
@@ -224,7 +224,7 @@
      }
  
      protected void onNewPotionEffect(EffectInstance id)
-@@ -1477,6 +1562,8 @@
+@@ -1582,6 +1667,8 @@
          this.chatColours = packetIn.isColorsEnabled();
          this.getDataManager().set(PLAYER_MODEL_FLAG, (byte)packetIn.getModelPartFlags());
          this.getDataManager().set(MAIN_HAND, (byte)(packetIn.getMainHand() == HandSide.LEFT ? 0 : 1));
@@ -233,8 +233,8 @@
      }
  
      public ChatVisibility getChatVisibility()
-@@ -1624,8 +1711,13 @@
-             this.connection.sendPacket(new SRespawnPacket(newWorld.func_230315_m_(), newWorld.getDimensionKey(), BiomeManager.func_235200_a_(newWorld.getSeed()), this.interactionManager.getGameType(), this.interactionManager.func_241815_c_(), newWorld.isDebug(), newWorld.func_241109_A_(), true));
+@@ -1748,8 +1835,13 @@
+             this.connection.sendPacket(new SRespawnPacket(newWorld.getDimensionType(), newWorld.getDimensionKey(), BiomeManager.getHashedSeed(newWorld.getSeed()), this.interactionManager.getGameType(), this.interactionManager.func_241815_c_(), newWorld.isDebug(), newWorld.func_241109_A_(), true));
              this.connection.sendPacket(new SServerDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
              this.server.getPlayerList().updatePermissionLevel(this);
 +            if (Reflector.ForgeHooks.exists()) {
@@ -247,7 +247,7 @@
              this.setLocationAndAngles(x, y, z, yaw, pitch);
              this.setWorld(newWorld);
              newWorld.addDuringCommandTeleport(this);
-@@ -1634,8 +1726,81 @@
+@@ -1758,8 +1850,81 @@
              this.interactionManager.setWorld(newWorld);
              this.server.getPlayerList().sendWorldInfo(this, newWorld);
              this.server.getPlayerList().sendInventory(this);
@@ -329,7 +329,7 @@
  
      @Nullable
      public BlockPos func_241140_K_()
-@@ -1660,6 +1825,9 @@
+@@ -1784,6 +1949,9 @@
  
      public void func_242111_a(RegistryKey<World> p_242111_1_, @Nullable BlockPos p_242111_2_, float p_242111_3_, boolean p_242111_4_, boolean p_242111_5_)
      {
@@ -339,15 +339,15 @@
          if (p_242111_2_ != null)
          {
              boolean flag = p_242111_2_.equals(this.field_241138_cr_) && p_242111_1_.equals(this.field_241137_cq_);
-@@ -1717,6 +1885,7 @@
-         return new SSpawnPlayerPacket(this);
-     }
- 
+@@ -1846,6 +2014,7 @@
+      * instead of dropping the item from where the player is pointing at. Likewise, if traceItem is true, the dropped
+      * item entity will have the thrower set as the player.
+      */
 +    @Override
      public ItemEntity dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
      {
          ItemEntity itementity = super.dropItem(droppedItem, dropAround, traceItem);
-@@ -1727,7 +1896,28 @@
+@@ -1856,7 +2025,28 @@
          }
          else
          {
@@ -376,9 +376,9 @@
              ItemStack itemstack = itementity.getItem();
  
              if (traceItem)
-@@ -1743,4 +1933,9 @@
-             return itementity;
-         }
+@@ -1878,4 +2068,9 @@
+     {
+         return this.field_244528_co;
      }
 -}
 +

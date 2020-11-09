@@ -82,11 +82,10 @@
          }
          else
          {
-@@ -562,9 +612,47 @@
+@@ -565,6 +615,44 @@
  
      public Quaternion getCameraOrientation()
      {
--        return this.cameraOrientation;
 +    	//Vivecraft Hack time! This is only used to render sprites 'normal' to the camera, but, 
 +    	//as you can see, doesn't work at all, how could it, using a fixed rotation for every sprite?
 +    	//Lets do better.  	
@@ -125,10 +124,6 @@
 +        this.cameraOrientation.set(0.0F, 0.0F, 0.0F, 1.0F);   
 +        this.cameraOrientation.multiply(Vector3f.YP.rotationDegrees((float)-Math.toDegrees(Math.atan2(-dir.x, dir.z))));
 +        this.cameraOrientation.multiply(Vector3f.XP.rotationDegrees((float)-Math.toDegrees(Math.asin(dir.y/dir.length()))));        
-+        return this.cameraOrientation;  	
+         return this.cameraOrientation;
      }
--
-+    
-     public FontRenderer getFontRenderer()
-     {
-         return this.textRenderer;
+ 

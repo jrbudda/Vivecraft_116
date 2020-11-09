@@ -9,7 +9,7 @@
  import net.minecraft.client.util.ITooltipFlag;
  import net.minecraft.entity.LivingEntity;
  import net.minecraft.entity.player.PlayerEntity;
-@@ -78,7 +80,12 @@
+@@ -82,7 +84,12 @@
                  playerentity.inventory.addItemStackToInventory(new ItemStack(Items.GLASS_BOTTLE));
              }
          }

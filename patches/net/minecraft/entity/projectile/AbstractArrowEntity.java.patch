@@ -49,7 +49,7 @@
          }
      }
  
-@@ -142,7 +161,15 @@
+@@ -157,7 +176,15 @@
          BlockPos blockpos = this.getPosition();
          BlockState blockstate = this.world.getBlockState(blockpos);
  
@@ -66,7 +66,7 @@
          {
              VoxelShape voxelshape = blockstate.getCollisionShape(this.world, blockpos);
  
-@@ -217,7 +244,12 @@
+@@ -232,7 +259,12 @@
                      }
                  }
  

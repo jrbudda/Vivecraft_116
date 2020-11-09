@@ -9,3 +9,12 @@
                      {
                          BlockState blockstate = chunkcacheof.getBlockState(blockposm);
  
+@@ -1109,7 +1109,7 @@
+ 
+                             if (ChunkRenderDispatcher.FORGE_SET_RENDER_LAYER)
+                             {
+-                                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, null);
++                                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, (Object)null);
+                             }
+                         }
+                     }

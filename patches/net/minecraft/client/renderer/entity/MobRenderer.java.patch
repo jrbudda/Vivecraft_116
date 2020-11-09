@@ -9,16 +9,17 @@
  import net.minecraft.client.renderer.IRenderTypeBuffer;
  import net.minecraft.client.renderer.LightTexture;
  import net.minecraft.client.renderer.RenderType;
-@@ -59,6 +61,12 @@
+@@ -59,6 +61,13 @@
          {
              matrixStackIn.push();
-             Vector3d vector3d = leashHolder.func_241843_o(partialTicks);
+             Vector3d vector3d = leashHolder.getLeashPosition(partialTicks);
 +            // VIVE START 
 +            if (leashHolder == Minecraft.getInstance().player)
 +            {
 +            	vector3d = Minecraft.getInstance().vrPlayer.vrdata_world_render.getController(0).getPosition();        		         
 +            }
 +            // VIVE END 
++
              double d0 = (double)(MathHelper.lerp(partialTicks, entityLivingIn.renderYawOffset, entityLivingIn.prevRenderYawOffset) * ((float)Math.PI / 180F)) + (Math.PI / 2D);
              Vector3d vector3d1 = entityLivingIn.func_241205_ce_();
              double d1 = Math.cos(d0) * vector3d1.z + Math.sin(d0) * vector3d1.x;

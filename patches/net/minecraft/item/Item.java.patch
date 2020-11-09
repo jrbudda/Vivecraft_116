@@ -15,7 +15,7 @@
  import net.minecraft.client.util.ITooltipFlag;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.LivingEntity;
-@@ -117,7 +123,7 @@
+@@ -126,7 +132,7 @@
          {
              ItemStack itemstack = playerIn.getHeldItem(handIn);
  
@@ -24,7 +24,7 @@
              {
                  playerIn.setActiveHand(handIn);
                  return ActionResult.resultConsume(itemstack);
-@@ -301,6 +307,13 @@
+@@ -382,6 +388,13 @@
          float f = player.rotationPitch;
          float f1 = player.rotationYaw;
          Vector3d vector3d = player.getEyePosition(1.0F);

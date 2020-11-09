@@ -778,7 +778,7 @@ public class OpenVRStereoRenderer
 				//Vanilla alpha sort shader
 	
 				alphaShaders.clear();
-				if (Minecraft.func_238218_y_()) { //Fabulous
+				if (Minecraft.isFabulousGraphicsEnabled()) { //Fabulous
 					ResourceLocation resourcelocation = new ResourceLocation("shaders/post/vrtransparency.json");
 					alphaShaders.put(framebufferVrRender.name, createShaderGroup(resourcelocation, framebufferVrRender));
 					if (renderPasses.contains(RenderPass.THIRD))

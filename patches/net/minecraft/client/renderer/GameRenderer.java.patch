@@ -195,7 +195,7 @@
      }
  
      public void close()
-@@ -200,7 +300,7 @@
+@@ -203,7 +303,7 @@
              }
  
              try
@@ -204,7 +204,7 @@
                  this.shaderGroup = new ShaderGroup(this.mc.getTextureManager(), this.resourceManager, this.mc.getFramebuffer(), resourceLocationIn);
                  this.shaderGroup.createBindFramebuffers(this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
                  this.useShader = true;
-@@ -300,13 +400,18 @@
+@@ -309,13 +409,18 @@
      {
          Entity entity = this.mc.getRenderViewEntity();
  
@@ -226,7 +226,7 @@
              boolean flag = false;
              int i = 3;
              double d1 = d0;
-@@ -332,14 +437,16 @@
+@@ -341,14 +446,16 @@
              {
                  d1 = this.mc.objectMouseOver.getHitVec().squareDistanceTo(vector3d);
              }
@@ -247,7 +247,7 @@
              }, d1);
  
              if (entityraytraceresult != null)
-@@ -393,6 +500,10 @@
+@@ -405,6 +512,10 @@
  
      private double getFOVModifier(ActiveRenderInfo activeRenderInfoIn, float partialTicks, boolean useFOVSetting)
      {
@@ -258,7 +258,7 @@
          if (this.debugView)
          {
              return 90.0D;
-@@ -497,7 +608,9 @@
+@@ -509,7 +620,9 @@
              matrixStackIn.rotate(Vector3f.XP.rotationDegrees(Math.abs(MathHelper.cos(f1 * (float)Math.PI - 0.2F) * f2) * 5.0F));
          }
      }
@@ -268,7 +268,7 @@
      private void renderHand(MatrixStack matrixStackIn, ActiveRenderInfo activeRenderInfoIn, float partialTicks)
      {
          this.renderHand(matrixStackIn, activeRenderInfoIn, partialTicks, true, true, false);
-@@ -592,13 +705,34 @@
+@@ -604,13 +717,34 @@
              this.clipDistance = 173.0F;
          }
  
@@ -310,7 +310,7 @@
          return matrixstack.getLast().getMatrix();
      }
  
-@@ -610,10 +744,12 @@
+@@ -622,10 +756,12 @@
  
      public void updateCameraAndRender(float partialTicks, long nanoTime, boolean renderWorldIn)
      {
@@ -325,7 +325,7 @@
              if (Util.milliTime() - this.prevFrameTime > 500L)
              {
                  this.mc.displayInGameMenu(false);
-@@ -623,16 +759,23 @@
+@@ -635,16 +771,23 @@
          {
              this.prevFrameTime = Util.milliTime();
          }
@@ -351,7 +351,7 @@
  
                  if (this.mc.isSingleplayer() && this.timeWorldIcon < Util.milliTime() - 1000L)
                  {
-@@ -644,9 +787,10 @@
+@@ -656,9 +799,10 @@
                      }
                  }
  
@@ -363,7 +363,7 @@
                  {
                      RenderSystem.disableBlend();
                      RenderSystem.disableDepthTest();
-@@ -662,140 +806,35 @@
+@@ -674,140 +818,35 @@
  
                  this.mc.getFramebuffer().bindFramebuffer(true);
              }
@@ -371,7 +371,10 @@
 -            {
 -                RenderSystem.viewport(0, 0, this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
 -            }
--
++    		else {
++    			this.mc.getProfiler().startSection("MainMenu");
++    			GL11.glDisable(GL11.GL_STENCIL_TEST);
+ 
 -            MainWindow mainwindow = this.mc.getMainWindow();
 -            RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
 -            RenderSystem.matrixMode(5889);
@@ -382,23 +385,29 @@
 -            RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
 -            RenderHelper.setupGui3DDiffuseLighting();
 -            MatrixStack matrixstack = new MatrixStack();
--
++    			this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
+ 
 -            if (this.lightmapTexture.isCustom())
 -            {
 -                this.lightmapTexture.setAllowed(false);
 -            }
--
++    			RenderSystem.pushMatrix();
++    			GL11.glLoadIdentity();
++    			applyVRModelViewLegacy(this.mc.currentPass);
++    			removeStereoLegacy(mc.currentPass);
+ 
 -            if (renderWorldIn && this.mc.world != null)
 -            {
 -                this.mc.getProfiler().endStartSection("gui");
--
++    			renderGuiLayer(partialTicks, true);
+ 
 -                if (this.mc.player != null)
 -                {
 -                    float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
 -
--                    if (f > 0.0F && this.mc.player.isPotionActive(Effects.NAUSEA) && this.mc.gameSettings.field_243226_aM < 1.0F)
+-                    if (f > 0.0F && this.mc.player.isPotionActive(Effects.NAUSEA) && this.mc.gameSettings.screenEffectScale < 1.0F)
 -                    {
--                        this.func_243497_c(f * (1.0F - this.mc.gameSettings.field_243226_aM));
+-                        this.func_243497_c(f * (1.0F - this.mc.gameSettings.screenEffectScale));
 -                    }
 -                }
 -
@@ -411,53 +420,39 @@
 -                    if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo)
 -                    {
 -                        Config.drawFps(matrixstack);
-+    		else {
-+    			this.mc.getProfiler().startSection("MainMenu");
-+    			GL11.glDisable(GL11.GL_STENCIL_TEST);
-+
-+    			this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
-+
-+    			RenderSystem.pushMatrix();
-+    			GL11.glLoadIdentity();
-+    			applyVRModelViewLegacy(this.mc.currentPass);
-+    			removeStereoLegacy(mc.currentPass);
-+
-+    			renderGuiLayer(partialTicks, true);
-+
+-                    }
+-
+-                    if (this.mc.gameSettings.showDebugInfo)
+-                    {
+-                        Lagometer.showLagometer(matrixstack, (int)this.mc.getMainWindow().getGuiScaleFactor());
+-                    }
+-
+-                    RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
+-                }
+-
+-                this.mc.getProfiler().endSection();
 +    			if(KeyboardHandler.Showing) {
 +    				if (mc.vrSettings.physicalKeyboard)
 +    					renderPhysicalKeyboard(partialTicks);
 +    				else
 +    					render2D(partialTicks, KeyboardHandler.Framebuffer, KeyboardHandler.Pos_room, KeyboardHandler.Rotation_room, false);
-                     }
+             }
  
--                    if (this.mc.gameSettings.showDebugInfo)
--                    {
--                        Lagometer.showLagometer(matrixstack, (int)this.mc.getMainWindow().getGuiScaleFactor());
-+    			if((mc.currentPass != RenderPass.THIRD || mc.vrSettings.mixedRealityRenderHands) && mc.currentPass != RenderPass.CAMERA){
-+    				renderVRHands(partialTicks, true, true, true, true);
-                     }
- 
--                    RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
-+    			RenderSystem.popMatrix();
-                 }
- 
-                 this.mc.getProfiler().endSection();
--            }
--
 -            if (this.guiLoadingVisible != (this.mc.loadingGui != null))
 -            {
 -                if (this.mc.loadingGui != null)
 -                {
 -                    ResourceLoadProgressGui.loadLogoTexture(this.mc);
- 
+-
 -                    if (this.mc.loadingGui instanceof ResourceLoadProgressGui)
 -                    {
 -                        ResourceLoadProgressGui resourceloadprogressgui = (ResourceLoadProgressGui)this.mc.loadingGui;
 -                        resourceloadprogressgui.update();
 -                    }
--                }
--
++    			if((mc.currentPass != RenderPass.THIRD || mc.vrSettings.mixedRealityRenderHands) && mc.currentPass != RenderPass.CAMERA){
++    				renderVRHands(partialTicks, true, true, true, true);
+                 }
+ 
 -                this.guiLoadingVisible = this.mc.loadingGui != null;
 -            }
 -
@@ -508,24 +503,26 @@
 -                        return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %f", this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight(), this.mc.getMainWindow().getGuiScaleFactor());
 -                    });
 -                    throw new ReportedException(crashreport1);
--                }
++    			RenderSystem.popMatrix();
+                 }
 -            }
 -
 -            this.lightmapTexture.setAllowed(true);
 -        }
--
+ 
 -        this.frameFinish();
 -        this.waitForServerThread();
 -        MemoryMonitor.update();
 -        Lagometer.updateLagometer();
--
++                this.mc.getProfiler().endSection();
+ 
 -        if (this.mc.gameSettings.ofProfiler)
 -        {
 -            this.mc.gameSettings.showDebugProfilerChart = true;
          }
      }
  
-@@ -839,7 +878,10 @@
+@@ -851,7 +890,10 @@
  
      private boolean isDrawBlockOutline()
      {
@@ -537,7 +534,7 @@
          {
              return false;
          }
-@@ -874,17 +916,36 @@
+@@ -886,17 +928,36 @@
          }
      }
  
@@ -579,7 +576,7 @@
          if (Config.isShaders())
          {
              Shaders.beginRender(this.mc, this.activeRender, partialTicks, finishTimeNano);
-@@ -897,108 +958,71 @@
+@@ -909,108 +970,71 @@
          {
              Shaders.beginRenderPass(partialTicks, finishTimeNano);
          }
@@ -599,7 +596,8 @@
 -        {
 -            this.farPlaneDistance *= 0.83F;
 -        }
--
++        setupClipPlanes();
+ 
 -        MatrixStack matrixstack = new MatrixStack();
 -        matrixstack.getLast().getMatrix().mul(this.getProjectionMatrix(activerenderinfo, partialTicks, true));
 -        MatrixStack matrixstack1 = matrixstack;
@@ -610,8 +608,6 @@
 -        }
 -
 -        this.hurtCameraEffect(matrixstack, partialTicks);
-+        setupClipPlanes();
-+     
 +        //no hurt  this.hurtCameraEffect(temp, partialTicks);
  
          if (this.mc.gameSettings.viewBobbing)
@@ -620,7 +616,7 @@
 +         //no bob   this.applyBobbing(temp, partialTicks);
          }
  
--        float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal) * this.mc.gameSettings.field_243226_aM * this.mc.gameSettings.field_243226_aM;
+-        float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal) * this.mc.gameSettings.screenEffectScale * this.mc.gameSettings.screenEffectScale;
 +        float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
  
          if (f > 0.0F)
@@ -654,7 +650,7 @@
  
 -        Matrix4f matrix4f = matrixstack.getLast().getMatrix();
 -        this.resetProjectionMatrix(matrix4f);
-         activerenderinfo.update(this.mc.world, (Entity)(this.mc.getRenderViewEntity() == null ? this.mc.player : this.mc.getRenderViewEntity()), !this.mc.gameSettings.func_243230_g().func_243192_a(), this.mc.gameSettings.func_243230_g().func_243193_b(), partialTicks);
+         activerenderinfo.update(this.mc.world, (Entity)(this.mc.getRenderViewEntity() == null ? this.mc.player : this.mc.getRenderViewEntity()), !this.mc.gameSettings.getPointOfView().func_243192_a(), this.mc.gameSettings.getPointOfView().func_243193_b(), partialTicks);
  
 -        if (Reflector.ForgeHooksClient_onCameraSetup.exists())
 -        {
@@ -715,7 +711,7 @@
          this.mc.getProfiler().endSection();
      }
  
-@@ -1110,8 +1134,6 @@
+@@ -1122,8 +1146,6 @@
  
          if (!this.initialized)
          {
@@ -724,7 +720,7 @@
              if (Config.getBitsOs() == 64 && Config.getBitsJre() == 32)
              {
                  Config.setNotify64BitJava(true);
-@@ -1280,25 +1302,30 @@
+@@ -1292,25 +1314,30 @@
              float f6 = this.itemActivationOffY * (float)(heightScaled / 4);
              RenderSystem.enableAlphaTest();
              RenderSystem.pushMatrix();
@@ -771,7 +767,7 @@
          }
      }
  
-@@ -1359,4 +1386,2196 @@
+@@ -1371,4 +1398,2196 @@
      {
          return this.overlayTexture;
      }

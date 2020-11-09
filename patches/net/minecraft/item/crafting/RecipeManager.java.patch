@@ -48,13 +48,14 @@
 +                    continue;
 +                 }
 +                //
-                 map.computeIfAbsent(irecipe.getType(), (p_223391_0_) ->
+                 map.computeIfAbsent(irecipe.getType(), (recipeType) ->
                  {
                      return ImmutableMap.builder();
-@@ -68,6 +90,30 @@
+@@ -67,7 +89,30 @@
+                 LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
              }
          }
- 
+-
 +    	//VIVECRAFT - This prolly cant stay here. Move to .json files someday.
 +    	ItemStack is = new ItemStack(Items.LEATHER_BOOTS);
 +    	is.setDisplayName(new TranslationTextComponent("vivecraft.item.jumpboots"));
@@ -79,6 +80,6 @@
 +    	map.get(claw.getType()).put(claw.getId(), claw);	
 +     	map.get(scope.getType()).put(scope.getId(), scope);
 +     	
-         this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (p_223400_0_) ->
+         this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (recipeEntry) ->
          {
-             return p_223400_0_.getValue().build();
+             return recipeEntry.getValue().build();

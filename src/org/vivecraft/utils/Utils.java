@@ -763,7 +763,7 @@ public class Utils
 	public static List<ITextProperties> wrapText(ITextProperties text, int width, FontRenderer fontRenderer, @Nullable ITextProperties linePrefix)
 	{
 		TextPropertiesManager manager = new TextPropertiesManager();
-		text.func_230439_a_((style, str) -> {
+		text.getComponentWithStyle((style, str) -> {
 			manager.func_238155_a_(ITextProperties.func_240653_a_(str, style));
 			return Optional.empty();
 		}, Style.EMPTY);
@@ -776,7 +776,7 @@ public class Utils
 		//});
 		//return list.isEmpty() ? Lists.newArrayList(IReorderingProcessor.field_242232_a) : list;
 		List<ITextProperties> list = Lists.newArrayList();
-		fontRenderer.func_238420_b_().func_243242_a(manager.func_238156_b_(), width, Style.EMPTY, (lineText, sameLine) ->
+		fontRenderer.getCharacterManager().func_243242_a(manager.func_238156_b_(), width, Style.EMPTY, (lineText, sameLine) ->
 		{
 			list.add(sameLine && linePrefix != null ? ITextProperties.func_240655_a_(linePrefix, lineText) : lineText);
 		});
@@ -789,7 +789,7 @@ public class Utils
 
 		ArrayList<TextFormatting> list = new ArrayList<>();
 		if (style.getColor() != null)
-			list.add(TextFormatting.getValueByName(style.getColor().func_240747_b_()));
+			list.add(TextFormatting.getValueByName(style.getColor().getName()));
 		if (style.getBold())
 			list.add(TextFormatting.BOLD);
 		if (style.getItalic())

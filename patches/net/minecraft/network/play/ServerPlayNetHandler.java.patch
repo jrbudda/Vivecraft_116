@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -4,10 +4,17 @@
+@@ -5,10 +5,17 @@
  import com.google.common.primitives.Floats;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
@@ -16,9 +16,9 @@
 +import java.io.IOException;
 +import java.io.InputStreamReader;
  import java.util.Collections;
+ import java.util.List;
  import java.util.Optional;
- import java.util.Set;
-@@ -19,6 +26,7 @@
+@@ -25,6 +32,7 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
  import net.minecraft.block.CommandBlockBlock;
@@ -26,7 +26,7 @@
  import net.minecraft.command.CommandSource;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -26,6 +34,8 @@
+@@ -32,6 +40,8 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.IJumpingMount;
  import net.minecraft.entity.MoverType;
@@ -35,7 +35,7 @@
  import net.minecraft.entity.item.BoatEntity;
  import net.minecraft.entity.item.ExperienceOrbEntity;
  import net.minecraft.entity.item.ItemEntity;
-@@ -51,6 +61,7 @@
+@@ -56,6 +66,7 @@
  import net.minecraft.nbt.StringNBT;
  import net.minecraft.network.IPacket;
  import net.minecraft.network.NetworkManager;
@@ -43,7 +43,7 @@
  import net.minecraft.network.PacketThreadUtil;
  import net.minecraft.network.play.client.CAnimateHandPacket;
  import net.minecraft.network.play.client.CChatMessagePacket;
-@@ -141,9 +152,18 @@
+@@ -148,9 +159,18 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -62,17 +62,17 @@
  public class ServerPlayNetHandler implements IServerPlayNetHandler
  {
      private static final Logger LOGGER = LogManager.getLogger();
-@@ -187,6 +207,9 @@
+@@ -204,6 +224,9 @@
          networkManagerIn.setNetHandler(this);
          this.player = playerIn;
          playerIn.connection = this;
 +        // VIVECRAFT
 +        ((Channel)MCReflection.NetworkManager_channel.get(networkManagerIn)).pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
 +        //
-     }
+         IChatFilter ichatfilter = playerIn.func_244529_Q();
  
-     public void tick()
-@@ -282,6 +305,8 @@
+         if (ichatfilter != null)
+@@ -305,6 +328,8 @@
          {
              this.disconnect(new TranslationTextComponent("multiplayer.disconnect.idling"));
          }
@@ -81,7 +81,7 @@
      }
  
      public void captureCurrentPosition()
-@@ -397,11 +422,17 @@
+@@ -471,11 +496,17 @@
                  }
  
                  entity.setPositionAndRotation(d3, d4, d5, f, f1);
@@ -99,7 +99,7 @@
                      this.netManager.sendPacket(new SMoveVehiclePacket(entity));
                      return;
                  }
-@@ -1097,7 +1128,18 @@
+@@ -1220,7 +1251,18 @@
  
          if (blockpos.getY() < this.server.getBuildLimit())
          {
@@ -119,95 +119,24 @@
              {
                  ActionResultType actionresulttype = this.player.interactionManager.func_219441_a(this.player, serverworld, itemstack, hand, blockraytraceresult);
  
-@@ -1251,43 +1293,51 @@
- 
-     public void processChatMessage(CChatMessagePacket packetIn)
-     {
--        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
--
--        if (this.player.getChatVisibility() == ChatVisibility.HIDDEN)
--        {
--            this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).mergeStyle(TextFormatting.RED), ChatType.SYSTEM, Util.DUMMY_UUID));
--        }
--        else
--        {
--            this.player.markPlayerActive();
--            String s = org.apache.commons.lang3.StringUtils.normalizeSpace(packetIn.getMessage());
--
--            for (int i = 0; i < s.length(); ++i)
--            {
--                if (!SharedConstants.isAllowedCharacter(s.charAt(i)))
--                {
--                    this.disconnect(new TranslationTextComponent("multiplayer.disconnect.illegal_characters"));
--                    return;
--                }
--            }
--
--            if (s.startsWith("/"))
--            {
--                this.handleSlashCommand(s);
--            }
--            else
--            {
--                ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), s);
--                this.server.getPlayerList().func_232641_a_(itextcomponent, ChatType.CHAT, this.player.getUniqueID());
--            }
--
--            this.chatSpamThresholdCount += 20;
-+    	PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
- 
--            if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile()))
--            {
--                this.disconnect(new TranslationTextComponent("disconnect.spam"));
--            }
--        }
-+    	if (this.player.getChatVisibility() == ChatVisibility.HIDDEN)
-+    	{
-+    		this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).mergeStyle(TextFormatting.RED), ChatType.SYSTEM, Util.DUMMY_UUID));
-+    	}
-+    	else
-+    	{
-+    		this.player.markPlayerActive();
-+    		String s = org.apache.commons.lang3.StringUtils.normalizeSpace(packetIn.getMessage());
-+
-+    		for (int i = 0; i < s.length(); ++i)
-+    		{
-+    			if (!SharedConstants.isAllowedCharacter(s.charAt(i)))
-+    			{
-+    				this.disconnect(new TranslationTextComponent("multiplayer.disconnect.illegal_characters"));
-+    				return;
-+    			}
-+    		}
-+
-+    		if (s.startsWith("/"))
-+    		{
-+    			this.handleSlashCommand(s);
-+    		}
-+    		else
-+    		{
+@@ -1430,8 +1472,16 @@
+             }
+             else
+             {
 +    			//Forge
 +    			if(Reflector.ForgeHooks_newChatWithLinks.exists()) {
-+    				ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), Reflector.call(Reflector.ForgeHooks_newChatWithLinks, s));
-+    				itextcomponent = (ITextComponent) Reflector.call(Reflector.ForgeHooks_onServerChatEvent, this, s, itextcomponent);
++    				ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), Reflector.call(Reflector.ForgeHooks_newChatWithLinks, p_244548_1_));
++    				itextcomponent = (ITextComponent) Reflector.call(Reflector.ForgeHooks_onServerChatEvent, this, p_244548_1_, itextcomponent);
 +    				if (itextcomponent == null) return;
 +    			} else {
 +    				//
-+    				ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), s);
-+    				this.server.getPlayerList().func_232641_a_(itextcomponent, ChatType.CHAT, this.player.getUniqueID());
-+    			}
-+    		}
-+
-+    		this.chatSpamThresholdCount += 20;
-+
-+    		if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile()))
-+    		{
-+    			this.disconnect(new TranslationTextComponent("disconnect.spam"));
-+    		}
-+    	}
-     }
+                 ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), p_244548_1_);
+                 this.server.getPlayerList().func_232641_a_(itextcomponent, ChatType.CHAT, this.player.getUniqueID());
++}
+             }
  
-     private void handleSlashCommand(String command)
-@@ -1402,6 +1452,9 @@
+             this.chatSpamThresholdCount += 20;
+@@ -1565,6 +1615,9 @@
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.INTERACT_AT)
                  {
@@ -217,8 +146,8 @@
                      optional = Optional.of(entity.applyPlayerInteraction(this.player, packetIn.getHitVec(), hand));
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.ATTACK)
-@@ -1674,6 +1727,117 @@
- 
+@@ -1880,6 +1933,117 @@
+      */
      public void processCustomPayload(CCustomPayloadPacket packetIn)
      {
 +        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());

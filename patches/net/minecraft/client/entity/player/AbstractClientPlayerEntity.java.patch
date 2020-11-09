@@ -26,4 +26,4 @@
 +        PatreonReceiver.addPlayerInfo(this);
      }
  
-     public boolean isSpectator()
+     /**

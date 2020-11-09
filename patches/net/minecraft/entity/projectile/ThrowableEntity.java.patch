@@ -41,8 +41,8 @@
 +    	///
      }
  
-     public boolean isInRangeToRenderDist(double distance)
-@@ -78,6 +92,11 @@
+     /**
+@@ -84,6 +98,11 @@
  
          if (raytraceresult.getType() != RayTraceResult.Type.MISS && !flag)
          {

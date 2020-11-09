@@ -1,13 +1,13 @@
 --- a/net/minecraft/client/renderer/RenderType.java
 +++ b/net/minecraft/client/renderer/RenderType.java
 @@ -122,9 +122,10 @@
-     public static RenderType func_239263_a_(ResourceLocation p_239263_0_)
+     public static RenderType getArmorCutoutNoCull(ResourceLocation locationIn)
      {
-         p_239263_0_ = getCustomTexture(p_239263_0_);
-+        final ResourceLocation temp = p_239263_0_;
-         return getRenderType("armor_cutout_no_cull", p_239263_0_, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("armor_cutout_no_cull", locationIn, () ->
          {
--            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(p_239263_0_, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).layer(field_239235_M_).build(true);
+-            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).layer(field_239235_M_).build(true);
 +            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).layer(field_239235_M_).build(true);
              return makeType("armor_cutout_no_cull", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
          });
@@ -37,42 +37,42 @@
          });
      }
 @@ -152,9 +155,10 @@
-     public static RenderType func_230167_a_(ResourceLocation p_230167_0_, boolean p_230167_1_)
+     public static RenderType getEntityCutoutNoCull(ResourceLocation locationIn, boolean outlineIn)
      {
-         p_230167_0_ = getCustomTexture(p_230167_0_);
-+        final ResourceLocation temp = p_230167_0_;
-         return getRenderType("entity_cutout_no_cull", p_230167_0_, p_230167_1_, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("entity_cutout_no_cull", locationIn, outlineIn, () ->
          {
--            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(p_230167_0_, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(p_230167_1_);
-+            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(p_230167_1_);
+-            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(outlineIn);
++            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(outlineIn);
              return makeType("entity_cutout_no_cull", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
          });
      }
 @@ -167,9 +171,10 @@
-     public static RenderType func_239266_b_(ResourceLocation p_239266_0_, boolean p_239266_1_)
+     public static RenderType getEntityCutoutNoCullZOffset(ResourceLocation locationIn, boolean outlineIn)
      {
-         p_239266_0_ = getCustomTexture(p_239266_0_);
-+        final ResourceLocation temp = p_239266_0_;
-         return getRenderType("entity_cutout_no_cull_z_offset", p_239266_0_, p_239266_1_, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("entity_cutout_no_cull_z_offset", locationIn, outlineIn, () ->
          {
--            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(p_239266_0_, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).layer(field_239235_M_).build(p_239266_1_);
-+            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).layer(field_239235_M_).build(p_239266_1_);
+-            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).layer(field_239235_M_).build(outlineIn);
++            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(NO_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).layer(field_239235_M_).build(outlineIn);
              return makeType("entity_cutout_no_cull_z_offset", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
          });
      }
 @@ -182,9 +187,10 @@
-     public static RenderType func_239268_f_(ResourceLocation p_239268_0_)
+     public static RenderType getItemEntityTranslucentCull(ResourceLocation locationIn)
      {
-         p_239268_0_ = getCustomTexture(p_239268_0_);
-+        final ResourceLocation temp = p_239268_0_;
-         return getRenderType("item_entity_translucent_cull", p_239268_0_, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("item_entity_translucent_cull", locationIn, () ->
          {
--            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(p_239268_0_, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).target(field_241712_U_).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).writeMask(RenderState.COLOR_DEPTH_WRITE).build(true);
+-            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).target(field_241712_U_).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).writeMask(RenderState.COLOR_DEPTH_WRITE).build(true);
 +            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).target(field_241712_U_).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).writeMask(RenderState.COLOR_DEPTH_WRITE).build(true);
              return makeType("item_entity_translucent_cull", DefaultVertexFormats.ENTITY, 7, 256, true, true, rendertype$state);
          });
      }
-@@ -192,19 +198,20 @@
+@@ -192,9 +198,10 @@
      public static RenderType getEntityTranslucentCull(ResourceLocation locationIn)
      {
          locationIn = getCustomTexture(locationIn);
@@ -84,118 +84,108 @@
              return makeType("entity_translucent_cull", DefaultVertexFormats.ENTITY, 7, 256, true, true, rendertype$state);
          });
      }
- 
-     public static RenderType func_230168_b_(ResourceLocation p_230168_0_, boolean p_230168_1_)
+@@ -202,9 +209,10 @@
+     public static RenderType getEntityTranslucent(ResourceLocation LocationIn, boolean outlineIn)
      {
--        p_230168_0_ = getCustomTexture(p_230168_0_);
--        return getRenderType("entity_translucent", p_230168_0_, p_230168_1_, () ->
-+    	final ResourceLocation temp = getCustomTexture(p_230168_0_);
-+        return getRenderType("entity_translucent", temp, p_230168_1_, () ->
+         LocationIn = getCustomTexture(LocationIn);
++        final ResourceLocation temp = LocationIn;
+         return getRenderType("entity_translucent", LocationIn, outlineIn, () ->
          {
--            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(p_230168_0_, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(p_230168_1_);
-+            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(p_230168_1_);
+-            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(LocationIn, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(outlineIn);
++            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(outlineIn);
              return makeType("entity_translucent", DefaultVertexFormats.ENTITY, 7, 256, true, true, rendertype$state);
          });
      }
-@@ -216,80 +223,80 @@
- 
+@@ -217,9 +225,10 @@
      public static RenderType getEntitySmoothCutout(ResourceLocation locationIn)
      {
--        locationIn = getCustomTexture(locationIn);
--        return getRenderType("entity_smooth_cutout", locationIn, () ->
-+    	final ResourceLocation temp = getCustomTexture(locationIn);
-+        return getRenderType("entity_smooth_cutout", temp, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("entity_smooth_cutout", locationIn, () ->
          {
 -            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).alpha(HALF_ALPHA).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).shadeModel(SHADE_ENABLED).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).build(true);
 +            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).alpha(HALF_ALPHA).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).shadeModel(SHADE_ENABLED).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).build(true);
              return makeType("entity_smooth_cutout", DefaultVertexFormats.ENTITY, 7, 256, rendertype$state);
          });
      }
- 
+@@ -227,9 +236,10 @@
      public static RenderType getBeaconBeam(ResourceLocation locationIn, boolean colorFlagIn)
      {
--        locationIn = getCustomTexture(locationIn);
--        return getRenderType("beacon_beam", locationIn, colorFlagIn, () ->
-+        final ResourceLocation temp = getCustomTexture(locationIn);
-+        return getRenderType("beacon_beam", temp, colorFlagIn, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("beacon_beam", locationIn, colorFlagIn, () ->
          {
 -            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).transparency(colorFlagIn ? TRANSLUCENT_TRANSPARENCY : NO_TRANSPARENCY).writeMask(colorFlagIn ? COLOR_WRITE : COLOR_DEPTH_WRITE).fog(NO_FOG).build(false);
 +            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(colorFlagIn ? TRANSLUCENT_TRANSPARENCY : NO_TRANSPARENCY).writeMask(colorFlagIn ? COLOR_WRITE : COLOR_DEPTH_WRITE).fog(NO_FOG).build(false);
              return makeType("beacon_beam", DefaultVertexFormats.BLOCK, 7, 256, false, true, rendertype$state);
          });
      }
- 
+@@ -237,9 +247,10 @@
      public static RenderType getEntityDecal(ResourceLocation locationIn)
      {
--        locationIn = getCustomTexture(locationIn);
--        return getRenderType("entity_decal", locationIn, () ->
-+    	final ResourceLocation temp = getCustomTexture(locationIn);
-+        return getRenderType("entity_decal", temp, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("entity_decal", locationIn, () ->
          {
 -            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).depthTest(DEPTH_EQUAL).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(false);
 +            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).depthTest(DEPTH_EQUAL).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(false);
              return makeType("entity_decal", DefaultVertexFormats.ENTITY, 7, 256, rendertype$state);
          });
      }
- 
+@@ -247,9 +258,10 @@
      public static RenderType getEntityNoOutline(ResourceLocation locationIn)
      {
--        locationIn = getCustomTexture(locationIn);
--        return getRenderType("entity_no_outline", locationIn, () ->
-+    	final ResourceLocation temp = getCustomTexture(locationIn);
-+        return getRenderType("entity_no_outline", temp, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("entity_no_outline", locationIn, () ->
          {
 -            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).writeMask(COLOR_WRITE).build(false);
 +            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).writeMask(COLOR_WRITE).build(false);
              return makeType("entity_no_outline", DefaultVertexFormats.ENTITY, 7, 256, false, true, rendertype$state);
          });
      }
- 
-     public static RenderType func_239272_l_(ResourceLocation p_239272_0_)
+@@ -257,9 +269,10 @@
+     public static RenderType getEntityShadow(ResourceLocation locationIn)
      {
--        p_239272_0_ = getCustomTexture(p_239272_0_);
--        return getRenderType("entity_shadow", p_239272_0_, () ->
-+    	final ResourceLocation temp = getCustomTexture(p_239272_0_);
-+        return getRenderType("entity_shadow", temp, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("entity_shadow", locationIn, () ->
          {
--            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(p_239272_0_, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_ENABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).writeMask(COLOR_WRITE).depthTest(DEPTH_LEQUAL).layer(field_239235_M_).build(false);
+-            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_ENABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).writeMask(COLOR_WRITE).depthTest(DEPTH_LEQUAL).layer(field_239235_M_).build(false);
 +            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).transparency(TRANSLUCENT_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_ENABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).writeMask(COLOR_WRITE).depthTest(DEPTH_LEQUAL).layer(field_239235_M_).build(false);
              return makeType("entity_shadow", DefaultVertexFormats.ENTITY, 7, 256, false, false, rendertype$state);
          });
      }
- 
-     public static RenderType func_239264_a_(ResourceLocation p_239264_0_, float p_239264_1_)
+@@ -267,9 +280,10 @@
+     public static RenderType getEntityAlpha(ResourceLocation locationIn, float refIn)
      {
--        p_239264_0_ = getCustomTexture(p_239264_0_);
--        return getRenderType("entity_alpha", p_239264_0_, p_239264_1_, () ->
-+    	final ResourceLocation temp = getCustomTexture(p_239264_0_);
-+        return getRenderType("entity_alpha", temp, p_239264_1_, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("entity_alpha", locationIn, refIn, () ->
          {
--            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(p_239264_0_, false, false)).alpha(new RenderState.AlphaState(p_239264_1_)).cull(CULL_DISABLED).build(true);
-+            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).alpha(new RenderState.AlphaState(p_239264_1_)).cull(CULL_DISABLED).build(true);
+-            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).alpha(new RenderState.AlphaState(refIn)).cull(CULL_DISABLED).build(true);
++            RenderType.State rendertype$state = RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).alpha(new RenderState.AlphaState(refIn)).cull(CULL_DISABLED).build(true);
              return makeType("entity_alpha", DefaultVertexFormats.ENTITY, 7, 256, rendertype$state);
          });
      }
- 
+@@ -277,9 +291,10 @@
      public static RenderType getEyes(ResourceLocation locationIn)
      {
--        locationIn = getCustomTexture(locationIn);
--        return getRenderType("eyes", locationIn, () ->
-+    	final ResourceLocation temp = getCustomTexture(locationIn);
-+        return getRenderType("eyes", temp, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("eyes", locationIn, () ->
          {
 -            RenderState.TextureState renderstate$texturestate = new RenderState.TextureState(locationIn, false, false);
 +            RenderState.TextureState renderstate$texturestate = new RenderState.TextureState(temp, false, false);
              return makeType("eyes", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder().texture(renderstate$texturestate).transparency(ADDITIVE_TRANSPARENCY).writeMask(COLOR_WRITE).fog(BLACK_FOG).build(false));
          });
      }
- 
+@@ -287,9 +302,10 @@
      public static RenderType getEnergySwirl(ResourceLocation locationIn, float uIn, float vIn)
      {
--        locationIn = getCustomTexture(locationIn);
--        return getRenderType("energy_swirl", locationIn, uIn, vIn, () ->
-+    	final ResourceLocation temp = getCustomTexture(locationIn);
-+        return getRenderType("energy_swirl", temp, uIn, vIn, () ->
+         locationIn = getCustomTexture(locationIn);
++        final ResourceLocation temp = locationIn;
+         return getRenderType("energy_swirl", locationIn, uIn, vIn, () ->
          {
 -            return makeType("energy_swirl", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).texturing(new RenderState.OffsetTexturingState(uIn, vIn)).fog(BLACK_FOG).transparency(ADDITIVE_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(false));
 +            return makeType("energy_swirl", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder().texture(new RenderState.TextureState(temp, false, false)).texturing(new RenderState.OffsetTexturingState(uIn, vIn)).fog(BLACK_FOG).transparency(ADDITIVE_TRANSPARENCY).diffuseLighting(DIFFUSE_LIGHTING_ENABLED).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).lightmap(LIGHTMAP_ENABLED).overlay(OVERLAY_ENABLED).build(false));

@@ -2,7 +2,7 @@
 +++ b/net/minecraft/item/ItemModelsProperties.java
 @@ -290,7 +290,13 @@
          });
-         func_239418_a_(Items.CROSSBOW, new ResourceLocation("charged"), (p_239425_0_, p_239425_1_, p_239425_2_) ->
+         registerProperty(Items.CROSSBOW, new ResourceLocation("charged"), (p_239425_0_, p_239425_1_, p_239425_2_) ->
          {
 -            return p_239425_2_ != null && CrossbowItem.isCharged(p_239425_0_) ? 1.0F : 0.0F;
 +//        	//Vivecraft - show arrow on crossbow when its fully drawn, to indicate it is ok to let go of right click
@@ -13,5 +13,5 @@
 +            
 +            //return p_239425_2_ != null && CrossbowItem.isCharged(p_239425_0_) ? 1.0F : 0.0F;
          });
-         func_239418_a_(Items.CROSSBOW, new ResourceLocation("firework"), (p_239424_0_, p_239424_1_, p_239424_2_) ->
+         registerProperty(Items.CROSSBOW, new ResourceLocation("firework"), (p_239424_0_, p_239424_1_, p_239424_2_) ->
          {

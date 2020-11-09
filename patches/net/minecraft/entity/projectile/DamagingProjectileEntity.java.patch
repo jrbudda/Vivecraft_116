@@ -17,7 +17,7 @@
  
  public abstract class DamagingProjectileEntity extends ProjectileEntity
  {
-@@ -80,7 +84,13 @@
+@@ -86,7 +90,13 @@
  
              RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
  
@@ -32,7 +32,7 @@
              {
                  this.onImpact(raytraceresult);
              }
-@@ -181,6 +191,13 @@
+@@ -199,6 +209,13 @@
              if (entity != null)
              {
                  Vector3d vector3d = entity.getLookVec();

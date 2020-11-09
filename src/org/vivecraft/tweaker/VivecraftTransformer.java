@@ -71,12 +71,12 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
             String s = astring[i];
             s = Utils.removePrefix(s, new String[] {"srg/"});
             s = Utils.removeSuffix(s, new String[] {".clsrg"});
-            Target target = Target.targetClass(s);
+            Target target = Target.targetPreClass(s);
             if(exclusions.contains(s))
         		continue;
             set.add(target);
         }
-        set.addAll(ofTargets);
+        //set.addAll(ofTargets);
         LOGGER.info("Targets: " + set.size());
         return set;
     }

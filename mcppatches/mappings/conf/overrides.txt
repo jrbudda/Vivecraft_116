@@ -236,6 +236,7 @@ com/mojang/realmsclient/gui/screens/RealmsTermsScreen/func_231044_a_ (DDI)Z
 com/mojang/realmsclient/gui/screens/RealmsTermsScreen/func_231046_a_ (III)Z
 com/mojang/realmsclient/gui/screens/RealmsTermsScreen/func_231160_c_ ()V
 com/mojang/realmsclient/gui/screens/RealmsTermsScreen/func_231164_f_ ()V
+com/mojang/realmsclient/gui/screens/RealmsTermsScreen/func_231167_h_ ()Ljava/lang/String;
 com/mojang/realmsclient/gui/screens/RealmsUploadScreen/func_230430_a_ (Lcom/mojang/blaze3d/matrix/MatrixStack;IIF)V
 com/mojang/realmsclient/gui/screens/RealmsUploadScreen/func_231023_e_ ()V
 com/mojang/realmsclient/gui/screens/RealmsUploadScreen/func_231046_a_ (III)Z
@@ -1920,6 +1921,7 @@ net/minecraft/client/entity/player/RemoteClientPlayerEntity/func_70071_h_ ()V
 net/minecraft/client/entity/player/RemoteClientPlayerEntity/func_70097_a (Lnet/minecraft/util/DamageSource;F)Z
 net/minecraft/client/entity/player/RemoteClientPlayerEntity/func_70112_a (D)Z
 net/minecraft/client/entity/player/RemoteClientPlayerEntity/func_70636_d ()V
+net/minecraft/client/gui/AccessibilityScreen/func_244718_c ()V
 net/minecraft/client/gui/ClientBossInfo/func_186735_a (F)V
 net/minecraft/client/gui/ClientBossInfo/func_186738_f ()F
 net/minecraft/client/gui/DisplayEffectsScreen/func_230430_a_ (Lcom/mojang/blaze3d/matrix/MatrixStack;IIF)V
@@ -2476,6 +2478,7 @@ net/minecraft/client/gui/screen/inventory/AbstractRepairScreen/func_71112_a (Lne
 net/minecraft/client/gui/screen/inventory/AnvilScreen/func_230451_b_ (Lcom/mojang/blaze3d/matrix/MatrixStack;II)V
 net/minecraft/client/gui/screen/inventory/AnvilScreen/func_230452_b_ (Lcom/mojang/blaze3d/matrix/MatrixStack;IIF)V
 net/minecraft/client/gui/screen/inventory/AnvilScreen/func_230453_j_ ()V
+net/minecraft/client/gui/screen/inventory/AnvilScreen/func_231023_e_ ()V
 net/minecraft/client/gui/screen/inventory/AnvilScreen/func_231046_a_ (III)Z
 net/minecraft/client/gui/screen/inventory/AnvilScreen/func_231152_a_ (Lnet/minecraft/client/Minecraft;II)V
 net/minecraft/client/gui/screen/inventory/AnvilScreen/func_231164_f_ ()V
@@ -2599,6 +2602,21 @@ net/minecraft/client/gui/screen/inventory/StonecutterScreen/func_230459_a_ (Lcom
 net/minecraft/client/gui/screen/inventory/StonecutterScreen/func_231043_a_ (DDD)Z
 net/minecraft/client/gui/screen/inventory/StonecutterScreen/func_231044_a_ (DDI)Z
 net/minecraft/client/gui/screen/inventory/StonecutterScreen/func_231045_a_ (DDIDD)Z
+net/minecraft/client/gui/social/FilterList/func_230430_a_ (Lcom/mojang/blaze3d/matrix/MatrixStack;IIF)V
+net/minecraft/client/gui/social/FilterListEntry$1/func_230442_c_ ()Lnet/minecraft/util/text/IFormattableTextComponent;
+net/minecraft/client/gui/social/FilterListEntry$2/func_230442_c_ ()Lnet/minecraft/util/text/IFormattableTextComponent;
+net/minecraft/client/gui/social/FilterListEntry/func_230432_a_ (Lcom/mojang/blaze3d/matrix/MatrixStack;IIIIIIIZF)V
+net/minecraft/client/gui/social/FilterListEntry/func_231039_at__ ()Ljava/util/List;
+net/minecraft/client/gui/social/SocialInteractionsScreen$1/func_230442_c_ ()Lnet/minecraft/util/text/IFormattableTextComponent;
+net/minecraft/client/gui/social/SocialInteractionsScreen/func_230430_a_ (Lcom/mojang/blaze3d/matrix/MatrixStack;IIF)V
+net/minecraft/client/gui/social/SocialInteractionsScreen/func_230446_a_ (Lcom/mojang/blaze3d/matrix/MatrixStack;)V
+net/minecraft/client/gui/social/SocialInteractionsScreen/func_231023_e_ ()V
+net/minecraft/client/gui/social/SocialInteractionsScreen/func_231044_a_ (DDI)Z
+net/minecraft/client/gui/social/SocialInteractionsScreen/func_231046_a_ (III)Z
+net/minecraft/client/gui/social/SocialInteractionsScreen/func_231160_c_ ()V
+net/minecraft/client/gui/social/SocialInteractionsScreen/func_231164_f_ ()V
+net/minecraft/client/gui/social/SocialInteractionsScreen/func_231167_h_ ()Ljava/lang/String;
+net/minecraft/client/gui/social/SocialInteractionsScreen/func_231177_au__ ()Z
 net/minecraft/client/gui/spectator/BaseSpectatorGroup/func_178669_a ()Ljava/util/List;
 net/minecraft/client/gui/spectator/BaseSpectatorGroup/func_178670_b ()Lnet/minecraft/util/text/ITextComponent;
 net/minecraft/client/gui/spectator/PlayerMenuObject/func_178661_a (Lnet/minecraft/client/gui/spectator/SpectatorMenu;)V
@@ -10143,6 +10161,7 @@ net/minecraft/server/dedicated/DedicatedServer/func_230541_aj_ ()Z
 net/minecraft/server/dedicated/DedicatedServer/func_230542_k__ ()Ljava/lang/String;
 net/minecraft/server/dedicated/DedicatedServer/func_230543_p_ ()V
 net/minecraft/server/dedicated/DedicatedServer/func_241871_k ()I
+net/minecraft/server/dedicated/DedicatedServer/func_244435_a (Lnet/minecraft/entity/player/ServerPlayerEntity;)Lnet/minecraft/util/text/filter/IChatFilter;
 net/minecraft/server/dedicated/DedicatedServer/func_70000_a (Lnet/minecraft/profiler/Snooper;)V
 net/minecraft/server/dedicated/DedicatedServer/func_71190_q (Ljava/util/function/BooleanSupplier;)V
 net/minecraft/server/dedicated/DedicatedServer/func_71197_b ()Z
@@ -11280,6 +11299,11 @@ net/minecraft/util/text/event/HoverEvent$ItemHover/hashCode ()I
 net/minecraft/util/text/event/HoverEvent/equals (Ljava/lang/Object;)Z
 net/minecraft/util/text/event/HoverEvent/hashCode ()I
 net/minecraft/util/text/event/HoverEvent/toString ()Ljava/lang/String;
+net/minecraft/util/text/filter/ChatFilterClient$ProfileFilter/func_244432_a (Ljava/lang/String;)Ljava/util/concurrent/CompletableFuture;
+net/minecraft/util/text/filter/ChatFilterClient$ProfileFilter/func_244433_a (Ljava/util/List;)Ljava/util/concurrent/CompletableFuture;
+net/minecraft/util/text/filter/ChatFilterClient$ProfileFilter/func_244434_b ()V
+net/minecraft/util/text/filter/ChatFilterClient$ProfileFilter/func_244800_a ()V
+net/minecraft/util/text/filter/ChatFilterClient/close ()V
 net/minecraft/village/GossipManager$GossipEntry/toString ()Ljava/lang/String;
 net/minecraft/village/PointOfInterest/equals (Ljava/lang/Object;)Z
 net/minecraft/village/PointOfInterest/hashCode ()I

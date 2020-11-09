@@ -1,0 +1,33 @@
+--- a/optifine/AccessFixer.java
++++ b/optifine/AccessFixer.java
+@@ -10,6 +10,7 @@
+ import java.util.stream.StreamSupport;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.objectweb.asm.tree.AbstractInsnNode;
+ import org.objectweb.asm.tree.ClassNode;
+ import org.objectweb.asm.tree.FieldNode;
+ import org.objectweb.asm.tree.InnerClassNode;
+@@ -62,15 +63,17 @@
+         if (!set.isEmpty())
+         {
+             List<MethodInsnNode> list4 = new ArrayList<>();
+-            classNew.methods.forEach((mn) ->
++            List<MethodNode> list5 = classNew.methods;
++            list5.forEach((mn) ->
+             {
+                 StreamSupport.stream(Spliterators.spliteratorUnknownSize(mn.instructions.iterator(), 16), false).filter((i) -> {
+-                    return i.getOpcode() == 183;
++                    return ((AbstractInsnNode) i).getOpcode() == 183;
+                 }).map(MethodInsnNode.class::cast).filter((m) -> {
+-                    return set.contains(m.name + m.desc);
++                	MethodInsnNode min = (MethodInsnNode) m;
++                    return set.contains(min.name + min.desc);
+                 }).forEach((m) -> {
+-                    m.setOpcode(182);
+-                    list4.add(m);
++                    ((MethodInsnNode) m).setOpcode(182);
++                    list4.add((MethodInsnNode) m);
+                 });
+             });
+         }

@@ -25,10 +25,10 @@
              this.minecraft.displayGuiScreen(new StatsScreen(this, this.minecraft.player.getStats()));
          }));
 -        String s = SharedConstants.getVersion().isStable() ? "https://aka.ms/javafeedback?ref=game" : "https://aka.ms/snapshotfeedback?ref=game";
--        this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.sendFeedback"), (p_213072_2_) ->
+-        this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.sendFeedback"), (button2) ->
 -        {
--            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((p_213069_2_) -> {
--                if (p_213069_2_)
+-            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((open) -> {
+-                if (open)
 -                {
 -                    Util.getOSType().openURI(s);
 -                }
@@ -36,10 +36,10 @@
 -                this.minecraft.displayGuiScreen(this);
 -            }, s, true));
 -        }));
--        this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.reportBugs"), (p_213063_1_) ->
+-        this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.reportBugs"), (button2) ->
 -        {
--            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((p_213064_1_) -> {
--                if (p_213064_1_)
+-            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((open) -> {
+-                if (open)
 -                {
 -                    Util.getOSType().openURI("https://aka.ms/snapshotbugs?ref=game");
 -                }
@@ -48,37 +48,37 @@
 -            }, "https://aka.ms/snapshotbugs?ref=game", true));
 -        }));
 +//        String s = SharedConstants.getVersion().isStable() ? "https://aka.ms/javafeedback?ref=game" : "https://aka.ms/snapshotfeedback?ref=game";
-+//       this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.sendFeedback"), (p_213072_2_) ->
++//        this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.sendFeedback"), (button2) ->
 +//        {
-+//            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((p_213069_2_) -> {
-+//                if (p_213069_2_)
++//            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((open) -> {
++//                if (open)
 +//                {
 +//                    Util.getOSType().openURI(s);
 +//                }
-+
++//
 +//                this.minecraft.displayGuiScreen(this);
 +//            }, s, true));
 +//        }));
-+//        this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.reportBugs"), (p_213063_1_) ->
++//        this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + -16, 98, 20, new TranslationTextComponent("menu.reportBugs"), (button2) ->
 +//        {
-+//            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((p_213064_1_) -> {
-+//                if (p_213064_1_)
++//            this.minecraft.displayGuiScreen(new ConfirmOpenLinkScreen((open) -> {
++//                if (open)
 +//                {
 +//                    Util.getOSType().openURI("https://aka.ms/snapshotbugs?ref=game");
 +//                }
-+
++//
 +//                this.minecraft.displayGuiScreen(this);
 +//            }, "https://aka.ms/snapshotbugs?ref=game", true));
 +//        }));
-         this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 96 + -16, 98, 20, new TranslationTextComponent("menu.options"), (p_213071_1_) ->
+         this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 96 + -16, 98, 20, new TranslationTextComponent("menu.options"), (button2) ->
          {
              this.minecraft.displayGuiScreen(new OptionsScreen(this, this.minecraft.gameSettings));
 @@ -75,7 +83,7 @@
              this.minecraft.displayGuiScreen(new ShareToLanScreen(this));
          }));
          button.active = this.minecraft.isSingleplayer() && !this.minecraft.getIntegratedServer().getPublic();
--        Button button1 = this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 204, 20, new TranslationTextComponent("menu.returnToMenu"), (p_213067_1_) ->
-+        Button button1 = this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 168 + -16, 204, 20, new TranslationTextComponent("menu.returnToMenu"), (p_213067_1_) ->
+-        Button button1 = this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 204, 20, new TranslationTextComponent("menu.returnToMenu"), (button2) ->
++        Button button1 = this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 168 + -16, 204, 20, new TranslationTextComponent("menu.returnToMenu"), (button2) ->
          {
              boolean flag = this.minecraft.isIntegratedServerRunning();
              boolean flag1 = this.minecraft.isConnectedToRealms();

@@ -114,7 +114,7 @@
          this.renderItem(stack, ItemCameraTransforms.TransformType.GUI, false, matrixstack, irendertypebuffer$impl, 15728880, OverlayTexture.NO_OVERLAY, bakedmodel);
          irendertypebuffer$impl.finish();
          RenderSystem.enableDepthTest();
-@@ -586,4 +626,21 @@
+@@ -592,4 +632,21 @@
      {
          return VanillaResourceType.MODELS;
      }

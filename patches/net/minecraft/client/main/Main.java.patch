@@ -61,7 +61,7 @@
              CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Initializing game");
              crashreport.makeCategory("Initialization");
              Minecraft.fillCrashReport((LanguageManager)null, gameconfiguration.gameInfo.version, (GameSettings)null, crashreport);
-@@ -274,6 +294,7 @@
+@@ -277,6 +297,7 @@
  
      static
      {

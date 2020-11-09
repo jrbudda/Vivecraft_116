@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientChunkProvider.java
 +++ b/net/minecraft/client/multiplayer/ClientChunkProvider.java
-@@ -113,7 +113,7 @@
+@@ -117,7 +117,7 @@
          else
          {
              int i = this.array.getIndex(chunkX, chunkZ);
@@ -9,7 +9,7 @@
  
              if (!p_228313_7_ && isValid(chunk, chunkX, chunkZ))
              {
-@@ -153,12 +153,13 @@
+@@ -157,12 +157,13 @@
                      chunk.setLoaded(false);
                  }
  

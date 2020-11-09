@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/NewChatGui.java
 +++ b/net/minecraft/client/gui/NewChatGui.java
-@@ -191,7 +191,7 @@
+@@ -196,7 +196,7 @@
  
      public void printChatMessage(ITextComponent chatComponent)
      {
@@ -8,4 +8,4 @@
 +    	this.printChatMessageWithOptionalDeletion(chatComponent, 0);
      }
  
-     public void printChatMessageWithOptionalDeletion(ITextComponent chatComponent, int chatLineId)
+     /**

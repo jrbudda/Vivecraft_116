@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\MobEntity.java minecraft_patched\net\minecraft\entity\MobEntity.java
 --- minecraft\net\minecraft\entity\MobEntity.java
 +++ minecraft_patched\net\minecraft\entity\MobEntity.java
-@@ -1057,7 +1057,7 @@
+@@ -1058,7 +1058,7 @@
           if (itemstack.func_77973_b() instanceof SpawnEggItem) {
              if (this.field_70170_p instanceof ServerWorld) {
                 SpawnEggItem spawneggitem = (SpawnEggItem)itemstack.func_77973_b();

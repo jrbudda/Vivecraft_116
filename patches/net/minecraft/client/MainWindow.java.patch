@@ -92,8 +92,8 @@
 +        this.scaledHeight = (double)this.height / scaleFactor > (double)j ? j + 1 : j;
      }
  
-     public void func_230148_b_(String p_230148_1_)
-@@ -533,12 +542,16 @@
+     public void setWindowTitle(String title)
+@@ -536,12 +545,16 @@
  
      public int getFramebufferWidth()
      {

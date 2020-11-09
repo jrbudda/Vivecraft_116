@@ -60,7 +60,7 @@
          double d0 = p_i50220_1_.getPosX() - (double)f3 * 0.3D;
          double d1 = p_i50220_1_.getPosYEye();
          double d2 = p_i50220_1_.getPosZ() - (double)f2 * 0.3D;
-@@ -274,6 +306,19 @@
+@@ -283,6 +315,19 @@
              this.setMotion(this.getMotion().scale(0.92D));
              this.recenterBoundingBox();
          }
@@ -80,7 +80,7 @@
      }
  
      private boolean func_234600_a_(PlayerEntity p_234600_1_)
-@@ -515,6 +560,7 @@
+@@ -530,6 +575,7 @@
          if (!this.world.isRemote && playerentity != null)
          {
              int i = 0;
@@ -88,7 +88,7 @@
  
              if (this.caughtEntity != null)
              {
-@@ -528,6 +574,14 @@
+@@ -543,6 +589,14 @@
                  LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.world)).withParameter(LootParameters.field_237457_g_, this.getPositionVec()).withParameter(LootParameters.TOOL, p_146034_1_).withParameter(LootParameters.THIS_ENTITY, this).withRandom(this.rand).withLuck((float)this.luck + playerentity.getLuck());
                  LootTable loottable = this.world.getServer().getLootTableManager().getLootTableFromLocation(LootTables.GAMEPLAY_FISHING);
                  List<ItemStack> list = loottable.generate(lootcontext$builder.build(LootParameterSets.FISHING));
@@ -103,7 +103,7 @@
                  CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayerEntity)playerentity, p_146034_1_, this, list);
  
                  for (ItemStack itemstack : list)
-@@ -556,7 +610,7 @@
+@@ -571,7 +625,7 @@
              }
  
              this.remove();
@@ -112,7 +112,7 @@
          }
          else
          {
-@@ -601,6 +655,17 @@
+@@ -622,6 +676,17 @@
          }
      }
  

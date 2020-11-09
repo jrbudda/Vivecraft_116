@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/chunk/ChunkTaskPriorityQueueSorter.java
++++ b/net/minecraft/world/chunk/ChunkTaskPriorityQueueSorter.java
+@@ -139,7 +139,7 @@
+     {
+         this.sorter.enqueue(new ITaskQueue.RunnableWithPriority(3, () ->
+         {
+-            Stream<Either<Function<ITaskExecutor<Unit>, T>, Runnable>> stream = p_219078_1_.func_219417_a();
++            Stream<Either<Function<ITaskExecutor<Unit>, T>, Runnable>> stream = (Stream<Either<Function<ITaskExecutor<Unit>, T>, Runnable>>)(Stream<?>) p_219078_1_.func_219417_a();
+ 
+             if (stream == null)
+             {

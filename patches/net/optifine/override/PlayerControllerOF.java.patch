@@ -16,17 +16,15 @@
  import net.minecraft.util.ActionResultType;
  import net.minecraft.util.Direction;
  import net.minecraft.util.Hand;
-@@ -25,7 +28,8 @@
-     {
-         super(mcIn, netHandler);
-     }
--
-+    
+@@ -29,6 +32,7 @@
+     /**
+      * Called when the player is hitting a block with an item.
+      */
 +    @Override
      public boolean clickBlock(BlockPos loc, Direction face)
      {
          this.acting = true;
-@@ -34,7 +38,8 @@
+@@ -37,7 +41,8 @@
          this.acting = false;
          return flag;
      }
@@ -36,12 +34,10 @@
      public boolean onPlayerDamageBlock(BlockPos posBlock, Direction directionFacing)
      {
          this.acting = true;
-@@ -43,30 +48,49 @@
-         this.acting = false;
+@@ -47,16 +52,33 @@
          return flag;
      }
--
-+    
+ 
 +    @Override
      public ActionResultType processRightClick(PlayerEntity player, World worldIn, Hand hand)
      {
@@ -53,7 +49,7 @@
          this.acting = false;
          return actionresulttype;
      }
-+    
+ 
 +    //Vivecraft
 +    @Override
 +    public void onStoppedUsingItem(PlayerEntity playerIn)
@@ -62,7 +58,7 @@
 +    	super.onStoppedUsingItem(playerIn);
 +    }
 +    //
- 
++
 +    @Override
      public ActionResultType func_217292_a(ClientPlayerEntity player, ClientWorld worldIn, Hand hand, BlockRayTraceResult rayTrace)
      {
@@ -72,19 +68,18 @@
          this.acting = true;
          this.lastClickBlockPos = rayTrace.getPos();
          ActionResultType actionresulttype = super.func_217292_a(player, worldIn, hand, rayTrace);
-         this.acting = false;
-         return actionresulttype;
-     }
--
-+    
+@@ -67,6 +89,7 @@
+     /**
+      * Handles right clicking an entity, sends a packet to the server.
+      */
 +    @Override
      public ActionResultType interactWithEntity(PlayerEntity player, Entity target, Hand hand)
      {
          this.lastClickEntity = target;
-         return super.interactWithEntity(player, target, hand);
-     }
--
-+    
+@@ -76,6 +99,7 @@
+     /**
+      * Handles right clicking an entity from the entities side, sends a packet to the server.
+      */
 +    @Override
      public ActionResultType interactWithEntity(PlayerEntity player, Entity target, EntityRayTraceResult ray, Hand hand)
      {

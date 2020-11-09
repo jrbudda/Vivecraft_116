@@ -17,7 +17,7 @@
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.Tessellator;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-@@ -451,6 +455,10 @@
+@@ -511,6 +515,10 @@
                  this.setFocused2(flag);
              }
  
@@ -28,7 +28,7 @@
              if (this.isFocused() && flag && button == 0)
              {
                  int i = MathHelper.floor(mouseX) - this.x;
-@@ -504,9 +512,15 @@
+@@ -567,9 +575,15 @@
  
              if (!s.isEmpty())
              {
@@ -46,7 +46,7 @@
  
              boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
              int k1 = j1;
-@@ -649,6 +663,12 @@
+@@ -737,6 +751,12 @@
          if (focused)
          {
              this.cursorCounter = 0;
@@ -59,8 +59,8 @@
          }
      }
  
-@@ -703,7 +723,8 @@
- 
+@@ -804,7 +824,8 @@
+      */
      public void setCanLoseFocus(boolean canLoseFocusIn)
      {
 -        this.canLoseFocus = canLoseFocusIn;
@@ -68,4 +68,4 @@
 +    	this.canLoseFocus = false;    
      }
  
-     public boolean getVisible()
+     /**

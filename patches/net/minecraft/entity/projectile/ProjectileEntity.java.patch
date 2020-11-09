@@ -15,7 +15,7 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.util.math.BlockRayTraceResult;
  import net.minecraft.util.math.EntityRayTraceResult;
-@@ -114,6 +119,27 @@
+@@ -123,6 +128,27 @@
  
      public void func_234612_a_(Entity p_234612_1_, float p_234612_2_, float p_234612_3_, float p_234612_4_, float p_234612_5_, float p_234612_6_)
      {

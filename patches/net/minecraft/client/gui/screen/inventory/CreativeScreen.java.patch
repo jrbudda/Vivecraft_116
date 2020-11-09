@@ -10,7 +10,7 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.entity.player.ClientPlayerEntity;
  import net.minecraft.client.gui.DisplayEffectsScreen;
-@@ -456,6 +459,10 @@
+@@ -466,6 +469,10 @@
              (this.container).itemList.addAll(isearchtree.search(s.toLowerCase(Locale.ROOT)));
          }
  
@@ -21,7 +21,7 @@
          this.currentScroll = 0.0F;
          this.container.scrollTo(0.0F);
      }
-@@ -594,6 +601,9 @@
+@@ -610,6 +617,9 @@
          else if (tab != ItemGroup.SEARCH)
          {
              tab.fill((this.container).itemList);

@@ -8,15 +8,15 @@
  
  public class GameSettings
  {
-@@ -183,6 +184,7 @@
-     public float field_243227_aN = 1.0F;
+@@ -186,6 +187,7 @@
+     public float fovScaleEffect = 1.0F;
      public double gamma;
      public int guiScale;
 +    public int guiScaleUser; // to store the user's setting, do not actually use
      public ParticleStatus particles = ParticleStatus.ALL;
      public NarratorStatus narrator = NarratorStatus.OFF;
      public String language = "en_us";
-@@ -194,7 +196,7 @@
+@@ -197,7 +199,7 @@
      public boolean ofSmoothFps = false;
      public boolean ofSmoothWorld = Config.isSingleProcessor();
      public boolean ofLazyChunkLoading = Config.isSingleProcessor();
@@ -25,7 +25,7 @@
      public boolean ofSmartAnimations = false;
      public double ofAoLevel = 1.0D;
      public int ofAaLevel = 0;
-@@ -233,7 +235,7 @@
+@@ -236,7 +238,7 @@
      public int ofTranslucentBlocks = 0;
      public boolean ofDynamicFov = true;
      public boolean ofAlternateBlocks = true;
@@ -34,7 +34,7 @@
      public boolean ofCustomEntityModels = true;
      public boolean ofCustomGuis = true;
      public boolean ofShowGlErrors = true;
-@@ -307,6 +309,9 @@
+@@ -310,6 +312,9 @@
          this.ofKeyBindZoom = new KeyBinding("of.key.zoom", 67, "key.categories.misc");
          this.keyBindings = ArrayUtils.add(this.keyBindings, this.ofKeyBindZoom);
          KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
@@ -44,7 +44,7 @@
          this.renderDistanceChunks = 8;
          this.loadOptions();
          Config.initGameSettings(this);
-@@ -519,7 +524,7 @@
+@@ -525,7 +530,7 @@
  
                      if ("guiScale".equals(s))
                      {
@@ -53,7 +53,7 @@
                      }
  
                      if ("particles".equals(s))
-@@ -883,7 +888,7 @@
+@@ -905,7 +910,7 @@
                  printwriter.println("gamma:" + this.gamma);
                  printwriter.println("renderDistance:" + this.renderDistanceChunks);
                  printwriter.println("entityDistanceScaling:" + this.entityDistanceScaling);
@@ -62,7 +62,7 @@
                  printwriter.println("particles:" + this.particles.getId());
                  printwriter.println("maxFps:" + this.framerateLimit);
                  printwriter.println("difficulty:" + this.difficulty.getId());
-@@ -1077,7 +1082,7 @@
+@@ -1107,7 +1112,7 @@
              {
                  if (i >= aint[j])
                  {
@@ -71,7 +71,7 @@
                  }
              }
  
-@@ -1518,7 +1523,7 @@
+@@ -1548,7 +1553,7 @@
  
          if (p_setOptionValueOF_1_ == AbstractOption.FAST_RENDER)
          {
@@ -80,7 +80,7 @@
          }
  
          if (p_setOptionValueOF_1_ == AbstractOption.TRANSLUCENT_BLOCKS)
-@@ -2613,6 +2618,13 @@
+@@ -2643,6 +2648,13 @@
              KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
              KeyBinding.resetKeyBindingArrayAndHash();
              bufferedreader.close();
@@ -94,7 +94,7 @@
          }
          catch (Exception exception11)
          {
-@@ -2763,7 +2775,7 @@
+@@ -2793,7 +2805,7 @@
          this.cloudOption = CloudOption.FANCY;
          this.fov = 70.0D;
          this.gamma = 0.0D;
@@ -103,7 +103,7 @@
          this.particles = ParticleStatus.ALL;
          this.heldItemTooltips = true;
          this.forceUnicodeFont = false;
-@@ -2776,7 +2788,7 @@
+@@ -2806,7 +2818,7 @@
          Config.updateAvailableProcessors();
          this.ofSmoothWorld = Config.isSingleProcessor();
          this.ofLazyChunkLoading = false;
@@ -112,8 +112,8 @@
          this.ofFastMath = false;
          this.ofFastRender = false;
          this.ofTranslucentBlocks = 0;
-@@ -3006,3 +3018,4 @@
-         this.field_243228_bb = p_243229_1_;
+@@ -3036,3 +3048,4 @@
+         this.pointOfView = pointOfView;
      }
  }
 +

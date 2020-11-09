@@ -88,7 +88,7 @@
                      }
                  }
              }
-@@ -398,7 +422,8 @@
+@@ -399,7 +423,8 @@
              GlStateManager.depthMask(true);
              GlStateManager.enableCull();
              GlStateManager.disableBlend();

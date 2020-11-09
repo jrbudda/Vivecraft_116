@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/AbstractOption.java
 +++ b/net/minecraft/client/AbstractOption.java
 @@ -199,7 +199,9 @@
-             return d0 == p_lambda$static$35_1_.getMaxValue() ? p_lambda$static$35_1_.func_243222_a(new TranslationTextComponent("options.framerateLimit.max")) : p_lambda$static$35_1_.func_243222_a(new TranslationTextComponent("options.framerate", (int)d0));
+             return d0 == p_lambda$static$35_1_.getMaxValue() ? p_lambda$static$35_1_.getGenericValueComponent(new TranslationTextComponent("options.framerateLimit.max")) : p_lambda$static$35_1_.getGenericValueComponent(new TranslationTextComponent("options.framerate", (int)d0));
          }
      });
 -    public static final SliderPercentageOption GAMMA = new SliderPercentageOption("options.gamma", 0.0D, 1.0D, 0.0F, (p_lambda$static$36_0_) ->
@@ -11,37 +11,42 @@
      {
          return p_lambda$static$36_0_.gamma;
      }, (p_lambda$static$37_0_, p_lambda$static$37_1_) ->
-@@ -208,14 +210,24 @@
+@@ -207,15 +209,26 @@
+         p_lambda$static$37_0_.gamma = p_lambda$static$37_1_;
      }, (p_lambda$static$38_0_, p_lambda$static$38_1_) ->
      {
-         double d0 = p_lambda$static$38_1_.normalizeValue(p_lambda$static$38_1_.get(p_lambda$static$38_0_));
--
+-        double d0 = p_lambda$static$38_1_.normalizeValue(p_lambda$static$38_1_.get(p_lambda$static$38_0_));
++    	double d0 = p_lambda$static$38_1_.normalizeValue(p_lambda$static$38_1_.get(p_lambda$static$38_0_));
+ 
 -        if (d0 == 0.0D)
-+        //Vivecraft 
-+        if (Math.abs(d0 - 1D / 3D) < 0.005)
-         {
--            return p_lambda$static$38_1_.func_243222_a(new TranslationTextComponent("options.gamma.min"));
-+        	return p_lambda$static$38_1_.func_243222_a(new TranslationTextComponent("options.gamma.min"));
-         }
+-        {
+-            return p_lambda$static$38_1_.getGenericValueComponent(new TranslationTextComponent("options.gamma.min"));
+-        }
 -        else {
--            return d0 == 1.0D ? p_lambda$static$38_1_.func_243222_a(new TranslationTextComponent("options.gamma.max")) : p_lambda$static$38_1_.func_243223_b((int)(d0 * 100.0D));
-+        else if (d0 == 1.0D)
-+        {
-+        	return p_lambda$static$38_1_.func_243222_a(new TranslationTextComponent("options.gamma.max"));
-+        }
-+        else if (d0 == 0.0D)
-+        {
-+        	return p_lambda$static$38_1_.func_243222_a(new TranslationTextComponent("vivecraft.options.gamma.cantseeshitcaptain"));
-+        }
-+        else
-+        {
-+        	return p_lambda$static$38_1_.func_243222_a(new StringTextComponent( (d0 >= 1D / 3D ? "+" : "") + (int)((d0 * 1.5 - 0.5) * 100.0D) + "%"));
-         }
-+        //
+-            return d0 == 1.0D ? p_lambda$static$38_1_.getGenericValueComponent(new TranslationTextComponent("options.gamma.max")) : p_lambda$static$38_1_.getPercentageAddMessage((int)(d0 * 100.0D));
+-        }
++    	//Vivecraft 
++    	if (Math.abs(d0 - 1D / 3D) < 0.005)
++    	{
++    		return p_lambda$static$38_1_.getGenericValueComponent(new TranslationTextComponent("options.gamma.min"));
++    	}
++    	else if (d0 == 1.0D)
++    	{
++    		return p_lambda$static$38_1_.getGenericValueComponent(new TranslationTextComponent("options.gamma.max"));
++    	}
++    	else if (d0 == 0.0D)
++    	{
++    		return p_lambda$static$38_1_.getGenericValueComponent(new TranslationTextComponent("vivecraft.options.gamma.cantseeshitcaptain"));
++    	}
++    	else
++    	{
++    		return p_lambda$static$38_1_.getGenericValueComponent(new StringTextComponent( (d0 >= 1D / 3D ? "+" : "") + (int)((d0 * 1.5 - 0.5) * 100.0D) + "%"));
++    	}
++    	//
      });
      public static final SliderPercentageOption MIPMAP_LEVELS = new SliderPercentageOption("options.mipmapLevels", 0.0D, 4.0D, 1.0F, (p_lambda$static$39_0_) ->
      {
-@@ -356,6 +368,9 @@
+@@ -356,6 +369,9 @@
  
              p_lambda$static$65_0_.updateRenderClouds();
              minecraft.worldRenderer.loadRenderers();
@@ -51,19 +56,23 @@
          }
      }, (p_lambda$static$66_0_, p_lambda$static$66_1_) ->
      {
-@@ -378,11 +393,13 @@
+@@ -378,14 +394,16 @@
      });
      public static final IteratableOption GUI_SCALE = new IteratableOption("options.guiScale", (p_lambda$static$67_0_, p_lambda$static$67_1_) ->
      {
 -        p_lambda$static$67_0_.guiScale = MathHelper.normalizeAngle(p_lambda$static$67_0_.guiScale + p_lambda$static$67_1_, Minecraft.getInstance().getMainWindow().calcGuiScale(0, Minecraft.getInstance().getForceUnicodeFont()) + 1);
-+    //Vivecraft switch to guiScaleUser
-+        p_lambda$static$67_0_.guiScaleUser = MathHelper.normalizeAngle(p_lambda$static$67_0_.guiScaleUser + p_lambda$static$67_1_, Minecraft.getInstance().getMainWindow().calcGuiScale(0, Minecraft.getInstance().getForceUnicodeFont()) + 1);
++    	//Vivecraft switch to guiScaleUser
++    	p_lambda$static$67_0_.guiScaleUser = MathHelper.normalizeAngle(p_lambda$static$67_0_.guiScaleUser + p_lambda$static$67_1_, Minecraft.getInstance().getMainWindow().calcGuiScale(0, Minecraft.getInstance().getForceUnicodeFont()) + 1);
      }, (p_lambda$static$68_0_, p_lambda$static$68_1_) ->
      {
--        return p_lambda$static$68_0_.guiScale == 0 ? p_lambda$static$68_1_.func_243222_a(new TranslationTextComponent("options.guiScale.auto")) : p_lambda$static$68_1_.func_243225_c(p_lambda$static$68_0_.guiScale);
-+        return p_lambda$static$68_0_.guiScaleUser == 0 ? p_lambda$static$68_1_.func_243222_a(new TranslationTextComponent("options.guiScale.auto")) : p_lambda$static$68_1_.func_243225_c(p_lambda$static$68_0_.guiScaleUser);
+-        return p_lambda$static$68_0_.guiScale == 0 ? p_lambda$static$68_1_.getGenericValueComponent(new TranslationTextComponent("options.guiScale.auto")) : p_lambda$static$68_1_.getMessageWithValue(p_lambda$static$68_0_.guiScale);
++    	return p_lambda$static$68_0_.guiScaleUser == 0 ? p_lambda$static$68_1_.getGenericValueComponent(new TranslationTextComponent("options.guiScale.auto")) : p_lambda$static$68_1_.getMessageWithValue(p_lambda$static$68_0_.guiScaleUser);
      });
 +    //
      public static final IteratableOption MAIN_HAND = new IteratableOption("options.mainHand", (p_lambda$static$69_0_, p_lambda$static$69_1_) ->
      {
-         p_lambda$static$69_0_.mainHand = p_lambda$static$69_0_.mainHand.opposite();
+-        p_lambda$static$69_0_.mainHand = p_lambda$static$69_0_.mainHand.opposite();
++    	p_lambda$static$69_0_.mainHand = p_lambda$static$69_0_.mainHand.opposite();
+     }, (p_lambda$static$70_0_, p_lambda$static$70_1_) ->
+     {
+         return p_lambda$static$70_1_.getGenericValueComponent(p_lambda$static$70_0_.mainHand.getHandName());

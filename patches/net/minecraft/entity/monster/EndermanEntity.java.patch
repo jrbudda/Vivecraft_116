@@ -26,7 +26,7 @@
  
  public class EndermanEntity extends MonsterEntity implements IAngerable
  {
-@@ -124,6 +131,9 @@
+@@ -127,6 +134,9 @@
                  modifiableattributeinstance.applyNonPersistentModifier(ATTACKING_SPEED_BOOST);
              }
          }
@@ -36,7 +36,7 @@
      }
  
      protected void registerData()
-@@ -217,22 +227,42 @@
+@@ -226,22 +236,42 @@
      private boolean shouldAttackPlayer(PlayerEntity player)
      {
          ItemStack itemstack = player.inventory.armorInventory.get(3);
@@ -86,7 +86,7 @@
      protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
      {
          return 2.55F;
-@@ -320,6 +350,16 @@
+@@ -342,6 +372,16 @@
  
          if (flag && !flag1)
          {
@@ -103,7 +103,7 @@
              boolean flag2 = this.attemptTeleport(x, y, z, true);
  
              if (flag2 && !this.isSilent())
-@@ -533,11 +573,16 @@
+@@ -558,11 +598,16 @@
  
          public boolean shouldExecute()
          {
@@ -121,7 +121,7 @@
              {
                  return false;
              }
-@@ -559,8 +604,11 @@
+@@ -584,8 +629,11 @@
              BlockPos blockpos1 = blockpos.down();
              BlockState blockstate1 = world.getBlockState(blockpos1);
              BlockState blockstate2 = this.enderman.getHeldBlockState();
@@ -135,7 +135,7 @@
              {
                  blockstate2 = Block.getValidBlockForPosition(blockstate2, this.enderman.world, blockpos);
  
-@@ -626,11 +674,16 @@
+@@ -651,11 +699,16 @@
  
          public boolean shouldExecute()
          {

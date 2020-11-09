@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/chunk/ChunkTaskPriorityQueue.java
++++ b/net/minecraft/world/chunk/ChunkTaskPriorityQueue.java
+@@ -20,7 +20,7 @@
+     public static final int MAX_LOADED_LEVELS = ChunkManager.MAX_LOADED_LEVEL + 2 + 32;
+     private final List<Long2ObjectLinkedOpenHashMap<List<Optional<T>>>> chunkPriorityQueue = IntStream.range(0, MAX_LOADED_LEVELS).mapToObj((p_lambda$new$0_0_) ->
+     {
+-        return new Long2ObjectLinkedOpenHashMap();
++    	return new Long2ObjectLinkedOpenHashMap<List<Optional<T>>>();
+     }).collect(Collectors.toList());
+     private volatile int maxLoaded = MAX_LOADED_LEVELS;
+     private final String queueName;
+@@ -112,7 +112,7 @@
+     }
+ 
+     @Nullable
+-    public Stream<Either<T, Runnable>> func_219417_a()
++    public Stream<Object> func_219417_a()
+     {
+         if (this.loadedChunks.size() >= this.priority)
+         {

@@ -3,7 +3,7 @@
 @@ -57,7 +57,7 @@
  public class EntityRendererManager
  {
-     private static final RenderType SHADOW_RENDER_TYPE = RenderType.func_239272_l_(new ResourceLocation("textures/misc/shadow.png"));
+     private static final RenderType SHADOW_RENDER_TYPE = RenderType.getEntityShadow(new ResourceLocation("textures/misc/shadow.png"));
 -    private final Map < EntityType<?>, EntityRenderer<? >> renderers = Maps.newHashMap();
 +    private final Map < EntityType, EntityRenderer> renderers = Maps.newHashMap();
      private final Map<String, PlayerRenderer> skinMap = Maps.newHashMap();

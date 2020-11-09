@@ -22,25 +22,24 @@
          this.func_243308_b(matrixStack, this.getTooltipFromItem(itemStack), mouseX, mouseY);
      }
  
-@@ -145,8 +153,15 @@
-     {
+@@ -146,7 +154,15 @@
          this.renderTooltip(p_243308_1_, Lists.transform(p_243308_2_, ITextComponent::func_241878_f), p_243308_3_, p_243308_4_);
      }
--
--    public void renderTooltip(MatrixStack p_238654_1_, List <? extends IReorderingProcessor > p_238654_2_, int p_238654_3_, int p_238654_4_)
-+    
+ 
+-    public void renderTooltip(MatrixStack matrixStack, List <? extends IReorderingProcessor > tooltips, int mouseX, int mouseY)
 +    //Forge vanilla method
-+    public void renderTooltip(MatrixStack p_238654_1_, List<? extends IReorderingProcessor> p_238654_2_, int p_238654_3_, int p_238654_4_) {
-+        this.renderToolTip(p_238654_1_, p_238654_2_, p_238654_3_, p_238654_4_, font);
++    public void renderTooltip(MatrixStack p_238654_1_, List<? extends IReorderingProcessor> tooltips, int mouseX, int mouseY) {
++        this.renderToolTip(p_238654_1_, tooltips, mouseX, mouseY, font);
 +     }
 +    //
 +    
-+    //Forge change sig
-+    public void renderToolTip(MatrixStack p_238654_1_, List<? extends IReorderingProcessor> p_238654_2_, int p_238654_3_, int p_238654_4_, FontRenderer font)
++
++    //Captial T -.-
++    public void renderToolTip(MatrixStack matrixStack, List <? extends IReorderingProcessor > tooltips, int mouseX, int mouseY, FontRenderer font)
      {
-         if (!p_238654_2_.isEmpty())
+         if (!tooltips.isEmpty())
          {
-@@ -365,6 +380,11 @@
+@@ -365,6 +381,11 @@
  
      public void sendMessage(String text, boolean addToChat)
      {
@@ -52,7 +51,7 @@
          if (addToChat)
          {
              this.minecraft.ingameGUI.getChatGUI().addToSentMessages(text);
-@@ -380,10 +400,15 @@
+@@ -380,10 +401,15 @@
          this.font = minecraft.fontRenderer;
          this.width = width;
          this.height = height;
@@ -72,7 +71,7 @@
      }
  
      public List <? extends IGuiEventListener > getEventListeners()
-@@ -412,7 +437,17 @@
+@@ -412,7 +438,17 @@
      {
          if (this.minecraft.world != null)
          {
@@ -91,7 +90,7 @@
          }
          else
          {
-@@ -433,6 +468,7 @@
+@@ -433,6 +469,7 @@
          bufferbuilder.pos((double)this.width, 0.0D, 0.0D).tex((float)this.width / 32.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
          bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
          tessellator.draw();
@@ -99,8 +98,8 @@
      }
  
      public boolean isPauseScreen()
-@@ -548,4 +584,10 @@
-     public void func_230476_a_(List<Path> p_230476_1_)
+@@ -548,4 +585,10 @@
+     public void addPacks(List<Path> packs)
      {
      }
 +    

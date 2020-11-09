@@ -170,7 +170,7 @@ public class MenuWorldRenderer {
 		GlStateManager.enableBlend();
 		RenderSystem.depthMask(false);
 		drawBlockLayer(RenderType.getTranslucent(), matrix);
-		drawBlockLayer(RenderType.func_241715_r_(), matrix); // tripwire
+		drawBlockLayer(RenderType.getTripwire(), matrix); // tripwire
 		RenderSystem.depthMask(true);
 
 		DefaultVertexFormats.BLOCK_VANILLA.clearBufferState();
@@ -840,7 +840,7 @@ public class MenuWorldRenderer {
 
 	public float getCelestialAngle()
 	{
-		return this.blockAccess.func_230315_m_().func_236032_b_(time);
+		return this.blockAccess.getDimensionType().getCelestrialAngleByTime(time);
 	}
 
 	public float getCelestialAngleRadians()
@@ -851,7 +851,7 @@ public class MenuWorldRenderer {
 
 	public int getMoonPhase()
 	{
-		return this.blockAccess.func_230315_m_().func_236035_c_(time);
+		return this.blockAccess.getDimensionType().getMoonPhase(time);
 	}
 
 	public float getSunBrightness() {
@@ -938,7 +938,7 @@ public class MenuWorldRenderer {
 	{
 		float f = MathHelper.clamp(MathHelper.cos(this.getCelestialAngle() * ((float)Math.PI * 2F)) * 2.0F + 0.5F, 0.0F, 1.0F);
 		Vector3d scaledPos = pos.subtract(2.0D, 2.0D, 2.0D).scale(0.25D);
-		return CubicSampler.func_240807_a_(scaledPos, (x, y, z) -> this.dimensionInfo.func_230494_a_(Vector3d.unpack(this.blockAccess.getBiomeManager().func_235199_a_(x, y, z).func_235080_i_()), f));
+		return CubicSampler.func_240807_a_(scaledPos, (x, y, z) -> this.dimensionInfo.func_230494_a_(Vector3d.unpack(this.blockAccess.getBiomeManager().getBiomeAtPosition(x, y, z).getFogColor()), f));
 	}
 
 	public Vector3d getCloudColour()
@@ -1173,8 +1173,8 @@ public class MenuWorldRenderer {
 			{
 				for (int j = 0; j < 16; ++j)
 				{
-					float f3 = this.blockAccess.func_230315_m_().func_236021_a_(i) * f;
-					float f4 = this.blockAccess.func_230315_m_().func_236021_a_(j) * (this.torchFlickerX * 0.1F + 1.5F);
+					float f3 = this.blockAccess.getDimensionType().getAmbientLight(i) * f;
+					float f4 = this.blockAccess.getDimensionType().getAmbientLight(j) * (this.torchFlickerX * 0.1F + 1.5F);
 
 					/*if (world.getLastLightningBolt() > 0)
 					{

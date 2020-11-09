@@ -8,7 +8,7 @@
  
  public class EditBookScreen extends Screen
  {
-@@ -176,6 +177,9 @@
+@@ -189,6 +190,9 @@
              this.previousPage();
          }, true));
          this.updateButtons();
@@ -17,4 +17,4 @@
 +        //
      }
  
-     private void previousPage()
+     /**

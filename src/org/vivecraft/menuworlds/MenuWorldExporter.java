@@ -60,7 +60,7 @@ public class MenuWorldExporter {
 					if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
 						int indexBiome = ((y / 4) * (zSize / 4) + (zl / 4)) * (xSize / 4) + (xl / 4);
 						// getNoiseBiome expects pre-divided coordinates
-						biomemap[indexBiome] = WorldGenRegistries.field_243657_i.getId(world.getNoiseBiome(x / 4, y / 4, z / 4));
+						biomemap[indexBiome] = WorldGenRegistries.BIOME.getId(world.getNoiseBiome(x / 4, y / 4, z / 4));
 					}
 				}
 			}
@@ -73,14 +73,14 @@ public class MenuWorldExporter {
 		dos.writeInt(ySize);
 		dos.writeInt(zSize);
 		dos.writeInt(ground);
-		dos.writeUTF(world.func_230315_m_().func_242725_p().toString());
+		dos.writeUTF(world.getDimensionType().getEffects().toString());
 
 		if (world instanceof ServerWorld)
 			dos.writeBoolean(((ServerWorld)world).func_241109_A_());
 		else
 			dos.writeBoolean((boolean)MCReflection.ClientWorldInfo_isFlat.get(world.getWorldInfo()));
 
-		dos.writeBoolean(world.func_230315_m_().hasSkyLight()); // technically not needed now but keeping it just in case
+		dos.writeBoolean(world.getDimensionType().hasSkyLight()); // technically not needed now but keeping it just in case
 
 		if (world instanceof ServerWorld)
 			dos.writeLong(((ServerWorld)world).getSeed());
@@ -168,7 +168,7 @@ public class MenuWorldExporter {
 			dimName = new ResourceLocation(dis.readUTF());
 		}
 		Registry<DimensionType> dimRegistry = DynamicRegistries.func_239770_b_().func_230520_a_();
-		RegistryKey<DimensionType> dimKey = RegistryKey.func_240903_a_(Registry.DIMENSION_TYPE_KEY, dimName);
+		RegistryKey<DimensionType> dimKey = RegistryKey.getOrCreateKey(Registry.DIMENSION_TYPE_KEY, dimName);
 		DimensionType dimensionType = dimRegistry.getValueForKey(dimKey);
 		if (dimensionType == null)
 			dimensionType = dimRegistry.getValueForKey(DimensionType.OVERWORLD);
@@ -245,8 +245,8 @@ public class MenuWorldExporter {
 
 	private static Biome getBiome(int biomeId)
 	{
-		Biome biome = WorldGenRegistries.field_243657_i.getByValue(biomeId);
-		return biome != null ? biome : WorldGenRegistries.field_243657_i.getValueForKey(Biomes.PLAINS);
+		Biome biome = WorldGenRegistries.BIOME.getByValue(biomeId);
+		return biome != null ? biome : WorldGenRegistries.BIOME.getValueForKey(Biomes.PLAINS);
 	}
 
 	// Just version for now, but could have future use
@@ -287,7 +287,7 @@ public class MenuWorldExporter {
 			paletteMap.clear();
 			int size = dis.readInt();
 			for (int i = 0; i < size; i++) {
-				CompoundNBT tag = CompoundNBT.TYPE.func_225649_b_(dis, 0, NBTSizeTracker.INFINITE);
+				CompoundNBT tag = CompoundNBT.TYPE.readNBT(dis, 0, NBTSizeTracker.INFINITE);
 				paletteMap.add(NBTUtil.readBlockState(tag));
 			}
 		}

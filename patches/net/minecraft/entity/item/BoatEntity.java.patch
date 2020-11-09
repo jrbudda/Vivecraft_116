@@ -16,7 +16,7 @@
  
  public class BoatEntity extends Entity
  {
-@@ -586,6 +588,11 @@
+@@ -620,6 +622,11 @@
  
                              if (!(blockstate.getBlock() instanceof LilyPadBlock) && VoxelShapes.compare(blockstate.getCollisionShape(this.world, blockpos$mutable).withOffset((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.AND))
                              {
@@ -28,7 +28,7 @@
                                  f += blockstate.getBlock().getSlipperiness();
                                  ++k1;
                              }
-@@ -736,14 +743,18 @@
+@@ -777,14 +784,18 @@
          {
              float f = 0.0F;
  
@@ -49,7 +49,7 @@
              }
  
              if (this.rightInputDown != this.leftInputDown && !this.forwardInputDown && !this.backInputDown)
-@@ -763,7 +774,83 @@
+@@ -804,7 +815,83 @@
                  f -= 0.005F;
              }
  
@@ -134,7 +134,7 @@
              this.setPaddleState(this.rightInputDown && !this.leftInputDown || this.forwardInputDown, this.leftInputDown && !this.rightInputDown || this.forwardInputDown);
          }
      }
-@@ -1031,7 +1118,17 @@
+@@ -1104,7 +1191,17 @@
      {
          return this.status == BoatEntity.Status.UNDER_WATER || this.status == BoatEntity.Status.UNDER_FLOWING_WATER;
      }

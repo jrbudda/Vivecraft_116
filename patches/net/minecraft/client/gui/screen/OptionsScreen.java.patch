@@ -18,7 +18,7 @@
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.Difficulty;
  
-@@ -42,7 +46,17 @@
+@@ -44,7 +48,17 @@
          {
              int j = this.width / 2 - 155 + i % 2 * 160;
              int k = this.height / 6 - 12 + 24 * (i >> 1);

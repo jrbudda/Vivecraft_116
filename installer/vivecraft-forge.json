@@ -27,7 +27,7 @@
             "--fml.forgeGroup",
             "net.minecraftforge",
             "--fml.mcpVersion",
-            "20200911.084530"
+            "20201102.104115"
         ]
     },
     "libraries": [
@@ -98,13 +98,13 @@
             }
         },
         {
-            "name": "cpw.mods:modlauncher:7.0.1",
+            "name": "cpw.mods:modlauncher:8.0.6",
             "downloads": {
                 "artifact": {
-                    "path": "cpw/mods/modlauncher/7.0.1/modlauncher-7.0.1.jar",
-                    "url": "https://files.minecraftforge.net/maven/cpw/mods/modlauncher/7.0.1/modlauncher-7.0.1.jar",
-                    "sha1": "e66e347c2a4c61781198f86be5cc43f19c1dfb92",
-                    "size": 122080
+                    "path": "cpw/mods/modlauncher/8.0.6/modlauncher-8.0.6.jar",
+                    "url": "https://files.minecraftforge.net/maven/cpw/mods/modlauncher/8.0.6/modlauncher-8.0.6.jar",
+                    "sha1": "70155a85837ebb17d36815ab4d12a3b464963df8",
+                    "size": 126111
                 }
             }
         },
@@ -131,24 +131,24 @@
             }
         },
         {
-            "name": "net.minecraftforge:eventbus:3.0.3-service",
+            "name": "net.minecraftforge:eventbus:3.0.5-service",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/eventbus/3.0.3-service/eventbus-3.0.3-service.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/eventbus/3.0.3/eventbus-3.0.3-service.jar",
-                    "sha1": "e5dedecd71479bbb4984485553b6fcf36953ef00",
-                    "size": 40980
+                    "path": "net/minecraftforge/eventbus/3.0.5-service/eventbus-3.0.5-service.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/eventbus/3.0.5/eventbus-3.0.5-service.jar",
+                    "sha1": "ddaf05a46ff9e4af845e4b6fc914c0b9f98f28c2",
+                    "size": 40979
                 }
             }
         },
         {
-            "name": "net.minecraftforge:forgespi:3.1.1",
+            "name": "net.minecraftforge:forgespi:3.2.0",
             "downloads": {
                 "artifact": {
-                    "path": "net/minecraftforge/forgespi/3.1.1/forgespi-3.1.1.jar",
-                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forgespi/3.1.1/forgespi-3.1.1.jar",
-                    "sha1": "f258f875d9252d5ee83d8f0f2d03f71123f37650",
-                    "size": 19937
+                    "path": "net/minecraftforge/forgespi/3.2.0/forgespi-3.2.0.jar",
+                    "url": "https://files.minecraftforge.net/maven/net/minecraftforge/forgespi/3.2.0/forgespi-3.2.0.jar",
+                    "sha1": "0c6ca4e4e4a0343701407c760e642537b613b543",
+                    "size": 20172
                 }
             }
         },
@@ -274,13 +274,13 @@
             }
         },
         {
-            "name": "org.spongepowered:mixin:0.8",
+            "name": "org.spongepowered:mixin:0.8.2",
             "downloads": {
                 "artifact": {
-                    "path": "org/spongepowered/mixin/0.8/mixin-0.8.jar",
-                    "url": "https://files.minecraftforge.net/maven/org/spongepowered/mixin/0.8/mixin-0.8.jar",
-                    "sha1": "dbe9e5db694a7c3cd644d5bb98f8a21295c75048",
-                    "size": 931239
+                    "path": "org/spongepowered/mixin/0.8.2/mixin-0.8.2.jar",
+                    "url": "https://files.minecraftforge.net/maven/org/spongepowered/mixin/0.8.2/mixin-0.8.2.jar",
+                    "sha1": "1cf212283d26f706fd3074318870bebd14d2a9ed",
+                    "size": 935252
                 }
             }
         },

@@ -127,5 +127,5 @@
 -
 +   
      @Nullable
-     public SoundSource getSource(SoundSystem.Mode soundMode)
-     {
+ 
+     /**
