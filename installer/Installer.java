@@ -511,6 +511,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			}
 
 			//check for multimc
+			if (targetDir.exists())
 			for(File f : targetDir.listFiles()){
 				if(f.getName().equalsIgnoreCase("multimc.exe") || (f.getName().equalsIgnoreCase("multimc") && f.isFile()) || f.getName().equalsIgnoreCase("multimc.cfg")){
 					ArrayList<File> ilist = new ArrayList<File>();
