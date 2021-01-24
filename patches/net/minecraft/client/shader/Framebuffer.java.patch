@@ -1,25 +1,20 @@
 --- a/net/minecraft/client/shader/Framebuffer.java
 +++ b/net/minecraft/client/shader/Framebuffer.java
-@@ -1,10 +1,17 @@
- package net.minecraft.client.shader;
- 
+@@ -3,7 +3,13 @@
+ import com.mojang.blaze3d.platform.GLX;
+ import com.mojang.blaze3d.platform.GlStateManager;
+ import com.mojang.blaze3d.systems.RenderSystem;
++
 +import java.nio.ByteBuffer;
-+import java.nio.IntBuffer;
+ import java.nio.IntBuffer;
 +
 +import org.lwjgl.opengl.GL11;
 +import org.lwjgl.opengl.GL30;
 +
- import com.mojang.blaze3d.platform.GlStateManager;
- import com.mojang.blaze3d.systems.RenderSystem;
--import java.nio.IntBuffer;
-+
+ import net.minecraft.client.Minecraft;
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.Tessellator;
-+import net.minecraft.client.renderer.WorldVertexBufferUploader;
- import net.minecraft.client.renderer.texture.TextureUtil;
- import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
- 
-@@ -17,10 +24,16 @@
+@@ -20,10 +26,15 @@
      public final boolean useDepth;
      public int framebufferObject;
      private int framebufferTexture;
@@ -27,29 +22,28 @@
 +    public int depthBuffer;
      public final float[] framebufferColor;
      public int framebufferFilter;
--
+-    private boolean stencilEnabled = false;
 +    //Vivecraft
 +    public static final int NO_TEXTURE_ID = -1;
 +    private int texid = NO_TEXTURE_ID;
 +    public String name = "Default";
 +    private boolean linearFilter;
 +    //
-+    
+ 
      public Framebuffer(int p_i51175_1_, int p_i51175_2_, boolean p_i51175_3_, boolean p_i51175_4_)
      {
-         RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
-@@ -90,7 +103,7 @@
-             this.framebufferObject = -1;
+@@ -105,7 +116,7 @@
+             }
          }
      }
 -
 +//o god what is this.
      public void func_237506_a_(Framebuffer p_237506_1_)
      {
-         RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
-@@ -118,7 +131,8 @@
- 
-         GlStateManager.bindFramebuffer(FramebufferConstants.GL_FRAMEBUFFER, 0);
+         if (GLX.isUsingFBOs())
+@@ -136,7 +147,8 @@
+             GlStateManager.bindFramebuffer(FramebufferConstants.GL_FRAMEBUFFER, 0);
+         }
      }
 -
 +    
@@ -57,59 +51,125 @@
      public void createBuffers(int p_216492_1_, int p_216492_2_, boolean p_216492_3_)
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
-@@ -127,21 +141,31 @@
-         this.framebufferTextureWidth = p_216492_1_;
-         this.framebufferTextureHeight = p_216492_2_;
-         this.framebufferObject = GlStateManager.genFramebuffers();
--        this.framebufferTexture = TextureUtil.generateTextureId();
-+        //Vivecraft support supplied texture
-+        if (this.texid == NO_TEXTURE_ID)
-+        	this.framebufferTexture = TextureUtil.generateTextureId();
-+        else
-+        	this.framebufferTexture = texid;
-+        //
- 
-         if (this.useDepth)
-         {
--            this.depthBuffer = TextureUtil.generateTextureId();
--            GlStateManager.bindTexture(this.depthBuffer);
--            GlStateManager.texParameter(3553, 10241, 9728);
--            GlStateManager.texParameter(3553, 10240, 9728);
--            GlStateManager.texParameter(3553, 10242, 10496);
--            GlStateManager.texParameter(3553, 10243, 10496);
--            GlStateManager.texParameter(3553, 34892, 0);
--            GlStateManager.texImage2D(3553, 0, 6402, this.framebufferTextureWidth, this.framebufferTextureHeight, 0, 6402, 5126, (IntBuffer)null);
-+       		this.depthBuffer = TextureUtil.generateTextureId();
-+            GlStateManager.bindTexture(this.depthBuffer);           
-+        	GL11.glBindTexture((int)3553, this.depthBuffer );
-+        	GL11.glTexParameteri((int)3553, (int)10242, (int)10496);
-+        	GL11.glTexParameteri((int)3553, (int)10243, (int)10496);
-+        	GL11.glTexParameteri((int)3553, (int)10241, linearFilter ? GL11.GL_LINEAR : (int)9728);
-+        	GL11.glTexParameteri((int)3553, (int)10240, linearFilter ? GL11.GL_LINEAR : (int)9728);
-+        	GL11.glTexParameteri((int)3553, (int)34891, (int)6409);     	
-+        	GL11.glTexImage2D(GL11.GL_TEXTURE_2D, (int)0, GL30.GL_DEPTH24_STENCIL8, framebufferWidth, framebufferHeight, (int)0, GL30.GL_DEPTH_STENCIL,  GL30.GL_UNSIGNED_INT_24_8, (ByteBuffer)null);
+@@ -151,58 +163,65 @@
          }
- 
--        this.setFramebufferFilter(9728);
-+        if (linearFilter)
-+            this.setFramebufferFilter(GL11.GL_LINEAR);
-+        else
-+            this.setFramebufferFilter(9728);
+         else
+         {
+-            this.framebufferObject = GlStateManager.genFramebuffers();
+-            this.framebufferTexture = TextureUtil.generateTextureId();
+-
+-            if (this.useDepth)
+-            {
+-                this.depthBuffer = TextureUtil.generateTextureId();
+-                GlStateManager.bindTexture(this.depthBuffer);
+-                GlStateManager.texParameter(3553, 10241, 9728);
+-                GlStateManager.texParameter(3553, 10240, 9728);
+-                GlStateManager.texParameter(3553, 10242, 10496);
+-                GlStateManager.texParameter(3553, 10243, 10496);
+-                GlStateManager.texParameter(3553, 34892, 0);
+-
+-                if (this.stencilEnabled)
+-                {
+-                    GlStateManager.texImage2D(3553, 0, 36013, this.framebufferTextureWidth, this.framebufferTextureHeight, 0, 34041, 36269, (IntBuffer)null);
+-                }
+-                else
+-                {
+-                    GlStateManager.texImage2D(3553, 0, 6402, this.framebufferTextureWidth, this.framebufferTextureHeight, 0, 6402, 5126, (IntBuffer)null);
+-                }
+-            }
+-
+-            this.setFramebufferFilter(9728);
+-            GlStateManager.bindTexture(this.framebufferTexture);
+-            GlStateManager.texImage2D(3553, 0, 32856, this.framebufferTextureWidth, this.framebufferTextureHeight, 0, 6408, 5121, (IntBuffer)null);
+-            GlStateManager.bindFramebuffer(FramebufferConstants.GL_FRAMEBUFFER, this.framebufferObject);
+-            GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_COLOR_ATTACHMENT0, 3553, this.framebufferTexture, 0);
+-
+-            if (this.useDepth)
+-            {
+-                if (this.stencilEnabled)
+-                {
+-                    if (ReflectorForge.getForgeUseCombinedDepthStencilAttachment())
+-                    {
+-                        GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, 33306, 3553, this.depthBuffer, 0);
+-                    }
+-                    else
+-                    {
+-                        GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, 36096, 3553, this.depthBuffer, 0);
+-                        GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, 36128, 3553, this.depthBuffer, 0);
+-                    }
+-                }
+-                else
+-                {
+-                    GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_DEPTH_ATTACHMENT, 3553, this.depthBuffer, 0);
+-                }
+-            }
+-
+-            this.checkFramebufferComplete();
+-            this.framebufferClear(p_216492_3_);
+-            this.unbindFramebufferTexture();
++        	this.framebufferObject = GlStateManager.genFramebuffers();
++        	//Vivecraft support supplied texture
++        	if (this.texid == NO_TEXTURE_ID)
++        		this.framebufferTexture = TextureUtil.generateTextureId();
++        	else
++        		this.framebufferTexture = texid;
++        	//
 +
-         GlStateManager.bindTexture(this.framebufferTexture);
-         GlStateManager.texImage2D(3553, 0, 32856, this.framebufferTextureWidth, this.framebufferTextureHeight, 0, 6408, 5121, (IntBuffer)null);
-         GlStateManager.bindFramebuffer(FramebufferConstants.GL_FRAMEBUFFER, this.framebufferObject);
-@@ -149,7 +173,8 @@
- 
-         if (this.useDepth)
-         {
--            GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_DEPTH_ATTACHMENT, 3553, this.depthBuffer, 0);
-+        	GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL11.GL_TEXTURE_2D, depthBuffer, (int)0);
-+        //   GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_DEPTH_ATTACHMENT, 3553, this.depthBuffer, 0);
++        	if (this.useDepth)
++        	{
++        		this.depthBuffer = TextureUtil.generateTextureId();
++        		GlStateManager.bindTexture(this.depthBuffer);
++        		//Vivecraft - just put this back like it was, we always use stencil
++        		GL11.glBindTexture((int)3553, this.depthBuffer );
++        		GlStateManager.texParameter((int)3553, (int)10242, (int)10496);
++        		GlStateManager.texParameter((int)3553, (int)10243, (int)10496);
++        		GlStateManager.texParameter((int)3553, (int)10241, linearFilter ? GL11.GL_LINEAR : (int)9728);
++        		GlStateManager.texParameter((int)3553, (int)10240, linearFilter ? GL11.GL_LINEAR : (int)9728);
++        		GlStateManager.texParameter((int)3553, (int)34891, (int)6409);     	
++            	GL11.glTexImage2D(GL11.GL_TEXTURE_2D, (int)0, GL30.GL_DEPTH24_STENCIL8, framebufferWidth, framebufferHeight, (int)0, GL30.GL_DEPTH_STENCIL,  GL30.GL_UNSIGNED_INT_24_8, (ByteBuffer)null);
++        		//
++        	}
++
++        	if (linearFilter)
++        		this.setFramebufferFilter(GL11.GL_LINEAR);
++        	else
++        		this.setFramebufferFilter(9728);
++        	GlStateManager.bindTexture(this.framebufferTexture);
++        	GlStateManager.texImage2D(3553, 0, 32856, this.framebufferTextureWidth, this.framebufferTextureHeight, 0, 6408, 5121, (IntBuffer)null);
++        	GlStateManager.bindFramebuffer(FramebufferConstants.GL_FRAMEBUFFER, this.framebufferObject);
++        	GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_COLOR_ATTACHMENT0, 3553, this.framebufferTexture, 0);
++
++        	if (this.useDepth)
++        	{
++            	GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL11.GL_TEXTURE_2D, depthBuffer, (int)0);
++        		
++            	//Vivecraft - just put this back like it was, we always use stencil
++
++//        		if (this.stencilEnabled)
++//        		{
++//        			if (ReflectorForge.getForgeUseCombinedDepthStencilAttachment())
++//        			{
++//        				GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, 33306, 3553, this.depthBuffer, 0);
++//        			}
++//        			else
++//        			{
++//        				GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, 36096, 3553, this.depthBuffer, 0);
++//        				GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, 36128, 3553, this.depthBuffer, 0);
++//        			}
++//        		}
++//        		else
++//        		{
++//        			GlStateManager.framebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_DEPTH_ATTACHMENT, 3553, this.depthBuffer, 0);
++//        		}
++        	}
++
++        	this.checkFramebufferComplete();
++        	this.framebufferClear(p_216492_3_);
++        	this.unbindFramebufferTexture();
          }
+     }
  
-         this.checkFramebufferComplete();
-@@ -212,17 +237,17 @@
+@@ -270,17 +289,17 @@
      }
  
      public void bindFramebuffer(boolean setViewportIn)
@@ -130,7 +190,7 @@
          }
      }
  
-@@ -265,7 +290,8 @@
+@@ -329,7 +348,8 @@
          this.framebufferRenderExt(width, height, true);
      }
  
@@ -140,7 +200,7 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnGameThreadOrInit);
  
-@@ -273,16 +299,17 @@
+@@ -337,16 +357,17 @@
          {
              RenderSystem.recordRenderCall(() ->
              {
@@ -159,79 +219,74 @@
 +    //Vivecraft extended framebuffer drawing.
 +    private void framebufferRenderExtRaw(int left, int width, int height, int top, boolean p_227588_3_, float xCropFactor, float yCropFactor, boolean keepAspect)
      {
-         RenderSystem.assertThread(RenderSystem::isOnRenderThread);
-         GlStateManager.colorMask(true, true, true, false);
-@@ -294,30 +321,57 @@
-         GlStateManager.matrixMode(5888);
-         GlStateManager.loadIdentity();
-         GlStateManager.translatef(0.0F, 0.0F, -2000.0F);
--        GlStateManager.viewport(0, 0, width, height);
-+    	//Vivecraft add x/y offsets
-+        GlStateManager.viewport(left, top, width, height);
-+        //
-         GlStateManager.enableTexture();
-         GlStateManager.disableLighting();
-         GlStateManager.disableAlphaTest();
- 
-         if (p_227588_3_)
+         if (GLX.isUsingFBOs())
          {
--            GlStateManager.disableBlend();
-+        	GlStateManager.disableBlend();
-             GlStateManager.enableColorMaterial();
-         }
+@@ -360,7 +381,9 @@
+             GlStateManager.matrixMode(5888);
+             GlStateManager.loadIdentity();
+             GlStateManager.translatef(0.0F, 0.0F, -2000.0F);
+-            GlStateManager.viewport(0, 0, width, height);
++        	//Vivecraft add x/y offsets
++            GlStateManager.viewport(left, top, width, height);
++            //
+             GlStateManager.enableTexture();
+             GlStateManager.disableLighting();
+             GlStateManager.disableAlphaTest();
+@@ -373,6 +396,33 @@
  
-         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-         this.bindFramebufferTexture();
--        float f = (float)width;
--        float f1 = (float)height;
-+        
-+        float displayAspect = (float)width / (float)height;
-+        float frameAspect = (float)this.framebufferWidth / (float)this.framebufferHeight;
-+        
-+        
-+        float rightV = (float)width;
-+        float bottomV = (float)height;
-+        float leftV = 0; 
-+        float topV = 0;
-+        
-+        if (keepAspect) {
-+        	if (displayAspect > frameAspect) {
-+        		float factor = (float)width / (float)this.framebufferWidth;
-+        		leftV = 0;
-+        		rightV = width;
-+        		topV = height / 2f - ((this.framebufferHeight / 2f) * factor);
-+        		bottomV = height / 2f + ((this.framebufferHeight / 2f) * factor);
-+        	} else {
-+        		float factor = (float)height / (float)this.framebufferHeight;
-+        		leftV = width / 2f - ((this.framebufferWidth / 2f) * factor);
-+        		rightV = width / 2f + ((this.framebufferWidth / 2f) * factor);
-+        		topV = 0;
-+        		bottomV = height;
-+        	}
-+        }
-+        
+             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+             this.bindFramebufferTexture();
++            
++            float displayAspect = (float)width / (float)height;
++            float frameAspect = (float)this.framebufferWidth / (float)this.framebufferHeight;
++            
++            
++            float rightV = (float)width;
++            float bottomV = (float)height;
++            float leftV = 0; 
++            float topV = 0;
++            
++            if (keepAspect) {
++            	if (displayAspect > frameAspect) {
++            		float factor = (float)width / (float)this.framebufferWidth;
++            		leftV = 0;
++            		rightV = width;
++            		topV = height / 2f - ((this.framebufferHeight / 2f) * factor);
++            		bottomV = height / 2f + ((this.framebufferHeight / 2f) * factor);
++            	} else {
++            		float factor = (float)height / (float)this.framebufferHeight;
++            		leftV = width / 2f - ((this.framebufferWidth / 2f) * factor);
++            		rightV = width / 2f + ((this.framebufferWidth / 2f) * factor);
++            		topV = 0;
++            		bottomV = height;
++            	}
++            }
++            
 +
-         float f2 = (float)this.framebufferWidth / (float)this.framebufferTextureWidth;
-         float f3 = (float)this.framebufferHeight / (float)this.framebufferTextureHeight;
-         Tessellator tessellator = RenderSystem.renderThreadTesselator();
-         BufferBuilder bufferbuilder = tessellator.getBuffer();
-         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
--        bufferbuilder.pos(0.0D, (double)f1, 0.0D).tex(0.0F, 0.0F).color(255, 255, 255, 255).endVertex();
--        bufferbuilder.pos((double)f, (double)f1, 0.0D).tex(f2, 0.0F).color(255, 255, 255, 255).endVertex();
--        bufferbuilder.pos((double)f, 0.0D, 0.0D).tex(f2, f3).color(255, 255, 255, 255).endVertex();
--        bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0F, f3).color(255, 255, 255, 255).endVertex();
+             float f = (float)width;
+             float f1 = (float)height;
+             float f2 = (float)this.framebufferWidth / (float)this.framebufferTextureWidth;
+@@ -380,10 +430,10 @@
+             Tessellator tessellator = RenderSystem.renderThreadTesselator();
+             BufferBuilder bufferbuilder = tessellator.getBuffer();
+             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+-            bufferbuilder.pos(0.0D, (double)f1, 0.0D).tex(0.0F, 0.0F).color(255, 255, 255, 255).endVertex();
+-            bufferbuilder.pos((double)f, (double)f1, 0.0D).tex(f2, 0.0F).color(255, 255, 255, 255).endVertex();
+-            bufferbuilder.pos((double)f, 0.0D, 0.0D).tex(f2, f3).color(255, 255, 255, 255).endVertex();
+-            bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0F, f3).color(255, 255, 255, 255).endVertex();
 +        bufferbuilder.pos(leftV, bottomV, 0.0D).tex(xCropFactor, yCropFactor).color(255, 255, 255, 255).endVertex();
 +        bufferbuilder.pos(rightV, bottomV, 0.0D).tex(f2 - xCropFactor, yCropFactor).color(255, 255, 255, 255).endVertex();
 +        bufferbuilder.pos(rightV, topV, 0.0D).tex(f2 - xCropFactor, f3 - yCropFactor).color(255, 255, 255, 255).endVertex();
 +        bufferbuilder.pos(leftV, topV, 0.0D).tex(xCropFactor, f3 - yCropFactor).color(255, 255, 255, 255).endVertex();
-         tessellator.draw();
-         this.unbindFramebufferTexture();
-         GlStateManager.depthMask(true);
-@@ -350,4 +404,71 @@
+             tessellator.draw();
+             this.unbindFramebufferTexture();
+             GlStateManager.depthMask(true);
+@@ -417,18 +467,71 @@
      {
          return this.depthBuffer;
      }
-+    
+-
++   
 + 	//Vivecraft extended constructor
 +    public Framebuffer(String name, int width, int height, boolean usedepth, boolean onMac, int texid, boolean depthtex, boolean linearFilter)
 +    {
@@ -283,19 +338,25 @@
 +     * This is to prevent the default cause where graphics cards do not support stencil bits.
 +     * <b>Make sure to call this on the main render thread!</b>
 +     */
-+    public void enableStencil()
-+    {
+     public void enableStencil()
+     {
+-        if (!this.stencilEnabled)
+-        {
+-            this.stencilEnabled = true;
+-            this.resize(this.framebufferWidth, this.framebufferHeight, Minecraft.IS_RUNNING_ON_MAC);
+-        }
 +    	//Vivecraft noop
-+    }
-+
+     }
+ 
 +    /**
 +     * Returns wither or not this FBO has been successfully initialized with stencil bits.
 +     * If not, and a modder wishes it to be, they must call enableStencil.
 +     */
-+    public boolean isStencilEnabled()
-+    {
+     public boolean isStencilEnabled()
+     {
+-        return this.stencilEnabled;
 +       return true;
-+    }
+     }
 +    /*================================ FORGE END   ================================================*/
 +
  }

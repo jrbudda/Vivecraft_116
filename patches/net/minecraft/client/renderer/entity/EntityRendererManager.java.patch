@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/EntityRendererManager.java
 +++ b/net/minecraft/client/renderer/entity/EntityRendererManager.java
-@@ -7,6 +7,12 @@
+@@ -6,6 +6,12 @@
  import java.util.Collections;
  import java.util.Map;
  import javax.annotation.Nullable;
@@ -13,7 +13,7 @@
  import net.minecraft.block.BlockRenderType;
  import net.minecraft.block.BlockState;
  import net.minecraft.client.GameSettings;
-@@ -60,6 +66,12 @@
+@@ -58,6 +64,12 @@
      private final Map < EntityType, EntityRenderer> renderers = Maps.newHashMap();
      private final Map<String, PlayerRenderer> skinMap = Maps.newHashMap();
      private final PlayerRenderer playerRenderer;
@@ -26,7 +26,7 @@
      private final FontRenderer textRenderer;
      public final TextureManager textureManager;
      private World world;
-@@ -222,13 +234,51 @@
+@@ -220,13 +232,51 @@
          }
      }
  
@@ -82,7 +82,7 @@
          }
          else
          {
-@@ -565,6 +615,44 @@
+@@ -556,6 +606,44 @@
  
      public Quaternion getCameraOrientation()
      {

@@ -553,6 +553,7 @@ vivecraft.gui.screenshot=Screenshot
 vivecraft.gui.calibrateheight=Calibrate Height
 vivecraft.gui.alignkatwalk=Align KAT WALK
 vivecraft.gui.movethirdpersoncam=Move Third Cam
+vivecraft.gui.social=Social
 
 # Items
 vivecraft.item.jumpboots=Jump Boots

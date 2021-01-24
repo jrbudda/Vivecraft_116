@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/AbstractOption.java
 +++ b/net/minecraft/client/AbstractOption.java
-@@ -199,7 +199,9 @@
+@@ -200,7 +200,9 @@
              return d0 == p_lambda$static$35_1_.getMaxValue() ? p_lambda$static$35_1_.getGenericValueComponent(new TranslationTextComponent("options.framerateLimit.max")) : p_lambda$static$35_1_.getGenericValueComponent(new TranslationTextComponent("options.framerate", (int)d0));
          }
      });
@@ -11,7 +11,7 @@
      {
          return p_lambda$static$36_0_.gamma;
      }, (p_lambda$static$37_0_, p_lambda$static$37_1_) ->
-@@ -207,15 +209,26 @@
+@@ -208,15 +210,26 @@
          p_lambda$static$37_0_.gamma = p_lambda$static$37_1_;
      }, (p_lambda$static$38_0_, p_lambda$static$38_1_) ->
      {
@@ -46,7 +46,7 @@
      });
      public static final SliderPercentageOption MIPMAP_LEVELS = new SliderPercentageOption("options.mipmapLevels", 0.0D, 4.0D, 1.0F, (p_lambda$static$39_0_) ->
      {
-@@ -356,6 +369,9 @@
+@@ -357,6 +370,9 @@
  
              p_lambda$static$65_0_.updateRenderClouds();
              minecraft.worldRenderer.loadRenderers();
@@ -56,7 +56,7 @@
          }
      }, (p_lambda$static$66_0_, p_lambda$static$66_1_) ->
      {
-@@ -378,14 +394,16 @@
+@@ -379,14 +395,16 @@
      });
      public static final IteratableOption GUI_SCALE = new IteratableOption("options.guiScale", (p_lambda$static$67_0_, p_lambda$static$67_1_) ->
      {

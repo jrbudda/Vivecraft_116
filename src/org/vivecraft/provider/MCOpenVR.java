@@ -1855,9 +1855,9 @@ public class MCOpenVR
 				mc.climbTracker.isClaws(mc.player.getHeldItemMainhand()))) //never let go, jack.
 		{}
 		else{
-			//if (Reflector.forgeExists() && mc.currentScreen == null && Display.isActive())
-			//	KeyboardSimulator.robot.mouseWheel(-dir * 120);
-			//else
+			if (Reflector.ForgeHooksClient.exists() && mc.currentScreen == null)
+				InputSimulator.scrollMouse(0, dir * 4);
+			else
 				mc.player.inventory.changeCurrentItem(dir);
 		}
 	}

@@ -16,7 +16,7 @@
          boolean flag = shaderPackLoaded;
          boolean flag1 = isOldLighting();
  
-@@ -1091,7 +1093,7 @@
+@@ -1085,7 +1087,7 @@
          Set set = props.keySet();
          List<ICustomTexture> list = new ArrayList<>();
  
@@ -25,7 +25,7 @@
          {
              if (s1.startsWith(s))
              {
-@@ -2454,11 +2456,11 @@
+@@ -2448,11 +2450,11 @@
  
      private static int getDrawBuffer(Program p, String str, int i)
      {
@@ -39,7 +39,7 @@
          }
          else
          {
-@@ -4307,15 +4309,15 @@
+@@ -4301,12 +4303,12 @@
          GlStateManager.activeTexture(33984);
      }
  
@@ -49,19 +49,22 @@
 -        if (currentWorld != world)
 +        if (currentWorld != worldin)
          {
--            World world = currentWorld;
+             World world = currentWorld;
 -            currentWorld = world;
-+            World worldold = currentWorld;
 +            currentWorld = worldin;
+ 
+             if (currentWorld == null)
+             {
+@@ -4320,7 +4322,7 @@
+ 
              setCameraOffset(mc.getRenderViewEntity());
--            int i = WorldUtils.getDimensionId(world);
+             int i = WorldUtils.getDimensionId(world);
 -            int j = WorldUtils.getDimensionId(world);
-+            int i = WorldUtils.getDimensionId(worldold);
 +            int j = WorldUtils.getDimensionId(worldin);
  
              if (j != i)
              {
-@@ -5789,7 +5791,7 @@
+@@ -5794,7 +5796,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

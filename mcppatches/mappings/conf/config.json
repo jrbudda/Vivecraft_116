@@ -1,6 +1,6 @@
 {
     "spec": 1,
-    "version": "1.16.4",
+    "version": "1.16.5",
     "data": {
         "access": "config/access.txt",
         "constructors": "config/constructors.txt",
@@ -42,7 +42,7 @@
                 "type": "merge",
                 "client": "{stripClientOutput}",
                 "server": "{stripServerOutput}",
-                "version": "1.16.4"
+                "version": "1.16.5"
             },
             {
                 "type": "rename",

@@ -203,7 +203,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.16.4 jrbudda-6-1";
++    public final String minecriftVerString = "Vivecraft 1.16.5 jrbudda-7-2a";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
@@ -1204,7 +1204,7 @@
          if (!this.isGamePaused)
          {
              this.musicTicker.tick();
-@@ -1875,6 +2411,9 @@
+@@ -1875,9 +2411,13 @@
          this.profiler.endStartSection("keyboard");
          this.keyboardListener.tick();
          this.profiler.endSection();
@@ -1213,8 +1213,13 @@
 +    	//
      }
  
-     private boolean func_244600_aM()
-@@ -1886,13 +2425,17 @@
+-    private boolean func_244600_aM()
++    //IsMultiplayer
++    public boolean func_244600_aM()
+     {
+         return !this.integratedServerIsRunning || this.integratedServer != null && this.integratedServer.getPublic();
+     }
+@@ -1886,13 +2426,17 @@
      {
          for (; this.gameSettings.keyBindTogglePerspective.isPressed(); this.worldRenderer.setDisplayListEntitiesDirty())
          {
@@ -1239,7 +1244,7 @@
          }
  
          while (this.gameSettings.keyBindSmoothCamera.isPressed())
-@@ -1971,7 +2514,9 @@
+@@ -1971,7 +2515,9 @@
          {
              if (!this.player.isSpectator() && this.player.drop(Screen.hasControlDown()))
              {
@@ -1250,7 +1255,7 @@
              }
          }
  
-@@ -1979,7 +2524,7 @@
+@@ -1979,7 +2525,7 @@
  
          if (flag2)
          {
@@ -1259,7 +1264,7 @@
              {
                  this.openChatScreen("");
              }
-@@ -1990,11 +2535,13 @@
+@@ -1990,11 +2536,13 @@
              }
          }
  
@@ -1278,7 +1283,7 @@
              }
  
              while (this.gameSettings.keyBindAttack.isPressed())
-@@ -2011,10 +2558,18 @@
+@@ -2011,10 +2559,18 @@
          }
          else
          {
@@ -1301,7 +1306,7 @@
  
              while (this.gameSettings.keyBindUseItem.isPressed())
              {
-@@ -2032,7 +2587,7 @@
+@@ -2032,7 +2588,7 @@
              this.rightClickMouse();
          }
  
@@ -1310,7 +1315,7 @@
      }
  
      public static DatapackCodec loadDataPackCodec(SaveFormat.LevelSave worldStorage)
-@@ -2180,7 +2735,7 @@
+@@ -2180,7 +2736,7 @@
  
              while (!this.integratedServer.serverIsInRunLoop())
              {
@@ -1319,7 +1324,7 @@
                  this.runGameLoop(false);
  
                  try
-@@ -2205,6 +2760,13 @@
+@@ -2205,6 +2761,13 @@
              {
              }));
              networkmanager.sendPacket(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -1333,7 +1338,7 @@
              networkmanager.sendPacket(new CLoginStartPacket(this.getSession().getProfile()));
              this.networkManager = networkmanager;
          }
-@@ -2306,6 +2868,13 @@
+@@ -2306,6 +2869,13 @@
       */
      public void loadWorld(ClientWorld worldClientIn)
      {
@@ -1347,7 +1352,7 @@
          WorkingScreen workingscreen = new WorkingScreen();
          workingscreen.displaySavingString(new TranslationTextComponent("connect.joining"));
          this.updateScreenTick(workingscreen);
-@@ -2342,12 +2911,18 @@
+@@ -2342,12 +2912,18 @@
          IntegratedServer integratedserver = this.integratedServer;
          this.integratedServer = null;
          this.gameRenderer.resetData();
@@ -1366,7 +1371,7 @@
              if (integratedserver != null)
              {
                  this.profiler.startSection("waitForServer");
-@@ -2364,6 +2939,9 @@
+@@ -2364,6 +2940,9 @@
              this.ingameGUI.resetPlayersOverlayFooterHeader();
              this.currentServerData = null;
              this.integratedServerIsRunning = false;
@@ -1376,7 +1381,7 @@
              this.game.leaveGameSession();
          }
  
-@@ -2397,6 +2975,9 @@
+@@ -2397,6 +2976,9 @@
          this.particles.clearEffects(worldIn);
          TileEntityRendererDispatcher.instance.setWorld(worldIn);
          this.setDefaultMinecraftTitle();
@@ -1386,7 +1391,7 @@
      }
  
      public boolean isMultiplayerEnabled()
-@@ -2465,6 +3046,16 @@
+@@ -2465,6 +3047,16 @@
      {
          if (this.objectMouseOver != null && this.objectMouseOver.getType() != RayTraceResult.Type.MISS)
          {
@@ -1403,7 +1408,7 @@
              boolean flag = this.player.abilities.isCreativeMode;
              TileEntity tileentity = null;
              RayTraceResult.Type raytraceresult$type = this.objectMouseOver.getType();
-@@ -2626,6 +3217,8 @@
+@@ -2626,6 +3218,8 @@
                  }
              }
          }
@@ -1412,7 +1417,7 @@
      }
  
      private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
-@@ -3182,8 +3775,12 @@
+@@ -3182,8 +3776,12 @@
          {
              supplier = wrapV4(supplier);
          }
@@ -1427,7 +1432,7 @@
      }
  
      private static Supplier<IResourcePack> wrapV3(Supplier<IResourcePack> resourcePackSupplier)
-@@ -3248,4 +3845,522 @@
+@@ -3248,4 +3846,522 @@
          CREATE,
          BACKUP;
      }

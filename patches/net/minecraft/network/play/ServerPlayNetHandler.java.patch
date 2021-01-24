@@ -62,17 +62,24 @@
  public class ServerPlayNetHandler implements IServerPlayNetHandler
  {
      private static final Logger LOGGER = LogManager.getLogger();
-@@ -204,6 +224,9 @@
+@@ -204,6 +224,16 @@
          networkManagerIn.setNetHandler(this);
          this.player = playerIn;
          playerIn.connection = this;
 +        // VIVECRAFT
-+        ((Channel)MCReflection.NetworkManager_channel.get(networkManagerIn)).pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
++        try {
++            ((Channel)MCReflection.NetworkManager_channel.get(networkManagerIn)).pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
++		} catch (Exception e) {
++			//this fails when forge mods do weird things with fake players.
++			if (!Reflector.fml_ModLoader.exists()) {
++                LOGGER.warn("{} failed adding VR aim fix", (Object)this.player.getName().getString());
++			}
++		}
 +        //
          IChatFilter ichatfilter = playerIn.func_244529_Q();
  
          if (ichatfilter != null)
-@@ -305,6 +328,8 @@
+@@ -305,6 +335,8 @@
          {
              this.disconnect(new TranslationTextComponent("multiplayer.disconnect.idling"));
          }
@@ -81,7 +88,7 @@
      }
  
      public void captureCurrentPosition()
-@@ -471,11 +496,17 @@
+@@ -471,11 +503,17 @@
                  }
  
                  entity.setPositionAndRotation(d3, d4, d5, f, f1);
@@ -99,7 +106,7 @@
                      this.netManager.sendPacket(new SMoveVehiclePacket(entity));
                      return;
                  }
-@@ -1220,7 +1251,18 @@
+@@ -1220,7 +1258,18 @@
  
          if (blockpos.getY() < this.server.getBuildLimit())
          {
@@ -119,7 +126,7 @@
              {
                  ActionResultType actionresulttype = this.player.interactionManager.func_219441_a(this.player, serverworld, itemstack, hand, blockraytraceresult);
  
-@@ -1430,8 +1472,16 @@
+@@ -1430,8 +1479,16 @@
              }
              else
              {
@@ -136,7 +143,7 @@
              }
  
              this.chatSpamThresholdCount += 20;
-@@ -1565,6 +1615,9 @@
+@@ -1565,6 +1622,9 @@
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.INTERACT_AT)
                  {
@@ -146,7 +153,7 @@
                      optional = Optional.of(entity.applyPlayerInteraction(this.player, packetIn.getHitVec(), hand));
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.ATTACK)
-@@ -1880,6 +1933,117 @@
+@@ -1880,6 +1940,117 @@
       */
      public void processCustomPayload(CCustomPayloadPacket packetIn)
      {

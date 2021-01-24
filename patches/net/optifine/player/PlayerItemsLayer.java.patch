@@ -25,16 +25,16 @@
      {
          super(renderPlayer);
          this.renderPlayer = renderPlayer;
-@@ -34,7 +38,7 @@
-             if (entityLiving instanceof AbstractClientPlayerEntity)
-             {
-                 AbstractClientPlayerEntity abstractclientplayerentity = (AbstractClientPlayerEntity)entityLiving;
--                BipedModel bipedmodel = this.renderPlayer.getEntityModel();
-+                BipedModel bipedmodel = (BipedModel) this.renderPlayer.getEntityModel();
-                 PlayerConfigurations.renderPlayerItems(bipedmodel, abstractclientplayerentity, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
+@@ -36,7 +40,7 @@
+                 if (entityLiving instanceof AbstractClientPlayerEntity)
+                 {
+                     AbstractClientPlayerEntity abstractclientplayerentity = (AbstractClientPlayerEntity)entityLiving;
+-                    BipedModel bipedmodel = this.renderPlayer.getEntityModel();
++                    BipedModel bipedmodel = (BipedModel) this.renderPlayer.getEntityModel();
+                     PlayerConfigurations.renderPlayerItems(bipedmodel, abstractclientplayerentity, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
+                 }
              }
-         }
-@@ -55,6 +59,14 @@
+@@ -58,6 +62,14 @@
                  playerrenderer.addLayer(new PlayerItemsLayer(playerrenderer));
                  flag = true;
              }

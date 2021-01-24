@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/Util.java
 +++ b/net/minecraft/util/Util.java
-@@ -102,7 +102,7 @@
+@@ -103,7 +103,7 @@
  
      private static ExecutorService createNamedService(String serviceName)
      {

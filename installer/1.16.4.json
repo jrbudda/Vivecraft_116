@@ -1534,7 +1534,7 @@
 			"url": "https://files.minecraftforge.net/maven/"
 		},
 		{
-			"name": "net.minecraft:launchwrapper:2.1",
+			"name": "net.minecraft:launchwrapper:2.2",
 			"url": "http://vivecraft.org/jar/"
 		},
 		{

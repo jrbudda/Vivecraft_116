@@ -53,7 +53,7 @@
          this.client.playerController.setPlayerCapabilities(this.client.player);
          this.client.renderViewEntity = this.client.player;
          this.client.displayGuiScreen(new DownloadTerrainScreen());
-@@ -439,9 +456,15 @@
+@@ -439,9 +456,16 @@
          this.client.player.setShowDeathScreen(packetIn.func_229743_k_());
          this.client.playerController.setGameType(packetIn.getGameType());
          this.client.playerController.func_241675_a_(packetIn.func_241786_f_());
@@ -64,12 +64,13 @@
          this.netManager.sendPacket(new CCustomPayloadPacket(CCustomPayloadPacket.BRAND, (new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
          this.client.getMinecraftGame().startGameSession();
 +        // VIVE START - ask server if it's running this mod
++        NetworkHelper.vivePlayers.clear();
 +        NetworkHelper.sendVersionInfo();
 +        // VIVE END - ask server if it's running this mod
      }
  
      /**
-@@ -961,7 +984,10 @@
+@@ -961,7 +985,10 @@
  
              if (tileentity != null)
              {
@@ -81,7 +82,7 @@
              }
          }
      }
-@@ -999,6 +1025,11 @@
+@@ -999,6 +1026,11 @@
      public void handleDisconnect(SDisconnectPacket packetIn)
      {
          this.netManager.closeChannel(packetIn.getReason());
@@ -93,7 +94,7 @@
      }
  
      /**
-@@ -1077,8 +1108,36 @@
+@@ -1077,8 +1109,36 @@
       */
      public void handleChat(SChatPacket packetIn)
      {
@@ -132,7 +133,7 @@
      }
  
      /**
-@@ -1218,7 +1277,9 @@
+@@ -1218,7 +1278,10 @@
  
                      if (entity1 == this.client.player && !flag)
                      {
@@ -140,10 +141,11 @@
 +                    	//Vivecraft - use key name, not keyboard key
 +                        this.client.ingameGUI.setOverlayMessage(new TranslationTextComponent("mount.onboard", this.client.gameSettings.keyBindSneak.getKeyDescription()), false);
 +                        //
++                        this.client.gameSettings.keyBindSneak.func_238171_j_(); // fuck you randompatches
                      }
                  }
              }
-@@ -1320,6 +1381,10 @@
+@@ -1320,6 +1383,10 @@
              this.world.setScoreboard(scoreboard);
              this.client.loadWorld(this.world);
              this.client.displayGuiScreen(new DownloadTerrainScreen());
@@ -154,7 +156,7 @@
          }
  
          this.world.removeAllEntities();
-@@ -1344,9 +1409,14 @@
+@@ -1344,9 +1411,14 @@
  
          clientplayerentity1.preparePlayerToSpawn();
          clientplayerentity1.setServerBrand(s);
@@ -170,7 +172,7 @@
          this.client.playerController.setPlayerCapabilities(clientplayerentity1);
          clientplayerentity1.setReducedDebug(clientplayerentity.hasReducedDebug());
          clientplayerentity1.setShowDeathScreen(clientplayerentity.isShowDeathScreen());
-@@ -1454,7 +1524,7 @@
+@@ -1454,7 +1526,7 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
          Container container = null;
@@ -179,7 +181,7 @@
  
          if (packetIn.getWindowId() == 0)
          {
-@@ -1469,6 +1539,9 @@
+@@ -1469,6 +1541,9 @@
          {
              this.sendPacket(new CConfirmTransactionPacket(packetIn.getWindowId(), packetIn.getActionNumber(), true));
          }
@@ -189,7 +191,7 @@
      }
  
      /**
-@@ -1521,7 +1594,15 @@
+@@ -1521,7 +1596,15 @@
          if (i == 1 && tileentity instanceof MobSpawnerTileEntity || flag || i == 3 && tileentity instanceof BeaconTileEntity || i == 4 && tileentity instanceof SkullTileEntity || i == 6 && tileentity instanceof BannerTileEntity || i == 7 && tileentity instanceof StructureBlockTileEntity || i == 8 && tileentity instanceof EndGatewayTileEntity || i == 9 && tileentity instanceof SignTileEntity || i == 11 && tileentity instanceof BedTileEntity || i == 5 && tileentity instanceof ConduitTileEntity || i == 12 && tileentity instanceof JigsawTileEntity || i == 13 && tileentity instanceof CampfireTileEntity || i == 14 && tileentity instanceof BeehiveTileEntity)
          {
              tileentity.read(this.client.world.getBlockState(blockpos), packetIn.getNbtCompound());
@@ -206,7 +208,7 @@
  
          if (flag && this.client.currentScreen instanceof CommandBlockScreen)
          {
-@@ -1783,6 +1864,9 @@
+@@ -1783,6 +1866,9 @@
          clientrecipebook.func_243196_a(this.recipeManager.getRecipes());
          clientrecipebook.getRecipes().forEach(imutablesearchtree::func_217872_a);
          imutablesearchtree.recalculate();
@@ -216,7 +218,7 @@
      }
  
      public void handlePlayerLook(SPlayerLookPacket packetIn)
-@@ -1886,7 +1970,7 @@
+@@ -1886,7 +1972,7 @@
  
          if (entity instanceof LivingEntity)
          {
@@ -225,7 +227,50 @@
  
              if (effect != null)
              {
-@@ -1917,7 +2001,7 @@
+@@ -1899,10 +1985,25 @@
+ 
+     public void handleTags(STagsListPacket packetIn)
+     {
+-        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
+-        ITagCollectionSupplier itagcollectionsupplier = packetIn.getTags();
+-        Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.validateTags(itagcollectionsupplier);
++    	PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
++    	ITagCollectionSupplier itagcollectionsupplier = packetIn.getTags();
+ 
++    	//Forge
++    	Multimap<ResourceLocation, ResourceLocation> multimap;
++    	boolean vanillaConnection = false;
++    	if(Reflector.NetworkHooks_isVanillaConnection.exists()) {
++    		vanillaConnection = Reflector.callBoolean(Reflector.NetworkHooks_isVanillaConnection, netManager);
++    		if(vanillaConnection) {
++    			multimap =  TagRegistryManager.validateTags((ITagCollectionSupplier) Reflector.call(Reflector.ForgeTagHandler_withNoCustom, itagcollectionsupplier));
++    		}
++    		else {
++    			multimap = (Multimap<ResourceLocation, ResourceLocation>) Reflector.call(Reflector.TagRegistryManager_validateVanillaTags, itagcollectionsupplier);
++    		}
++    	} else {
++            multimap = TagRegistryManager.validateTags(itagcollectionsupplier);
++    	}       
++        //
++    	
+         if (!multimap.isEmpty())
+         {
+             LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
+@@ -1910,6 +2011,13 @@
+         }
+         else
+         {
++        	//Forge
++        	if(Reflector.ForgeTagHandler_resetCachedTagCollections.exists()) {
++        		Reflector.call(Reflector.ForgeTagHandler_resetCachedTagCollections, true, vanillaConnection);
++        		itagcollectionsupplier = (ITagCollectionSupplier) Reflector.call(Reflector.ITagCollectionSupplier_reinjectOptionalTags, itagcollectionsupplier);
++        	}
++        	//
++
+             this.networkTagManager = itagcollectionsupplier;
+ 
+             if (!this.netManager.isLocalChannel())
+@@ -1917,7 +2025,7 @@
                  itagcollectionsupplier.updateTags();
              }
  
@@ -234,7 +279,7 @@
          }
      }
  
-@@ -2280,7 +2364,7 @@
+@@ -2280,7 +2388,7 @@
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
          ResourceLocation resourcelocation = packetIn.getChannelName();
          PacketBuffer packetbuffer = null;
@@ -243,7 +288,7 @@
          try
          {
              packetbuffer = packetIn.getBufferData();
-@@ -2553,14 +2637,125 @@
+@@ -2553,14 +2661,125 @@
                  int l5 = packetbuffer.readInt();
                  this.client.debugRenderer.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
              }
@@ -371,7 +416,7 @@
              {
                  packetbuffer.release();
              }
-@@ -2955,4 +3150,14 @@
+@@ -2955,4 +3174,14 @@
      {
          return this.field_239163_t_;
      }
