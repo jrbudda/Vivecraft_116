@@ -251,6 +251,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		forgePanel.add(useForge);
 
 		optCustomForgeVersion = new JCheckBox();
+		
 
 		AbstractAction actf2 = new updateActionF();
 		actf2.putValue(AbstractAction.NAME, "Custom Version");
@@ -1218,8 +1219,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		}
 
 		private int[] getRamAlloc() {
-			int minAlloc = Math.min((int)ramAllocation.getSelectedItem(), 2);
 			int maxAlloc = (int)ramAllocation.getSelectedItem();
+			int minAlloc = useZGC.isSelected() ? maxAlloc : Math.min(maxAlloc, 2);
 			return new int[]{minAlloc, maxAlloc};
 		}
 
