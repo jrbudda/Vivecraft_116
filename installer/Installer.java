@@ -511,6 +511,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			}
 
 			//check for multimc
+			if (targetDir.exists())
 			for(File f : targetDir.listFiles()){
 				if(f.getName().equalsIgnoreCase("multimc.exe") || (f.getName().equalsIgnoreCase("multimc") && f.isFile()) || f.getName().equalsIgnoreCase("multimc.cfg")){
 					ArrayList<File> ilist = new ArrayList<File>();
@@ -1287,7 +1288,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fileChooser.setFileHidingEnabled(false);
-				fileChooser.setCurrentDirectory(new File(System.getProperty("java.home")));
+				if (isWindows)
+					fileChooser.setCurrentDirectory(new File(System.getenv("ProgramFiles")));
 				fileChooser.setFileFilter(new FileFilter() {
 					@Override
 					public boolean accept(File f) {
