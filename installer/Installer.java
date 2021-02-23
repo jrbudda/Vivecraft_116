@@ -1220,7 +1220,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 		private int[] getRamAlloc() {
 			int maxAlloc = (int)ramAllocation.getSelectedItem();
-			int minAlloc = useZGC.isSelected() ? maxAlloc : Math.min(maxAlloc, 2);
+			int minAlloc = /*useZGC.isSelected()*/ true ? maxAlloc : Math.min(maxAlloc, 2);
 			return new int[]{minAlloc, maxAlloc};
 		}
 
