@@ -668,7 +668,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 				FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
 				forgeInstaller = new File(tempDir + "/forge-" + FULL_FORGE_VERSION + "-installer.jar");
-				forge_url = "http://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
+				forge_url = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
 
 				if( targetDir.exists() ) {
 					File ForgeDir = new File( targetDir, "libraries"+File.separator+"net"+File.separator+"minecraftforge"+File.separator+"forge");
@@ -953,7 +953,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		private boolean installForge(File target)
 		{
 			try {
-				JOptionPane.showMessageDialog(null, "The Forge installer will launch. In it, please ensure \"Install client\" is selected and the correct directory is specified (default unless you changed it).", "Forge Installation", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "The Forge installer will launch. In it, please ensure \"Install client\" is selected, and do not change the install directory.", "Forge Installation", JOptionPane.INFORMATION_MESSAGE);
 				final Process proc = new ProcessBuilder(isWindows ? "javaw" : "java", "-jar", target.getAbsolutePath()).start();
 				new Thread("Forge Installer Stdout") { // needed otherwise subprocess blocks
 					@Override
