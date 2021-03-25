@@ -1289,7 +1289,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				int res = JOptionPane.showConfirmDialog(null,
-						"The currently selected Java executable is not at least Java 14.\n" +
+						"The currently selected Java executable is not Java 14.\n" +
 						"Would you like to select the correct one now?",
 						"Wrong Java Version",
 						JOptionPane.YES_NO_OPTION,
