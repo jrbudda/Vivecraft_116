@@ -418,10 +418,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					panel.add(new JLabel(
 							"<html>ZGC is an experimental garbage collector available in Java 14+.<br>" +
 									"It can significantly reduce GC stutter, but may have stability issues as it is still in development.<br>" +
-									"Your launcher profile must be configured to use Java 14+ or the game will crash with this option enabled.<br>" +
-									"The installer will prompt you to locate the Java 14+ runtime and do this for you, however it must be installed before proceeding.<html>"
+									"Your launcher profile must be configured to use Java 14 or the game will crash with this option enabled.<br>" +
+									"The installer will prompt you to locate the Java 14 runtime and do this for you, however it must be installed before proceeding.<html>"
 					));
-					panel.add(linkify("You can download the latest version of Java at AdoptOpenJDK.", "https://adoptopenjdk.net/", "AdoptOpenJDK"));
+					panel.add(linkify("You can download the latest release of Java 14 at AdoptOpenJDK.", "https://adoptopenjdk.net/archive.html?variant=openjdk14&jvmVariant=hotspot", "AdoptOpenJDK"));
 					panel.add(new JLabel("<html><br>Do you wish to continue installation with this option enabled?</html>"));
 					int res = JOptionPane.showOptionDialog(
 							null, panel, "Warning!",
@@ -433,9 +433,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 			}
 		};
-		zgcAction.putValue(AbstractAction.NAME, "Enable ZGC (Experimental)");
+		zgcAction.putValue(AbstractAction.NAME, "Enable ZGC");
 		useZGC.setAction(zgcAction);
-		useZGC.setToolTipText("<html>Enables experimental stutter-free Java 14 garbage collector.</html>");
+		useZGC.setToolTipText("<html>Enables stutter-free Java 14+ garbage collector.</html>");
 		useZGC.setAlignmentX(LEFT_ALIGNMENT);
 		
 		this.add(forgePanel);
@@ -1277,13 +1277,13 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			boolean first = true;
 			while (true) {
 				String ver = !newPath.isEmpty() ? getJavaVersionFromPath(newPath) : "0.0.0";
-				if (parseJavaVersion(ver) >= 14)
+				if (parseJavaVersion(ver) == 14)
 					break;
 
 				if (first) {
 					String javaHome = System.getProperty("java.home") + (isWindows ? "\\bin\\javaw.exe" : "/bin/java");
 					String homeVer = getJavaVersionFromPath(javaHome);
-					if (parseJavaVersion(homeVer) >= 14)
+					if (parseJavaVersion(homeVer) == 14)
 						return javaHome;
 					first = false;
 				}
