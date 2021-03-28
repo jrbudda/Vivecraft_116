@@ -50,7 +50,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String OF_FILE_NAME          = "1.16.5_HD_U_G6";
     private static final String OF_MD5                = "4a13bb8132744ab7beeff9f076d48125";
     private static final String OF_VERSION_EXT        = ".jar";
-    private static String FORGE_VERSION               = "36.0.1";
+    private static String FORGE_VERSION               = "36.0.7";
     private static final String HOMEPAGE_LINK         = "http://www.vivecraft.org";
     private static final String DONATION_LINK         = "https://www.patreon.com/jrbudda";
     private static final String PROJECT_NAME          = "Vivecraft";
@@ -1277,19 +1277,19 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			boolean first = true;
 			while (true) {
 				String ver = !newPath.isEmpty() ? getJavaVersionFromPath(newPath) : "0.0.0";
-				if (parseJavaVersion(ver) == 14)
+				if (parseJavaVersion(ver) >= 14 && parseJavaVersion(ver) <= 15)
 					break;
 
 				if (first) {
 					String javaHome = System.getProperty("java.home") + (isWindows ? "\\bin\\javaw.exe" : "/bin/java");
 					String homeVer = getJavaVersionFromPath(javaHome);
-					if (parseJavaVersion(homeVer) == 14)
+					if (parseJavaVersion(homeVer) >= 14 && parseJavaVersion(homeVer) <= 15)
 						return javaHome;
 					first = false;
 				}
 
 				int res = JOptionPane.showConfirmDialog(null,
-						"The currently selected Java executable is not Java 14.\n" +
+						"The currently selected Java executable is not Java 14 or Java 15.\n" +
 						"Would you like to select the correct one now?",
 						"Wrong Java Version",
 						JOptionPane.YES_NO_OPTION,
