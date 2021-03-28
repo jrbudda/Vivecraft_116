@@ -9,7 +9,7 @@
 		"url": "http://vivecraft.org/jar/"
 	},
 	{
-		"name": "org.ow2.asm:asm-all:5.2",
+		"name": "org.ow2.asm:asm-all:9.0",
 		"url": "http://files.minecraftforge.net/maven/"
 	},
 	{
