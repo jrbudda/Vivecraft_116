@@ -67,7 +67,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private String[] forgeVersions = null;
 	private boolean forgeVersionInstalled = false;
 	private static String FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
-	private String forge_url = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
+	private String forge_url = "https://maven.minecraftforge.net/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
 	private File forgeInstaller;
 	private JTextField selectedDirText;
 	private JLabel infoLabel;
@@ -672,7 +672,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 				FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
 				forgeInstaller = new File(tempDir + "/forge-" + FULL_FORGE_VERSION + "-installer.jar");
-				forge_url = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
+				forge_url = "https://maven.minecraftforge.net/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
 
 				if( targetDir.exists() ) {
 					File ForgeDir = new File( targetDir, "libraries"+File.separator+"net"+File.separator+"minecraftforge"+File.separator+"forge");
