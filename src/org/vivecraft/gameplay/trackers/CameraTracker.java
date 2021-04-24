@@ -25,6 +25,7 @@ public class CameraTracker extends Tracker {
 	private VRData.VRDevicePose startControllerPose;
 	private Vector3d startPosition;
 	private Quaternion startRotation;
+	private boolean quickMode;
 
 	public CameraTracker(Minecraft mc) {
 		super(mc);
@@ -56,6 +57,9 @@ public class CameraTracker extends Tracker {
 			rotation = startRotation.multiply(new Quaternion(Utils.convertOVRMatrix(deltaMatrix)));
 		}
 
+		if (quickMode && !isMoving() && !mc.grabScreenShot)
+			visible = false;
+
 		// chunk renderer gets angry if we're really far away, force hide when >3/4 render distance
 		if (mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition().distanceTo(position) > mc.gameSettings.renderDistanceChunks * 12)
 			visible = false;
@@ -64,6 +68,7 @@ public class CameraTracker extends Tracker {
 	@Override
 	public void reset(ClientPlayerEntity player) {
 		visible = false;
+		quickMode = false;
 		stopMoving();
 	}
 
@@ -104,11 +109,20 @@ public class CameraTracker extends Tracker {
 		return startController;
 	}
 
-	public void startMoving(int controller) {
+	public boolean isQuickMode() {
+		return quickMode;
+	}
+
+	public void startMoving(int controller, boolean quickMode) {
 		startController = controller;
 		startControllerPose = mc.vrPlayer.vrdata_world_pre.getController(controller);
 		startPosition = position;
 		startRotation = rotation.copy();
+		this.quickMode = quickMode;
+	}
+
+	public void startMoving(int controller) {
+		startMoving(controller, false);
 	}
 
 	public void stopMoving() {

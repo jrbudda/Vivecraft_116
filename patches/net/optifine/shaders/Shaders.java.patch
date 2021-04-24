@@ -1,6 +1,6 @@
 --- a/net/optifine/shaders/Shaders.java
 +++ b/net/optifine/shaders/Shaders.java
-@@ -125,13 +125,18 @@
+@@ -125,8 +125,13 @@
  import org.lwjgl.opengl.EXTFramebufferObject;
  import org.lwjgl.opengl.GL;
  import org.lwjgl.opengl.GL11;
@@ -14,12 +14,6 @@
  
  public class Shaders
  {
-     static Minecraft mc;
--    static GameRenderer entityRenderer;
-+    static GameRenderer gameRenderer;
-     public static boolean isInitializedOnce = false;
-     public static boolean isShaderPackInitialized = false;
-     public static GLCapabilities capabilities;
 @@ -341,12 +346,12 @@
      static final int MaxShadowColorBuffers = 8;
      static final int MaxShadowDepthBuffers = 2;
@@ -35,15 +29,6 @@
      static int sfb = 0;
      private static int[] gbuffersFormat = new int[8];
      public static boolean[] gbuffersClear = new boolean[8];
-@@ -436,7 +441,7 @@
-     private static ShaderOption[] shaderPackOptions = null;
-     private static Set<String> shaderPackOptionSliders = null;
-     static ShaderProfile[] shaderPackProfiles = null;
--    static Map<String, ScreenShaderOptions> shaderPackGuiScreens = null;
-+    static Map<String, ScreenShaderOptions> shaderPackScreens = null;
-     static Map<String, IExpressionBool> shaderPackProgramConditions = new HashMap<>();
-     public static final String PATH_SHADERS_PROPERTIES = "/shaders/shaders.properties";
-     public static PropertyDefaultFastFancyOff shaderPackClouds = new PropertyDefaultFastFancyOff("clouds", "Clouds", 0);
 @@ -512,7 +517,7 @@
      static final FloatBuffer tempMatrixDirectBuffer = nextFloatBuffer(16);
      static final FloatBuffer tempDirectFloatBuffer = nextFloatBuffer(16);
@@ -65,15 +50,6 @@
      private static ByteBuffer nextByteBuffer(int size)
      {
          ByteBuffer bytebuffer = bigBuffer;
-@@ -833,7 +843,7 @@
-             shaderPackOptions = null;
-             shaderPackOptionSliders = null;
-             shaderPackProfiles = null;
--            shaderPackGuiScreens = null;
-+            shaderPackScreens = null;
-             shaderPackProgramConditions.clear();
-             shaderPackClouds.resetValue();
-             shaderPackOldHandLight.resetValue();
 @@ -883,6 +893,27 @@
          loadShaderPackResources();
          loadShaderPackDimensions();
@@ -102,58 +78,6 @@
          loadShaderPackProperties();
          boolean flag3 = shaderPackLoaded != flag;
          boolean flag4 = isOldLighting() != flag1;
-@@ -1056,7 +1087,7 @@
-                 shaderPackFrustumCulling.loadFrom(properties);
-                 shaderPackOptionSliders = ShaderPackParser.parseOptionSliders(properties, shaderPackOptions);
-                 shaderPackProfiles = ShaderPackParser.parseProfiles(properties, shaderPackOptions);
--                shaderPackGuiScreens = ShaderPackParser.parseGuiScreens(properties, shaderPackProfiles, shaderPackOptions);
-+                shaderPackScreens = ShaderPackParser.parseGuiScreens(properties, shaderPackProfiles, shaderPackOptions);
-                 shaderPackProgramConditions = ShaderPackParser.parseProgramConditions(properties, shaderPackOptions);
-                 customTexturesGbuffers = loadCustomTextures(properties, 0);
-                 customTexturesComposite = loadCustomTextures(properties, 1);
-@@ -1559,7 +1590,7 @@
-     {
-         ShaderOption[] ashaderoption = (ShaderOption[])shaderPackOptions.clone();
- 
--        if (shaderPackGuiScreens == null)
-+        if (shaderPackScreens == null)
-         {
-             if (shaderPackProfiles != null)
-             {
-@@ -1572,7 +1603,7 @@
-         else
-         {
-             String s = screenName != null ? "screen." + screenName : "screen";
--            ScreenShaderOptions screenshaderoptions = shaderPackGuiScreens.get(s);
-+            ScreenShaderOptions screenshaderoptions = shaderPackScreens.get(s);
- 
-             if (screenshaderoptions == null)
-             {
-@@ -1593,7 +1624,7 @@
-                     }
-                     else if (shaderoption instanceof ShaderOptionRest)
-                     {
--                        ShaderOption[] ashaderoption2 = getShaderOptionsRest(shaderPackGuiScreens, ashaderoption);
-+                        ShaderOption[] ashaderoption2 = getShaderOptionsRest(shaderPackScreens, ashaderoption);
-                         list.addAll(Arrays.asList(ashaderoption2));
-                     }
-                     else
-@@ -1611,13 +1642,13 @@
-     {
-         String s = screenName != null ? "screen." + screenName : "screen";
- 
--        if (shaderPackGuiScreens == null)
-+        if (shaderPackScreens == null)
-         {
-             return def;
-         }
-         else
-         {
--            ScreenShaderOptions screenshaderoptions = shaderPackGuiScreens.get(s);
-+            ScreenShaderOptions screenshaderoptions = shaderPackScreens.get(s);
-             return screenshaderoptions == null ? def : screenshaderoptions.getColumns();
-         }
-     }
 @@ -2390,6 +2421,8 @@
              }
  
@@ -225,15 +149,6 @@
          checkGLError("FT d");
  
          for (int k = 0; k < usedColorBuffers; ++k)
-@@ -4080,7 +4123,7 @@
-         checkWorldChanged(mc.world);
-         mc = minecraft;
-         mc.getProfiler().startSection("init");
--        entityRenderer = mc.gameRenderer;
-+        gameRenderer = mc.gameRenderer;
- 
-         if (!isShaderPackInitialized)
-         {
 @@ -4100,9 +4143,10 @@
              }
          }
@@ -270,7 +185,7 @@
 -        ShadersRender.renderShadowMap(entityRenderer, activeRenderInfo, 0, partialTicks, finishTimeNano);
 +		// VIVECRAFT: Render shadow map once per frame instead of every damn pass
 +		if (mc.currentPass == RenderPass.LEFT || mc.currentPass == RenderPass.THIRD || mc.currentPass == RenderPass.CAMERA)
-+			ShadersRender.renderShadowMap(gameRenderer, gameRenderer.getActiveRenderInfo(), 0, partialTicks, finishTimeNano);
++			ShadersRender.renderShadowMap(entityRenderer, entityRenderer.getActiveRenderInfo(), 0, partialTicks, finishTimeNano);
          mc.getProfiler().endSection();
          EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
  
@@ -285,7 +200,7 @@
 +        MatrixStack mat = new MatrixStack();
 +        mat.getLast().getMatrix().setIdentity();
 +        mat.getLast().getMatrix().mul(matrix4f);
-+        gameRenderer.applystereo(mc.currentPass, mat);
++        entityRenderer.applystereo(mc.currentPass, mat);
 +        //
 +        mat.getLast().getMatrix().transpose();
 +        mat.getLast().getMatrix().write(tempMat);

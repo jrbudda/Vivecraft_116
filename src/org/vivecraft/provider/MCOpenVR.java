@@ -298,6 +298,7 @@ public class MCOpenVR
 	public static final KeyBinding keyMoveThirdPersonCam = new KeyBinding("vivecraft.key.moveThirdPersonCam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.misc");
 	public static final KeyBinding keyTogglePlayerList = new KeyBinding("vivecraft.key.togglePlayerList", GLFW.GLFW_KEY_UNKNOWN, "key.categories.multiplayer");
 	public static final KeyBinding keyToggleHandheldCam = new KeyBinding("vivecraft.key.toggleHandheldCam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.misc");
+	public static final KeyBinding keyQuickHandheldCam = new KeyBinding("vivecraft.key.quickHandheldCam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.misc");
 	public static final HandedKeyBinding keyTrackpadTouch = new HandedKeyBinding("vivecraft.key.trackpadTouch", GLFW.GLFW_KEY_UNKNOWN, "key.categories.misc"); // used for swipe sampler
 	public static final HandedKeyBinding keyVRInteract = new HandedKeyBinding("vivecraft.key.vrInteract", GLFW.GLFW_KEY_UNKNOWN,"key.categories.gameplay");
 	public static final HandedKeyBinding keyClimbeyGrab = new HandedKeyBinding("vivecraft.key.climbeyGrab", GLFW.GLFW_KEY_UNKNOWN,"vivecraft.key.category.climbey");
@@ -493,6 +494,7 @@ public class MCOpenVR
 			keyBindingSet.add(keyMoveThirdPersonCam);
 			keyBindingSet.add(keyTogglePlayerList);
 			keyBindingSet.add(keyToggleHandheldCam);
+			keyBindingSet.add(keyQuickHandheldCam);
 			keyBindingSet.add(keyTrackpadTouch);
 			keyBindingSet.add(GuiHandler.keyLeftClick);
 			keyBindingSet.add(GuiHandler.keyRightClick);
@@ -654,6 +656,7 @@ public class MCOpenVR
 		addActionParams(map, MCOpenVR.keyToggleKeyboard, "optional", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyMoveThirdPersonCam, "optional", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyToggleHandheldCam, "optional", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, MCOpenVR.keyQuickHandheldCam, "optional", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyTrackpadTouch, "optional", "boolean", VRInputActionSet.TECHNICAL);
 		addActionParams(map, MCOpenVR.keyVRInteract, "suggested", "boolean", VRInputActionSet.CONTEXTUAL);
 		addActionParams(map, MCOpenVR.keyClimbeyGrab, "suggested", "boolean", null);
@@ -1842,6 +1845,22 @@ public class MCOpenVR
 				mc.cameraTracker.setPosition(handPose.getPosition());
 				mc.cameraTracker.setRotation(new Quaternion(handPose.getMatrix().transposed()));
 			}
+		}
+
+		if (keyQuickHandheldCam.isPressed() && mc.player != null) {
+			if (!mc.cameraTracker.isVisible())
+				mc.cameraTracker.toggleVisibility();
+			ControllerType hand = findActiveBindingControllerType(keyQuickHandheldCam);
+			if (hand == null)
+				hand = ControllerType.RIGHT;
+			VRData.VRDevicePose handPose = mc.vrPlayer.vrdata_world_pre.getController(hand.ordinal());
+			mc.cameraTracker.setPosition(handPose.getPosition());
+			mc.cameraTracker.setRotation(new Quaternion(handPose.getMatrix().transposed()));
+			mc.cameraTracker.startMoving(hand.ordinal(), true);
+		}
+		if (!keyQuickHandheldCam.isKeyDown() && mc.cameraTracker.isMoving() && mc.cameraTracker.isQuickMode() && mc.player != null) {
+			mc.cameraTracker.stopMoving();
+			mc.grabScreenShot = true;
 		}
 
 		GuiHandler.processBindingsGui();

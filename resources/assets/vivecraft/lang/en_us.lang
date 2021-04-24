@@ -23,6 +23,7 @@ vivecraft.key.toggleKeyboard=Show/Hide Keyboard
 vivecraft.key.moveThirdPersonCam=Move Third Person Camera
 vivecraft.key.togglePlayerList=Toggle Player List
 vivecraft.key.toggleHandheldCam=Toggle Camera
+vivecraft.key.quickHandheldCam=Quick Camera
 vivecraft.key.trackpadTouch=Trackpad Touch
 vivecraft.key.vrInteract=Contextual Interact
 vivecraft.key.guiLeftClick=Left Click

@@ -83,7 +83,7 @@ public class InteractTracker extends Tracker{
 	private void reset(ClientPlayerEntity player, int c) {
 		if (inCamera[c] && VRHotkeys.isMovingThirdPersonCam() && VRHotkeys.getMovingThirdPersonCamTriggerer() == VRHotkeys.Triggerer.INTERACTION && VRHotkeys.getMovingThirdPersonCamController() == c)
 			VRHotkeys.stopMovingThirdPersonCam();
-		if (inHandheldCamera[c] && mc.cameraTracker.isMoving() && mc.cameraTracker.getMovingController() == c)
+		if (inHandheldCamera[c] && mc.cameraTracker.isMoving() && mc.cameraTracker.getMovingController() == c && !mc.cameraTracker.isQuickMode())
 			mc.cameraTracker.stopMoving();
 		inBlockPos[c] = null;
 		inBlockHit[c] = null;
@@ -154,7 +154,7 @@ public class InteractTracker extends Tracker{
 				}
 			}
 
-			if (!active[c] && mc.cameraTracker.isVisible()) {
+			if (!active[c] && mc.cameraTracker.isVisible() && !mc.cameraTracker.isQuickMode()) {
 				VRData.VRDevicePose camData = mc.vrPlayer.vrdata_world_pre.getEye(RenderPass.CAMERA);
 				Vector3d camPos = camData.getPosition();
 				camPos = camPos.subtract(camData.getCustomVector(new Vector3d(0, 0, -1)).scale(0.08f));

@@ -203,7 +203,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.16.5 jrbudda-1-1";
++    public final String minecriftVerString = "Vivecraft 1.16.5 jrbudda-7-2";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
@@ -1315,7 +1315,73 @@
      }
  
      public static DatapackCodec loadDataPackCodec(SaveFormat.LevelSave worldStorage)
-@@ -2180,7 +2736,7 @@
+@@ -2067,7 +2623,7 @@
+ 
+     public void loadWorld(String worldName)
+     {
+-        this.loadWorld(worldName, DynamicRegistries.func_239770_b_(), Minecraft::loadDataPackCodec, Minecraft::loadWorld, false, Minecraft.WorldSelectionType.BACKUP);
++        this.loadWorld(worldName, DynamicRegistries.func_239770_b_(), Minecraft::loadDataPackCodec, Minecraft::loadWorld, false, Minecraft.WorldSelectionType.BACKUP, false);
+     }
+ 
+     public void createWorld(String worldName, WorldSettings worldSettings, DynamicRegistries.Impl dynamicRegistriesIn, DimensionGeneratorSettings dimensionGeneratorSettings)
+@@ -2084,10 +2640,11 @@
+             });
+             DimensionGeneratorSettings dimensiongeneratorsettings = dataresult.resultOrPartial(Util.func_240982_a_("Error reading worldgen settings after loading data packs: ", LOGGER::error)).orElse(dimensionGeneratorSettings);
+             return new ServerWorldInfo(worldSettings, dimensiongeneratorsettings, dataresult.lifecycle());
+-        }, false, Minecraft.WorldSelectionType.CREATE);
++        }, false, Minecraft.WorldSelectionType.CREATE, true);
+     }
+ 
+-    private void loadWorld(String worldName, DynamicRegistries.Impl dynamicRegistries, Function<SaveFormat.LevelSave, DatapackCodec> levelSaveToDatapackFunction, Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> quadFunction, boolean vanillaOnly, Minecraft.WorldSelectionType selectionType)
++    // Forge does this crap
++    private void loadWorld(String worldName, DynamicRegistries.Impl dynamicRegistries, Function<SaveFormat.LevelSave, DatapackCodec> levelSaveToDatapackFunction, Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> quadFunction, boolean vanillaOnly, Minecraft.WorldSelectionType selectionType, boolean creating)
+     {
+         SaveFormat.LevelSave saveformat$levelsave;
+ 
+@@ -2104,17 +2661,22 @@
+         }
+ 
+         Minecraft.PackManager minecraft$packmanager;
++		final DynamicRegistries.Impl dyn_f;
+ 
+         try
+         {
+-            minecraft$packmanager = this.reloadDatapacks(dynamicRegistries, levelSaveToDatapackFunction, quadFunction, vanillaOnly, saveformat$levelsave);
++        	// FORGE
++			Minecraft.PackManager mgr = this.reloadDatapacks(dynamicRegistries, levelSaveToDatapackFunction, quadFunction, vanillaOnly, saveformat$levelsave);
++			dyn_f = creating ? dynamicRegistries : DynamicRegistries.func_239770_b_();
++			minecraft$packmanager = creating ? mgr : this.reloadDatapacks(dyn_f, levelSaveToDatapackFunction, quadFunction, vanillaOnly, saveformat$levelsave);
++			// END FORGE
+         }
+         catch (Exception exception)
+         {
+             LOGGER.warn("Failed to load datapacks, can't proceed with server load", (Throwable)exception);
+             this.displayGuiScreen(new DatapackFailureScreen(() ->
+             {
+-                this.loadWorld(worldName, dynamicRegistries, levelSaveToDatapackFunction, quadFunction, true, selectionType);
++                this.loadWorld(worldName, dynamicRegistries, levelSaveToDatapackFunction, quadFunction, true, selectionType, creating);
+             }));
+ 
+             try
+@@ -2140,7 +2702,7 @@
+ 
+             try
+             {
+-                saveformat$levelsave.saveLevel(dynamicRegistries, iserverconfiguration);
++                saveformat$levelsave.saveLevel(dyn_f, iserverconfiguration);
+                 minecraft$packmanager.getDataPackRegistries().updateTags();
+                 YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(this.proxy);
+                 MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
+@@ -2151,7 +2713,7 @@
+                 PlayerProfileCache.setOnlineMode(false);
+                 this.integratedServer = MinecraftServer.func_240784_a_((thread) ->
+                 {
+-                    return new IntegratedServer(thread, this, dynamicRegistries, saveformat$levelsave, minecraft$packmanager.getResourcePacks(), minecraft$packmanager.getDataPackRegistries(), iserverconfiguration, minecraftsessionservice, gameprofilerepository, playerprofilecache, (radius) -> {
++                    return new IntegratedServer(thread, this, dyn_f, saveformat$levelsave, minecraft$packmanager.getResourcePacks(), minecraft$packmanager.getDataPackRegistries(), iserverconfiguration, minecraftsessionservice, gameprofilerepository, playerprofilecache, (radius) -> {
+                         TrackingChunkStatusListener trackingchunkstatuslistener = new TrackingChunkStatusListener(radius + 0);
+                         trackingchunkstatuslistener.startTracking();
+                         this.refChunkStatusListener.set(trackingchunkstatuslistener);
+@@ -2180,7 +2742,7 @@
  
              while (!this.integratedServer.serverIsInRunLoop())
              {
@@ -1324,7 +1390,7 @@
                  this.runGameLoop(false);
  
                  try
-@@ -2205,6 +2761,13 @@
+@@ -2205,6 +2767,13 @@
              {
              }));
              networkmanager.sendPacket(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -1338,7 +1404,16 @@
              networkmanager.sendPacket(new CLoginStartPacket(this.getSession().getProfile()));
              this.networkManager = networkmanager;
          }
-@@ -2306,6 +2869,13 @@
+@@ -2212,7 +2781,7 @@
+         {
+             this.deleteWorld(selectionType, worldName, flag, () ->
+             {
+-                this.loadWorld(worldName, dynamicRegistries, levelSaveToDatapackFunction, quadFunction, vanillaOnly, Minecraft.WorldSelectionType.NONE);
++                this.loadWorld(worldName, dynamicRegistries, levelSaveToDatapackFunction, quadFunction, vanillaOnly, Minecraft.WorldSelectionType.NONE, creating);
+             });
+             minecraft$packmanager.close();
+ 
+@@ -2306,6 +2875,13 @@
       */
      public void loadWorld(ClientWorld worldClientIn)
      {
@@ -1352,7 +1427,7 @@
          WorkingScreen workingscreen = new WorkingScreen();
          workingscreen.displaySavingString(new TranslationTextComponent("connect.joining"));
          this.updateScreenTick(workingscreen);
-@@ -2342,12 +2912,18 @@
+@@ -2342,12 +2918,18 @@
          IntegratedServer integratedserver = this.integratedServer;
          this.integratedServer = null;
          this.gameRenderer.resetData();
@@ -1371,7 +1446,7 @@
              if (integratedserver != null)
              {
                  this.profiler.startSection("waitForServer");
-@@ -2364,6 +2940,9 @@
+@@ -2364,6 +2946,9 @@
              this.ingameGUI.resetPlayersOverlayFooterHeader();
              this.currentServerData = null;
              this.integratedServerIsRunning = false;
@@ -1381,7 +1456,7 @@
              this.game.leaveGameSession();
          }
  
-@@ -2397,6 +2976,9 @@
+@@ -2397,6 +2982,9 @@
          this.particles.clearEffects(worldIn);
          TileEntityRendererDispatcher.instance.setWorld(worldIn);
          this.setDefaultMinecraftTitle();
@@ -1391,7 +1466,7 @@
      }
  
      public boolean isMultiplayerEnabled()
-@@ -2465,6 +3047,16 @@
+@@ -2465,6 +3053,16 @@
      {
          if (this.objectMouseOver != null && this.objectMouseOver.getType() != RayTraceResult.Type.MISS)
          {
@@ -1408,7 +1483,7 @@
              boolean flag = this.player.abilities.isCreativeMode;
              TileEntity tileentity = null;
              RayTraceResult.Type raytraceresult$type = this.objectMouseOver.getType();
-@@ -2626,6 +3218,8 @@
+@@ -2626,6 +3224,8 @@
                  }
              }
          }
@@ -1417,7 +1492,7 @@
      }
  
      private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
-@@ -3182,8 +3776,12 @@
+@@ -3182,8 +3782,12 @@
          {
              supplier = wrapV4(supplier);
          }
@@ -1432,7 +1507,7 @@
      }
  
      private static Supplier<IResourcePack> wrapV3(Supplier<IResourcePack> resourcePackSupplier)
-@@ -3248,4 +3846,522 @@
+@@ -3248,4 +3852,522 @@
          CREATE,
          BACKUP;
      }
