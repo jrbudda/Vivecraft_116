@@ -9,10 +9,6 @@
 		"url": "http://vivecraft.org/jar/"
 	},
 	{
-		"name": "org.ow2.asm:asm-all:9.0",
-		"url": "http://files.minecraftforge.net/maven/"
-	},
-	{
 		"url": "https://repo1.maven.org/maven2/",
 		"name": "io.github.classgraph:classgraph:4.8.78"
 	},
