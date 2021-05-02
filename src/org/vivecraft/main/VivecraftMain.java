@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.vivecraft.asm.VivecraftASMTransformer;
 import org.vivecraft.tweaker.MinecriftClassTransformer;
 import org.vivecraft.tweaker.MinecriftClassTransformer.Stage;
 

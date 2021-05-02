@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\monster\HoglinEntity.java minecraft_patched\net\minecraft\entity\monster\HoglinEntity.java
 --- minecraft\net\minecraft\entity\monster\HoglinEntity.java
 +++ minecraft_patched\net\minecraft\entity\monster\HoglinEntity.java
-@@ -104,7 +104,7 @@
+@@ -105,7 +105,7 @@
     }
  
     public Brain<HoglinEntity> func_213375_cj() {

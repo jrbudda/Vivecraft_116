@@ -1,6 +1,11 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -8,6 +8,12 @@
+@@ -5,10 +5,17 @@
+ import com.google.common.primitives.Floats;
+ import com.mojang.brigadier.ParseResults;
+ import com.mojang.brigadier.StringReader;
++import io.netty.channel.Channel;
+ import io.netty.util.concurrent.Future;
  import io.netty.util.concurrent.GenericFutureListener;
  import it.unimi.dsi.fastutil.ints.Int2ShortMap;
  import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap;
@@ -11,9 +16,9 @@
 +import java.io.IOException;
 +import java.io.InputStreamReader;
  import java.util.Collections;
+ import java.util.List;
  import java.util.Optional;
- import java.util.Set;
-@@ -19,6 +25,7 @@
+@@ -25,6 +32,7 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
  import net.minecraft.block.CommandBlockBlock;
@@ -21,15 +26,16 @@
  import net.minecraft.command.CommandSource;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -26,6 +33,7 @@
+@@ -32,6 +40,8 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.IJumpingMount;
  import net.minecraft.entity.MoverType;
++import net.minecraft.entity.Pose;
 +import net.minecraft.entity.ai.attributes.Attribute;
  import net.minecraft.entity.item.BoatEntity;
  import net.minecraft.entity.item.ExperienceOrbEntity;
  import net.minecraft.entity.item.ItemEntity;
-@@ -51,6 +59,7 @@
+@@ -56,6 +66,7 @@
  import net.minecraft.nbt.StringNBT;
  import net.minecraft.network.IPacket;
  import net.minecraft.network.NetworkManager;
@@ -37,7 +43,7 @@
  import net.minecraft.network.PacketThreadUtil;
  import net.minecraft.network.play.client.CAnimateHandPacket;
  import net.minecraft.network.play.client.CChatMessagePacket;
-@@ -140,8 +149,15 @@
+@@ -148,9 +159,18 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -46,14 +52,34 @@
 +
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
+ 
++import org.vivecraft.api.AimFixHandler;
 +import org.vivecraft.api.NetworkHelper;
 +import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
 +import org.vivecraft.api.ServerVivePlayer;
 +import org.vivecraft.reflection.MCReflection;
- 
++
  public class ServerPlayNetHandler implements IServerPlayNetHandler
  {
-@@ -281,6 +297,8 @@
+     private static final Logger LOGGER = LogManager.getLogger();
+@@ -204,6 +224,16 @@
+         networkManagerIn.setNetHandler(this);
+         this.player = playerIn;
+         playerIn.connection = this;
++        // VIVECRAFT
++        try {
++            ((Channel)MCReflection.NetworkManager_channel.get(networkManagerIn)).pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
++		} catch (Exception e) {
++			//this fails when forge mods do weird things with fake players.
++			if (!Reflector.fml_ModLoader.exists()) {
++                LOGGER.warn("{} failed adding VR aim fix", (Object)this.player.getName().getString());
++			}
++		}
++        //
+         IChatFilter ichatfilter = playerIn.func_244529_Q();
+ 
+         if (ichatfilter != null)
+@@ -305,6 +335,8 @@
          {
              this.disconnect(new TranslationTextComponent("multiplayer.disconnect.idling"));
          }
@@ -62,7 +88,7 @@
      }
  
      public void captureCurrentPosition()
-@@ -396,11 +414,17 @@
+@@ -471,11 +503,17 @@
                  }
  
                  entity.setPositionAndRotation(d3, d4, d5, f, f1);
@@ -80,7 +106,7 @@
                      this.netManager.sendPacket(new SMoveVehiclePacket(entity));
                      return;
                  }
-@@ -1105,7 +1129,15 @@
+@@ -1220,7 +1258,18 @@
  
          if (blockpos.getY() < this.server.getBuildLimit())
          {
@@ -88,8 +114,11 @@
 +        	double dist = 8D;
 +        	
 +        	//Forge
-+        	if(Reflector.ForgePlayer_REACH_DISTANCE.exists())
-+        		dist = player.getAttribute((Attribute) Reflector.getFieldValue(Reflector.ForgePlayer_REACH_DISTANCE)).getValue() + 3;
++        	
++        	Object attrib =Reflector.call(Reflector.getFieldValue(Reflector.ForgeMod_REACH_DISTANCE), Reflector.RegistryObject_get);
++
++        	if(attrib != null)
++        		dist = player.getAttribute((Attribute) attrib).getValue() + 3;
 +        	//
 +        	
 +            dist *= dist;
@@ -97,95 +126,25 @@
              {
                  ActionResultType actionresulttype = this.player.interactionManager.func_219441_a(this.player, serverworld, itemstack, hand, blockraytraceresult);
  
-@@ -1259,43 +1291,51 @@
- 
-     public void processChatMessage(CChatMessagePacket packetIn)
-     {
--        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
--
--        if (this.player.getChatVisibility() == ChatVisibility.HIDDEN)
--        {
--            this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_240699_a_(TextFormatting.RED), ChatType.SYSTEM, Util.field_240973_b_));
--        }
--        else
--        {
--            this.player.markPlayerActive();
--            String s = org.apache.commons.lang3.StringUtils.normalizeSpace(packetIn.getMessage());
-+    	PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
- 
--            for (int i = 0; i < s.length(); ++i)
--            {
--                if (!SharedConstants.isAllowedCharacter(s.charAt(i)))
--                {
--                    this.disconnect(new TranslationTextComponent("multiplayer.disconnect.illegal_characters"));
--                    return;
--                }
--            }
--
--            if (s.startsWith("/"))
--            {
--                this.handleSlashCommand(s);
--            }
--            else
--            {
--                ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), s);
--                this.server.getPlayerList().func_232641_a_(itextcomponent, ChatType.CHAT, this.player.getUniqueID());
--            }
--
--            this.chatSpamThresholdCount += 20;
--
--            if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile()))
--            {
--                this.disconnect(new TranslationTextComponent("disconnect.spam"));
--            }
--        }
-+    	if (this.player.getChatVisibility() == ChatVisibility.HIDDEN)
-+    	{
-+    		this.sendPacket(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_240699_a_(TextFormatting.RED), ChatType.SYSTEM, Util.field_240973_b_));
-+    	}
-+    	else
-+    	{
-+    		this.player.markPlayerActive();
-+    		String s = org.apache.commons.lang3.StringUtils.normalizeSpace(packetIn.getMessage());
-+
-+    		for (int i = 0; i < s.length(); ++i)
-+    		{
-+    			if (!SharedConstants.isAllowedCharacter(s.charAt(i)))
-+    			{
-+    				this.disconnect(new TranslationTextComponent("multiplayer.disconnect.illegal_characters"));
-+    				return;
-+    			}
-+    		}
-+
-+    		if (s.startsWith("/"))
-+    		{
-+    			this.handleSlashCommand(s);
-+    		}
-+    		else
-+    		{
-+    			//Forge
+@@ -1430,9 +1479,17 @@
+             }
+             else
+             {
++//Forge
 +    			if(Reflector.ForgeHooks_newChatWithLinks.exists()) {
-+    				ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), Reflector.call(Reflector.ForgeHooks_newChatWithLinks, s));
-+    				itextcomponent = (ITextComponent) Reflector.call(Reflector.ForgeHooks_onServerChatEvent, this, s, itextcomponent);
++    				ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), Reflector.call(Reflector.ForgeHooks_newChatWithLinks, p_244548_1_));
++    				itextcomponent = (ITextComponent) Reflector.call(Reflector.ForgeHooks_onServerChatEvent, this, p_244548_1_, itextcomponent);
 +    				if (itextcomponent == null) return;
 +    			} else {
 +    				//
-+    				ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), s);
-+    				this.server.getPlayerList().func_232641_a_(itextcomponent, ChatType.CHAT, this.player.getUniqueID());
-+    			}
-+    		}
-+
-+    		this.chatSpamThresholdCount += 20;
-+
-+    		if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile()))
-+    		{
-+    			this.disconnect(new TranslationTextComponent("disconnect.spam"));
-+    		}
-+    	}
-     }
+                 ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), p_244548_1_);
+                 this.server.getPlayerList().func_232641_a_(itextcomponent, ChatType.CHAT, this.player.getUniqueID());
+             }
++            }
  
-     private void handleSlashCommand(String command)
-@@ -1409,6 +1449,9 @@
+             this.chatSpamThresholdCount += 20;
+ 
+@@ -1565,6 +1622,9 @@
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.INTERACT_AT)
                  {
@@ -195,8 +154,8 @@
                      optional = Optional.of(entity.applyPlayerInteraction(this.player, packetIn.getHitVec(), hand));
                  }
                  else if (packetIn.getAction() == CUseEntityPacket.Action.ATTACK)
-@@ -1681,6 +1724,109 @@
- 
+@@ -1880,6 +1940,117 @@
+      */
      public void processCustomPayload(CCustomPayloadPacket packetIn)
      {
 +        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -228,7 +187,8 @@
 +            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.VERSION,ver));
 +            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.REQUESTDATA, new byte[]{}));  
 +            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.CLIMBING, new byte[]{1, 0}));
-+            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.TELEPORT, new byte[]{})); 
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.TELEPORT, new byte[]{}));
++                sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.CRAWL, new byte[]{}));
 +    			vp = new ServerVivePlayer(this.player);
 +            	NetworkHelper.vivePlayers.put(this.player.getUniqueID(), vp);
 +            	
@@ -296,7 +256,14 @@
 +    			vp.activeHand = rawdata.readByte();
 +    			if (vp.isSeated())
 +    				vp.activeHand = 0;
-+    			break;	
++    			break;
++            case CRAWL:
++                rawdata.resetReaderIndex();
++                rawdata.readByte();
++                vp.crawling = rawdata.readByte() != 0;
++                if (vp.crawling)
++                    this.player.setPose(Pose.SWIMMING);
++                break;
 +        	default:
 +        		break;
 +        	}

@@ -1,8 +1,0 @@
---- a/net/minecraft/client/gui/FontRenderer.java
-+++ b/net/minecraft/client/gui/FontRenderer.java
-@@ -376,4 +376,5 @@
-             return this.field_238438_l_;
-         }
-     }
-+
- }

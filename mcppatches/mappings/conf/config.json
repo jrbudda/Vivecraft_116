@@ -1,6 +1,6 @@
 {
     "spec": 1,
-    "version": "1.16.1",
+    "version": "1.16.5",
     "data": {
         "access": "config/access.txt",
         "constructors": "config/constructors.txt",
@@ -42,7 +42,7 @@
                 "type": "merge",
                 "client": "{stripClientOutput}",
                 "server": "{stripServerOutput}",
-                "version": "1.16.1"
+                "version": "1.16.5"
             },
             {
                 "type": "rename",
@@ -150,7 +150,7 @@
     },
     "functions": {
         "decompile": {
-            "version": "net.minecraftforge:forgeflower:1.5.478.15",
+            "version": "net.minecraftforge:forgeflower:1.5.478.16",
             "args": [
                 "-din=1",
                 "-rbr=1",

@@ -190,28 +190,7 @@ public class Matrix4f {
       Matrix4f m = new Matrix4f(x.x, x.y, x.z, -x.dot(eye), y.x, y.y, y.z, -y.dot(eye), z.x, z.y, z.z, -z.dot(eye), 0.0F, 0.0F, 0.0F, 1.0F);
       return m;
    }
-   
-   public net.minecraft.util.math.vector.Matrix4f toMCMatrix() {
-	   net.minecraft.util.math.vector.Matrix4f out = new net.minecraft.util.math.vector.Matrix4f();
-	      out.m00 = this.M[0][0];
-	      out.m01 = this.M[0][1];
-	      out.m02 = this.M[0][2];
-	      out.m03 = this.M[0][3];
-	      out.m10 = this.M[1][0];
-	      out.m11 = this.M[1][1];
-	      out.m12 = this.M[1][2];
-	      out.m13 = this.M[1][3];
-	      out.m20 = this.M[2][0];
-	      out.m21 = this.M[2][1];
-	      out.m22 = this.M[2][2];
-	      out.m23 = this.M[2][3];
-	      out.m30 = this.M[3][0];
-	      out.m31 = this.M[3][1];
-	      out.m32 = this.M[3][2];
-	      out.m33 = this.M[3][3];
-	      return out;
-	   }
-   
+    
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
 		buf.append(this.M[0][0]).append(' ').append(this.M[1][0]).append(' ').append(this.M[2][0]).append(' ').append(this.M[3][0]).append('\n');

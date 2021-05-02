@@ -1,14 +1,14 @@
 --- a/net/optifine/CustomItemProperties.java
 +++ b/net/optifine/CustomItemProperties.java
-@@ -4,6 +4,7 @@
+@@ -3,6 +3,7 @@
+ import com.mojang.blaze3d.platform.GlStateManager;
  import java.util.ArrayList;
- import java.util.Collection;
  import java.util.HashMap;
 +import java.util.Iterator;
  import java.util.LinkedHashMap;
  import java.util.List;
  import java.util.Map;
-@@ -239,7 +240,7 @@
+@@ -237,7 +238,7 @@
                  }
              }
  
@@ -17,7 +17,7 @@
              int[] aint = new int[ainteger.length];
  
              for (int k = 0; k < aint.length; ++k)
-@@ -336,11 +337,12 @@
+@@ -334,11 +335,12 @@
              Set set = map.keySet();
              Map map1 = new LinkedHashMap();
  
@@ -33,7 +33,7 @@
              }
  
              return map1;
-@@ -416,7 +418,7 @@
+@@ -414,7 +416,7 @@
              Set set = map.keySet();
              Map map1 = new LinkedHashMap();
  
@@ -42,7 +42,7 @@
              {
                  String s2 = (String)map.get(s1);
                  s2 = fixModelName(s2, basePath);
-@@ -634,7 +636,7 @@
+@@ -632,7 +634,7 @@
          {
              List list = new ArrayList();
  
@@ -51,7 +51,7 @@
              {
                  String s2 = (String)map.get(s1);
                  String s3 = s1.substring(s.length());
-@@ -642,7 +644,7 @@
+@@ -640,7 +642,7 @@
                  list.add(nbttagvalue);
              }
  
@@ -60,7 +60,7 @@
              return anbttagvalue;
          }
      }
-@@ -651,7 +653,7 @@
+@@ -649,7 +651,7 @@
      {
          Map map = new LinkedHashMap();
  
@@ -69,7 +69,7 @@
          {
              String s1 = props.getProperty(s);
  
-@@ -810,7 +812,7 @@
+@@ -808,7 +810,7 @@
  
          if (this.mapSprites != null)
          {

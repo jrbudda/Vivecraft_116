@@ -25,8 +25,8 @@
                      }
  
                      BlockState blockstate = block.getDefaultState();
--                    Collection < Property<? >> collection = blockstate.func_235904_r_();
-+                    Collection < Property> collection = blockstate.func_235904_r_();
+-                    Collection < Property<? >> collection = blockstate.getProperties();
++                    Collection < Property> collection = blockstate.getProperties();
                      Map<Property, Comparable> map = new LinkedHashMap<>();
                      JsonObject jsonobject1 = (JsonObject)jsonobject.get("Properties");
  

@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\server\dedicated\PropertyManager.java minecraft_patched\net\minecraft\server\dedicated\PropertyManager.java
 --- minecraft\net\minecraft\server\dedicated\PropertyManager.java
 +++ minecraft_patched\net\minecraft\server\dedicated\PropertyManager.java
-@@ -92,7 +92,7 @@
+@@ -93,7 +93,7 @@
        String s = this.func_218976_c(p_218981_1_);
        V v = MoreObjects.firstNonNull((V)(s != null ? p_218981_2_.apply(s) : null), p_218981_4_);
        this.field_73672_b.put(p_218981_1_, p_218981_3_.apply(v));

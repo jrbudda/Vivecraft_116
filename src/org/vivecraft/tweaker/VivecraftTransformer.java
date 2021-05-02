@@ -37,16 +37,17 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
     private ZipFile ZipFile;
     
     public List<ITransformer> undeadClassTransformers = new ArrayList<ITransformer>();
-    public List<ITransformer> lostdMethodTransformers = new ArrayList<ITransformer>();
+    public List<ITransformer> lostMethodTransformers = new ArrayList<ITransformer>();
     public List<ITransformer> fieldTransformersOftheDamned  = new ArrayList<ITransformer>();
-
+    public Set<Target> ofTargets = null;
+    
     private List<String> exclusions = Arrays.asList(
             "net/minecraft/item/Item",
             "net/minecraft/item/Item$Properties",
             "net/minecraft/client/gui/screen/inventory/ContainerScreen",
             "net/minecraft/client/gui/screen/inventory/CreativeScreen",
             "net/minecraft/fluid/FluidState"
-    );
+            );
     
     public VivecraftTransformer(ZipFile ZipFile)
     {
@@ -70,12 +71,12 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
             String s = astring[i];
             s = Utils.removePrefix(s, new String[] {"srg/"});
             s = Utils.removeSuffix(s, new String[] {".clsrg"});
-            Target target = Target.targetClass(s);
+            Target target = Target.targetPreClass(s);
             if(exclusions.contains(s))
         		continue;
             set.add(target);
         }
-
+        //set.addAll(ofTargets);
         LOGGER.info("Targets: " + set.size());
         return set;
     }
@@ -86,26 +87,25 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
         ClassNode classnode = input;
         String s = context.getClassName();
         String s1 = s.replace('.', '/');
+            
         byte[] abyte = this.getResourceBytes("srg/" + s1 + ".clsrg");
 
         if (abyte != null)
         {
-            InputStream inputstream = new ByteArrayInputStream(abyte);
-            ClassNode classnode1 = this.loadClass(inputstream);
-        	System.out.println("Vivecraft Replacing " + s + " History ... ");
+        	System.out.println("Class Debug " + s + " History ... ");
 			ITransformerActivity a;
-		
         	for (ITransformerActivity act : context.getAuditActivities()){
         	  	System.out.println("... " + act.getActivityString());
         	}
-			
+        	InputStream inputstream = new ByteArrayInputStream(abyte);
+        	ClassNode classnode1 = this.loadClass(inputstream);
+        	System.out.println("Vivecraft Replacing " + s);		
             if (classnode1 != null)
             {
                 this.debugClass(classnode1);
                 AccessFixer.fixMemberAccess(input, classnode1);
                 classnode = classnode1;
             }
-        }
 
         for(ITransformer<ClassNode> it: undeadClassTransformers) {
         	TransformerHolder<ClassNode> t = (TransformerHolder<ClassNode>) it;
@@ -116,17 +116,16 @@ public class VivecraftTransformer implements ITransformer<ClassNode>
         	for(Target target: t.targets()) {
         		if(target.getClassName().equals(context.getClassName())) {
         			classnode = t.transform(classnode, context);
-            	  	System.out.println("ARISE! " + target.getClassName() + " " + target.getElementName() + " " + target.getElementDescriptor());
+        				System.out.println("ARISE! " + t.owner().name() + " " + target.getClassName() + " " + target.getElementName() + " " + target.getElementDescriptor());
+        			}
         		}
         	}
         }
         
     	List<MethodNode> ms = new ArrayList<>();
     	for (MethodNode n: (List<MethodNode>)classnode.methods) {
-	        for(ITransformer<MethodNode> t: lostdMethodTransformers) {
-	        	//  	System.out.println("SPAM1 " + context.getClassName() + " " + n.name + " " + n.desc);
+	        for(ITransformer<MethodNode> t: lostMethodTransformers) {
 	        		for(Target target: t.targets()) {
-	            	//  	System.out.println("SPAM2 " + target.getClassName() + " " + target.getElementName() + " " + target.getElementDescriptor());
 			        	if(target.getClassName().equals(context.getClassName() ) && 
 			        			target.getElementName().equals(n.name) && 
 			        			target.getElementDescriptor().equals(n.desc)){    		

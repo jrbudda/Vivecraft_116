@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientChunkProvider.java
 +++ b/net/minecraft/client/multiplayer/ClientChunkProvider.java
-@@ -112,7 +112,7 @@
+@@ -117,7 +117,7 @@
          else
          {
              int i = this.array.getIndex(chunkX, chunkZ);
@@ -9,8 +9,8 @@
  
              if (!p_228313_7_ && isValid(chunk, chunkX, chunkZ))
              {
-@@ -147,12 +147,13 @@
-                     return null;
+@@ -157,12 +157,13 @@
+                     chunk.setLoaded(false);
                  }
  
 -                chunk = new ChunkOF(this.world, new ChunkPos(chunkX, chunkZ), biomeContainerIn);
@@ -24,13 +24,4 @@
 +            ChunkSection[] achunksection = ((Chunk)chunk).getSections();
              WorldLightManager worldlightmanager = this.getLightManager();
              worldlightmanager.enableLightSources(new ChunkPos(chunkX, chunkZ), true);
- 
-@@ -169,7 +170,7 @@
-                 Reflector.postForgeBusEvent(Reflector.ChunkEvent_Load_Constructor, chunk);
-             }
- 
--            return chunk;
-+            return (Chunk)chunk;
-         }
-     }
  

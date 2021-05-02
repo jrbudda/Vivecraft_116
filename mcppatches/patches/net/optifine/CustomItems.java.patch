@@ -1,6 +1,6 @@
 --- a/net/optifine/CustomItems.java
 +++ b/net/optifine/CustomItems.java
-@@ -519,11 +519,11 @@
+@@ -520,11 +520,11 @@
  
          for (int i = 0; i < list.size(); ++i)
          {
@@ -15,7 +15,7 @@
                  Arrays.sort(acustomitemproperties1, new CustomItemsComparator());
                  acustomitemproperties[i] = acustomitemproperties1;
              }
-@@ -595,15 +595,15 @@
+@@ -596,15 +596,15 @@
              list.add((List<CustomItemProperties>)null);
          }
  

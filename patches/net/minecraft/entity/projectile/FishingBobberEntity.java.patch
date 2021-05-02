@@ -20,7 +20,7 @@
  import net.minecraft.util.SoundEvents;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.BlockRayTraceResult;
-@@ -42,6 +48,7 @@
+@@ -41,6 +47,7 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -28,62 +28,47 @@
  
  public class FishingBobberEntity extends ProjectileEntity
  {
-@@ -89,10 +96,30 @@
+@@ -88,6 +95,31 @@
          float f3 = MathHelper.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
          float f4 = -MathHelper.cos(-f * ((float)Math.PI / 180F));
          float f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
--        double d0 = p_i290_1_.getPosX() - (double)f3 * 0.3D;
--        double d1 = p_i290_1_.getPosYEye();
--        double d2 = p_i290_1_.getPosZ() - (double)f2 * 0.3D;
--        this.setLocationAndAngles(d0, d1, d2, f1, f);
-+        	//VIVE USE CONTROLLER  	
-+    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i290_1_.getUniqueID());
-+    	
-+    	if (vp !=null && vp.isVR())
-+    	{
-+    		Vector3d aim = vp.getControllerDir(vp.activeHand);
-+    		Vector3d aimSource = vp.getControllerPos(vp.activeHand, p_i290_1_);
-+    		float pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
-+    		float yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
-+    		this.setLocationAndAngles(aimSource.x + aim.x*0.6f, aimSource.y+aim.y*0.6f, aimSource.z+aim.z*0.6f, yaw, pitch);
-+    		f = pitch;
-+    		f1 = yaw;
-+            f2 = MathHelper.cos(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
-+            f3 = MathHelper.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
-+            f4 = -MathHelper.cos(-f * ((float)Math.PI / 180F));
-+            f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
-+    	}else {
-+            double d0 = p_i290_1_.getPosX() - (double)f3 * 0.3D;
-+            double d1 = p_i290_1_.getPosYEye();
-+            double d2 = p_i290_1_.getPosZ() - (double)f2 * 0.3D;
-+	        this.setLocationAndAngles(d0, d1, d2, f1, f);
-+    	}
-+    	//END VIVE
-+ 
-         Vector3d vector3d = new Vector3d((double)(-f3), (double)MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
-         double d3 = vector3d.length();
-         vector3d = vector3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D, 0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
-@@ -275,6 +302,19 @@
++
++        //VIVE USE CONTROLLER  	
++        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i50220_1_.getUniqueID());
++
++        if (vp !=null && vp.isVR())
++        {
++        	Vector3d aim = vp.getControllerDir(vp.activeHand);
++        	Vector3d aimSource = vp.getControllerPos(vp.activeHand, p_i50220_1_);
++        	float pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.length()));
++        	float yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
++        	this.setLocationAndAngles(aimSource.x + aim.x*0.6f, aimSource.y+aim.y*0.6f, aimSource.z+aim.z*0.6f, yaw, pitch);
++        	f = pitch;
++        	f1 = yaw;
++        	f2 = MathHelper.cos(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
++        	f3 = MathHelper.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
++        	f4 = -MathHelper.cos(-f * ((float)Math.PI / 180F));
++        	f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
++        }else {
++        	double d0 = p_i50220_1_.getPosX() - (double)f3 * 0.3D;
++        	double d1 = p_i50220_1_.getPosYEye();
++        	double d2 = p_i50220_1_.getPosZ() - (double)f2 * 0.3D;
++        	this.setLocationAndAngles(d0, d1, d2, f1, f);
++        }
++        //END VIVE
++
+         double d0 = p_i50220_1_.getPosX() - (double)f3 * 0.3D;
+         double d1 = p_i50220_1_.getPosYEye();
+         double d2 = p_i50220_1_.getPosZ() - (double)f2 * 0.3D;
+@@ -283,6 +315,7 @@
              this.setMotion(this.getMotion().scale(0.92D));
              this.recenterBoundingBox();
          }
 +        
-+        if(playerentity.isUser()) {
-+        	//Vivecraft nibblehaptics
-+        	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(playerentity.getUniqueID());
-+        	if (vp !=null && vp.isVR()) {
-+        		if(this.currentState == State.BOBBING) {
-+        			if(this.getMotion().y <= -0.24) { //server makes the bobber jump downwards on a bite.
-+        				MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
-+        			}				
-+        		}
-+        	}
-+        }
-+    	//
      }
  
      private boolean func_234600_a_(PlayerEntity p_234600_1_)
-@@ -516,6 +556,7 @@
+@@ -530,6 +563,7 @@
          if (!this.world.isRemote && playerentity != null)
          {
              int i = 0;
@@ -91,8 +76,8 @@
  
              if (this.caughtEntity != null)
              {
-@@ -529,6 +570,14 @@
-                 LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.world)).withParameter(LootParameters.POSITION, this.getBlockPos()).withParameter(LootParameters.TOOL, p_146034_1_).withParameter(LootParameters.THIS_ENTITY, this).withRandom(this.rand).withLuck((float)this.luck + playerentity.getLuck());
+@@ -543,6 +577,14 @@
+                 LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.world)).withParameter(LootParameters.field_237457_g_, this.getPositionVec()).withParameter(LootParameters.TOOL, p_146034_1_).withParameter(LootParameters.THIS_ENTITY, this).withRandom(this.rand).withLuck((float)this.luck + playerentity.getLuck());
                  LootTable loottable = this.world.getServer().getLootTableManager().getLootTableFromLocation(LootTables.GAMEPLAY_FISHING);
                  List<ItemStack> list = loottable.generate(lootcontext$builder.build(LootParameterSets.FISHING));
 +                //Forge
@@ -106,7 +91,7 @@
                  CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayerEntity)playerentity, p_146034_1_, this, list);
  
                  for (ItemStack itemstack : list)
-@@ -557,7 +606,7 @@
+@@ -571,7 +613,7 @@
              }
  
              this.remove();
@@ -115,7 +100,7 @@
          }
          else
          {
-@@ -602,6 +651,17 @@
+@@ -622,6 +664,17 @@
          }
      }
  

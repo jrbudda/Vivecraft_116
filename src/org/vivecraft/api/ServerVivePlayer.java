@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-import org.vivecraft.settings.AutoCalibration;
 import org.vivecraft.utils.math.Quaternion;
 import org.vivecraft.utils.math.Vector3;
 
@@ -23,11 +22,13 @@ public class ServerVivePlayer {
 	public float worldScale = 1.0f;
 	public float heightscale = 1.0f;
 	public byte activeHand = 0;
+	public boolean crawling;
 
 	boolean isTeleportMode;
 	boolean isReverseHands;
 	boolean isVR = true;
 
+	public Vector3d offset = new Vector3d(0, 0, 0);
 	public ServerPlayerEntity player;
 
 	public ServerVivePlayer(ServerPlayerEntity player) {
@@ -139,7 +140,7 @@ public class ServerVivePlayer {
 				
 				da.close(); 
 								
-				return new Vector3d(x, y, z).add(player.getPositionVec());
+				return new Vector3d(x, y, z).add(player.getPositionVec()).add(offset);
 			}else{
 			}
 		} catch (IOException e) {
@@ -177,7 +178,7 @@ public class ServerVivePlayer {
 					return new Vector3d(x, y, z);
 				}
 				
-				return new Vector3d(x, y, z).add(player.getPositionVec());
+				return new Vector3d(x, y, z).add(player.getPositionVec()).add(offset);
 			}else{
 			}
 		} catch (IOException e) {

@@ -1,6 +1,6 @@
 --- a/net/optifine/CustomColors.java
 +++ b/net/optifine/CustomColors.java
-@@ -469,7 +469,7 @@
+@@ -468,7 +468,7 @@
          String s = "palette.block.";
          Map map = new HashMap();
  
@@ -9,7 +9,7 @@
          {
              String s2 = props.getProperty(s1);
  
-@@ -479,7 +479,7 @@
+@@ -478,7 +478,7 @@
              }
          }
  
@@ -18,7 +18,7 @@
  
          for (int j = 0; j < astring.length; ++j)
          {
-@@ -517,7 +517,7 @@
+@@ -516,7 +516,7 @@
              }
          }
  

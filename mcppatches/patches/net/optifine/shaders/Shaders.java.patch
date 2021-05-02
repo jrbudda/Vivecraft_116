@@ -1,6 +1,6 @@
 --- a/net/optifine/shaders/Shaders.java
 +++ b/net/optifine/shaders/Shaders.java
-@@ -117,6 +117,7 @@
+@@ -118,6 +118,7 @@
  import net.optifine.util.WorldUtils;
  import org.apache.commons.io.IOUtils;
  import org.lwjgl.BufferUtils;
@@ -8,7 +8,7 @@
  import org.lwjgl.opengl.ARBGeometryShader4;
  import org.lwjgl.opengl.ARBShaderObjects;
  import org.lwjgl.opengl.ARBVertexShader;
-@@ -810,6 +811,7 @@
+@@ -812,6 +813,7 @@
  
      public static void loadShaderPack()
      {
@@ -16,7 +16,7 @@
          boolean flag = shaderPackLoaded;
          boolean flag1 = isOldLighting();
  
-@@ -1095,7 +1097,7 @@
+@@ -1085,7 +1087,7 @@
          Set set = props.keySet();
          List<ICustomTexture> list = new ArrayList<>();
  
@@ -25,7 +25,7 @@
          {
              if (s1.startsWith(s))
              {
-@@ -2457,11 +2459,11 @@
+@@ -2448,11 +2450,11 @@
  
      private static int getDrawBuffer(Program p, String str, int i)
      {
@@ -39,7 +39,7 @@
          }
          else
          {
-@@ -4308,15 +4310,15 @@
+@@ -4301,12 +4303,12 @@
          GlStateManager.activeTexture(33984);
      }
  
@@ -49,19 +49,22 @@
 -        if (currentWorld != world)
 +        if (currentWorld != worldin)
          {
--            World world = currentWorld;
+             World world = currentWorld;
 -            currentWorld = world;
-+            World worldold = currentWorld;
 +            currentWorld = worldin;
+ 
+             if (currentWorld == null)
+             {
+@@ -4320,7 +4322,7 @@
+ 
              setCameraOffset(mc.getRenderViewEntity());
--            int i = WorldUtils.getDimensionId(world);
+             int i = WorldUtils.getDimensionId(world);
 -            int j = WorldUtils.getDimensionId(world);
-+            int i = WorldUtils.getDimensionId(worldold);
 +            int j = WorldUtils.getDimensionId(worldin);
  
              if (j != i)
              {
-@@ -5770,7 +5772,7 @@
+@@ -5794,7 +5796,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

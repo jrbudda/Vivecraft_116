@@ -14,7 +14,7 @@
  import net.minecraft.network.IPacket;
  import net.minecraft.network.play.server.SSpawnObjectPacket;
  import net.minecraft.particles.ParticleTypes;
-@@ -15,6 +19,7 @@
+@@ -14,6 +18,7 @@
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
@@ -22,23 +22,23 @@
  
  public abstract class ThrowableEntity extends ProjectileEntity
  {
-@@ -33,6 +38,15 @@
+@@ -32,6 +37,15 @@
      {
-         this(p_i3867_1_, p_i3867_2_.getPosX(), p_i3867_2_.getPosYEye() - (double)0.1F, p_i3867_2_.getPosZ(), p_i3867_3_);
-         this.setShooter(p_i3867_2_);
-+        //VIVE SET SPAWNPOS
-+        ServerVivePlayer vp = NetworkHelper.vivePlayers.get(p_i3867_2_.getUniqueID());
-+        if (vp !=null && vp.isVR())
-+        {
-+        	Vector3d aimSource = vp.getControllerPos(vp.activeHand, (PlayerEntity) p_i3867_2_);
-+        	Vector3d aimDir = vp.getControllerDir(vp.activeHand).scale(0.6f);
-+        	this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
-+        } 
-+        ///
+         this(type, livingEntityIn.getPosX(), livingEntityIn.getPosYEye() - (double)0.1F, livingEntityIn.getPosZ(), worldIn);
+         this.setShooter(livingEntityIn);
++    	//VIVE SET SPAWNPOS
++    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(livingEntityIn.getUniqueID());
++    	if (vp !=null && vp.isVR())
++    	{
++    		Vector3d aimSource = vp.getControllerPos(vp.activeHand, (PlayerEntity) livingEntityIn);
++    		Vector3d aimDir = vp.getControllerDir(vp.activeHand).scale(0.6f);
++    		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
++    	} 
++    	///
      }
  
-     public boolean isInRangeToRenderDist(double distance)
-@@ -79,6 +93,11 @@
+     /**
+@@ -84,6 +98,11 @@
  
          if (raytraceresult.getType() != RayTraceResult.Type.MISS && !flag)
          {

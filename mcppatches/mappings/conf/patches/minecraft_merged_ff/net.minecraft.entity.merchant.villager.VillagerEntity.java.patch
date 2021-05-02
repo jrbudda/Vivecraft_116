@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\merchant\villager\VillagerEntity.java minecraft_patched\net\minecraft\entity\merchant\villager\VillagerEntity.java
 --- minecraft\net\minecraft\entity\merchant\villager\VillagerEntity.java
 +++ minecraft_patched\net\minecraft\entity\merchant\villager\VillagerEntity.java
-@@ -129,7 +129,7 @@
+@@ -130,7 +130,7 @@
     }
  
     public Brain<VillagerEntity> func_213375_cj() {

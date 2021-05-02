@@ -8,7 +8,7 @@
  import java.util.function.Function;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
-@@ -537,9 +538,9 @@
+@@ -538,9 +539,9 @@
  
                          try {
                              ModelBakery.ModelListWrapper modelbakery$modellistwrapper1 = pair2.getSecond().get();
@@ -20,7 +20,7 @@
                          }
                          catch (Exception exception11)
                          {
-@@ -548,7 +549,7 @@
+@@ -549,7 +550,7 @@
                      });
                      lvt_20_1_.forEach((p_lambda$loadBlockstate$26_1_, p_lambda$loadBlockstate$26_2_) ->
                      {
@@ -29,7 +29,7 @@
  
                          while (iterator.hasNext())
                          {
-@@ -561,9 +562,9 @@
+@@ -562,9 +563,9 @@
                              }
                          }
  

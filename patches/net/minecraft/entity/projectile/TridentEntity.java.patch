@@ -11,7 +11,7 @@
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
-@@ -81,7 +85,16 @@
+@@ -84,7 +88,16 @@
              else if (i > 0)
              {
                  this.setNoClip(true);

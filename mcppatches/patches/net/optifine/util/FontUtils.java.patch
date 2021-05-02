@@ -1,6 +1,6 @@
 --- a/net/optifine/util/FontUtils.java
 +++ b/net/optifine/util/FontUtils.java
-@@ -62,7 +62,7 @@
+@@ -63,7 +63,7 @@
      {
          Int2ObjectMap<Float> int2objectmap = new Int2ObjectOpenHashMap<>();
  

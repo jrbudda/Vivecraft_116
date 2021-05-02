@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\monster\SlimeEntity.java minecraft_patched\net\minecraft\entity\monster\SlimeEntity.java
 --- minecraft\net\minecraft\entity\monster\SlimeEntity.java
 +++ minecraft_patched\net\minecraft\entity\monster\SlimeEntity.java
-@@ -173,7 +173,7 @@
+@@ -175,7 +175,7 @@
     }
  
     public EntityType<? extends SlimeEntity> func_200600_R() {

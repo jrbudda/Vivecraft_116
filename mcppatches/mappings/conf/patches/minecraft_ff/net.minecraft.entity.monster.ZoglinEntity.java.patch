@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\monster\ZoglinEntity.java minecraft_patched\net\minecraft\entity\monster\ZoglinEntity.java
 --- minecraft\net\minecraft\entity\monster\ZoglinEntity.java
 +++ minecraft_patched\net\minecraft\entity\monster\ZoglinEntity.java
-@@ -76,11 +76,11 @@
+@@ -77,11 +77,11 @@
     }
  
     private static void func_234329_b_(Brain<ZoglinEntity> p_234329_0_) {
@@ -15,7 +15,7 @@
     }
  
     private Optional<? extends LivingEntity> func_234335_eQ_() {
-@@ -153,7 +153,7 @@
+@@ -162,7 +162,7 @@
     }
  
     public Brain<ZoglinEntity> func_213375_cj() {

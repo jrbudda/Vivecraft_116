@@ -1,24 +1,24 @@
 --- a/net/minecraft/client/renderer/texture/AtlasTexture.java
 +++ b/net/minecraft/client/renderer/texture/AtlasTexture.java
-@@ -172,7 +172,7 @@
+@@ -173,7 +173,7 @@
              {
                  GlStateManager.bindTexture(this.getMultiTexID().norm);
  
 -                for (TextureAtlasSprite textureatlassprite2 : list)
 +                for (TextureAtlasSprite textureatlassprite2 : (List<TextureAtlasSprite>) list)
                  {
-                     TextureAtlasSprite textureatlassprite5 = textureatlassprite2.spriteNormal;
+                     TextureAtlasSprite textureatlassprite4 = textureatlassprite2.spriteNormal;
  
-@@ -187,7 +187,7 @@
+@@ -188,7 +188,7 @@
              {
                  GlStateManager.bindTexture(this.getMultiTexID().spec);
  
 -                for (TextureAtlasSprite textureatlassprite3 : list)
 +                for (TextureAtlasSprite textureatlassprite3 : (List<TextureAtlasSprite>) list)
                  {
-                     TextureAtlasSprite textureatlassprite6 = textureatlassprite3.spriteSpecular;
+                     TextureAtlasSprite textureatlassprite5 = textureatlassprite3.spriteSpecular;
  
-@@ -752,7 +752,7 @@
+@@ -829,7 +829,7 @@
                              }
                              else
                              {
@@ -27,7 +27,7 @@
                                  map.put(j, k + 1);
                              }
                          }
-@@ -765,12 +765,12 @@
+@@ -842,12 +842,12 @@
          }
  
          int l = 0;
@@ -43,7 +43,7 @@
              l += l1;
          }
  
-@@ -780,7 +780,7 @@
+@@ -857,7 +857,7 @@
  
          for (int j2 : set1)
          {

@@ -30,6 +30,8 @@ import java.util.zip.ZipFile;
 
 import io.github.classgraph.ClassGraph;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.resources.IResource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
 import optifine.OptiFineTransformer;
@@ -293,88 +295,48 @@ public class Utils
 		return mat;
 	}
 
-	/**
-	 * HSB to RGB conversion, pinched from java.awt.Color.
-	 * @param hue (0..1.0f)
-	 * @param saturation (0..1.0f)
-	 * @param brightness (0..1.0f)
-	 */
-	public static GlStateManager.Color colorFromHSB(float hue, float saturation, float brightness) {
-		GlStateManager.Color color = new GlStateManager.Color();
-		if (saturation == 0.0F) {
-			color.red = color.green = color.blue = brightness;
-		} else {
-			float f3 = (hue - (float) Math.floor(hue)) * 6F;
-			float f4 = f3 - (float) Math.floor(f3);
-			float f5 = brightness * (1.0F - saturation);
-			float f6 = brightness * (1.0F - saturation * f4);
-			float f7 = brightness * (1.0F - saturation * (1.0F - f4));
-			switch ((int) f3) {
-				case 0 :
-					color.red = brightness;
-					color.green = f7;
-					color.blue = f5;
-					break;
-				case 1 :
-					color.red = f6;
-					color.green = brightness;
-					color.blue = f5;
-					break;
-				case 2 :
-					color.red = f5;
-					color.green = brightness;
-					color.blue = f7;
-					break;
-				case 3 :
-					color.red = f5;
-					color.green = f6;
-					color.blue = brightness;
-					break;
-				case 4 :
-					color.red = f7;
-					color.green = f5;
-					color.blue = brightness;
-					break;
-				case 5 :
-					color.red = brightness;
-					color.green = f5;
-					color.blue = f6;
-					break;
-			}
-		}
-		return color;
-	}
-
 	public static InputStream getAssetAsStream(String name, boolean required) {
 		InputStream is = null;
 		try {
-			is = VRShaders.class.getResourceAsStream("/assets/vivecraft/" + name);
+			try {
+				IResource resource = Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation("vivecraft", name));
+				is = resource.getInputStream();
+			} catch (FileNotFoundException | NullPointerException e) { // might be called super early
+				is = VRShaders.class.getResourceAsStream("/assets/vivecraft/" + name);
+			}
+
 			if (is == null) {
 				//uhh debugging?
 				Path dir = Paths.get(System.getProperty("user.dir")); // ../mcpxxx/jars/
-				Path p5 = dir.getParent().resolve("src/resources/assets/vivecraft/" + name);
-				if (!p5.toFile().exists()) {
-					p5 = dir.getParent().getParent().resolve("resources/assets/vivecraft/" + name);
-				}
-				if (p5.toFile().exists()) {
-					is = new FileInputStream(p5.toFile());
+				if (dir.getParent() != null) {
+					Path p5 = dir.getParent().resolve("src/resources/assets/vivecraft/" + name);
+					if (!p5.toFile().exists() && dir.getParent().getParent() != null)
+						p5 = dir.getParent().getParent().resolve("resources/assets/vivecraft/" + name);
+					if (p5.toFile().exists())
+						is = new FileInputStream(p5.toFile());
 				}
 			}
 		} catch (Exception e) {
 			handleAssetException(e, name, required);
+			return null;
 		}
+
+		if (is == null)
+			handleAssetException(new FileNotFoundException(name), name, required);
 
 		return is;
 	}
 
 	public static byte[] loadAsset(String name, boolean required) {
 		InputStream is = getAssetAsStream(name, required);
+		if (is == null)
+			return null;
 
 		try {
 			byte[] out = IOUtils.toByteArray(is);
 			is.close();
 			return out;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			handleAssetException(e, name, required);
 		}
 
@@ -382,15 +344,22 @@ public class Utils
 	}
 	
 	public static String loadAssetAsString(String name, boolean required) {
-		return new String(loadAsset(name, required), Charsets.UTF_8);
+		byte[] bytes = loadAsset(name, required);
+		if (bytes == null)
+			return null;
+
+		return new String(bytes, Charsets.UTF_8);
 	}
 
 	public static void loadAssetToFile(String name, File file, boolean required) {
 		InputStream is = getAssetAsStream(name, required);
+		if (is == null)
+			return;
+
 		try {
 			writeStreamToFile(is, file);
 			is.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			handleAssetException(e, name, required);
 		}
 	}

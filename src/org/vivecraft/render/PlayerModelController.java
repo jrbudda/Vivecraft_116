@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import org.vivecraft.api.VRData;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Quaternion;
 import org.vivecraft.utils.math.Vector3;
@@ -275,25 +274,6 @@ public class PlayerModelController {
 //		}
 //	}
 	
-	public static RotInfo getMainPlayerRotInfo(VRData data){
-			RotInfo rotInfo=new RotInfo();
-
-			Quaternion quatLeft=new Quaternion(data.getController(1).getMatrix());
-			Quaternion quatRight=new Quaternion(data.getController(0).getMatrix());
-			Quaternion quatHmd=new Quaternion(data.hmd.getMatrix());
-
-			rotInfo.headQuat=quatHmd;
-			rotInfo.leftArmQuat=quatLeft;
-			rotInfo.rightArmQuat=quatRight;
-			rotInfo.seated=Minecraft.getInstance().vrSettings.seated;
-
-			rotInfo.leftArmPos = data.getController(1).getPosition();
-			rotInfo.rightArmPos = data.getController(0).getPosition();
-			rotInfo.Headpos = data.hmd.getPosition(); 
-
-			return rotInfo;
-	}
-
 	public boolean debug = false;
 
 	public boolean isTracked(UUID uuid){

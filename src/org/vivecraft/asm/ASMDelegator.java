@@ -7,6 +7,7 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.potion.Potions;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class ASMDelegator {
 	public static boolean containerCreativeMouseDown(int eatTheStack) {
@@ -23,13 +24,13 @@ public class ASMDelegator {
 			list.add(drinkMe);
 		}
 		if (tab == ItemGroup.TOOLS || tab == null) {
-			ItemStack jumpBoots = new ItemStack(Items.LEATHER_BOOTS).setDisplayName(new StringTextComponent("Jump Boots"));
+			ItemStack jumpBoots = new ItemStack(Items.LEATHER_BOOTS).setDisplayName(new TranslationTextComponent("vivecraft.item.jumpboots"));
 			jumpBoots.getTag().putBoolean("Unbreakable", true);
 			jumpBoots.getTag().putInt("HideFlags", 4);
-			ItemStack climbClaws = new ItemStack(Items.SHEARS).setDisplayName(new StringTextComponent("Climb Claws"));
+			ItemStack climbClaws = new ItemStack(Items.SHEARS).setDisplayName(new TranslationTextComponent("vivecraft.item.climbclaws"));
 			climbClaws.getTag().putBoolean("Unbreakable", true);
 			climbClaws.getTag().putInt("HideFlags", 4);
-			ItemStack telescope = new ItemStack(Items.ENDER_EYE).setDisplayName(new StringTextComponent("Eye of the Farseer"));
+			ItemStack telescope = new ItemStack(Items.ENDER_EYE).setDisplayName(new TranslationTextComponent("vivecraft.item.telescope"));
 			telescope.getTag().putBoolean("Unbreakable", true);
 			telescope.getTag().putInt("HideFlags", 4);
 			list.add(telescope);

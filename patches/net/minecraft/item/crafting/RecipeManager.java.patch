@@ -13,18 +13,19 @@
  import net.minecraft.profiler.IProfiler;
  import net.minecraft.resources.IResourceManager;
  import net.minecraft.util.JSONUtils;
-@@ -29,7 +32,10 @@
+@@ -29,7 +32,11 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.Util;
  import net.minecraft.util.registry.Registry;
 +import net.minecraft.util.text.StringTextComponent;
++import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.World;
 +import net.optifine.reflect.Reflector;
 +
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -53,10 +59,25 @@
+@@ -53,10 +60,25 @@
          for (Entry<ResourceLocation, JsonElement> entry : objectIn.entrySet())
          {
              ResourceLocation resourcelocation = entry.getKey();
@@ -47,26 +48,26 @@
 +                    continue;
 +                 }
 +                //
-                 map.computeIfAbsent(irecipe.getType(), (p_223391_0_) ->
+                 map.computeIfAbsent(irecipe.getType(), (recipeType) ->
                  {
                      return ImmutableMap.builder();
-@@ -68,6 +89,30 @@
+@@ -67,6 +89,29 @@
+                 LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
              }
          }
- 
 +    	//VIVECRAFT - This prolly cant stay here. Move to .json files someday.
 +    	ItemStack is = new ItemStack(Items.LEATHER_BOOTS);
-+    	is.setDisplayName(new StringTextComponent("Jump Boots"));
++    	is.setDisplayName(new TranslationTextComponent("vivecraft.item.jumpboots"));
 +    	is.getTag().putBoolean("Unbreakable", true);
 +    	is.getTag().putInt("HideFlags",4);
 +
 +    	ItemStack is2 = new ItemStack(Items.SHEARS);
-+    	is2.setDisplayName(new StringTextComponent("Climb Claws"));
++    	is2.setDisplayName(new TranslationTextComponent("vivecraft.item.climbclaws"));
 +    	is2.getTag().putBoolean("Unbreakable", true);
 +    	is2.getTag().putInt("HideFlags",4);
 +    	
 +    	ItemStack is3 = new ItemStack(Items.ENDER_EYE);
-+    	is3.setDisplayName(new StringTextComponent("Eye of the Farseer"));
++    	is3.setDisplayName(new TranslationTextComponent("vivecraft.item.telescope"));
 +    	is3.getTag().putBoolean("Unbreakable", true);
 +    	is3.getTag().putInt("HideFlags",4);
 +    	
@@ -77,7 +78,6 @@
 +    	map.get(boot.getType()).put(boot.getId(), boot);
 +    	map.get(claw.getType()).put(claw.getId(), claw);	
 +     	map.get(scope.getType()).put(scope.getId(), scope);
-+     	
-         this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (p_223400_0_) ->
+ 
+         this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (recipeEntry) ->
          {
-             return p_223400_0_.getValue().build();

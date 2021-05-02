@@ -605,7 +605,9 @@ class Commands(object):
         self.xserverlogdry = os.path.normpath(config.get('EXCEPTOR', 'XServerLogReobf'))
         self.xclientmeta = os.path.normpath(config.get('EXCEPTOR', 'XClientMeta'))
         self.xservermeta = os.path.normpath(config.get('EXCEPTOR', 'XServerMeta'))
-
+        self.xclientctr = os.path.normpath(config.get('EXCEPTOR', 'XClientCtr'))
+        self.xserverctr = os.path.normpath(config.get('EXCEPTOR', 'XServerCtr'))
+        
         # do we have the exc files
         self.has_exc = False
         if os.path.isfile(self.xclientconf) and os.path.isfile(self.xserverconf):
@@ -1416,12 +1418,12 @@ class Commands(object):
         excmeta = {CLIENT: self.xclientmeta, SERVER: self.xservermeta}
         exclogdry = {CLIENT: self.xclientlogdry, SERVER: self.xserverlogdry}        
         json = {CLIENT: self.xclientjson, SERVER: self.xserverjson}
-
+        ctrs = {CLIENT: self.xclientctr, SERVER: self.xserverctr}
         if not dryrun:
-            forkcmd = self.cmdexceptor.format(input=excinput[side], output=excoutput[side], conf=excconf[side],
+            forkcmd = self.cmdexceptor.format(input=excinput[side], const=ctrs[side], output=excoutput[side], conf=excconf[side],
                                             log=exclog[side], json=json[side])
         else:
-            forkcmd = self.cmdexceptordry.format(input=excinputdry[side], conf=excconf[side], log=exclogdry[side], json=json[side])
+            forkcmd = self.cmdexceptordry.format(input=excinputdry[side], conf=excconf[side], const=ctrs[side], log=exclogdry[side], json=json[side])
 
         if exc_update:
             forkcmd += ' --mapOut %s.exc' % (exclog[side])

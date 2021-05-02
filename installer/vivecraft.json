@@ -31,7 +31,7 @@
 		"name": "org.json:json:20140107"
 	}, 
 	{
-		"name": "net.minecraft:launchwrapper:2.1",
+		"name": "net.minecraft:launchwrapper:2.2",
 		"url": "http://vivecraft.org/jar/"
 	}, 
 	{

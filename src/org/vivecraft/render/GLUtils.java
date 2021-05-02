@@ -26,16 +26,6 @@ public class GLUtils {
         return createByteBuffer(size << 2).asFloatBuffer();
     }
 
-    public static Matrix4f getViewModelMatrix() {
-        matrixBuffer.rewind();
-        GL11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, matrixBuffer);
-
-        matrixBuffer.rewind();
-        Matrix4f out = new Matrix4f();
-        out.read(matrixBuffer);
-
-        return out;
-    }
 
     // Temporary measure because I am lazy
     // TODO: Use VBO for cloud renderer

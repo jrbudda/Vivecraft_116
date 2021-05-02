@@ -1,16 +1,6 @@
 --- a/net/minecraft/entity/player/ServerPlayerEntity.java
 +++ b/net/minecraft/entity/player/ServerPlayerEntity.java
-@@ -13,7 +13,9 @@
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.advancements.PlayerAdvancements;
- import net.minecraft.block.BlockState;
-+import net.minecraft.block.Blocks;
- import net.minecraft.block.HorizontalBlock;
-+import net.minecraft.client.Minecraft;
- import net.minecraft.command.arguments.EntityAnchorArgument;
- import net.minecraft.crash.CrashReport;
- import net.minecraft.crash.CrashReportCategory;
-@@ -37,6 +39,7 @@
+@@ -41,6 +41,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.Items;
  import net.minecraft.item.MerchantOffers;
@@ -18,7 +8,7 @@
  import net.minecraft.item.WrittenBookItem;
  import net.minecraft.item.crafting.IRecipe;
  import net.minecraft.item.crafting.ServerRecipeBook;
-@@ -75,8 +78,13 @@
+@@ -79,8 +80,13 @@
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
  import net.minecraft.network.play.server.SWindowItemsPacket;
  import net.minecraft.network.play.server.SWindowPropertyPacket;
@@ -32,18 +22,16 @@
  import net.minecraft.scoreboard.Score;
  import net.minecraft.scoreboard.ScoreCriteria;
  import net.minecraft.scoreboard.ScorePlayerTeam;
-@@ -102,6 +110,7 @@
- import net.minecraft.util.ServerCooldownTracker;
- import net.minecraft.util.SoundCategory;
- import net.minecraft.util.SoundEvent;
-+import net.minecraft.util.SoundEvents;
- import net.minecraft.util.Unit;
- import net.minecraft.util.Util;
- import net.minecraft.util.math.AxisAlignedBB;
-@@ -123,8 +132,13 @@
+@@ -124,12 +130,19 @@
+ import net.minecraft.util.text.filter.IChatFilter;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.GameType;
++import net.minecraft.world.Teleporter;
+ import net.minecraft.world.World;
  import net.minecraft.world.biome.BiomeManager;
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.IWorldInfo;
++import net.minecraftforge.common.util.ITeleporter;
 +import net.optifine.reflect.Reflector;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -54,7 +42,7 @@
  
  public class ServerPlayerEntity extends PlayerEntity implements IContainerListener
  {
-@@ -359,6 +373,22 @@
+@@ -386,6 +399,22 @@
      public void addSelfToInternalCraftingInventory()
      {
          this.openContainer.addListener(this);
@@ -76,9 +64,17 @@
 +		}
      }
  
-     public void sendEnterCombat()
-@@ -545,6 +575,10 @@
+     /**
+@@ -490,6 +519,7 @@
+             if (!this.isSpectator() || this.world.isBlockLoaded(this.getPosition()))
+             {
+                 super.tick();
++                NetworkHelper.overridePose(this); // VIVECRAFT
+             }
  
+             for (int i = 0; i < this.inventory.getSizeInventory(); ++i)
+@@ -584,6 +614,10 @@
+      */
      public void onDeath(DamageSource cause)
      {
 +        //Forge
@@ -88,7 +84,105 @@
          boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
  
          if (flag)
-@@ -1089,6 +1123,7 @@
+@@ -784,9 +818,20 @@
+         }
+     }
+ 
++    //Forge - vanilla method
+     @Nullable
+-    public Entity changeDimension(ServerWorld server)
++    public Entity changeDimension(ServerWorld server) {
++        return changeDimension(server, Reflector.ForgeHooks.exists() ? (ITeleporter)server.getDefaultTeleporter() : null);
++    }
++    //
++
++    @Nullable
++    //Forge add ITeleporter
++    public Entity changeDimension(ServerWorld server, ITeleporter teleporter)
++    //
+     {
++    	if (Reflector.ForgeHooks.exists() && !Reflector.callBoolean(Reflector.ForgeHooks_onTravelToDimension, this, server.getDimensionKey()))
++    		return null;
+         this.invulnerableDimensionChange = true;
+         ServerWorld serverworld = this.getServerWorld();
+         RegistryKey<World> registrykey = serverworld.getDimensionKey();
+@@ -794,8 +839,13 @@
+         if (registrykey == World.THE_END && server.getDimensionKey() == World.OVERWORLD)
+         {
+             this.detach();
++            //Forge
++    		if (Reflector.ForgeHooks.exists()) {
++    			Reflector.callVoid(this.getServerWorld(), Reflector.ServerWorld_removePlayer, this, true);
++    		} else {
+             this.getServerWorld().removePlayer(this);
+-
++    		}
++    		//
+             if (!this.queuedEndExit)
+             {
+                 this.queuedEndExit = true;
+@@ -812,8 +862,16 @@
+             this.connection.sendPacket(new SServerDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
+             PlayerList playerlist = this.server.getPlayerList();
+             playerlist.updatePermissionLevel(this);
++    		//Forge
++            if (Reflector.ForgeHooks.exists()) {
++    			Reflector.callVoid(serverworld, Reflector.ServerWorld_removePlayer, this, true);
++    			Reflector.callVoid(this, Reflector.Entity_revive);
++    		} else {
+             serverworld.removePlayer(this);
+             this.removed = false;
++    		}
++    		//
++            this.removed = false;
+             PortalInfo portalinfo = this.func_241829_a(server);
+ 
+             if (portalinfo != null)
+@@ -851,6 +909,9 @@
+                 this.lastExperience = -1;
+                 this.lastHealth = -1.0F;
+                 this.lastFoodLevel = -1;
++                //Forge
++                Reflector.call(Reflector.BasicEventHooks_firePlayerChangedDimensionEvent, this, registrykey, server.getDimensionKey());
++                //
+             }
+ 
+             return this;
+@@ -949,6 +1010,12 @@
+ 
+     public Either<PlayerEntity.SleepResult, Unit> trySleep(BlockPos at)
+     {
++        java.util.Optional<BlockPos> optAt = java.util.Optional.of(at);
++    	if(Reflector.ForgeEventFactory_onPlayerSleepInBed.exists()) {
++	        PlayerEntity.SleepResult ret = (SleepResult) Reflector.call(Reflector.ForgeEventFactory_onPlayerSleepInBed, this, optAt);
++	        if (ret != null) return Either.left(ret);
++    	}
++
+         Direction direction = this.world.getBlockState(at).get(HorizontalBlock.HORIZONTAL_FACING);
+ 
+         if (!this.isSleeping() && this.isAlive())
+@@ -969,7 +1036,11 @@
+             {
+                 this.func_242111_a(this.world.getDimensionKey(), at, this.rotationYaw, false, true);
+ 
+-                if (this.world.isDaytime())
++                boolean sflag = this.world.isDaytime();
++                if(Reflector.ForgeEventFactory_fireSleepingTimeCheck.exists()) 
++                	sflag = !Reflector.callBoolean(Reflector.ForgeEventFactory_fireSleepingTimeCheck, this, optAt);
++
++                if (sflag)
+                 {
+                     return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
+                 }
+@@ -1015,6 +1086,7 @@
+ 
+     private boolean func_241147_a_(BlockPos p_241147_1_, Direction p_241147_2_)
+     {
++        if (p_241147_2_ == null) return false; // idk Forge puts this here
+         return this.func_241158_g_(p_241147_1_) || this.func_241158_g_(p_241147_1_.offset(p_241147_2_.getOpposite()));
+     }
+ 
+@@ -1158,6 +1230,7 @@
                  this.connection.sendPacket(new SOpenWindowPacket(container.windowId, container.getType(), p_213829_1_.getDisplayName()));
                  container.addListener(this);
                  this.openContainer = container;
@@ -96,7 +190,7 @@
                  return OptionalInt.of(this.currentWindowId);
              }
          }
-@@ -1110,6 +1145,7 @@
+@@ -1179,6 +1252,7 @@
          this.connection.sendPacket(new SOpenHorseWindowPacket(this.currentWindowId, inventoryIn.getSizeInventory(), horse.getEntityId()));
          this.openContainer = new HorseInventoryContainer(this.currentWindowId, this.inventory, inventoryIn, horse);
          this.openContainer.addListener(this);
@@ -104,7 +198,7 @@
      }
  
      public void openBook(ItemStack stack, Hand hand)
-@@ -1182,6 +1218,7 @@
+@@ -1272,6 +1346,7 @@
      public void closeContainer()
      {
          this.openContainer.onContainerClosed(this);
@@ -112,18 +206,10 @@
          this.openContainer = this.container;
      }
  
-@@ -1331,6 +1368,24 @@
+@@ -1429,6 +1504,16 @@
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.setLeftShoulderEntity(that.getLeftShoulderEntity());
          this.setRightShoulderEntity(that.getRightShoulderEntity());
-+        //Forge
-+    	Reflector.setFieldValue(this, Reflector.ForgePlayerEntity_spawnPosMap, Reflector.getFieldValue(that, Reflector.ForgePlayerEntity_spawnPosMap));
-+		Reflector.setFieldValue(this, Reflector.ForgePlayerEntity_spawnForcedMap, Reflector.getFieldValue(that, Reflector.ForgePlayerEntity_spawnForcedMap));
-+   
-+//		if(that.dimension != DimensionType.OVERWORLD) {
-+//			MCReflection.PlayerEntity_spawnPos.set(this, MCReflection.PlayerEntity_spawnPos.get(that));
-+//			MCReflection.PlayerEntity_spawnForced.set(this, MCReflection.PlayerEntity_spawnForced.get(that));
-+//        }
 +
 +        //Copy over a section of the Entity Data from the old player.
 +        //Allows mods to specify data that persists after players respawn.       
@@ -137,15 +223,38 @@
      }
  
      protected void onNewPotionEffect(EffectInstance id)
-@@ -1620,6 +1675,82 @@
+@@ -1582,6 +1667,8 @@
+         this.chatColours = packetIn.isColorsEnabled();
+         this.getDataManager().set(PLAYER_MODEL_FLAG, (byte)packetIn.getModelPartFlags());
+         this.getDataManager().set(MAIN_HAND, (byte)(packetIn.getMainHand() == HandSide.LEFT ? 0 : 1));
++        if (Reflector.ForgeHooks.exists())
++            this.language = Reflector.callString(packetIn, Reflector.CClientSettingsPacket_getLanguage);
+     }
+ 
+     public ChatVisibility getChatVisibility()
+@@ -1748,8 +1835,13 @@
+             this.connection.sendPacket(new SRespawnPacket(newWorld.getDimensionType(), newWorld.getDimensionKey(), BiomeManager.getHashedSeed(newWorld.getSeed()), this.interactionManager.getGameType(), this.interactionManager.func_241815_c_(), newWorld.isDebug(), newWorld.func_241109_A_(), true));
+             this.connection.sendPacket(new SServerDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
+             this.server.getPlayerList().updatePermissionLevel(this);
++            if (Reflector.ForgeHooks.exists()) {
++                Reflector.callVoid(serverworld, Reflector.ServerWorld_removePlayer, this, true);
++                Reflector.callVoid(this, Reflector.Entity_revive);
++            } else {
+             serverworld.removePlayer(this);
+             this.removed = false;
++            }
+             this.setLocationAndAngles(x, y, z, yaw, pitch);
+             this.setWorld(newWorld);
+             newWorld.addDuringCommandTeleport(this);
+@@ -1758,8 +1850,81 @@
              this.interactionManager.setWorld(newWorld);
              this.server.getPlayerList().sendWorldInfo(this, newWorld);
              this.server.getPlayerList().sendInventory(this);
 +            //Forge
-+            Reflector.call(Reflector.BasicEventHooks_firePlayerChangedDimensionEvent, this, serverworld.getDimension(), newWorld.getDimension());
++            Reflector.call(Reflector.BasicEventHooks_firePlayerChangedDimensionEvent, this, serverworld.getDimensionKey(), newWorld.getDimensionKey());
 +            //
-+        }
-+    }
+         }
+     }
 +	@Override
 +	public void spawnSweepParticles() {
 +		ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
@@ -173,62 +282,71 @@
 +
 +	//Vivecraft override from LivingEntity because addItemParticles is private
 +	@Override
-+    protected void triggerItemUseEffects(ItemStack p_226293_1_, int p_226293_2_)
++    protected void triggerItemUseEffects(ItemStack stack, int count)
 +    {
-+        if (!p_226293_1_.isEmpty() && this.isHandActive())
++        if (!stack.isEmpty() && this.isHandActive())
 +        {
-+            if (p_226293_1_.getUseAction() == UseAction.DRINK)
++            if (stack.getUseAction() == UseAction.DRINK)
 +            {
-+                this.playSound(this.getDrinkSound(p_226293_1_), 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
++                this.playSound(this.getDrinkSound(stack), 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
 +            }
 +
-+            if (p_226293_1_.getUseAction() == UseAction.EAT)
++            if (stack.getUseAction() == UseAction.EAT)
 +            {
-+                this.addItemParticles(p_226293_1_, p_226293_2_);
-+                this.playSound(this.getEatSound(p_226293_1_), 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
++                this.addItemParticles(stack, count);
++                this.playSound(this.getEatSound(stack), 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
 +            }
 +        }
 +    }
 +
 +    private void addItemParticles(ItemStack stack, int count)
 +    {
++    	ServerVivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
 +
-+        for (int i = 0; i < count; ++i)
-+        {
-+            Vector3d vector3d = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
-+            vector3d = vector3d.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
-+            vector3d = vector3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
-+            double d0 = (double)(-this.rand.nextFloat()) * 0.6D - 0.3D;
-+            Vector3d vector3d1 = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
-+		
-+            if(this.isUser()) { 
-+            	//TODO: wait what
-+	            //VIVE
-+				Hand hand = getActiveHand();
-+				if(hand == Hand.MAIN_HAND){
-+					vector3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(0).getPosition();                 	
-+				} else {
-+					vector3d1 = Minecraft.getInstance().vrPlayer.vrdata_world_pre.getController(1).getPosition();      
-+				}
-+			}
-+               
-+            // vector3d1 = vector3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
-+            // vector3d1 = vector3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
-+            // vector3d1 = vector3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
-+			//
-+            this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vector3d1.x, vector3d1.y, vector3d1.z, vector3d.x, vector3d.y + 0.05D, vector3d.z);
-         }
-     }
++    	for (int i = 0; i < count; ++i)
++    	{
++    		Vector3d vector3d = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
++    		vector3d = vector3d.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++    		vector3d = vector3d.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++    		double d0 = (double)(-this.rand.nextFloat()) * 0.6D - 0.3D;
++    		Vector3d vector3d1 = new Vector3d(((double)this.rand.nextFloat() - 0.5D) * 0.3D, d0, 0.6D);
++    		vector3d1 = vector3d1.rotatePitch(-this.rotationPitch * ((float)Math.PI / 180F));
++    		vector3d1 = vector3d1.rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F));
++    		vector3d1 = vector3d1.add(this.getPosX(), this.getPosYEye(), this.getPosZ());
++    		if (vp != null && vp.isVR()) {
++    			//VIVE
++    			Hand hand = getActiveHand();
++    			if(hand == Hand.MAIN_HAND){
++    				vector3d1 = vp.getControllerPos(0, this);             	
++    			} else {
++    				vector3d1 = vp.getControllerPos(1, this);  
++    			}
++    		}
++    		this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), vector3d1.x, vector3d1.y, vector3d1.z, vector3d.x, vector3d.y + 0.05D, vector3d.z);
++    	}
++    }
  
-@@ -1696,6 +1827,7 @@
-         return new SSpawnPlayerPacket(this);
-     }
+     @Nullable
+     public BlockPos func_241140_K_()
+@@ -1784,6 +1949,9 @@
  
+     public void func_242111_a(RegistryKey<World> p_242111_1_, @Nullable BlockPos p_242111_2_, float p_242111_3_, boolean p_242111_4_, boolean p_242111_5_)
+     {
++    	//Forge
++    	if(Reflector.callBoolean(Reflector.ForgeEventFactory_onPlayerSpawnSet, this, p_242111_2_ == null ? World.OVERWORLD : p_242111_1_, p_242111_2_, p_242111_3_)) return;
++    	//
+         if (p_242111_2_ != null)
+         {
+             boolean flag = p_242111_2_.equals(this.field_241138_cr_) && p_242111_1_.equals(this.field_241137_cq_);
+@@ -1846,6 +2014,7 @@
+      * instead of dropping the item from where the player is pointing at. Likewise, if traceItem is true, the dropped
+      * item entity will have the thrower set as the player.
+      */
 +    @Override
      public ItemEntity dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
      {
          ItemEntity itementity = super.dropItem(droppedItem, dropAround, traceItem);
-@@ -1706,7 +1838,28 @@
+@@ -1856,7 +2025,28 @@
          }
          else
          {
@@ -257,10 +375,15 @@
              ItemStack itemstack = itementity.getItem();
  
              if (traceItem)
-@@ -1722,4 +1875,4 @@
-             return itementity;
-         }
+@@ -1878,4 +2068,9 @@
+     {
+         return this.field_244528_co;
      }
 -}
++
++    private String language = "en_us";
++    public String getLanguage() {
++        return this.language;
++    }
 +}
 \ No newline at end of file

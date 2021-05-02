@@ -36,7 +36,7 @@
          {
              String[] astring = Config.tokenize(s, ".");
  
-@@ -922,7 +922,7 @@
+@@ -929,7 +929,7 @@
  
      public static void parseBlendStates(Properties props)
      {
@@ -45,7 +45,7 @@
          {
              String[] astring = Config.tokenize(s, ".");
  
-@@ -997,7 +997,7 @@
+@@ -1011,7 +1011,7 @@
  
      public static void parseRenderScales(Properties props)
      {
@@ -54,7 +54,7 @@
          {
              String[] astring = Config.tokenize(s, ".");
  
-@@ -1061,7 +1061,7 @@
+@@ -1075,7 +1075,7 @@
  
      public static void parseBuffersFlip(Properties props)
      {

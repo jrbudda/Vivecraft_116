@@ -10,7 +10,7 @@
          try
          {
 @@ -139,7 +139,7 @@
-                 float f35 = (float)(i >> 16 & 255) / 255.0F;
+                 float f28 = (float)(i >> 16 & 255) / 255.0F;
                  float f1 = (float)(i >> 8 & 255) / 255.0F;
                  float f2 = (float)(i & 255) / 255.0F;
 -                boolean flag7 = false;
@@ -18,7 +18,7 @@
                  float f3 = lightReaderIn.func_230487_a_(Direction.DOWN, true);
                  float f4 = lightReaderIn.func_230487_a_(Direction.UP, true);
                  float f5 = lightReaderIn.func_230487_a_(Direction.NORTH, true);
-@@ -405,7 +405,7 @@
+@@ -421,7 +421,7 @@
                  return flag7;
              }
  
@@ -27,7 +27,7 @@
          }
          finally
          {
-@@ -415,7 +415,7 @@
+@@ -431,7 +431,7 @@
              }
          }
  

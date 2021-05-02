@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.beans.*;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URI;
 import java.nio.channels.Channels;
@@ -20,6 +21,7 @@ import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * Derived from https://github.com/MinecraftForge/Installer/
@@ -34,50 +36,38 @@ public class Installer extends JPanel  implements PropertyChangeListener
 {
 	private static final long serialVersionUID = -562178983462626162L;
 	private String tempDir = System.getProperty("java.io.tmpdir");
-
-	private static final boolean ALLOW_FORGE_INSTALL = true; 
-	private static final boolean DEFAULT_FORGE_INSTALL = false; 
-	private static final boolean ALLOW_HYDRA_INSTALL = false; 
-	private static final boolean ALLOW_KATVR_INSTALL = true; 
-	private static final boolean ALLOW_KIOSK_INSTALL = true; 
-	private static final boolean ALLOW_HRTF_INSTALL = false; 
-	private static final boolean PROMPT_REMOVE_HRTF = true; 
-	private static final boolean ALLOW_SHADERSMOD_INSTALL = false;  
-
-	private static final boolean NEEDS_2010_REDIST = false;
-	private static final boolean NEEDS_2012_REDIST = false;
-
-	// Currently needed for Win boxes - C++ redists
-
-	public static String winredist2012_64url = "http://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe";
-	public static String winredist2012_32url = "http://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe";
-	public static String winredist2010_64url = "http://download.microsoft.com/download/A/8/0/A80747C3-41BD-45DF-B505-E9710D2744E0/vcredist_x64.exe";
-	public static String winredist2010_32url = "http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe";
-
 	/* DO NOT RENAME THESE STRING CONSTS - THEY ARE USED IN (AND THE VALUES UPDATED BY) THE AUTOMATED BUILD SCRIPTS */
-    private static final String MINECRAFT_VERSION = "1.16.1";
-    private static final String MC_VERSION        = "1.16.1";
-    private static final String MC_MD5            = "9b94beec05c9580343f663165fa53d3f";
-	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.16.1_HD_U_G2_pre3";
-    private static final String OF_MD5            = "e93ad02cc2a06ddbfb5843d9fba7c0a2";
-    private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "32.0.63";
+    private static final boolean ALLOW_FORGE_INSTALL  = true;
+    private static final boolean DEFAULT_FORGE_INSTALL= false;
+    private static final boolean ALLOW_KATVR_INSTALL  = false;
+    private static final boolean ALLOW_KIOSK_INSTALL  = false;
+    private static final boolean ALLOW_ZGC_INSTALL    = true;
+    private static final boolean ALLOW_HRTF_INSTALL   = false;
+    private static final boolean PROMPT_REMOVE_HRTF   = false;
+    private static final String MINECRAFT_VERSION     = "1.16.5";
+    private static final String MC_VERSION            = "1.16.5";
+    private static final String MC_MD5                = "a57b9157ff3bb308208e79ef9e19187e";
+    private static final String OF_FILE_NAME          = "1.16.5_HD_U_G6";
+    private static final String OF_MD5                = "4a13bb8132744ab7beeff9f076d48125";
+    private static final String OF_VERSION_EXT        = ".jar";
+    private static String FORGE_VERSION               = "36.0.7";
+    private static final String HOMEPAGE_LINK         = "http://www.vivecraft.org";
+    private static final String DONATION_LINK         = "https://www.patreon.com/jrbudda";
+    private static final String PROJECT_NAME          = "Vivecraft NonVR";
 	/* END OF DO NOT RENAME */
-
-	private static final String DEFAULT_PROFILE_NAME = "Vivecraft " + MINECRAFT_VERSION;
-	private static final String DEFAULT_PROFILE_NAME_FORGE = "Vivecraft-Forge " + MINECRAFT_VERSION;
-	private static final String HOMEPAGE_LINK = "http://www.vivecraft.org";
-	private static final String DONATION_LINK = "https://www.patreon.com/jrbudda";
-    private static final String ORIG_FORGE_VERSION = FORGE_VERSION;
 	
+	private static final String OF_LIB_PATH           = "libraries/optifine/OptiFine/";
+	private static final String DEFAULT_PROFILE_NAME = PROJECT_NAME + " " + MINECRAFT_VERSION;
+	private static final String DEFAULT_PROFILE_NAME_FORGE = PROJECT_NAME + "-Forge " + MINECRAFT_VERSION;
+    private static final String ORIG_FORGE_VERSION = FORGE_VERSION;
+
 	private InstallTask task;
 	private static ProgressMonitor monitor;
 	static private File targetDir;
 	private String[] forgeVersions = null;
 	private boolean forgeVersionInstalled = false;
 	private static String FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
-	private String forge_url = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
+	private String forge_url = "https://maven.minecraftforge.net/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
 	private File forgeInstaller;
 	private JTextField selectedDirText;
 	private JLabel infoLabel;
@@ -97,28 +87,18 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private JCheckBox katvr;
 	private JCheckBox kiosk;
 	private JCheckBox optCustomForgeVersion;
+	private JCheckBox useZGC;
 	private JTextField txtCustomForgeVersion;
 	private JComboBox ramAllocation;
 	private final boolean QUIET_DEV = false;
 	private File releaseNotes = null;
 	private static String releaseNotePathAddition = "";
 	private static JLabel instructions;
-	private String smcVanillaURL = "http://www.karyonix.net/shadersmod/files/ShadersMod-v2.3.29mc1.7.10-installer.jar";
-	private String smcForgeURL = "http://www.karyonix.net/shadersmod/files/ShadersModCore-v2.3.31-mc1.7.10-f.jar";	
-	private  final String smcVanillaLib  = "libraries/shadersmodcore/ShadersModCore/2.3.29mc1.7.10";
-	private  final String smcForgelib   = "libraries/shadersmodcore/ShadersModCore/2.3.31mc1.7.10-f";
-	private  final String smcVanillaFile  = "ShadersModCore-2.3.29mc1.7.10.jar";
-	private  final String smcForgeFile   = "ShadersModCore-2.3.31mc1.7.10-f.jar";
-	private  final String smcVanillaMD5  = "4797D91A1F3752EF47242637901199CB";
-	private  final String smcForgeMD5   = "F66374AEA8DDA5F3B7CCB20C230375D7";
 
 	private JTextField txtCustomProfileName;
 	private JTextField txtCustomGameDir;
 	private JCheckBox chkCustomProfileName;
 	private JCheckBox chkCustomGameDir;  
-
-
-	static private final String forgeNotFound = "Forge not found..." ;
 
 	private String userHomeDir;
 	private String osType;
@@ -139,7 +119,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			// Read png
 			BufferedImage image;
 			image = ImageIO.read(Installer.class.getResourceAsStream("logo.png"));
-			ImageIcon icon = new ImageIcon(image.getScaledInstance(500, 200,  java.awt.Image.SCALE_SMOOTH));
+			ImageIcon icon = new ImageIcon(image.getScaledInstance(500, 200,  Image.SCALE_SMOOTH));
 			JLabel logoLabel = new JLabel(icon);
 			logoLabel.setAlignmentX(LEFT_ALIGNMENT);
 			logoLabel.setAlignmentY(CENTER_ALIGNMENT);
@@ -186,7 +166,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			releaseNotes = null;
 		}
 
-		JLabel tag = new JLabel("Welcome! This will install Vivecraft "+ version);
+		JLabel tag = new JLabel("Welcome! This will install " + PROJECT_NAME + " " + version);
 		tag.setAlignmentX(LEFT_ALIGNMENT);
 		tag.setAlignmentY(CENTER_ALIGNMENT);
 		logoSplash.add(tag);
@@ -427,15 +407,45 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				"</html>");
 		kiosk.setAlignmentX(LEFT_ALIGNMENT);
 
+		useZGC = new JCheckBox();
+		AbstractAction zgcAction = new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (useZGC.isSelected()) {
+					JPanel panel = new JPanel();
+					panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+					panel.add(new JLabel(
+							"<html>ZGC is an experimental garbage collector available in Java 14+.<br>" +
+									"It can significantly reduce GC stutter, but may have stability issues as it is still in development.<br>" +
+									"Your launcher profile must be configured to use Java 14 or the game will crash with this option enabled.<br>" +
+									"The installer will prompt you to locate the Java 14 runtime and do this for you, however it must be installed before proceeding.<html>"
+					));
+					panel.add(linkify("You can download the latest release of Java 14 at AdoptOpenJDK.", "https://adoptopenjdk.net/archive.html?variant=openjdk14&jvmVariant=hotspot", "AdoptOpenJDK"));
+					panel.add(new JLabel("<html><br>Do you wish to continue installation with this option enabled?</html>"));
+					int res = JOptionPane.showOptionDialog(
+							null, panel, "Warning!",
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, new String[]{"Yes", "No"}, "No"
+					);
+					if (res == JOptionPane.NO_OPTION)
+						useZGC.setSelected(false);
+				}
+			}
+		};
+		zgcAction.putValue(AbstractAction.NAME, "Enable ZGC");
+		useZGC.setAction(zgcAction);
+		useZGC.setToolTipText("<html>Enables stutter-free Java 14+ garbage collector.</html>");
+		useZGC.setAlignmentX(LEFT_ALIGNMENT);
+
 		this.add(forgePanel);
-		if(ALLOW_SHADERSMOD_INSTALL) this.add(useShadersMod);
 		this.add(createProfile);
 		this.add(ramPanel);
 		this.add(namePanel);
 		this.add(gameDirPanel);
 		if(ALLOW_HRTF_INSTALL)this.add(useHrtf);
 		this.add(new JLabel("         "));
-		if(ALLOW_KATVR_INSTALL||ALLOW_KIOSK_INSTALL) this.add(new JLabel("Advanced Options"));
+		if(ALLOW_KATVR_INSTALL||ALLOW_KIOSK_INSTALL||ALLOW_ZGC_INSTALL) this.add(new JLabel("Advanced Options"));
+		if(ALLOW_ZGC_INSTALL) this.add(useZGC);
 		if(ALLOW_KIOSK_INSTALL) this.add(kiosk);
 		if(ALLOW_KATVR_INSTALL) this.add(katvr);
 
@@ -474,11 +484,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	{
 		JOptionPane optionPane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, new String[]{"Install", "Cancel"});
 
-		emptyFrame = new Frame("Vivecraft Installer");
+		emptyFrame = new Frame(PROJECT_NAME + " Installer");
 		emptyFrame.setUndecorated(true);
 		emptyFrame.setVisible(true);
 		emptyFrame.setLocationRelativeTo(null);
-		dialog = optionPane.createDialog(emptyFrame, "Vivecraft Installer");
+		dialog = optionPane.createDialog(emptyFrame, PROJECT_NAME + " Installer");
 		dialog.setResizable(true);
 		dialog.setSize(620,748);
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -501,10 +511,15 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			}
 			
 			//check for multimc
+			if (targetDir.exists())
 			for(File f : targetDir.listFiles()){
 				if(f.getName().equalsIgnoreCase("multimc.exe") || (f.getName().equalsIgnoreCase("multimc") && f.isFile()) || f.getName().equalsIgnoreCase("multimc.cfg")){
 					ArrayList<File> ilist = new ArrayList<File>();
 					File insts = new File(targetDir, "instances");
+					if (!insts.exists()) {
+						JOptionPane.showMessageDialog(null, "MultiMC files were detected in the install path, but the instances directory is missing, so we're going to assume it isn't MultiMC.\nIf it actually is MultiMC, set up an instance for Vivecraft first, then run this installer again.", "MultiMC Detection Failed", JOptionPane.WARNING_MESSAGE);
+						break;
+					}
 					for(File inst : insts.listFiles()){
 						if(inst.isDirectory() && !inst.getName().startsWith("_"))
 							ilist.add(inst);
@@ -591,8 +606,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					}
 				}
 			}
-			catch (NoSuchFieldException e) {}
-			catch (IllegalAccessException e) {}
+			catch (Exception e) {}
 
 
 			finalMessage = "Failed: Couldn't download C++ redistributables. ";
@@ -634,35 +648,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				downloadedOptifine = true;
 			}
 
-			if(useShadersMod.isSelected()){
-				finalMessage = "Failed: Couldn't download ShadersMod. ";
-				monitor.setNote("Checking ShadersModCore");
-				monitor.setProgress(42);
-				boolean downloadedSMC = false;
-				monitor.setNote("Downloading ShadersModCore");
-
-				for (int i = 1; i <= 3; i++)
-				{
-					if (downloadSMC(useForge.isSelected()))
-					{
-						// Got it!
-						downloadedSMC = true;
-						break;
-					}
-
-					// Failed. Sleep a bit and retry...
-					if (i < 3) {
-						monitor.setNote("Downloading ShadersModCore... waiting...");
-						try {
-							Thread.sleep(i * 1000);
-						}
-						catch (InterruptedException e) {
-						}
-						monitor.setNote("Downloading ShadersModCore...retrying...");
-					}
-				}
-			}
-
 			monitor.setProgress(50);
 
 			// VIVE START - install openVR
@@ -685,7 +670,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					
 				FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
 				forgeInstaller = new File(tempDir + "/forge-" + FULL_FORGE_VERSION + "-installer.jar");
-				forge_url = "http://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
+				forge_url = "https://maven.minecraftforge.net/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
 
 				if( targetDir.exists() ) {
 					File ForgeDir = new File( targetDir, "libraries"+File.separator+"net"+File.separator+"minecraftforge"+File.separator+"forge");
@@ -695,7 +680,15 @@ public class Installer extends JPanel  implements PropertyChangeListener
 							// Check for the currently required forge
 							for (String forgeVersion : forgeVersions) {
 								if (forgeVersion.contains(FORGE_VERSION)) {
+									File forgeVersionDir = new File(ForgeDir, forgeVersion);
+									if (forgeVersionDir.isDirectory()) {
+										for (File forgeVersionFile : forgeVersionDir.listFiles()) {
+											if (forgeVersionFile.length() > 512000) { // check for some realistically sized files because Mojang's launcher does stupid nonsense
 									forgeVersionInstalled = true;
+									break;
+								}
+							}
+						}
 									break;
 								}
 							}
@@ -773,8 +766,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				finalMessage = "Installed (but failed to download OptiFine). Restart Minecraft" +
 						(profileCreated == false ? " and Edit Profile->Use Version " + minecriftVersionName : " and select the '" + getMinecraftProfileName(useForge.isSelected(), useShadersMod.isSelected()) + "' profile.") +
 						"\nPlease download OptiFine " + OF_FILE_NAME + " from https://optifine.net/downloads before attempting to play." +
-						"\nDo not run and install it, instead rename the file to OptiFine-" + OF_FILE_NAME + " (note the hyphen) and manually place it into the following directory:" +
-						"\n" + (isMultiMC ? new File(mmcinst, "libraries").getAbsolutePath() : new File(targetDir, OF_LIB_PATH + OF_FILE_NAME).getAbsolutePath());
+						"\nDo not run and install it, instead rename the file to OptiFine-" + OF_FILE_NAME + "_LIB.jar (note the hyphen and _LIB) and manually place it into the following directory:" +
+						"\n" + (isMultiMC ? new File(mmcinst, "libraries").getAbsolutePath() : new File(targetDir, OF_LIB_PATH + OF_FILE_NAME + "_LIB").getAbsolutePath());
 			}
 			else {
 				if(isMultiMC && mmcinst != null)
@@ -843,7 +836,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				// Need to attempt download...
-				success = downloadFile("http://vivecraft.org/jar/Optifine/OptiFine_" + OF_FILE_NAME + "_LIB" + OF_VERSION_EXT, fo);
+				success = downloadFile("http://vivecraft.org/jar/Optifine/OptiFine-" + OF_FILE_NAME + "_LIB" + OF_VERSION_EXT, fo);
 				// Check (potentially) downloaded optifine md5
 				optOnDiskMd5 = GetMd5(fo);
 				if (success == false || optOnDiskMd5 == null || !optOnDiskMd5.equalsIgnoreCase(OF_MD5)) {
@@ -855,124 +848,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					}
 					catch (Exception ex1) {
 						JOptionPane.showMessageDialog(null, "Could not delete existing Optifine jar " +ex1.getLocalizedMessage(), "Download File", JOptionPane.WARNING_MESSAGE);
-						ex1.printStackTrace();
-					}
-					return false;
-				}
-
-				return true;
-			} catch (Exception e) {
-				finalMessage += " Error: "+e.getLocalizedMessage();
-			}
-			return false;
-		}
-
-		private boolean downloadSMC(boolean forge)
-		{
-			String dir = null;
-			String file = null;
-			String url = null;
-			String goodmd5 = null;
-			String temp = "temp.jar";
-			if (forge) {
-				dir = smcForgelib;
-				file = smcForgeFile;
-				url = smcForgeURL;
-				goodmd5 = smcForgeMD5;
-			} else {
-				dir = smcVanillaLib;
-				file = smcVanillaFile;
-				url = smcVanillaURL; 
-				goodmd5 = smcVanillaMD5;
-			}
-
-			boolean success = true;
-			boolean deleted = false;
-
-			try {
-				File fod = new File(targetDir,dir);
-				fod.mkdirs();
-				File fo = new File(fod,file);
-
-				// Attempt to get the Optifine MD5
-				String md5 = GetMd5(fo);
-				System.out.println(md5 == null ? fo.getCanonicalPath() : fo.getCanonicalPath() + " MD5: " + md5);
-
-				// Test MD5
-				if (md5 == null)
-				{
-					// Just continue...
-					System.out.println("ShadersMod not found - downloading");
-				}
-				else if (!md5.equalsIgnoreCase(goodmd5)) {
-					// Bad copy. Attempt delete just to make sure.
-					System.out.println("ShadersMod MD5 bad - downloading");
-
-					try {
-						deleted = fo.delete();
-					}
-					catch (Exception ex1) {
-						ex1.printStackTrace();
-					}
-				}
-				else {
-					// A good copy!
-					System.out.println("ShadersMod MD5 good! " + md5);
-					return true;
-				}
-
-				// Need to attempt download...
-
-				if(forge) {
-					success = downloadFile(url, fo);
-
-				}else {
-					File t = new File(fod,temp);
-					if( downloadFile(url, t)){
-
-						ZipInputStream temp_jar = new ZipInputStream(new FileInputStream(t));
-
-						ZipEntry ze = null;
-						byte data[] = new byte[1024];
-						while ((ze = temp_jar.getNextEntry()) != null) {
-							if(ze.getName().equals(file)) //extract the core jar.
-
-							{
-								FileOutputStream output = new FileOutputStream(fo);
-								try
-								{
-									byte[] buffer = new byte[2048];
-									int len = 0;
-									while ((len = temp_jar.read(buffer)) > 0)
-									{
-										output.write(buffer, 0, len);
-									}
-								}
-								finally
-								{
-									if(output!=null) output.close();
-								}
-							}
-						}
-						temp_jar.close();
-						t.delete();
-						return true;                		 
-					} else {
-						return false;
-					}
-
-				}   
-
-				//Check (potentially) downloaded shadersmodcore md5
-				md5 = GetMd5(fo);
-				if (success == false || md5 == null || !md5.equalsIgnoreCase(goodmd5)) {
-					// No good
-					if (md5 != null)
-						System.out.println("ShadersMod - bad MD5. Got " + md5 + ", expected " + goodmd5);
-					try {
-						deleted = fo.delete();
-					}
-					catch (Exception ex1) {
 						ex1.printStackTrace();
 					}
 					return false;
@@ -999,8 +874,17 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				fos = new FileOutputStream(fo);
 				System.out.println(surl);
 				URL url = new URL(surl);
-				ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-				long bytes = fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+				HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+				conn.setConnectTimeout(15000);
+				conn.setReadTimeout(60000);
+				InputStream is = conn.getInputStream();
+
+				byte[] bytes = new byte[16384];
+				int count;
+				while ((count = is.read(bytes, 0, bytes.length)) != -1) {
+					fos.write(bytes, 0, count);
+				}
+
 				fos.flush();
 			}
 			catch(Exception ex) {
@@ -1079,7 +963,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		private boolean installForge(File target)
 		{
 			try {
-				JOptionPane.showMessageDialog(null, "The Forge installer will launch. In it, please ensure \"Install client\" is selected and the correct directory is specified (default unless you changed it).", "Forge Installation", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "The Forge installer will launch. In it, please ensure \"Install client\" is selected, and do not change the install directory.", "Forge Installation", JOptionPane.INFORMATION_MESSAGE);
 				final Process proc = new ProcessBuilder(isWindows ? "javaw" : "java", "-jar", target.getAbsolutePath()).start();
 				new Thread("Forge Installer Stdout") { // needed otherwise subprocess blocks
 					@Override
@@ -1129,18 +1013,13 @@ public class Installer extends JPanel  implements PropertyChangeListener
 						filename = "version-multimc-forge.json";
 					version_json = Installer.class.getResourceAsStream(filename);
 				}
-				else if(useForge.isSelected() /*&& forgeVersion.getSelectedItem() != forgeNotFound*/ ) 
+				else if(useForge.isSelected())
 				{
 					String filename;
 
-					if(!useShadersMod.isSelected()){
 						filename = "version-forge.json";
 						mod="-forge";
-					}
-					else{
-						filename = "version-forge-shadersmod.json";
-						mod="-forge-shadersmod";
-					}
+
 					version_json = new FilterInputStream( Installer.class.getResourceAsStream(filename) ) {
 						public int read(byte[] buff) throws IOException {
 							int ret = in.read(buff);
@@ -1341,6 +1220,108 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			} catch (InterruptedException e) {}
 		}
 
+		private String getGCOptions() {
+			if (useZGC.isSelected()) {
+				return "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC";
+			} else {
+				return "-XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M";
+			}
+		}
+
+		private int[] getRamAlloc() {
+			int maxAlloc = (int)ramAllocation.getSelectedItem();
+			int minAlloc = /*useZGC.isSelected()*/ true ? maxAlloc : Math.min(maxAlloc, 2);
+			return new int[]{minAlloc, maxAlloc};
+		}
+
+		private String getJavaVersionFromPath(String path) {
+			String out = "";
+			try {
+				ProcessBuilder pb = new ProcessBuilder(path, "-version");
+				Process p = pb.start();
+				BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+				String line;
+				while ((line = br.readLine()) != null) {
+					if (line.toLowerCase().contains("version")) {
+						out = line.substring(line.indexOf('"') + 1, line.lastIndexOf('"'));
+						break;
+					}
+				}
+				p.destroy();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return out;
+		}
+
+		private int parseJavaVersion(String version) {
+			try {
+				if (version.indexOf('.') != -1)
+				return Integer.parseInt(version.substring(0, version.indexOf('.')));
+				else
+					return Integer.parseInt(version);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				return 0;
+			}
+		}
+
+		/*
+		* If the user decides to not select the Java runtime at installation, this function will
+		* return the same value that was passed to it. In this case, the profile should not be changed.
+		 */
+		private String checkForJava14(String path) {
+			String newPath = path;
+			boolean first = true;
+			while (true) {
+				String ver = !newPath.isEmpty() ? getJavaVersionFromPath(newPath) : "0.0.0";
+				if (parseJavaVersion(ver) >= 14 && parseJavaVersion(ver) <= 15)
+					break;
+
+				if (first) {
+					String javaHome = System.getProperty("java.home") + (isWindows ? "\\bin\\javaw.exe" : "/bin/java");
+					String homeVer = getJavaVersionFromPath(javaHome);
+					if (parseJavaVersion(homeVer) >= 14 && parseJavaVersion(homeVer) <= 15)
+						return javaHome;
+					first = false;
+				}
+
+				int res = JOptionPane.showConfirmDialog(null,
+						"The currently selected Java executable is not Java 14 or Java 15.\n" +
+						"Would you like to select the correct one now?",
+						"Wrong Java Version",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.ERROR_MESSAGE
+				);
+				if (res != JOptionPane.YES_OPTION)
+					return path;
+
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				fileChooser.setFileHidingEnabled(false);
+				if (isWindows)
+					fileChooser.setCurrentDirectory(new File(System.getenv("ProgramFiles")));
+				fileChooser.setFileFilter(new FileFilter() {
+					@Override
+					public boolean accept(File f) {
+						if (!f.isFile())
+							return true;
+						return isWindows ? f.getName().equals("javaw.exe") : f.getName().equals("java");
+					}
+
+					@Override
+					public String getDescription() {
+						return "Java Executable";
+					}
+				});
+				int response = fileChooser.showOpenDialog(null);
+				if (response == JFileChooser.APPROVE_OPTION)
+					newPath = fileChooser.getSelectedFile().getAbsolutePath();
+			}
+
+			return newPath;
+		}
+
 		private boolean updateLauncherJson(File mcBaseDirFile, String minecriftVer, String profileName)
 		{
 			boolean result = false;
@@ -1368,8 +1349,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				prof.put("lastVersionId", minecriftVer + mod);
-				int minAlloc = ramAllocation.getSelectedItem() == Integer.valueOf(1) ? 1 : 2;
-				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + minAlloc + "G -XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
+				int[] ramAlloc = getRamAlloc();
+				prof.put("javaArgs", "-Xmx" + ramAlloc[1] + "G -Xms" + ramAlloc[0] + "G " + getGCOptions());
 				prof.put("name", profileName);
 				prof.put("icon", ICON);
 				prof.put("type", "custom");
@@ -1378,11 +1359,24 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					String dir = txtCustomGameDir.getText();
 					if (dir.endsWith("\\mods")) dir = dir.substring(0, dir.length()-5);
 					if (dir.endsWith("\\mods\\")) dir = dir.substring(0, dir.length()-6);
-					prof.put("gameDir", txtCustomGameDir.getText());
+					prof.put("gameDir", dir);
 				} else {
 					prof.remove("gameDir");
 				}
 				
+				if (useZGC.isSelected()) {
+					String javaExe;
+					if (prof.has("javaDir"))
+						javaExe = prof.getString("javaDir");
+					else {
+						javaExe = "";
+					}
+
+					javaExe = checkForJava14(javaExe);
+					if (!javaExe.isEmpty())
+						prof.put("javaDir", javaExe);
+				}
+
 				FileWriter fwJson = new FileWriter(fileJson);
 				fwJson.write(root.toString(jsonIndentSpaces));
 				fwJson.flush();
@@ -1405,6 +1399,22 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				File cfg = new File(mcBaseDirFile, "instance.cfg");
 				if(!cfg.exists()) return result;
 
+				boolean setupJavaPath = useZGC.isSelected();
+
+				String javaPath = "javaw";
+				if (setupJavaPath) {
+					try (BufferedReader br = new BufferedReader(new FileReader(new File(mcBaseDirFile, "../../multimc.cfg")))) {
+						String line;
+						while ((line = br.readLine()) != null) {
+							String[] split = line.split("=", 2);
+							if (split[0].equals("JavaPath")) {
+								javaPath = split[1];
+								break;
+							}
+						}
+					}
+				}
+
 				BufferedReader r = new BufferedReader(new FileReader(cfg));
 				java.util.List<String> lines = new ArrayList<String>();
 				String l;
@@ -1424,14 +1434,32 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					
 					if(l.startsWith("OverrideMemory"))
 						continue;
+
+					if(l.startsWith("OverrideJavaLocation") && setupJavaPath)
+						continue;
+
+					if (l.startsWith("JavaPath") && setupJavaPath) {
+						javaPath = l.split("=", 2)[1];
+						continue;
+					}
+
 					lines.add(l);
 				}
 
-				lines.add("MinMemAlloc=" + ((Integer)ramAllocation.getSelectedItem())*1024);
-				lines.add("MaxMemAlloc=" + ((Integer)ramAllocation.getSelectedItem())*1024);
+				int[] ramAlloc = getRamAlloc();
+				lines.add("MinMemAlloc=" + (ramAlloc[0] * 1024));
+				lines.add("MaxMemAlloc=" + (ramAlloc[1] * 1024));
 				lines.add("OverrideJavaArgs=true");
 				lines.add("OverrideMemory=true");
-				lines.add("JvmArgs=-XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
+				lines.add("JvmArgs=" + getGCOptions());
+
+				if (setupJavaPath) {
+					javaPath = javaPath.replace("\\\\", "\\");
+					javaPath = checkForJava14(javaPath);
+					javaPath = javaPath.replace("\\", "\\\\");
+					lines.add("JavaPath=" + javaPath);
+					lines.add("OverrideJavaLocation=true");
+				}
 
 				r.close();
 
@@ -1629,7 +1657,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		ramAllocation.setEnabled(createProfile.isSelected());
 		txtCustomForgeVersion.setEnabled(optCustomForgeVersion.isSelected());
 		txtCustomForgeVersion.setVisible(useForge.isSelected());
-		optCustomForgeVersion.setVisible(false);
+		optCustomForgeVersion.setVisible(useForge.isSelected());
 		this.revalidate();		
 	}
 
@@ -1678,7 +1706,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) { }
 		try {
-			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					createAndShowGUI();
 				}

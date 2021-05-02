@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\util\Util.java minecraft_patched\net\minecraft\util\Util.java
 --- minecraft\net\minecraft\util\Util.java
 +++ minecraft_patched\net\minecraft\util\Util.java
-@@ -258,7 +258,7 @@
+@@ -262,7 +262,7 @@
     }
  
     public static <K> Strategy<K> func_212443_g() {

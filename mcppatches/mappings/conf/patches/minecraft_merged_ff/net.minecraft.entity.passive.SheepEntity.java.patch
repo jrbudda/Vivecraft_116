@@ -1,7 +1,7 @@
 ﻿diff -r -U 3 minecraft\net\minecraft\entity\passive\SheepEntity.java minecraft_patched\net\minecraft\entity\passive\SheepEntity.java
 --- minecraft\net\minecraft\entity\passive\SheepEntity.java
 +++ minecraft_patched\net\minecraft\entity\passive\SheepEntity.java
-@@ -80,7 +80,7 @@
+@@ -81,7 +81,7 @@
        p_203402_0_.put(DyeColor.RED, Blocks.field_196570_aZ);
        p_203402_0_.put(DyeColor.BLACK, Blocks.field_196602_ba);
     });

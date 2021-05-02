@@ -17,6 +17,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.state.StateHolder;
 import net.minecraft.world.biome.BiomeManager;
@@ -65,6 +66,8 @@ public class MCReflection {
 	public static final ReflectionField ClientWorldInfo_isFlat = new ReflectionField(ClientWorld.ClientWorldInfo.class, "field_239146_c_");
 
 	public static final ReflectionField BiomeManager_seed = new ReflectionField(BiomeManager.class, "field_226833_b_");
+
+	public static final ReflectionField NetworkManager_channel = new ReflectionField(NetworkManager.class, "field_150746_k");
 
 	
 	public static class ReflectionField {
