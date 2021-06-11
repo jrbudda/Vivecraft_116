@@ -511,33 +511,50 @@ public class Installer extends JPanel  implements PropertyChangeListener
 						JOptionPane.ERROR_MESSAGE, null, null, null);
 			}
 
-			//check for multimc
-			if (targetDir.exists())
-			for(File f : targetDir.listFiles()){
-				if(f.getName().equalsIgnoreCase("multimc.exe") || (f.getName().equalsIgnoreCase("multimc") && f.isFile()) || f.getName().equalsIgnoreCase("multimc.cfg")){
-					ArrayList<File> ilist = new ArrayList<File>();
-					File insts = new File(targetDir, "instances");
-					if (!insts.exists()) {
-						JOptionPane.showMessageDialog(null, "MultiMC files were detected in the install path, but the instances directory is missing, so we're going to assume it isn't MultiMC.\nIf it actually is MultiMC, set up an instance for Vivecraft first, then run this installer again.", "MultiMC Detection Failed", JOptionPane.WARNING_MESSAGE);
-						break;
-					}
-					for(File inst : insts.listFiles()){
-						if(inst.isDirectory() && !inst.getName().startsWith("_"))
-							ilist.add(inst);
-					}
-					JComboBox icb = new JComboBox(ilist.toArray());
-					File sel =(File) JOptionPane.showInputDialog(null,"Select MultiMC Instance.","MultiMC Detected", JOptionPane.PLAIN_MESSAGE, null, ilist.toArray(), null);
-					if(sel != null){
-						mmcinst = sel;
-						isMultiMC = true;
-					} else {
-						dialog.dispose();
-						emptyFrame.dispose();
-					}
-					break; // don't ask multiple times
+			// check for multimc
+			if (targetDir.exists()) {
+				File searchPath = targetDir;
+				File instancesPath = new File(searchPath, "instances");
+				if (instancesPath.exists() && instancesPath.isDirectory())
+					searchPath = instancesPath;
+
+				File groupsJson = new File(searchPath, "instgroups.json");
+				if (!groupsJson.exists() || !groupsJson.isFile()) {
+					JOptionPane.showOptionDialog(null,
+							"The folder you selected isn't a MultiMC program/instances folder. " +
+							"Make sure to select the folder containing MultiMC.exe or the folder containing your MultiMC instances.",
+							"Error!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, null, null);
+					dialog.dispose();
+					emptyFrame.dispose();
+					return;
+				}
+
+				ArrayList<File> ilist = new ArrayList<File>();
+				for (File inst : searchPath.listFiles()) {
+					if (inst.isDirectory() && !inst.getName().startsWith("_"))
+						ilist.add(inst);
+				}
+				if (ilist.isEmpty()) {
+					JOptionPane.showOptionDialog(null,
+							"The folder you selected doesn't have any instances! " +
+							"Make sure to create an instance for Vivecraft before attempting an install.",
+							"Error!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, null, null);
+					dialog.dispose();
+					emptyFrame.dispose();
+					return;
+				}
+
+				File sel = (File) JOptionPane.showInputDialog(null, "Select MultiMC Instance.", "MultiMC Detected",
+						JOptionPane.PLAIN_MESSAGE, null, ilist.toArray(), null);
+				if (sel != null) {
+					mmcinst = sel;
+					isMultiMC = true;
+				} else {
+					dialog.dispose();
+					emptyFrame.dispose();
+					return;
 				}
 			}
-			//
 
 			int option = 0;
 			String msg = "Please ensure you have closed the Minecraft Launcher before proceeding.";
