@@ -517,6 +517,20 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				if(f.getName().equalsIgnoreCase("multimc.exe") || (f.getName().equalsIgnoreCase("multimc") && f.isFile()) || f.getName().equalsIgnoreCase("multimc.cfg")){
 					ArrayList<File> ilist = new ArrayList<File>();
 					File insts = new File(targetDir, "instances");
+					try (BufferedReader br = new BufferedReader(new FileReader(new File(targetDir, "multimc.cfg")))) {
+						String line;
+						while ((line = br.readLine()) != null) {
+							String[] split = line.split("=", 2);
+							if (split[0].equals("InstanceDir")) {
+								insts = new File(split[1]);
+								if (!insts.isAbsolute())
+									insts = new File(targetDir, split[1]);
+								break;
+							}
+						}
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
 					if (!insts.exists()) {
 						JOptionPane.showMessageDialog(null, "MultiMC files were detected in the install path, but the instances directory is missing, so we're going to assume it isn't MultiMC.\nIf it actually is MultiMC, set up an instance for Vivecraft first, then run this installer again.", "MultiMC Detection Failed", JOptionPane.WARNING_MESSAGE);
 						break;
