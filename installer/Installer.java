@@ -1421,7 +1421,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				boolean setupJavaPath = useZGC.isSelected();
 
 				String javaPath = "javaw";
-				bool java14SetGlobally = false;
+				boolean java14SetGlobally = false;
 				if (setupJavaPath) {
 					try (BufferedReader br = new BufferedReader(new FileReader(new File(targetDir, "multimc.cfg")))) {
 						String line;
