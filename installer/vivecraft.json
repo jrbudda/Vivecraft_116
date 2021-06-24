@@ -20,6 +20,7 @@
 	"order": 6,
 	"libraries": [
 	{
+		"url": "http://vivecraft.org/jar/", 
 		"name": "optifine:OptiFine:$OFVERSION"
 	},
 	{

@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/lighting/LevelBasedGraph.java
++++ b/net/minecraft/world/lighting/LevelBasedGraph.java
+@@ -120,14 +120,15 @@
+     public void func_227465_a_(LongPredicate p_227465_1_)
+     {
+         LongList longlist = new LongArrayList();
+-        this.propagationLevels.keySet().forEach((p_lambda$func_227465_a_$0_2_) ->
+-        {
+-            if (p_227465_1_.test(p_lambda$func_227465_a_$0_2_))
++        for (Long long1 : this.propagationLevels.keySet()) {
++            if (p_227465_1_.test(long1))
+             {
+-                longlist.add(p_lambda$func_227465_a_$0_2_);
++                longlist.add(long1);
+             }
+-        });
+-        longlist.forEach(this::cancelUpdate);
++		}
++        for (Long long1 : longlist) {
++            	this.cancelUpdate(long1);
++		}
+     }
+ 
+     private void removeToUpdate(long pos, int level, int maxLevel, boolean removeAll)

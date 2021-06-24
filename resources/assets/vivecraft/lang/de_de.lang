@@ -1,4 +1,4 @@
-# Contributors: 3tes, Kerberus, McRobin, Philuu, SamyPro, Unluckymichell, acul009
+# Contributors: 3tes, Kerberus, McRobin, Philuu, SamyPro, Unluckymichell, acul009, nodscher
 
 # Key bindings
 vivecraft.key.hotbarNext=Hotbar weiter
@@ -25,6 +25,7 @@ vivecraft.key.toggleKeyboard=Tastatur Zeigen/Verstecken
 vivecraft.key.moveThirdPersonCam=Außenansicht Bewegen
 vivecraft.key.togglePlayerList=Spielerliste Anzeigen
 vivecraft.key.toggleHandheldCam=Kamera Umschalten
+# vivecraft.key.quickHandheldCam=Quick Camera
 vivecraft.key.trackpadTouch=Trackpad Berühren
 vivecraft.key.vrInteract=Kontextbasierte Interaktion
 vivecraft.key.guiLeftClick=Links Klick
@@ -417,6 +418,7 @@ vivecraft.gui.screenshot=Bildschirmfoto
 vivecraft.gui.calibrateheight=Höhe Kalibrieren
 vivecraft.gui.alignkatwalk=KAT WALK Ausrichten
 vivecraft.gui.movethirdpersoncam=Außenansicht Bewegen
+# vivecraft.gui.social=Social
 
 # Items
 vivecraft.item.jumpboots=Sprung-Schuhe
@@ -435,6 +437,7 @@ vivecraft.messages.noserverplugin=Vivecraft Server Mod nicht erkannt. Dieser Ser
 vivecraft.messages.calibrateheight=Bitte kalibrieren Sie Ihre Körpergröße im Pause Menü.
 vivecraft.messages.rendersetupfailed=Render Setup fehlgeschlagen: %s
 vivecraft.messages.intelgraphics=Intel Integrated Graphics werden nicht unterstützt. Wenn es sich um einen Laptop handelt, erzwingen Sie bitte die Hochleistungs-GPU. Erkannte GPU: %s
+vivecraft.messages.nosteamvr=OpenVR runtime nicht erkannt. Ist SteamVR installiert?
 vivecraft.messages.menuworldexportcomplete.1=Weltexport abgeschlossen... Flächengröße: %d
 vivecraft.messages.menuworldexportcomplete.2=Gespeichert unter %s
 vivecraft.messages.menuworldexportclientwarning=WARNUNG: Speichern der Menüwelt mithilfe einer Clientwelt. Daten können unvollständig sein. Es wird empfohlen, Menüwelten im Einzelspielermodus zu speichern.

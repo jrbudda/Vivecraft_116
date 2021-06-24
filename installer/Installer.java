@@ -47,10 +47,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MINECRAFT_VERSION     = "1.16.5";
     private static final String MC_VERSION            = "1.16.5";
     private static final String MC_MD5                = "a57b9157ff3bb308208e79ef9e19187e";
-    private static final String OF_FILE_NAME          = "1.16.5_HD_U_G6";
-    private static final String OF_MD5                = "4a13bb8132744ab7beeff9f076d48125";
+    private static final String OF_FILE_NAME          = "1.16.5_HD_U_G8";
+    private static final String OF_MD5                = "e0717ba6d1674af83036ebc479fc77b4";
     private static final String OF_VERSION_EXT        = ".jar";
-    private static String FORGE_VERSION               = "36.0.7";
+    private static String FORGE_VERSION               = "36.1.31";
     private static final String HOMEPAGE_LINK         = "http://www.vivecraft.org";
     private static final String DONATION_LINK         = "https://www.patreon.com/jrbudda";
     private static final String PROJECT_NAME          = "Vivecraft NonVR";
@@ -516,6 +516,20 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				if(f.getName().equalsIgnoreCase("multimc.exe") || (f.getName().equalsIgnoreCase("multimc") && f.isFile()) || f.getName().equalsIgnoreCase("multimc.cfg")){
 					ArrayList<File> ilist = new ArrayList<File>();
 					File insts = new File(targetDir, "instances");
+					try (BufferedReader br = new BufferedReader(new FileReader(new File(targetDir, "multimc.cfg")))) {
+						String line;
+						while ((line = br.readLine()) != null) {
+							String[] split = line.split("=", 2);
+							if (split[0].equals("InstanceDir")) {
+								insts = new File(split[1]);
+								if (!insts.isAbsolute())
+									insts = new File(targetDir, split[1]);
+								break;
+							}
+						}
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
 					if (!insts.exists()) {
 						JOptionPane.showMessageDialog(null, "MultiMC files were detected in the install path, but the instances directory is missing, so we're going to assume it isn't MultiMC.\nIf it actually is MultiMC, set up an instance for Vivecraft first, then run this installer again.", "MultiMC Detection Failed", JOptionPane.WARNING_MESSAGE);
 						break;
@@ -1266,6 +1280,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			}
 		}
 
+		private boolean isSuitableJavaVersion(int version) {
+			return version >= 14 && version <= 15;
+		}
+
 		/*
 		* If the user decides to not select the Java runtime at installation, this function will
 		* return the same value that was passed to it. In this case, the profile should not be changed.
@@ -1281,7 +1299,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				if (first) {
 					String javaHome = System.getProperty("java.home") + (isWindows ? "\\bin\\javaw.exe" : "/bin/java");
 					String homeVer = getJavaVersionFromPath(javaHome);
-					if (parseJavaVersion(homeVer) >= 14 && parseJavaVersion(homeVer) <= 15)
+					if (isSuitableJavaVersion(parseJavaVersion(homeVer)))
 						return javaHome;
 					first = false;
 				}
@@ -1402,18 +1420,24 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				boolean setupJavaPath = useZGC.isSelected();
 
 				String javaPath = "javaw";
+				boolean java14SetGlobally = false;
 				if (setupJavaPath) {
-					try (BufferedReader br = new BufferedReader(new FileReader(new File(mcBaseDirFile, "../../multimc.cfg")))) {
+					try (BufferedReader br = new BufferedReader(new FileReader(new File(targetDir, "multimc.cfg")))) {
 						String line;
 						while ((line = br.readLine()) != null) {
 							String[] split = line.split("=", 2);
 							if (split[0].equals("JavaPath")) {
 								javaPath = split[1];
+								String javaVer = getJavaVersionFromPath(javaPath.replace("\\\\", "\\"));
+								if (isSuitableJavaVersion(parseJavaVersion(javaVer)))
+									java14SetGlobally = true;
 								break;
 							}
 						}
 					}
 				}
+
+				boolean hadJavaOverride = false;
 
 				BufferedReader r = new BufferedReader(new FileReader(cfg));
 				java.util.List<String> lines = new ArrayList<String>();
@@ -1435,8 +1459,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					if(l.startsWith("OverrideMemory"))
 						continue;
 
-					if(l.startsWith("OverrideJavaLocation") && setupJavaPath)
+					if(l.startsWith("OverrideJavaLocation") && setupJavaPath) {
+						hadJavaOverride = true;
 						continue;
+					}
 
 					if (l.startsWith("JavaPath") && setupJavaPath) {
 						javaPath = l.split("=", 2)[1];
@@ -1453,7 +1479,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				lines.add("OverrideMemory=true");
 				lines.add("JvmArgs=" + getGCOptions());
 
-				if (setupJavaPath) {
+				if (setupJavaPath && (!java14SetGlobally || hadJavaOverride)) {
 					javaPath = javaPath.replace("\\\\", "\\");
 					javaPath = checkForJava14(javaPath);
 					javaPath = javaPath.replace("\\", "\\\\");

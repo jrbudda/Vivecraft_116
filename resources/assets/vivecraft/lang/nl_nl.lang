@@ -1,4 +1,4 @@
-# Contributors: BlockBanana123, Lelebees, marijnessen
+# Contributors: BlockBanana123, Lelebees, ZeeuwsGamertje, marijnessen, stijnotter, twjfransen
 
 # Key bindings
 vivecraft.key.hotbarNext=Hotbar Volgende
@@ -24,6 +24,8 @@ vivecraft.key.swapMirrorView=Wissel Spiegelweergave
 vivecraft.key.toggleKeyboard=Toon/Verberg Toetsenbord
 vivecraft.key.moveThirdPersonCam=Verplaats Derde Persoon Camera
 vivecraft.key.togglePlayerList=Spelerslijst wisselen
+vivecraft.key.toggleHandheldCam=Camera aanpassen
+# vivecraft.key.quickHandheldCam=Quick Camera
 vivecraft.key.trackpadTouch=Trackpad aanraking
 vivecraft.key.vrInteract=Contextuele Interactie
 vivecraft.key.guiLeftClick=Linkermuisklik
@@ -108,14 +110,14 @@ vivecraft.options.PHYSICAL_KEYBOARD=Toetsenbordtype
 vivecraft.options.PHYSICAL_KEYBOARD_SCALE=Toetsenbordgrootte
 vivecraft.options.GUI_APPEAR_OVER_BLOCK=Verschijnen boven blok
 vivecraft.options.FSAA=Lanczos Scaler
-vivecraft.options.MIRROR_DISPLAY=Desktop Mirror
+vivecraft.options.MIRROR_DISPLAY=Bureaublad Spiegel
 vivecraft.options.MIRROR_EYE=Spiegeloog
 vivecraft.options.MIXED_REALITY_KEY_COLOR=Sleutel kleur
 vivecraft.options.MIXED_REALITY_RENDER_HANDS=Toon Handen
 vivecraft.options.MIXED_REALITY_UNITY_LIKE=Indeling
 vivecraft.options.MIXED_REALITY_UNDISTORTED=Onvervormde pas
 vivecraft.options.MIXED_REALITY_ALPHA_MASK=Alfamasker
-vivecraft.options.MIXED_REALITY_FOV=Camera FOV
+vivecraft.options.MIXED_REALITY_FOV=Gezichtsveld Derde Persoon
 vivecraft.options.WALK_UP_BLOCKS=Loop tegen blokken op
 vivecraft.options.MOVEMENT_MULTIPLIER=Bewegingssnelheid vermenigvuldiger
 vivecraft.options.INERTIA_FACTOR=Speler Traagheid
@@ -168,6 +170,8 @@ vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Laad de externe camera opnieuw
 vivecraft.options.RIGHT_CLICK_DELAY=Klik met de rechtermuisknop op Herhalen
 vivecraft.options.ANIMAL_TOUCHING=Dier Betasting
+vivecraft.options.HANDHELD_CAMERA_FOV=Camera FOV
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=Camera Resolutie
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=Relatieve grootte HUD neemt in gezichtsveld in beslag.\nDe eenheden zijn slechts relatief, niet in graden of een fractie van FOV of zoiets.
@@ -330,6 +334,10 @@ vivecraft.options.RIGHT_CLICK_DELAY.tooltip=Het aantal van het spel tikt tussen 
 
 vivecraft.options.ANIMAL_TOUCHING.tooltip=Indien ingeschakeld, zal het aanraken van een passieve menigte (dier) zonder wapen met de rechtermuisknop klikken (interactie) in plaats van aanvallen.\nZet uit voor varken Spanking, Bert.
 
+vivecraft.options.HANDHELD_CAMERA_FOV.tooltip=Gezichtsveld van de schermafbeelding camera
+
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE.tooltip=Resolutie van de schermafbeelding camera, voor het nemen van schermafbeeldingen veel groter dan de normale render resolutie.\nKan niet gebruikt worden shaders aan staan.\n§cWaarschuwing: Als je deze instelling heel hoog zet kan je je computer smelten!
+
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=Ik kan het niet zien
 vivecraft.options.yes=JA
@@ -410,6 +418,7 @@ vivecraft.gui.screenshot=Schermafbeelding
 vivecraft.gui.calibrateheight=Hoogte kalibreren
 vivecraft.gui.alignkatwalk=Align KAT WALK
 vivecraft.gui.movethirdpersoncam=Verplaats Derde Camera
+# vivecraft.gui.social=Social
 
 # Items
 vivecraft.item.jumpboots=Spring Schoenen
@@ -428,6 +437,7 @@ vivecraft.messages.noserverplugin=Vivecraft-servermod niet gedetecteerd. Deze se
 vivecraft.messages.calibrateheight=Kalibreer uw lengte in het pauzemenu.
 vivecraft.messages.rendersetupfailed=Installatie van weergave mislukt: %s
 vivecraft.messages.intelgraphics=Intel Integrated Graphics wordt niet ondersteund. Als dit een laptop is, forceer dan de krachtige GPU. Gedetecteerde GPU: %s
+vivecraft.messages.nosteamvr=OpenVR runtime niet gedetecteerd. Heb je SteamVR geïnstalleerd?
 vivecraft.messages.menuworldexportcomplete.1=Wereld export compleet ... gebiedsgrootte: %d
 vivecraft.messages.menuworldexportcomplete.2=Opgeslagen naar %s
 vivecraft.messages.menuworldexportclientwarning=WAARSCHUWING: Menuwereld opslaan met behulp van een clientwereld. Gegevens zijn mogelijk onvolledig. Het is aan te raden om menuwerelden in singleplayer op te slaan.

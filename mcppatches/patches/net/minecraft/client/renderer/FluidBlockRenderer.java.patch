@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FluidBlockRenderer.java
 +++ b/net/minecraft/client/renderer/FluidBlockRenderer.java
-@@ -84,7 +84,7 @@
+@@ -85,7 +85,7 @@
      public boolean render(IBlockDisplayReader lightReaderIn, BlockPos posIn, IVertexBuilder vertexBuilderIn, FluidState fluidStateIn)
      {
          BlockState blockstate = fluidStateIn.getBlockState();
@@ -9,7 +9,7 @@
  
          try
          {
-@@ -139,7 +139,7 @@
+@@ -140,7 +140,7 @@
                  float f28 = (float)(i >> 16 & 255) / 255.0F;
                  float f1 = (float)(i >> 8 & 255) / 255.0F;
                  float f2 = (float)(i & 255) / 255.0F;
@@ -18,7 +18,7 @@
                  float f3 = lightReaderIn.func_230487_a_(Direction.DOWN, true);
                  float f4 = lightReaderIn.func_230487_a_(Direction.UP, true);
                  float f5 = lightReaderIn.func_230487_a_(Direction.NORTH, true);
-@@ -421,7 +421,7 @@
+@@ -427,7 +427,7 @@
                  return flag7;
              }
  
@@ -27,7 +27,7 @@
          }
          finally
          {
-@@ -431,7 +431,7 @@
+@@ -437,7 +437,7 @@
              }
          }
  

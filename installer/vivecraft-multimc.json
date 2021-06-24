@@ -25,6 +25,7 @@
 		"url": "http://vivecraft.org/jar/"
 	},
 	{
+		"url": "http://vivecraft.org/jar/", 
 		"name": "optifine:OptiFine:$OFVERSION",
 		"MMC-hint": "local"
 	}

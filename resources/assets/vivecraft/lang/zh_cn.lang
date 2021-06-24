@@ -1,4 +1,4 @@
-# Contributors: IceFairyCirno, Logan_Haiz
+# Contributors: BKCake, IceFairyCirno, Logan_Haiz, xwdit
 
 # Key bindings
 vivecraft.key.hotbarNext=物品栏后一格
@@ -24,7 +24,8 @@ vivecraft.key.swapMirrorView=切换桌面镜像
 vivecraft.key.toggleKeyboard=显示/隐藏虚拟键盘
 vivecraft.key.moveThirdPersonCam=移动第三人称摄像机
 vivecraft.key.togglePlayerList=切换显示玩家列表
-vivecraft.key.toggleHandheldCam=切换摄像机
+vivecraft.key.toggleHandheldCam=呼出/隐藏手持相机
+vivecraft.key.quickHandheldCam=松手即拍快速相机
 vivecraft.key.trackpadTouch=触摸触控板
 vivecraft.key.vrInteract=情景交互
 vivecraft.key.guiLeftClick=左键点击
@@ -64,7 +65,7 @@ vivecraft.options.screen.menuworld=主菜单背景世界选项
 vivecraft.options.screen.guiother=聊天/鼠标指针选项
 vivecraft.options.screen.quickcommands=快捷命令
 vivecraft.options.screen.radialmenu=扇形菜单选项
-vivecraft.options.screen.stereorendering=桌面渲染选项
+vivecraft.options.screen.stereorendering=相机和画面渲染选项
 vivecraft.options.screen.roomscale=动作识别交互选项
 vivecraft.options.screen.seated=就座选项
 vivecraft.options.screen.standing=站立移动选项
@@ -74,7 +75,7 @@ vivecraft.options.screen.controls=控制器选项
 # Buttons that lead to the screen
 vivecraft.options.screen.main.button=VR设置……
 vivecraft.options.screen.gui.button=游戏界面及图形界面选项……
-vivecraft.options.screen.stereorendering.button=桌面渲染……
+vivecraft.options.screen.stereorendering.button=相机和画面渲染……
 vivecraft.options.screen.quickcommands.button=快捷命令……
 vivecraft.options.screen.guiother.button=聊天和准心选项……
 vivecraft.options.screen.standing.button=移动选项……
@@ -123,7 +124,7 @@ vivecraft.options.INERTIA_FACTOR=玩家惯性
 vivecraft.options.SIMULATE_FALLING=拟真摔落
 vivecraft.options.WEAPON_COLLISION=武器攻击动作识别
 vivecraft.options.ALLOW_CRAWLING=匍匐动作识别
-vivecraft.options.LIMIT_TELEPORT=生存模式限制
+vivecraft.options.LIMIT_TELEPORT=生存模式传送限制
 vivecraft.options.REVERSE_HANDS=切换主手
 vivecraft.options.STENCIL_ON=使用眼部模板
 vivecraft.options.BCB_ON=显示身体位置
@@ -132,7 +133,7 @@ vivecraft.options.WORLD_ROTATION=世界旋转
 vivecraft.options.WORLD_ROTATION_INCREMENT=旋转增加
 vivecraft.options.TOUCH_HOTBAR=已启用可触摸的快捷栏
 vivecraft.options.PLAY_MODE_SEATED=游玩模式
-vivecraft.options.RENDER_SCALEFACTOR=画面解析度
+vivecraft.options.RENDER_SCALEFACTOR=VR渲染倍率
 vivecraft.options.MONO_FOV=视野(无形变模式)
 vivecraft.options.REALISTIC_JUMP=跳跃动作识别
 vivecraft.options.REALISTIC_SNEAK=潜行动作识别
@@ -155,11 +156,11 @@ vivecraft.options.SEATED_HUD_XHAIR=HUD跟随对象
 vivecraft.options.BACKPACK_SWITCH=背包切换
 vivecraft.options.ANALOG_MOVEMENT=模拟移动
 vivecraft.options.AUTO_SPRINT=自动疾跑
-vivecraft.options.AUTO_SPRINT_THRESHOLD=自动疾跑阈
+vivecraft.options.AUTO_SPRINT_THRESHOLD=自动疾跑摇杆阈值
 vivecraft.options.BOW_MODE=射箭动作识别
-vivecraft.options.TELEPORT_DOWN_LIMIT=下限
-vivecraft.options.TELEPORT_UP_LIMIT=上限
-vivecraft.options.TELEPORT_HORIZ_LIMIT=距离限制
+vivecraft.options.TELEPORT_DOWN_LIMIT=传送高度下限
+vivecraft.options.TELEPORT_UP_LIMIT=传送高度上限
+vivecraft.options.TELEPORT_HORIZ_LIMIT=传送距离限制
 vivecraft.options.ALLOW_STANDING_ORIGIN_OFFSET=允许原始偏移
 vivecraft.options.SEATED_FREE_MOVE=移动类型
 vivecraft.options.FORCE_STANDING_FREE_MOVE=强制自由移动
@@ -169,13 +170,13 @@ vivecraft.options.HRTF_SELECTION=3D环绕音效（头部相关传递函数）
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=重载外部摄像机
 vivecraft.options.RIGHT_CLICK_DELAY=重复右键点击
 vivecraft.options.ANIMAL_TOUCHING=动物触摸识别
-vivecraft.options.HANDHELD_CAMERA_FOV=视野(相机)
-vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=摄像机解析度
+vivecraft.options.HANDHELD_CAMERA_FOV=手持相机视野
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=手持相机显示屏解析度
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=视野内状态栏(HUD)占据的相对大小。\n是相对单位，不是具体大小也不会影响FOV或者其它什么。
 
-vivecraft.options.HUD_DISTANCE.tooltip=悬浮的状态栏(HUD)与玩家身体之间的距离。\nHUD的相对大小不会被这个设置所改变。\n以现实中的米（m）为单位（而不是以一个方块为单位）\n[PS：在Vivecraft中，默认一个方块为1米，\n而Java版客户端可以通过改变视角调整观感。]
+vivecraft.options.HUD_DISTANCE.tooltip=悬浮的状态栏(HUD)与玩家身体之间的距离；HUD的相对大小不会被这个设置所改变。\n以现实中的米（m）为单位（而不是以一个方块为单位）\n[PS：在Vivecraft中，默认一个方块为1米，而Java版客户端可以通过改变视角调整观感。]
 
 vivecraft.options.HUD_LOCK_TO.tooltip=(HUD:状态栏，包括物品栏和生命值等内容)\n指定HUD的锁定位置！\n手柄上方：HUD会出现在你的副手(默认左手)上方。\n头部：HUD会出现并锁定在你的头显视野中！\n手臂(推荐)：HUD被设置在你的副手手腕内侧。\n[转动你的手腕！当你看向它时它便会出现！]
 
@@ -193,7 +194,7 @@ vivecraft.options.MENU_CROSSHAIR_SCALE.tooltip=设置菜单页面中十字指针
 
 vivecraft.options.RENDER_CROSSHAIR_MODE.tooltip=设置游戏内指针的显示方式：\n总是：指针永远会显示，就算HUD被关闭了也是这样！\n仅启用状态栏时：指针只会在启用了HUD时显示\n从不：从不显示指针
 
-vivecraft.options.CHAT_NOTIFICATIONS.tooltip=设置当你收到一条聊天信息是将会发生什么【慎用】\n无：什么都不会发生~（欸嘿~）\n震动：你的手柄会通过震动提示你\n声音：收到消息时会播放信息提示音\n全部：不仅手柄会震动，你还会听到提示音
+vivecraft.options.CHAT_NOTIFICATIONS.tooltip=设置当你收到一条聊天信息是将会发生什么【慎用】\n无：什么都不会发生~（欸嘿~） \n震动：你的手柄会通过震动提示你\n声音：收到消息时会播放信息提示音\n全部：不仅手柄会震动，你还会听到提示音
 
 vivecraft.options.CHAT_NOTIFICATION_SOUND.tooltip=设置聊天信息提示音
 
@@ -209,17 +210,17 @@ vivecraft.options.PHYSICAL_KEYBOARD.tooltip=选择哪一种VR键盘来打字：\
 
 vivecraft.options.PHYSICAL_KEYBOARD_SCALE.tooltip=设置物理碰撞键盘的大小，这个数值将改变它的基础大小。
 
-vivecraft.options.GUI_APPEAR_OVER_BLOCK.tooltip=如果启用这项设置，功能方块（比如箱子和熔炉）的用户操作界面(GUI)将会平放在那个方块的上方；\n否则GUI将会出现在原本的地方。
+vivecraft.options.GUI_APPEAR_OVER_BLOCK.tooltip=如果启用这项设置，功能方块（比如箱子和熔炉）的\n用户操作界面(GUI)将会出现在那个方块的上方；\n不启用：GUI将会出现在原本的地方。
 
-vivecraft.options.FSAA.tooltip=在将画面送往头显之前，使用一种更注重质量的重采样(resampling)方法来处理游戏画面。最好搭配高渲染倍率使用。
+vivecraft.options.FSAA.tooltip=[FSAA]在将画面送往头显之前，使用一种更注重质量的重采样(resampling)方法来处理游戏画面。\n最好搭配高渲染倍率使用。
 
-vivecraft.options.MIRROR_DISPLAY.tooltip=把头显中的画面镜像处理显示在桌面的游戏程式上。\n可以被设置为：\n关：无画面\n单眼：传输到头显左/右眼镜片的画面\n双眼：同时显示传输到头显左眼和右眼镜片的画面\n第一人称视角：渲染整合双眼画面\n第三人称视角：从侧后方45°向下俯视的视角\nMR混合现实模式：【高级，请勿随意选择】\n\n第一、第三人称视角和混合现实模式都会影响性能和帧数。
+vivecraft.options.MIRROR_DISPLAY.tooltip=把头显中的画面镜像处理显示在桌面的游戏程式上。可以被设置为：\n关：无画面\n单眼：传输到头显左/右眼镜片的画面\n双眼：同时显示传输到头显左眼和右眼镜片的画面\n第一人称视角{影响帧数}：渲染整合双眼画面\n第三人称视角{影响帧数}：从侧后方45°向下俯视的视角\nMR混合现实模式{影响帧数}：【慎用】\n
 
-vivecraft.options.MIRROR_EYE.tooltip=在裁切模式和单眼模式中使用传输到头显里哪个镜片中的画面
+vivecraft.options.MIRROR_EYE.tooltip=（在裁切模式和单眼模式中）\n使用传输到头显里哪个镜片中的画面？
 
-vivecraft.options.MIXED_REALITY_KEY_COLOR.tooltip=在MR混合现实模式中被填充到”透明“区域的颜色。系统会过滤掉游戏中和这个颜色相配的一些颜色，防止画面看起来怪怪的。
+vivecraft.options.MIXED_REALITY_KEY_COLOR.tooltip=在MR混合现实模式中被填充到”透明“区域的颜色。\n系统会过滤掉游戏中和这个颜色相配的一些颜色，防止画面看起来怪怪的。
 
-vivecraft.options.MIXED_REALITY_RENDER_HANDS.tooltip=在MR混合现实模式中渲染你的双手。仅调整是否渲染你所使用的人物的双手；人物模型的双手皮肤和手中所持有的物品都会被渲染。
+vivecraft.options.MIXED_REALITY_RENDER_HANDS.tooltip=在MR混合现实模式中渲染你的双手。\n仅调整是否渲染你所使用的人物的双手；\n人物模型的双手皮肤和手中所持有的物品都会被渲染。
 
 vivecraft.options.MIXED_REALITY_UNITY_LIKE.tooltip=在以下两个选项中选择：\nUnity式的一分四窗口显示（例如：左下第三人称，右下第一人称）\n3+1（Side-by-Side）式的一分二窗口显示
 
@@ -233,7 +234,7 @@ vivecraft.options.WALK_UP_BLOCKS.tooltip=这个选项允许你设置角色不用
 
 vivecraft.options.MOVEMENT_MULTIPLIER.tooltip=调整这个数值，可以让你比默认设置移动地慢一些。这也许可以帮助你减轻一些自由移动模式带来的晕眩感。\n§c警告！改变这个设置可能会触发多人服务器防作弊程序！\n默认设置为Minecraft标准移动速度(1.0)
 
-vivecraft.options.INERTIA_FACTOR.tooltip=设置玩家在单人模式中移动的惯性。惯性越低，加速度越大，移动灵敏度更高；反之亦然。\n高惯性也许可以减轻一些玩家在使用自由移动模式时的晕眩感，但在使用的时候请小心悬崖！\n默认设置为”一般“，即标准Minecraft玩家的移动方式\n该设置目前不会影响玩家在岩浆、水中的动作和跳跃动作。\n设置量表：\n无<一般<很大<更大\n
+vivecraft.options.INERTIA_FACTOR.tooltip=选项：\n无<一般<很大<更大\n设置玩家在单人模式中移动的惯性。惯性越低，加速度越大，移动灵敏度更高；反之亦然。\n高惯性也许可以减轻一些玩家在使用自由移动模式时的晕眩感，但在使用的时候请小心悬崖！\n默认设置为”一般“，即标准Minecraft玩家的移动方式\n该设置目前不会影响玩家在岩浆、水中的动作和跳跃动作。
 
 vivecraft.options.SIMULATE_FALLING.tooltip=启用该设置后，使用传送移动模式的玩家如果脚下没有方块的话，他们将会摔个嘴啃泥！\n不过与此同时，玩家也可以跳跃了。（是谁赢了呢emm）
 
@@ -243,13 +244,13 @@ vivecraft.options.ALLOW_CRAWLING.tooltip=如果启用这个功能，玩家将可
 
 vivecraft.options.LIMIT_TELEPORT.tooltip=如果启用该设置，传送移动在生存模式中将会受到限制。你不能使用传送从你站立的方块边缘传送到你头顶的方块上；传送移动也会消耗食物；传送移动将会内置一个隐藏的、随时间回复的能量条，能量越多，可以传送的距离越远。
 
-vivecraft.options.REVERSE_HANDS.tooltip=切换主手（默认主手为右手）\n开：左手为主手\n关：右手为主手\n\n切换主手后，重启游戏以应用双手键位的互换；同时请确认你在SteamVR中选择了默认键位设置(default bindings)
+vivecraft.options.REVERSE_HANDS.tooltip=切换主手（默认主手为右手）\n开：左手为主手\n关：右手为主手\n切换主手后，重启游戏以应用双手键位的互换；同时请确认你在SteamVR中选择了默认键位设置(default bindings)
 
 vivecraft.options.STENCIL_ON.tooltip=【屏幕黑边】\n开启后在频幕上显示镜片黑边，遮盖头显镜片外视野范围外的区域。\n可以略微增加帧数。
 
 vivecraft.options.BCB_ON.tooltip=通过在地面上显示一个方形的影子来显示你的位置判定。\n-它可是你的好♂兄♂弟\n-啊♂？乖♂乖♂站♂好♂
 
-vivecraft.options.WORLD_SCALE.tooltip=通过调整倍率来放大缩小玩家！\n数值调高会让你从巨人的视角看世界！\n调小来体验小人过的视角！\n娱乐功能，如果可以的话最好不要调整~
+vivecraft.options.WORLD_SCALE.tooltip=通过调整倍率来放大缩小玩家！\n数值调高会让你从巨人的视角看世界！\n调小来体验《格列佛游记（Gulliver's Travels）》里 小人国 的视角！\n娱乐功能，如果可以的话最好不要调整~
 
 vivecraft.options.WORLD_ROTATION.tooltip=微调所使用头显的旋转值\n如果能够跟某个按键绑定的话会更有用\n可以使用方向键”←“”→“进行调节
 
@@ -273,11 +274,11 @@ vivecraft.options.REALISTIC_CLIMB.tooltip=如果打开了该设置项，你就�
 
 vivecraft.options.REALISTIC_SWIM.tooltip=如果打开了这个设置，你就在三次元里体会到划水的乐趣了！\n（被水淹没，不知所措）
 
-vivecraft.options.REALISTIC_ROW.tooltip=让我们荡起双桨~小船儿————\n————开到陆上~船里载着那SCP173\n看你到底该如何——（咔擦）
+vivecraft.options.REALISTIC_ROW.tooltip=如果想锻炼手臂的话可以试试\n*让我们荡起双桨~小船儿开到陆上~\n**也许人会先起飞或者手柄撞到东西上报废吧（笑）
 
 vivecraft.options.WALK_MULTIPLIER.tooltip=倍乘你现实中一步走出去后，在游戏中移动的距离；\n让你可以在不动用移动按键的前提下走得更远一些；\n但是可能会导致晕眩\n【不建议更改】
 
-vivecraft.options.FREEMOVE_MODE.tooltip=自由移动模式下人物移动的方向。\n\n控制器：副手(默认左手)手柄前端指向的方向【推荐】\n头显：你的VR头显看向的方向\n  原地摆臂移动：转向取决于你的VR手柄(控制器)是怎么甩的，向上向下取决于你的头显。\n[Run-In-Place: Yaw is based on how controllers are swinging. Pitch is your Headset.]\n房间：转向取决于你的VR游玩空间。向上向下取决于你的头显。这个设置最适合那些无法追踪到背后、或者只有180度视野的人（比如不想转身的站立模式玩家）\n[Room: Yaw is relative to your VR room forward. Pitch is your Headset. This mode is best only for 180 setups.]
+vivecraft.options.FREEMOVE_MODE.tooltip=自由移动模式下人物移动的方向。\n控制器：副手(默认左手)手柄前端指向的方向【推荐】\n头显：你的VR头显看向的方向\n原地摆臂移动：左右转向(Yaw)取决于你的VR手柄(控制器)是怎么甩的，向上向下(Pitch)则取决于你的头显方向。\n房间：左右转向(Yaw)取决于你的VR游玩空间的正向。向上向下(Pitch)取决于你的头显。这个设置只适合那些无法追踪到背后、或者只有180度追踪/视野的人（比如不想转身的站立模式玩家）
 
 vivecraft.options.VEHICLE_ROTATION.tooltip=在载具（如船和矿车）中，玩家视角会随着载具旋转而旋转。\n别玩太狠了，这个可能会使人失去方向感
 
@@ -301,19 +302,19 @@ vivecraft.options.SEATED_HUD_XHAIR.tooltip=状态栏(HUD)跟随的对象\n选择
 
 vivecraft.options.BACKPACK_SWITCH.tooltip=如果启用这个设置：\n把你的右控制器伸向脑后，即可快速切换出物品栏的第一个物品，或者切换到你上一次切换的格子！\n而用你的左控制器这样做，则可以快速交换你双手所持有的物品！\n【是个好功能，请善用！】
 
-vivecraft.options.ANALOG_MOVEMENT.tooltip=如果VR手柄(控制器)上与移动绑定的键(自由移动模式下是摇杆)有可变行程(可变角度)的话，将根据对应按键(摇杆)的可变行程(可变角度)来控制行走速度。\n\n为了充分地模拟对于行走的控制，最好使用”移动/扫描(Strafe)“或者”移动/旋转视角(Rotate)“设置
+vivecraft.options.ANALOG_MOVEMENT.tooltip=如果VR手柄(控制器)上“与移动绑定的键(自由移动模式下是摇杆)”有“可变行程(可变角度)”的话，将根据对应按键(摇杆)的可变行程(可变角度)来控制行走速度。\n\n为了充分地模拟对于行走的控制，最好使用”移动/扫描(Strafe)“或者”移动/旋转视角(Rotate)“设置
 
 vivecraft.options.AUTO_SPRINT.tooltip=使用自由移动模式时，摇杆角度一旦达到设定的阈值便会自动触发冲刺。\nWhile using freemove, sprint will automatically activate when the axis reaches the configured threshold.
 
 vivecraft.options.AUTO_SPRINT_THRESHOLD.tooltip=设置激活自动冲刺的摇杆角度阈值\n超过即激发\n\nThe axis threshold at which auto-sprint activates.
 
-vivecraft.options.BOW_MODE.tooltip=你可以设置在什么情况下进行射箭的动作识别\n关：从不。（我就是要做按键英雄！）\n原版：仅在使用原版弓(Bow)时使用射箭动作识别；不识别MOD道具。\n开：对所有使用"弓(BOW)"动作的物品都启用射箭动作识别。\n【请注意该设置最好只用于那些有可交互拉弓射击动作的弓类武器】\n【虽然可以上膛，但弩和枪械(+MOD)没有弓(BOW)那样的可交互射击动作】
+vivecraft.options.BOW_MODE.tooltip=你可以设置在什么情况下进行射箭的动作识别\n关：从不。（我就是要做按键英雄！）\n原版：仅在使用原版弓(Bow)时使用射箭动作识别；不识别MOD道具。\n开：对所有使用"弓(BOW)"的蓄力动作的物品都启用射箭动作识别。\n【请注意该设置最好只用于那些有可交互拉弓、蓄力、射击动作的弓类武器】\n【虽然可以上膛，但弩和枪械(+MOD)没有弓(BOW)那样的蓄力射击动作】
 
 vivecraft.options.TELEPORT_DOWN_LIMIT.tooltip=限制你每次传送能把你送往多低的地方\n以方块(blocks)为单位
 
 vivecraft.options.TELEPORT_UP_LIMIT.tooltip=限制你每次传送能把你送上多高的地方\n以方块(blocks)为单位
 
-vivecraft.options.TELEPORT_HORIZ_LIMIT.tooltip=限制你传送的距离\n以方块(blocks)为单位
+vivecraft.options.TELEPORT_HORIZ_LIMIT.tooltip=限制你传送的水平距离\n以方块(blocks)为单位
 
 vivecraft.options.ALLOW_STANDING_ORIGIN_OFFSET.tooltip=允许玩家在”站立游玩模式“下使用”复位“按钮。\n这个选项通常是给那些在站立模式下游玩，却又想坐搬个椅子坐着的玩家。\n（-说到底就是条懒狗……-懒狗怎么了？看不起懒狗啊？）
 
@@ -321,7 +322,7 @@ vivecraft.options.SEATED_FREE_MOVE.tooltip=选择在就座游玩模式中，你�
 
 vivecraft.options.FORCE_STANDING_FREE_MOVE.tooltip=强制使用备用的自由移动模式绑定按键(默认启用按键为左扳机)。\n如果想使用更多的移动选项，请在SteamVR设置中”控制器“栏目的”管理控制器按键设置“中进行编辑。\n\n请注意，启用这项设置将禁用传送模式中绑定的触发按键。
 
-vivecraft.options.ALLOW_ADVANCED_BINDINGS.tooltip=显示可以通过SteamVR绑定的额外按键！可用于绑定攀爬、显示键盘和MR混合显示相关功能！\n\n设置改变后需要重启。
+vivecraft.options.ALLOW_ADVANCED_BINDINGS.tooltip=显示可以通过SteamVR绑定的额外按键！\n可用于绑定攀爬、显示键盘和MR混合显示相关功能！\n\n需要重启SteamVR让改动生效。
 
 vivecraft.options.MENU_WORLD_SELECTION.tooltip=选择想要作为主菜单背景显示出来的世界！\n如果系统没有找到任何自订世界的话，会强制使用官方世界。
 
@@ -406,7 +407,7 @@ vivecraft.gui.ok=确认
 vivecraft.gui.clear=清除
 vivecraft.gui.loaddefaults=加载默认设置
 vivecraft.gui.menuworld.refresh=刷新主菜单世界背景
-vivecraft.gui.menuworld.loadnew=家崽新的主菜单世界背景
+vivecraft.gui.menuworld.loadnew=加载新的主菜单世界背景
 vivecraft.gui.radialmenu.mainset=默认菜单设置
 vivecraft.gui.radialmenu.alternateset=额外菜单设置
 vivecraft.gui.chat=聊天栏
@@ -417,6 +418,7 @@ vivecraft.gui.screenshot=截屏
 vivecraft.gui.calibrateheight=校准身高
 vivecraft.gui.alignkatwalk=校准KAT WALK
 vivecraft.gui.movethirdpersoncam=移动第三人称摄像头
+vivecraft.gui.social=社交菜单
 
 # Items
 vivecraft.item.jumpboots=弹跳靴
@@ -428,13 +430,14 @@ vivecraft.messages.seatedmode=切换至就座游玩模式将会关闭VR手柄输
 vivecraft.messages.radialmenubind.1=请确认“打开扇形菜单”的功能已经跟手柄的某个键位绑定。
 vivecraft.messages.radialmenubind.2=在扇形菜单打开的时候按住（键盘上的Shift键）来切换到这一套配置。
 vivecraft.messages.controls.1=键位绑定由SteamVR输入(Input)来控制。
-vivecraft.messages.controls.2=如需修改设置，请鼠标点击SteamVR窗口左上角→设置→控制器→管理控制器按键设置\n[也可在游戏内按下SteamVR菜单键后点击画面下方齿轮进入设置页面}
-vivecraft.messages.controls.3= 必须在SteamVR启动 §o之前§r§6 运行Steam,否则键位的绑定和更改不会被保存。
+vivecraft.messages.controls.2=请在SteamVR中的“设置”→“控制器”→“管理控制器按键设置”中进行修改（SteamVR 快捷菜单中也可修改）
+vivecraft.messages.controls.3= 必须在SteamVR启动 §o之前 §r§6 运行Steam，§o§6否则键位的绑定和更改不会被保存。
 vivecraft.messages.serverplugin=检测到Vivecraft服务器适应插件(MOD)%s
 vivecraft.messages.noserverplugin=没有检测到Vivecraft服务器适应插件(MOD)，这个服务器也许不支持使用传送移动！已启用有限移动模式！（如果完全无法传送，将切换到备用的自由移动模式！）
-vivecraft.messages.calibrateheight=请在按下菜单键呼出的暂停菜单中校准您的升高。
+vivecraft.messages.calibrateheight=请在按下菜单键呼出的暂停菜单中校准您的身高。
 vivecraft.messages.rendersetupfailed=客户端启动/渲染失败(Render setup failed)：%s
 vivecraft.messages.intelgraphics=不支持Intel核芯显卡！如果你使用的使笔记本电脑，请在设置中强制JAVA程序使用“高性能GPU”！已检测到的GPU有：%s
+vivecraft.messages.nosteamvr=未检测到OpenVR. 您安装SteamVR了吗？
 vivecraft.messages.menuworldexportcomplete.1=世界文件导出完成！区域大小：%d
 vivecraft.messages.menuworldexportcomplete.2=保存至%s
 vivecraft.messages.menuworldexportclientwarning=警告！正在使用客户端世界渲染器保存主菜单背景世界！数据可能不完整！我们推荐您将主菜单背景世界保存到单人游戏中。

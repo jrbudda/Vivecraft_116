@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/MobEntity.java
 +++ b/net/minecraft/entity/MobEntity.java
-@@ -1525,7 +1525,7 @@
+@@ -1526,7 +1526,7 @@
                  if (this.world instanceof ServerWorld)
                  {
                      SpawnEggItem spawneggitem = (SpawnEggItem)itemstack.getItem();

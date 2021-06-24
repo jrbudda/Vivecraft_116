@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/BakedQuad.java
 +++ b/net/minecraft/client/renderer/model/BakedQuad.java
-@@ -116,11 +116,6 @@
+@@ -119,11 +119,6 @@
          Reflector.callVoid(Reflector.LightUtil_putBakedQuad, p_pipe_1_, this);
      }
  
