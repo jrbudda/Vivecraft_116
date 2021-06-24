@@ -1,9 +1,9 @@
 package org.vivecraft.gameplay.screenhandlers;
 
-import org.vivecraft.control.ControllerType;
 import org.vivecraft.gui.GuiKeyboard;
 import org.vivecraft.gui.PhysicalKeyboard;
-import org.vivecraft.provider.OpenVRUtil;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.openvr_jna.OpenVRUtil;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Matrix4f;
 import org.vivecraft.utils.math.Vector3;
@@ -137,7 +137,7 @@ public class KeyboardHandler {
 
 			float yaw = (float)Math.PI + (float)Math.toRadians(-mc.vrPlayer.vrdata_room_pre.hmd.getYaw());
 			Rotation_room = Matrix4f.rotationY(yaw);
-			Rotation_room = Matrix4f.multiply(Rotation_room, OpenVRUtil.rotationXMatrix((float)Math.PI * 0.8f));
+			Rotation_room = Matrix4f.multiply(Rotation_room, Utils.rotationXMatrix((float)Math.PI * 0.8f));
 		} else if (guiRelative && GuiHandler.guiRotation_room != null) {
 			org.vivecraft.utils.lwjgl.Matrix4f guiRot = Utils.convertOVRMatrix(GuiHandler.guiRotation_room);
 			Vector3d guiUp = new Vector3d(guiRot.m10, guiRot.m11, guiRot.m12);

@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.settings.profile.ProfileManager;
 import org.vivecraft.settings.profile.ProfileReader;
@@ -751,7 +751,7 @@ public class VRSettings
 
 					if(optionTokens[0].equals("originOffset")){
                         String[] split = optionTokens[1].split(",");
-					    MCOpenVR.offset = new Vector3(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
+					    mc.vr.offset = new Vector3(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
                     }
 
 					if(optionTokens[0].equals("allowStandingOriginOffset")){
@@ -990,7 +990,7 @@ public class VRSettings
             case HUD_HIDE:
                 return this.mc.gameSettings.hideGUI ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case RENDER_SCALEFACTOR:
-                Framebuffer eye0 = mc.stereoProvider.framebufferEye0;
+                Framebuffer eye0 = mc.vrRenderer.framebufferEye0;
             	return var4 + Math.round(this.renderScaleFactor * 100) + "% (" + (int)Math.ceil(eye0.framebufferWidth * Math.sqrt(this.renderScaleFactor)) + "x" + (int)Math.ceil(eye0.framebufferHeight * Math.sqrt(this.renderScaleFactor)) + ")";
             case FSAA:
             	return this.useFsaa ? var4 + Lang.getOn() : var4 + Lang.getOff();
@@ -1204,7 +1204,7 @@ public class VRSettings
                 return var4 + String.format("%.0f\u00B0", this.handCameraFov);
             case HANDHELD_CAMERA_RENDER_SCALE:
                 if (Config.isShaders()) {
-                    Framebuffer camfb = mc.stereoProvider.cameraFramebuffer;
+                    Framebuffer camfb = mc.vrRenderer.cameraFramebuffer;
                     return var4 + camfb.framebufferWidth + "x" + camfb.framebufferHeight;
                 } else {
                     return var4 + Math.round(1920 * this.handCameraResScale) + "x" + Math.round(1080 * this.handCameraResScale);
@@ -1335,7 +1335,7 @@ public class VRSettings
                         this.displayMirrorMode = MIRROR_OFF;
                         break;
                 }
-                this.mc.stereoProvider.reinitFrameBuffers("Mirror Setting Changed");
+                this.mc.vrRenderer.reinitFrameBuffers("Mirror Setting Changed");
                 break;
             case MIRROR_EYE:
                 this.displayMirrorLeftEye = !this.displayMirrorLeftEye;
@@ -1364,15 +1364,15 @@ public class VRSettings
             	break;
             case MIXED_REALITY_UNITY_LIKE:
             	this.mixedRealityUnityLike = !this.mixedRealityUnityLike;
-            	mc.stereoProvider.reinitFrameBuffers("MR Setting Changed");
+            	mc.vrRenderer.reinitFrameBuffers("MR Setting Changed");
             	break;
             case MIXED_REALITY_UNDISTORTED:
             	this.mixedRealityMRPlusUndistorted = !this.mixedRealityMRPlusUndistorted;
-            	mc.stereoProvider.reinitFrameBuffers("MR Setting Changed");
+            	mc.vrRenderer.reinitFrameBuffers("MR Setting Changed");
             	break;
             case MIXED_REALITY_ALPHA_MASK:
             	this.mixedRealityAlphaMask = !this.mixedRealityAlphaMask;
-            	mc.stereoProvider.reinitFrameBuffers("MR Setting Changed");
+            	mc.vrRenderer.reinitFrameBuffers("MR Setting Changed");
             	break;
             case WALK_UP_BLOCKS:
                 this.walkUpBlocks = !this.walkUpBlocks;
@@ -1647,7 +1647,7 @@ public class VRSettings
                 break;
             case WORLD_ROTATION:
                 this.vrWorldRotation = par2;
-                MCOpenVR.seatedRot = par2;
+                mc.vr.seatedRot = par2;
                 break;
             case WORLD_ROTATION_INCREMENT:
             	this.vrWorldRotation = 0;
@@ -1839,7 +1839,7 @@ public class VRSettings
             var5.println("radialModeHold:" + this.radialModeHold);
             var5.println("physicalKeyboard:" + this.physicalKeyboard);
             var5.println("physicalKeyboardScale:" + this.physicalKeyboardScale);
-            var5.println("originOffset:" + MCOpenVR.offset.getX() + "," + MCOpenVR.offset.getY() + "," + MCOpenVR.offset.getZ());
+            var5.println("originOffset:" + mc.vr.offset.getX() + "," + mc.vr.offset.getY() + "," + mc.vr.offset.getZ());
             var5.println("allowStandingOriginOffset:" + this.allowStandingOriginOffset);
             var5.println("seatedFreeMove:" + this.seatedFreeMove);
             var5.println("forceStandingFreeMove:" + this.forceStandingFreeMove);

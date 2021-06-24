@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/MainWindow.java
 +++ b/net/minecraft/client/MainWindow.java
-@@ -147,7 +147,7 @@
+@@ -159,7 +159,7 @@
          GL.createCapabilities();
          this.updateVideoMode();
          this.updateFramebufferSize();
@@ -9,7 +9,7 @@
          GLFW.glfwSetWindowPosCallback(this.handle, this::onWindowPosUpdate);
          GLFW.glfwSetWindowSizeCallback(this.handle, this::onWindowSizeUpdate);
          GLFW.glfwSetWindowFocusCallback(this.handle, this::onWindowFocusUpdate);
-@@ -309,7 +309,9 @@
+@@ -321,7 +321,9 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
          this.vsync = vsyncEnabled;
@@ -20,7 +20,7 @@
      }
  
      public void close()
-@@ -328,21 +330,22 @@
+@@ -340,21 +342,22 @@
          this.windowY = windowYIn;
      }
  
@@ -47,7 +47,7 @@
                  }
              }
          }
-@@ -371,8 +374,13 @@
+@@ -383,8 +386,13 @@
  
      private void onWindowSizeUpdate(long windowPointer, int windowWidthIn, int windowHeightIn)
      {
@@ -61,7 +61,7 @@
      }
  
      private void onWindowFocusUpdate(long windowPointer, boolean hasFocus)
-@@ -507,13 +515,14 @@
+@@ -519,13 +527,14 @@
      {
          int i;
  
@@ -78,7 +78,7 @@
          }
  
          return i;
-@@ -522,10 +531,10 @@
+@@ -534,10 +543,10 @@
      public void setGuiScale(double scaleFactor)
      {
          this.guiScaleFactor = scaleFactor;
@@ -93,7 +93,7 @@
      }
  
      public void setWindowTitle(String title)
-@@ -548,12 +557,16 @@
+@@ -560,12 +569,16 @@
  
      public int getFramebufferWidth()
      {

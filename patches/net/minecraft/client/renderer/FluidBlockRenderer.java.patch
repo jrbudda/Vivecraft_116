@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FluidBlockRenderer.java
 +++ b/net/minecraft/client/renderer/FluidBlockRenderer.java
-@@ -63,6 +63,7 @@
+@@ -64,6 +64,7 @@
              return false;
          }
      }
@@ -8,7 +8,7 @@
  
      private static boolean func_239283_a_(IBlockReader p_239283_0_, BlockPos p_239283_1_, Direction p_239283_2_, float p_239283_3_)
      {
-@@ -148,11 +149,15 @@
+@@ -149,11 +150,15 @@
                  float f8 = this.getFluidHeight(lightReaderIn, posIn.south(), fluidStateIn.getFluid());
                  float f9 = this.getFluidHeight(lightReaderIn, posIn.east().south(), fluidStateIn.getFluid());
                  float f10 = this.getFluidHeight(lightReaderIn, posIn.east(), fluidStateIn.getFluid());

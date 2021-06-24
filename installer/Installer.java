@@ -47,10 +47,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MINECRAFT_VERSION     = "1.16.5";
     private static final String MC_VERSION            = "1.16.5";
     private static final String MC_MD5                = "a57b9157ff3bb308208e79ef9e19187e";
-    private static final String OF_FILE_NAME          = "1.16.5_HD_U_G6";
-    private static final String OF_MD5                = "4a13bb8132744ab7beeff9f076d48125";
+    private static final String OF_FILE_NAME          = "1.16.5_HD_U_G8";
+    private static final String OF_MD5                = "e0717ba6d1674af83036ebc479fc77b4";
     private static final String OF_VERSION_EXT        = ".jar";
-    private static String FORGE_VERSION               = "36.0.7";
+    private static String FORGE_VERSION               = "36.1.31";
     private static final String HOMEPAGE_LINK         = "http://www.vivecraft.org";
     private static final String DONATION_LINK         = "https://www.patreon.com/jrbudda";
     private static final String PROJECT_NAME          = "Vivecraft";

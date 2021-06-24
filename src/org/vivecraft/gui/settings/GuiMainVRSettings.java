@@ -6,7 +6,8 @@ package org.vivecraft.gui.settings;
 
 import org.vivecraft.gui.framework.GuiVROptionsBase;
 import org.vivecraft.gui.framework.VROptionLayout;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.MCVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.client.gui.screen.Screen;
@@ -99,15 +100,15 @@ public class GuiMainVRSettings extends GuiVROptionsBase
     @Override
     protected void loadDefaults() {
         minecraft.vrSettings.vrWorldRotation = 0;
-        MCOpenVR.seatedRot = 0;
+        MCVR.get().seatedRot = 0;
         minecraft.vrSettings.vrWorldScale = 1;
         minecraft.vrSettings.vrWorldRotationIncrement = 45f;
         minecraft.vrSettings.seated = false;
-		MCOpenVR.clearOffset();
+        MCVR.get().clearOffset();
     }
 
     protected void resetOrigin() {
-		MCOpenVR.resetPosition();
+    	MCVR.get().resetPosition();
 		settings.saveOptions();
 		this.minecraft.displayGuiScreen(null);
 	}

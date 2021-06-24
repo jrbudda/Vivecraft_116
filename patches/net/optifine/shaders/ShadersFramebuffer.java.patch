@@ -1,0 +1,52 @@
+--- a/net/optifine/shaders/ShadersFramebuffer.java
++++ b/net/optifine/shaders/ShadersFramebuffer.java
+@@ -37,7 +37,7 @@
+     private int[] colorImageUnits;
+     private int glFramebuffer;
+     private FlipTextures colorTexturesFlip;
+-    private IntBuffer depthTextures;
++    public IntBuffer depthTextures;
+     private final DrawBuffers drawBuffers;
+     private DrawBuffers activeDrawBuffers;
+     private int[] drawColorTextures;
+@@ -94,6 +94,7 @@
+         ((Buffer)this.depthTextures).position(0);
+         this.colorTexturesFlip.position(0);
+ 
++        //VIVECRAFT: We need stencil buffers here (not on the shadow map tho)!
+         for (int k = 0; k < this.usedDepthBuffers; ++k)
+         {
+             GlStateManager.bindTexture(this.depthTextures.get(k));
+@@ -107,11 +108,18 @@
+             {
+                 GL30.glTexParameteri(3553, 34892, 34894);
+             }
+-
+-            GL30.glTexImage2D(3553, 0, 6402, this.width, this.height, 0, 6402, 5126, (FloatBuffer)null);
+-        }
+-
+-        this.setFramebufferTexture2D(36160, 36096, 3553, this.depthTextures.get(0), 0);
++            
++            if(this.name == "dfb")
++            	GL30.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL30.GL_DEPTH24_STENCIL8, this.width, this.height, 0, GL30.GL_DEPTH_STENCIL, GL30.GL_UNSIGNED_INT_24_8, (FloatBuffer)null);
++            else
++            	GL30.glTexImage2D(3553, 0, 6402, this.width, this.height, 0, 6402, 5126, (FloatBuffer)null);
++        }
++        
++        if(this.name == "dfb")
++        	this.setFramebufferTexture2D(36160, GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.depthTextures.get(0), 0);
++        else
++        	this.setFramebufferTexture2D(36160, 36096, 3553, this.depthTextures.get(0), 0);
++        
+         Shaders.checkGLError("FBS " + this.name + " depth");
+ 
+         for (int l = 0; l < this.usedColorBuffers; ++l)
+@@ -165,7 +173,7 @@
+     {
+         if (this.glFramebuffer != 0)
+         {
+-            EXTFramebufferObject.glDeleteFramebuffersEXT(this.glFramebuffer);
++            GlStateManager.deleteFramebuffers(this.glFramebuffer);
+             this.glFramebuffer = 0;
+         }
+ 

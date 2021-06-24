@@ -9,7 +9,7 @@
          return airesourcepack;
      }
  
-@@ -1513,7 +1513,7 @@
+@@ -1549,7 +1549,7 @@
              list.add(s);
          }
  
@@ -18,7 +18,7 @@
          return astring;
      }
  
-@@ -1645,7 +1645,7 @@
+@@ -1681,7 +1681,7 @@
  
              if (s == null)
              {
@@ -27,7 +27,7 @@
              }
  
              list.add(s);
-@@ -1941,7 +1941,7 @@
+@@ -1978,7 +1978,7 @@
          {
              int i = arr.length;
              int j = i + 1;
@@ -36,7 +36,7 @@
              System.arraycopy(arr, 0, aobject, 0, i);
              aobject[i] = obj;
              return aobject;
-@@ -1952,7 +1952,7 @@
+@@ -1989,7 +1989,7 @@
      {
          List list = new ArrayList<>(Arrays.asList(arr));
          list.add(index, obj);
@@ -45,7 +45,7 @@
          return list.toArray(aobject);
      }
  
-@@ -1970,7 +1970,7 @@
+@@ -2007,7 +2007,7 @@
          {
              int i = arr.length;
              int j = i + objs.length;
@@ -54,7 +54,7 @@
              System.arraycopy(arr, 0, aobject, 0, i);
              System.arraycopy(objs, 0, aobject, i, objs.length);
              return aobject;
-@@ -2000,7 +2000,7 @@
+@@ -2037,7 +2037,7 @@
          }
          else
          {

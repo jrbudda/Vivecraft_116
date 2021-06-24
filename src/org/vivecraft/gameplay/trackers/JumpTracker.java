@@ -1,8 +1,8 @@
 package org.vivecraft.gameplay.trackers;
 
 import org.vivecraft.api.NetworkHelper;
-import org.vivecraft.gameplay.OpenVRPlayer;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.gameplay.VRPlayer;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.settings.AutoCalibration;
 
 import net.minecraft.client.Minecraft;
@@ -58,7 +58,7 @@ public class JumpTracker extends Tracker {
 
 	@Override
 	public void idleTick(ClientPlayerEntity player) {
-		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyJump).setEnabled(isClimbeyJumpEquipped() && (this.isActive(player) || (mc.climbTracker.isClimbeyClimbEquipped() && mc.climbTracker.isGrabbingLadder())));
+		mc.vr.getInputAction(mc.vr.keyClimbeyJump).setEnabled(isClimbeyJumpEquipped() && (this.isActive(player) || (mc.climbTracker.isClimbeyClimbEquipped() && mc.climbTracker.isGrabbingLadder())));
 	}
 
 	@Override
@@ -71,17 +71,17 @@ public class JumpTracker extends Tracker {
 
 		if(isClimbeyJumpEquipped()){
 
-			OpenVRPlayer provider = mc.vrPlayer;
+			VRPlayer provider = mc.vrPlayer;
 
 			boolean[] ok = new boolean[2];
 
 			for(int c=0;c<2;c++){
-				ok[c]=	MCOpenVR.keyClimbeyJump.isKeyDown();
+				ok[c]=	mc.vr.keyClimbeyJump.isKeyDown();
 			}
 
 			boolean jump = false;
 			if(!ok[0] && c0Latched){ //let go right
-				MCOpenVR.triggerHapticPulse(0, 200);
+				mc.vr.triggerHapticPulse(0, 200);
 				jump = true;
 			}
 			
@@ -93,11 +93,11 @@ public class JumpTracker extends Tracker {
 				latchStart[0] = now;
 				latchStartOrigin[0] = mc.vrPlayer.vrdata_world_pre.origin;
 				latchStartPlayer[0] = mc.player.getPositionVec();
-				MCOpenVR.triggerHapticPulse(0, 1000);
+				mc.vr.triggerHapticPulse(0, 1000);
 			}
 
 			if(!ok[1] && c1Latched){ //let go left
-				MCOpenVR.triggerHapticPulse(1, 200);
+				mc.vr.triggerHapticPulse(1, 200);
 				jump = true;
 			}
 
@@ -105,7 +105,7 @@ public class JumpTracker extends Tracker {
 				latchStart[1] = now;
 				latchStartOrigin[1] = mc.vrPlayer.vrdata_world_pre.origin;
 				latchStartPlayer[1] = mc.player.getPositionVec();
-				MCOpenVR.triggerHapticPulse(1, 1000);
+				mc.vr.triggerHapticPulse(1, 1000);
 			}
 
 			c0Latched = ok[0];
@@ -120,17 +120,17 @@ public class JumpTracker extends Tracker {
 			
 
 			if(!jump && isjumping()){ //bzzzzzz
-				MCOpenVR.triggerHapticPulse(0, 200);
-				MCOpenVR.triggerHapticPulse(1, 200);
+				mc.vr.triggerHapticPulse(0, 200);
+				mc.vr.triggerHapticPulse(1, 200);
 			}
 
 			if(jump){
 				mc.climbTracker.forceActivate = true;
 
-				Vector3d m = (MCOpenVR.controllerHistory[0].netMovement(0.3)
-						.add(MCOpenVR.controllerHistory[1].netMovement(0.3)));
+				Vector3d m = (mc.vr.controllerHistory[0].netMovement(0.3)
+						.add(mc.vr.controllerHistory[1].netMovement(0.3)));
 				
-				double sp =  (MCOpenVR.controllerHistory[0].averageSpeed(0.3) + MCOpenVR.controllerHistory[1].averageSpeed(0.3)) / 2 ;	
+				double sp =  (mc.vr.controllerHistory[0].averageSpeed(0.3) + mc.vr.controllerHistory[1].averageSpeed(0.3)) / 2 ;	
 									
 				m = m.scale(0.33f * sp);
 							
@@ -168,8 +168,8 @@ public class JumpTracker extends Tracker {
 				mc.vrPlayer.setRoomOrigin(thing.x, thing.y, thing.z, false);
 			}
 		}else {
-			if(MCOpenVR.hmdPivotHistory.netMovement(0.25).y > 0.1 &&
-					MCOpenVR.hmdPivotHistory.latest().y-AutoCalibration.getPlayerHeight() > mc.vrSettings.jumpThreshold
+			if(mc.vr.hmdPivotHistory.netMovement(0.25).y > 0.1 &&
+					mc.vr.hmdPivotHistory.latest().y-AutoCalibration.getPlayerHeight() > mc.vrSettings.jumpThreshold
 					){
 				player.jump();
 			}			

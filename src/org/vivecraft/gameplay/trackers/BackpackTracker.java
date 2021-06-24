@@ -1,7 +1,7 @@
 package org.vivecraft.gameplay.trackers;
 
-import org.vivecraft.gameplay.OpenVRPlayer;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.gameplay.VRPlayer;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -37,7 +37,7 @@ public class BackpackTracker extends Tracker {
 	private Vector3d down = new Vector3d(0, -1, 0);
 	
 	public void doProcess(ClientPlayerEntity player){
-		OpenVRPlayer provider = mc.vrPlayer;
+		VRPlayer provider = mc.vrPlayer;
 
 		Vector3d hmdPos=provider.vrdata_room_pre.getHeadRear();
 
@@ -83,7 +83,7 @@ public class BackpackTracker extends Tracker {
 								player.connection.sendPacket(new CPlayerDiggingPacket(CPlayerDiggingPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ZERO, Direction.DOWN));
 						}
 					}
-					MCOpenVR.triggerHapticPulse(c, 1500);
+					mc.vr.triggerHapticPulse(c, 1500);
 					wasIn[c] = true;
 				}
 			} else {

@@ -9,7 +9,15 @@
  public class MouseHelper
  {
      private final Minecraft minecraft;
-@@ -44,7 +44,7 @@
+@@ -33,6 +33,7 @@
+     private double accumulatedScrollDelta;
+     private double lastLookTime = Double.MIN_VALUE;
+     private boolean mouseGrabbed;
++    private boolean butts = true;
+ 
+     public MouseHelper(Minecraft minecraftIn)
+     {
+@@ -44,7 +45,7 @@
       *  
       * @see GLFWMouseButtonCallbackI
       */
@@ -18,7 +26,7 @@
      {
          if (handle == this.minecraft.getMainWindow().getHandle())
          {
-@@ -88,7 +88,9 @@
+@@ -88,7 +89,9 @@
  
                  this.activeButton = -1;
              }
@@ -29,7 +37,7 @@
              boolean[] aboolean = new boolean[] {false};
  
              if (this.minecraft.loadingGui == null)
-@@ -109,14 +111,24 @@
+@@ -109,14 +112,24 @@
                      {
                          Screen.wrapScreenError(() ->
                          {
@@ -56,7 +64,7 @@
                          }, "mouseReleased event handler", this.minecraft.currentScreen.getClass().getCanonicalName());
                      }
                  }
-@@ -141,7 +153,7 @@
+@@ -141,7 +154,7 @@
  
                  if (flag)
                  {
@@ -65,7 +73,7 @@
                      {
                          this.minecraft.ingameGUI.getSpectatorGui().onMiddleClick();
                      }
-@@ -151,6 +163,9 @@
+@@ -151,6 +164,9 @@
                      }
                  }
              }
@@ -75,7 +83,7 @@
          }
      }
  
-@@ -159,7 +174,7 @@
+@@ -159,7 +175,7 @@
       *  
       * @see GLFWScrollCallbackI
       */
@@ -84,7 +92,7 @@
      {
          if (handle == Minecraft.getInstance().getMainWindow().getHandle())
          {
-@@ -171,7 +186,9 @@
+@@ -171,7 +187,9 @@
                  {
                      double d1 = this.mouseX * (double)this.minecraft.getMainWindow().getScaledWidth() / (double)this.minecraft.getMainWindow().getWidth();
                      double d2 = this.mouseY * (double)this.minecraft.getMainWindow().getScaledHeight() / (double)this.minecraft.getMainWindow().getHeight();
@@ -95,7 +103,7 @@
                  }
                  else if (this.minecraft.player != null)
                  {
-@@ -189,7 +206,11 @@
+@@ -189,7 +207,11 @@
                      }
  
                      this.accumulatedScrollDelta -= (double)f1;
@@ -108,7 +116,7 @@
                      if (this.minecraft.player.isSpectator())
                      {
                          if (this.minecraft.ingameGUI.getSpectatorGui().isMenuActive())
-@@ -260,7 +281,7 @@
+@@ -260,7 +282,7 @@
       *  
       * @see GLFWCursorPosCallbackI
       */
@@ -117,7 +125,7 @@
      {
          if (handle == Minecraft.getInstance().getMainWindow().getHandle())
          {
-@@ -288,7 +309,9 @@
+@@ -288,7 +310,9 @@
                      double d3 = (ypos - this.mouseY) * (double)this.minecraft.getMainWindow().getScaledHeight() / (double)this.minecraft.getMainWindow().getHeight();
                      Screen.wrapScreenError(() ->
                      {
@@ -128,19 +136,19 @@
                      }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
                  }
              }
-@@ -310,6 +333,11 @@
+@@ -310,6 +334,11 @@
  
      public void updatePlayerLook()
      {
 +    	
 +    	//Vivecraft
-+    	if(true) return;
++    	if(butts) return;
 +    	//
 +    	
          double d0 = NativeUtil.getTime();
          double d1 = d0 - this.lastLookTime;
          this.lastLookTime = d0;
-@@ -378,7 +406,18 @@
+@@ -378,7 +407,18 @@
      {
          return this.mouseY;
      }
@@ -159,7 +167,7 @@
      public void setIgnoreFirstMove()
      {
          this.ignoreFirstMove = true;
-@@ -398,7 +437,11 @@
+@@ -398,7 +438,11 @@
       */
      public void grabMouse()
      {
@@ -172,7 +180,7 @@
          {
              if (!this.mouseGrabbed)
              {
-@@ -423,6 +466,10 @@
+@@ -423,6 +467,10 @@
       */
      public void ungrabMouse()
      {

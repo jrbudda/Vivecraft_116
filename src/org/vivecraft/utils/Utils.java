@@ -68,7 +68,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.mojang.blaze3d.platform.GlStateManager;
 
-import jopenvr.HmdMatrix34_t;
 import net.minecraft.client.Minecraft;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.util.math.vector.Vector3d;
@@ -152,22 +151,6 @@ public class Utils
 		return mat;
 	}
 	
-	public static HmdMatrix34_t convertToMatrix34(Matrix4f matrix) {
-		HmdMatrix34_t mat = new HmdMatrix34_t();
-		mat.m[0 + 0 * 4] = matrix.m00;
-		mat.m[1 + 0 * 4] = matrix.m10;
-		mat.m[2 + 0 * 4] = matrix.m20;
-		mat.m[3 + 0 * 4] = matrix.m30;
-		mat.m[0 + 1 * 4] = matrix.m01;
-		mat.m[1 + 1 * 4] = matrix.m11;
-		mat.m[2 + 1 * 4] = matrix.m21;
-		mat.m[3 + 1 * 4] = matrix.m31;
-		mat.m[0 + 2 * 4] = matrix.m02;
-		mat.m[1 + 2 * 4] = matrix.m12;
-		mat.m[2 + 2 * 4] = matrix.m22;
-		mat.m[3 + 2 * 4] = matrix.m32;
-		return mat;
-	}
 
 	public static double lerp(double from, double to, double percent){
 		return from+(to-from)*percent;
@@ -192,6 +175,21 @@ public class Utils
 			return target;
 		}
 	}
+	
+	public static float angleDiff(float a, float b) {
+		float d = Math.abs(a - b) % 360;
+		float r = d > 180 ? 360 - d : d;
+		int sign = (a - b >= 0 && a - b <= 180) || (a - b <= -180 && a - b >= -360) ? 1 : -1;
+		return r * sign;
+	}
+	
+	public static float angleNormalize(float angle) {
+		angle %= 360;
+		if (angle < 0)
+			angle += 360;
+		return angle;
+	}
+	
 	
 	public static void glRotate(Quaternion quaternion){
 		GlStateManager.multMatrix(Convert.matrix(quaternion.inverse()).toMCMatrix4f());
@@ -493,7 +491,7 @@ public class Utils
 		List<URI> uris = new ClassGraph().getClasspathURIs();
 		for (URI uri : uris) {
 			try (ZipFile zipFile = new ZipFile(new File(uri))) {
-				if (zipFile.getEntry("org/vivecraft/provider/MCOpenVR.class") != null) {
+				if (zipFile.getEntry("org/vivecraft/provider/MCVR.class") != null) {
 					System.out.println("Found Vivecraft zip: " + uri.toString());
 					vivecraftZipURI = uri;
 					break;
@@ -838,5 +836,161 @@ public class Utils
 		if (print)
 			Thread.dumpStack();
 	}
+	public static net.minecraft.util.math.vector.Matrix4f Matrix4fFromOpenVR(jopenvr.HmdMatrix44_t in) {
+		//do not transpose on 1.15
+		net.minecraft.util.math.vector.Matrix4f out = new net.minecraft.util.math.vector.Matrix4f();
+		out.m00 = in.m[0];
+		out.m01 = in.m[1];
+		out.m02 = in.m[2];
+		out.m03 = in.m[3];
+		out.m10 = in.m[4];
+		out.m11 = in.m[5];
+		out.m12 = in.m[6];
+		out.m13 = in.m[7];
+		out.m20 = in.m[8];
+		out.m21 = in.m[9];
+		out.m22 = in.m[10];
+		out.m23 = in.m[11];
+		out.m30 = in.m[12];
+		out.m31 = in.m[13];
+		out.m32 = in.m[14];
+		out.m33 = in.m[15];
+		return out;
+	}
+	
+    public static Quaternion convertMatrix4ftoRotationQuat(float m00, float m01, float m02,
+    		float m10, float m11, float m12, float m20, float m21, float m22) {
+    	// first normalize the forward (F), up (U) and side (S) vectors of the rotation matrix
+    	// so that the scale does not affect the rotation
+    	double lengthSquared = m00 * m00 + m10 * m10 + m20 * m20;
+    	if (lengthSquared != 1f && lengthSquared != 0f) {
+    		lengthSquared = 1.0 / Math.sqrt(lengthSquared);
+    		m00 *= lengthSquared;
+    		m10 *= lengthSquared;
+    		m20 *= lengthSquared;
+    	}
+    	lengthSquared = m01 * m01 + m11 * m11 + m21 * m21;
+    	if (lengthSquared != 1 && lengthSquared != 0f) {
+    		lengthSquared = 1.0 / Math.sqrt(lengthSquared);
+    		m01 *= lengthSquared;
+    		m11 *= lengthSquared;
+    		m21 *= lengthSquared;
+    	}
+    	lengthSquared = m02 * m02 + m12 * m12 + m22 * m22;
+    	if (lengthSquared != 1f && lengthSquared != 0f) {
+    		lengthSquared = 1.0 / Math.sqrt(lengthSquared);
+    		m02 *= lengthSquared;
+    		m12 *= lengthSquared;
+    		m22 *= lengthSquared;
+    	}
 
+    	// Use the Graphics Gems code, from
+    	// ftp://ftp.cis.upenn.edu/pub/graphics/shoemake/quatut.ps.Z
+    	// *NOT* the "Matrix and Quaternions FAQ", which has errors!
+
+    	// the trace is the sum of the diagonal elements; see
+    	// http://mathworld.wolfram.com/MatrixTrace.html
+    	float t = m00 + m11 + m22;
+
+    	// we protect the division by s by ensuring that s>=1
+    	Quaternion quat = new Quaternion();
+    	if (t >= 0) { // |w| >= .5
+    		double s = Math.sqrt(t + 1); // |s|>=1 ...
+    		quat.w = (float)(0.5f * s);
+    		s = 0.5f / s;                 // so this division isn't bad
+    		quat.x = (float)((m21 - m12) * s);
+    		quat.y = (float)((m02 - m20) * s);
+    		quat.z = (float)((m10 - m01) * s);
+    	} else if (m00 > m11 && m00 > m22) {
+    		double s = Math.sqrt(1.0 + m00 - m11 - m22); // |s|>=1
+    		quat.x = (float)(s * 0.5f); // |x| >= .5
+    		s = 0.5f / s;
+    		quat.y = (float)((m10 + m01) * s);
+    		quat.z = (float)((m02 + m20) * s);
+    		quat.w = (float)((m21 - m12) * s);
+    	} else if (m11 > m22) {
+    		double s = Math.sqrt(1.0 + m11 - m00 - m22); // |s|>=1
+    		quat.y = (float)(s * 0.5f); // |y| >= .5
+    		s = 0.5f / s;
+    		quat.x = (float)((m10 + m01) * s);
+    		quat.z = (float)((m21 + m12) * s);
+    		quat.w = (float)((m02 - m20) * s);
+    	} else {
+    		double s = Math.sqrt(1.0 + m22 - m00 - m11); // |s|>=1
+    		quat.z = (float)(s * 0.5f); // |z| >= .5
+    		s = 0.5f / s;
+    		quat.x = (float)((m02 + m20) * s);
+    		quat.y = (float)((m21 + m12) * s);
+    		quat.w = (float)((m10 - m01) * s);
+    	}
+
+    	return quat;
+}
+    public static org.vivecraft.utils.math.Matrix4f rotationXMatrix(float angle) {
+        float sina = (float) Math.sin((double)angle);
+        float cosa = (float) Math.cos((double)angle);
+        return new org.vivecraft.utils.math.Matrix4f(1.0F, 0.0F, 0.0F,
+                            0.0F, cosa, -sina,
+                            0.0F, sina, cosa);
+    }
+
+    public static org.vivecraft.utils.math.Matrix4f rotationZMatrix(float angle) {
+        float sina = (float) Math.sin((double)angle);
+        float cosa = (float) Math.cos((double)angle);
+        return new org.vivecraft.utils.math.Matrix4f(cosa, -sina, 0.0F,
+                sina, cosa, 0.0f,
+                0.0F, 0.0f, 1.0f);
+    }
+    public static Vector3 convertMatrix4ftoTranslationVector(org.vivecraft.utils.math.Matrix4f mat) {
+        return new Vector3(mat.M[0][3], mat.M[1][3], mat.M[2][3]);
+    }
+    // VIVE START
+    public static void Matrix4fSet(org.vivecraft.utils.math.Matrix4f mat, float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)
+    {
+        mat.M[0][0] = m11;
+        mat.M[0][1] = m12;
+        mat.M[0][2] = m13;
+        mat.M[0][3] = m14;
+        mat.M[1][0] = m21;
+        mat.M[1][1] = m22;
+        mat.M[1][2] = m23;
+        mat.M[1][3] = m24;
+        mat.M[2][0] = m31;
+        mat.M[2][1] = m32;
+        mat.M[2][2] = m33;
+        mat.M[2][3] = m34;
+        mat.M[3][0] = m41;
+        mat.M[3][1] = m42;
+        mat.M[3][2] = m43;
+        mat.M[3][3] = m44;
+    }
+
+    public static void Matrix4fCopy(org.vivecraft.utils.math.Matrix4f source, org.vivecraft.utils.math.Matrix4f dest)
+    {
+        dest.M[0][0] = source.M[0][0];
+        dest.M[0][1] = source.M[0][1];
+        dest.M[0][2] = source.M[0][2];
+        dest.M[0][3] = source.M[0][3];
+        dest.M[1][0] = source.M[1][0];
+        dest.M[1][1] = source.M[1][1];
+        dest.M[1][2] = source.M[1][2];
+        dest.M[1][3] = source.M[1][3];
+        dest.M[2][0] = source.M[2][0];
+        dest.M[2][1] = source.M[2][1];
+        dest.M[2][2] = source.M[2][2];
+        dest.M[2][3] = source.M[2][3];
+        dest.M[3][0] = source.M[3][0];
+        dest.M[3][1] = source.M[3][1];
+        dest.M[3][2] = source.M[3][2];
+        dest.M[3][3] = source.M[3][3];
+    }
+
+    public static org.vivecraft.utils.math.Matrix4f Matrix4fSetIdentity(org.vivecraft.utils.math.Matrix4f mat)
+    {
+        mat.M[0][0] = mat.M[1][1] = mat.M[2][2] = mat.M[3][3] = 1.0F;
+        mat.M[0][1] = mat.M[1][0] = mat.M[2][3] = mat.M[3][1] = 0.0F;
+        mat.M[0][2] = mat.M[1][2] = mat.M[2][0] = mat.M[3][2] = 0.0F;
+        mat.M[0][3] = mat.M[1][3] = mat.M[2][1] = mat.M[3][0] = 0.0F;
+        return mat;
+    }
 }

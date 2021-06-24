@@ -18,9 +18,9 @@
  import org.apache.logging.log4j.Logger;
 +import org.vivecraft.api.NetworkHelper;
 +import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
-+import org.vivecraft.control.ControllerType;
-+import org.vivecraft.control.VivecraftMovementInput;
-+import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.provider.ControllerType;
++import org.vivecraft.provider.openvr_jna.MCOpenVR;
++import org.vivecraft.provider.openvr_jna.control.VivecraftMovementInput;
 +import org.vivecraft.render.PlayerModelController;
 +import org.vivecraft.settings.VRSettings;
  
@@ -120,7 +120,7 @@
 +    		if (mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_HAPTIC ||
 +    				mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_BOTH)
 +    			if(mc.vrSettings.seated == false) 
-+    				MCOpenVR.triggerHapticPulse(ControllerType.LEFT, 0.2f, 1000, 1);
++    				mc.vr.triggerHapticPulse(ControllerType.LEFT, 0.2f, 1000, 1);
 +
 +    		if (mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_SOUND ||
 +    				mc.vrSettings.chatNotifications == VRSettings.CHAT_NOTIFICATIONS_BOTH) {

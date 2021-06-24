@@ -8,8 +8,8 @@ import java.util.Set;
 
 import org.vivecraft.api.NetworkHelper;
 import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
-import org.vivecraft.control.ControllerType;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -154,8 +154,8 @@ public class ClimbTracker extends Tracker{
 		else if (mc.player.isOnGround() || mc.player.abilities.isFlying)
 			forceActivate = false;
 
-		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).setEnabled(ControllerType.RIGHT, isClimbeyClimb() && (isGrabbingLadder() || inblock[0] || forceActivate));
-		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).setEnabled(ControllerType.LEFT, isClimbeyClimb() && (isGrabbingLadder() || inblock[1] || forceActivate));
+		mc.vr.getInputAction(mc.vr.keyClimbeyGrab).setEnabled(ControllerType.RIGHT, isClimbeyClimb() && (isGrabbingLadder() || inblock[0] || forceActivate));
+		mc.vr.getInputAction(mc.vr.keyClimbeyGrab).setEnabled(ControllerType.LEFT, isClimbeyClimb() && (isGrabbingLadder() || inblock[1] || forceActivate));
 	}
 
 	@Override
@@ -322,9 +322,9 @@ public class ClimbTracker extends Tracker{
 					mc.player.setOnGround(!latched[0] && !latched[1]);
 
 				if(c == 0)
-					button[c] = MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT);
+					button[c] = mc.vr.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT);
 				else 
-					button[c] = MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT);
+					button[c] = mc.vr.keyClimbeyGrab.isKeyDown(ControllerType.LEFT);
 
 				inblock[c] = box[c] != null && box[c].offset(bp).contains(cpos[c]);
 
@@ -344,9 +344,9 @@ public class ClimbTracker extends Tracker{
 			if(!button[c] && latched[c]){ //let go 
 				latched[c] = false;
 				if(c == 0)
-					MCOpenVR.keyClimbeyGrab.unpressKey(ControllerType.RIGHT);
+					mc.vr.keyClimbeyGrab.unpressKey(ControllerType.RIGHT);
 				else 
-					MCOpenVR.keyClimbeyGrab.unpressKey(ControllerType.LEFT);
+					mc.vr.keyClimbeyGrab.unpressKey(ControllerType.LEFT);
 
 				jump = true;
 			} 
@@ -355,7 +355,7 @@ public class ClimbTracker extends Tracker{
 				if(allowed[c]){
 
 					if(!wasinblock[c] && inblock[c]){
-						MCOpenVR.triggerHapticPulse(c, 750);
+						mc.vr.triggerHapticPulse(c, 750);
 					} //indicate can grab.
 
 					if((!wasinblock[c] && inblock[c] && button[c]) ||
@@ -374,7 +374,7 @@ public class ClimbTracker extends Tracker{
 						}
 						else 
 							latched[0] = false;
-						MCOpenVR.triggerHapticPulse(c, 2000);
+						mc.vr.triggerHapticPulse(c, 2000);
 						mc.player.stepSound(bp, latchStart[c]);
 						if(!ladder)mc.vrPlayer.blockDust(latchStart[c].x, latchStart[c].y, latchStart[c].z, 5, bp, bs, 0.1f, 0.2f);
 
@@ -399,7 +399,7 @@ public class ClimbTracker extends Tracker{
 					latched[c] = true;
 					latchbox[c] = box[c];
 					wantjump = false;
-					MCOpenVR.triggerHapticPulse(c, 2000);
+					mc.vr.triggerHapticPulse(c, 2000);
 					BlockPos bp = new BlockPos(latchStart[c]);
 					BlockState bs = mc.world.getBlockState(bp);
 					if(!ladder)mc.vrPlayer.blockDust(latchStart[c].x, latchStart[c].y, latchStart[c].z, 5, bp, bs, 0.1f, 0.2f);
@@ -409,7 +409,7 @@ public class ClimbTracker extends Tracker{
 
 
 		if(!wantjump && !ladder) 
-			wantjump = MCOpenVR.keyClimbeyJump.isKeyDown() && mc.jumpTracker.isClimbeyJumpEquipped();
+			wantjump = mc.vr.keyClimbeyJump.isKeyDown() && mc.jumpTracker.isClimbeyJumpEquipped();
 
 		jump &= wantjump;
 
@@ -427,8 +427,8 @@ public class ClimbTracker extends Tracker{
 		if(!latched[0] && !latched[1] && !jump){
 			if(player.isOnGround() && unsetflag){
 				unsetflag = false;
-				MCOpenVR.keyClimbeyGrab.unpressKey(ControllerType.RIGHT);
-				MCOpenVR.keyClimbeyGrab.unpressKey(ControllerType.LEFT);
+				mc.vr.keyClimbeyGrab.unpressKey(ControllerType.RIGHT);
+				mc.vr.keyClimbeyGrab.unpressKey(ControllerType.LEFT);
 			}
 			latchStartController = -1;
 			return; //fly u fools
@@ -450,7 +450,7 @@ public class ClimbTracker extends Tracker{
 		latchStart_room[latchStartController] = mc.vrPlayer.vrdata_room_pre.getController(latchStartController).getPosition();
 
 		if(wantjump) //bzzzzzz
-			MCOpenVR.triggerHapticPulse(latchStartController, 200);
+			mc.vr.triggerHapticPulse(latchStartController, 200);
 
 		if(!jump){
 
@@ -560,8 +560,8 @@ public class ClimbTracker extends Tracker{
 				free = mc.world.hasNoCollisions(player,bb);
 				if(free) {
 					if( i > 1){
-						MCOpenVR.triggerHapticPulse(0, 100); //ouch!
-						MCOpenVR.triggerHapticPulse(1, 100);
+						mc.vr.triggerHapticPulse(0, 100); //ouch!
+						mc.vr.triggerHapticPulse(1, 100);
 					}
 					break;
 				}
@@ -569,8 +569,8 @@ public class ClimbTracker extends Tracker{
 
 			if(!free) {
 				player.setPosition(x, y, z);
-				MCOpenVR.triggerHapticPulse(0, 100); //ouch!
-				MCOpenVR.triggerHapticPulse(1, 100);
+				mc.vr.triggerHapticPulse(0, 100); //ouch!
+				mc.vr.triggerHapticPulse(1, 100);
 			}
 
 			if(mc.isIntegratedServerRunning()) { //handle server falling.
@@ -588,8 +588,8 @@ public class ClimbTracker extends Tracker{
 			wantjump = false;
 			Vector3d pl = player.getPositionVec().subtract(delta);
 
-			Vector3d m = MCOpenVR.controllerHistory[latchStartController].netMovement(0.3);
-			double s = MCOpenVR.controllerHistory[latchStartController].averageSpeed(0.3f);
+			Vector3d m = mc.vr.controllerHistory[latchStartController].netMovement(0.3);
+			double s = mc.vr.controllerHistory[latchStartController].averageSpeed(0.3f);
 			m = m.scale(0.66 * s);
 			float limit = 0.66f;
 			

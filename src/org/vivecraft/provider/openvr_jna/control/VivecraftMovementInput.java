@@ -1,7 +1,8 @@
-package org.vivecraft.control;
+package org.vivecraft.provider.openvr_jna.control;
 
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.MCVR;
+import org.vivecraft.provider.openvr_jna.VRInputAction;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Vector2;
 
@@ -20,8 +21,8 @@ public class VivecraftMovementInput extends MovementInput {
 	}
 	
 	public static float getMovementAxisValue(KeyBinding keyBinding) {
-		VRInputAction action = MCOpenVR.getInputAction(keyBinding);
-		return Math.abs(MCOpenVR.getAxis1D(action));
+		VRInputAction action = MCVR.get().getInputAction(keyBinding);
+		return Math.abs(action.getAxis1DUseTracked());
 	}
 
 	private float axisToDigitalMovement(float value) {
@@ -43,7 +44,7 @@ public class VivecraftMovementInput extends MovementInput {
 		if (mc.climbTracker.isClimbeyClimb() && !mc.player.isInWater() && (mc.climbTracker.isGrabbingLadder()))
 			flag = true;
 
-		if (!flag && (this.gameSettings.keyBindForward.isKeyDown() || MCOpenVR.keyTeleportFallback.isKeyDown())) {
+		if (!flag && (this.gameSettings.keyBindForward.isKeyDown() || mc.vr.keyTeleportFallback.isKeyDown())) {
 			++this.moveForward;
 			this.forwardKeyDown = true;
 		} else {
@@ -76,11 +77,11 @@ public class VivecraftMovementInput extends MovementInput {
 		if (!flag && !mc.vrSettings.seated && mc.currentScreen == null && !KeyboardHandler.Showing){
 			// override everything
 
-			VRInputAction strafeAction = MCOpenVR.getInputAction(MCOpenVR.keyFreeMoveStrafe);
-			VRInputAction rotateAction = MCOpenVR.getInputAction(MCOpenVR.keyFreeMoveRotate);
-			Vector2 strafeAxis = MCOpenVR.getAxis2D(strafeAction);
-			Vector2 rotateAxis = MCOpenVR.getAxis2D(rotateAction);
-
+			VRInputAction strafeAction = mc.vr.getInputAction(mc.vr.keyFreeMoveStrafe);
+			VRInputAction rotateAction = mc.vr.getInputAction(mc.vr.keyFreeMoveRotate);
+			Vector2 strafeAxis = strafeAction.getAxis2DUseTracked();
+			Vector2 rotateAxis = rotateAction.getAxis2DUseTracked();
+					
 			if (strafeAxis.getX() != 0 || strafeAxis.getY() != 0) {
 				setMovement = true;
 				forwardAxis = strafeAxis.getY();
@@ -109,7 +110,7 @@ public class VivecraftMovementInput extends MovementInput {
 				this.moveStrafe = 0;
 
 				float forward = getMovementAxisValue(this.gameSettings.keyBindForward);
-				if (forward == 0) forward = getMovementAxisValue(MCOpenVR.keyTeleportFallback);
+				if (forward == 0) forward = getMovementAxisValue(mc.vr.keyTeleportFallback);
 				forwardAxis = forward;
 
 				this.moveForward += forward;

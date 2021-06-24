@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/GameSettings.java
 +++ b/net/minecraft/client/GameSettings.java
-@@ -69,6 +69,7 @@
+@@ -70,6 +70,7 @@
  import org.apache.commons.lang3.ArrayUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.provider.openvr_jna.MCOpenVR;
  
  public class GameSettings
  {
-@@ -186,6 +187,7 @@
+@@ -187,6 +188,7 @@
      public float fovScaleEffect = 1.0F;
      public double gamma;
      public int guiScale;
@@ -16,7 +16,7 @@
      public ParticleStatus particles = ParticleStatus.ALL;
      public NarratorStatus narrator = NarratorStatus.OFF;
      public String language = "en_us";
-@@ -197,7 +199,7 @@
+@@ -198,7 +200,7 @@
      public boolean ofSmoothFps = false;
      public boolean ofSmoothWorld = Config.isSingleProcessor();
      public boolean ofLazyChunkLoading = Config.isSingleProcessor();
@@ -25,7 +25,7 @@
      public boolean ofSmartAnimations = false;
      public double ofAoLevel = 1.0D;
      public int ofAaLevel = 0;
-@@ -236,7 +238,7 @@
+@@ -237,7 +239,7 @@
      public int ofTranslucentBlocks = 0;
      public boolean ofDynamicFov = true;
      public boolean ofAlternateBlocks = true;
@@ -34,17 +34,17 @@
      public boolean ofCustomEntityModels = true;
      public boolean ofCustomGuis = true;
      public boolean ofShowGlErrors = true;
-@@ -310,6 +312,9 @@
+@@ -311,6 +313,9 @@
          this.ofKeyBindZoom = new KeyBinding("of.key.zoom", 67, "key.categories.misc");
          this.keyBindings = ArrayUtils.add(this.keyBindings, this.ofKeyBindZoom);
          KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
 +        //Vivecraft
-+        this.keyBindings = MCOpenVR.initializeBindings(this.keyBindings);
++        this.keyBindings = mc.vr.initializeBindings(this.keyBindings);
 +        //
          this.renderDistanceChunks = 8;
          this.loadOptions();
          Config.initGameSettings(this);
-@@ -525,7 +530,7 @@
+@@ -526,7 +531,7 @@
  
                      if ("guiScale".equals(s))
                      {
@@ -53,7 +53,7 @@
                      }
  
                      if ("particles".equals(s))
-@@ -905,7 +910,7 @@
+@@ -906,7 +911,7 @@
                  printwriter.println("gamma:" + this.gamma);
                  printwriter.println("renderDistance:" + this.renderDistanceChunks);
                  printwriter.println("entityDistanceScaling:" + this.entityDistanceScaling);
@@ -62,16 +62,15 @@
                  printwriter.println("particles:" + this.particles.getId());
                  printwriter.println("maxFps:" + this.framerateLimit);
                  printwriter.println("difficulty:" + this.difficulty.getId());
-@@ -1113,7 +1118,7 @@
-             {
-                 if (i >= aint[j])
-                 {
--                    this.ofAaLevel = aint[j];
-+                    this.ofAaLevel = 0; //Vivecraft aint[j];
-                 }
-             }
+@@ -1109,6 +1114,7 @@
  
-@@ -1548,7 +1553,7 @@
+             this.ofAaLevel = i;
+             this.ofAaLevel = Config.limit(this.ofAaLevel, 0, 16);
++            this.ofAaLevel = 0; //Vivecraft no.
+         }
+ 
+         if (p_setOptionFloatValueOF_1_ == AbstractOption.AF_LEVEL)
+@@ -1536,7 +1542,7 @@
  
          if (p_setOptionValueOF_1_ == AbstractOption.FAST_RENDER)
          {
@@ -80,7 +79,7 @@
          }
  
          if (p_setOptionValueOF_1_ == AbstractOption.TRANSLUCENT_BLOCKS)
-@@ -2643,6 +2648,13 @@
+@@ -2608,6 +2614,13 @@
              KeyUtils.fixKeyConflicts(this.keyBindings, new KeyBinding[] {this.ofKeyBindZoom});
              KeyBinding.resetKeyBindingArrayAndHash();
              bufferedreader.close();
@@ -94,7 +93,7 @@
          }
          catch (Exception exception11)
          {
-@@ -2793,7 +2805,7 @@
+@@ -2758,7 +2771,7 @@
          this.cloudOption = CloudOption.FANCY;
          this.fov = 70.0D;
          this.gamma = 0.0D;
@@ -103,7 +102,7 @@
          this.particles = ParticleStatus.ALL;
          this.heldItemTooltips = true;
          this.forceUnicodeFont = false;
-@@ -2806,7 +2818,7 @@
+@@ -2771,7 +2784,7 @@
          Config.updateAvailableProcessors();
          this.ofSmoothWorld = Config.isSingleProcessor();
          this.ofLazyChunkLoading = false;
@@ -112,7 +111,7 @@
          this.ofFastMath = false;
          this.ofFastRender = false;
          this.ofTranslucentBlocks = 0;
-@@ -3036,3 +3048,4 @@
+@@ -3001,3 +3014,4 @@
          this.pointOfView = pointOfView;
      }
  }

@@ -55,7 +55,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 	void init() {
 		loadSlots();
 		
-		/*VRButtonMapping vrPrime=mc.vrSettings.buttonMappings.get(MCOpenVR.keyInteractVRprimary.getKeyDescription());
+		/*VRButtonMapping vrPrime=mc.vrSettings.buttonMappings.get(mc.vr.keyInteractVRprimary.getKeyDescription());
 		vrPrime.registerListener(new VRButtonMapping.KeyListener() {
 			@Override
 			public boolean onPressed() {
@@ -89,7 +89,7 @@ public class PhysicalItemSlotGui extends PhysicalGui {
 				}
 			}
 		});
-		VRButtonMapping vrSecond=mc.vrSettings.buttonMappings.get(MCOpenVR.keyInteractVRsecondary.getKeyDescription());
+		VRButtonMapping vrSecond=mc.vrSettings.buttonMappings.get(mc.vr.keyInteractVRsecondary.getKeyDescription());
 		vrSecond.registerListener(new VRButtonMapping.KeyListener() {
 			@Override
 			public boolean onPressed() {

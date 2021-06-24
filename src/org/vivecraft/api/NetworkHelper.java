@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.vivecraft.gameplay.OpenVRPlayer;
+import org.vivecraft.gameplay.VRPlayer;
 import org.vivecraft.render.PlayerModelController;
 import org.vivecraft.settings.AutoCalibration;
 import org.vivecraft.settings.VRSettings;
@@ -105,7 +105,7 @@ public class NetworkHelper {
 		Minecraft.getInstance().vrPlayer.teleportWarningTimer = 20 * 10;
 	}
 	
-	public static void sendVRPlayerPositions(OpenVRPlayer player) {
+	public static void sendVRPlayerPositions(VRPlayer player) {
 		if(!serverWantsData) return;
 		if(Minecraft.getInstance().getConnection() == null) return;
 		float worldScale = Minecraft.getInstance().vrPlayer.vrdata_world_post.worldScale;

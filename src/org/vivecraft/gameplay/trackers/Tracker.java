@@ -1,12 +1,12 @@
 package org.vivecraft.gameplay.trackers;
 
-import org.vivecraft.gameplay.OpenVRPlayer;
+import org.vivecraft.gameplay.VRPlayer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 
 /**
- * register in {@link OpenVRPlayer}
+ * register in {@link VRPlayer}
  * */
 public abstract class Tracker {
 	public Minecraft mc;

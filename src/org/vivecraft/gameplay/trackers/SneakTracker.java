@@ -1,6 +1,6 @@
 package org.vivecraft.gameplay.trackers;
 
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.settings.AutoCalibration;
 
 import net.minecraft.client.Minecraft;
@@ -41,7 +41,7 @@ public class SneakTracker extends Tracker {
 				mc.sneakTracker.sneakCounter--;
 		}
 		
-	    if(( AutoCalibration.getPlayerHeight() - MCOpenVR.hmdPivotHistory.latest().y )> mc.vrSettings.sneakThreshold){
+	    if(( AutoCalibration.getPlayerHeight() - mc.vr.hmdPivotHistory.latest().y )> mc.vrSettings.sneakThreshold){
 		   sneakOverride=true;
 	    }else{
 		    sneakOverride=false;

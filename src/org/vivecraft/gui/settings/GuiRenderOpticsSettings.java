@@ -134,7 +134,7 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     	this.minecraft.gameSettings.fov = 70f;
     	this.settings.useFsaa = true;
     	this.settings.vrUseStencil = true;
-        this.minecraft.stereoProvider.reinitFrameBuffers("Defaults Loaded");
+        this.minecraft.vrRenderer.reinitFrameBuffers("Defaults Loaded");
     }
     
     @Override
@@ -144,7 +144,7 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     	if (button.id == VRSettings.VrOptions.MIRROR_DISPLAY.ordinal() ||
         		button.id == VRSettings.VrOptions.FSAA.ordinal())
         	{
-                this.minecraft.stereoProvider.reinitFrameBuffers("Render Setting Changed");
+                this.minecraft.vrRenderer.reinitFrameBuffers("Render Setting Changed");
         	}
     }
 
@@ -154,7 +154,7 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     	if (settings.renderScaleFactor != prevRenderScaleFactor || settings.handCameraResScale != prevHandCameraResScale) {
 			prevRenderScaleFactor = settings.renderScaleFactor;
 			prevHandCameraResScale = settings.handCameraResScale;
-			this.minecraft.stereoProvider.reinitFrameBuffers("Render Setting Changed");
+			this.minecraft.vrRenderer.reinitFrameBuffers("Render Setting Changed");
 		}
 
 		return super.mouseReleased(mouseX, mouseY, button);

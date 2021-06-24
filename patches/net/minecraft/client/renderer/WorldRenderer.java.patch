@@ -16,19 +16,19 @@
  import net.minecraft.client.shader.ShaderGroup;
  import net.minecraft.client.world.ClientWorld;
  import net.minecraft.client.world.DimensionRenderInfo;
-@@ -151,6 +153,11 @@
+@@ -154,6 +156,11 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  import org.lwjgl.opengl.GL11;
 +import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 +import org.vivecraft.gameplay.screenhandlers.RadialHandler;
-+import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.provider.openvr_jna.MCOpenVR;
 +import org.vivecraft.render.RenderPass;
 +import org.vivecraft.settings.VRSettings;
  
  public class WorldRenderer implements IResourceManagerReloadListener, AutoCloseable
  {
-@@ -267,7 +274,16 @@
+@@ -270,7 +277,16 @@
      private static boolean ambientOcclusion = false;
      private Map<String, List<Entity>> mapEntityLists = new HashMap<>();
      private Map<RenderType, Map> mapRegionLayers = new LinkedHashMap<>();
@@ -46,7 +46,7 @@
      public WorldRenderer(Minecraft mcIn, RenderTypeBuffers rainTimeBuffersIn)
      {
          this.mc = mcIn;
-@@ -316,9 +332,16 @@
+@@ -319,9 +335,16 @@
  
              lightmapIn.enableLightmap();
              World world = this.mc.world;
@@ -66,7 +66,7 @@
              Tessellator tessellator = Tessellator.getInstance();
              BufferBuilder bufferbuilder = tessellator.getBuffer();
              RenderSystem.enableAlphaTest();
-@@ -549,17 +572,22 @@
+@@ -552,17 +575,22 @@
          RenderSystem.texParameter(3553, 10242, 10497);
          RenderSystem.texParameter(3553, 10243, 10497);
          RenderSystem.bindTexture(0);
@@ -77,7 +77,7 @@
 -            this.func_239233_v_();
 -        }
 +        //Vivecraft
-+        mc.stereoProvider.reinitFrameBuffers("Resource Reload");
++        mc.vrRenderer.reinitFrameBuffers("Resource Reload");
 +        
 +       // this.makeEntityOutlineShader();
 +
@@ -95,7 +95,7 @@
      public void makeEntityOutlineShader()
      {
          if (this.entityOutlineShader != null)
-@@ -570,7 +598,7 @@
+@@ -573,7 +601,7 @@
          ResourceLocation resourcelocation = new ResourceLocation("shaders/post/entity_outline.json");
  
          try
@@ -104,7 +104,7 @@
              this.entityOutlineShader = new ShaderGroup(this.mc.getTextureManager(), this.mc.getResourceManager(), this.mc.getFramebuffer(), resourcelocation);
              this.entityOutlineShader.createBindFramebuffers(this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
              this.entityOutlineFramebuffer = this.entityOutlineShader.getFramebufferRaw("final");
-@@ -588,11 +616,12 @@
+@@ -591,11 +619,12 @@
              this.entityOutlineFramebuffer = null;
          }
      }
@@ -120,7 +120,7 @@
  
          try
          {
-@@ -644,7 +673,8 @@
+@@ -647,7 +676,8 @@
          }
      }
  
@@ -130,7 +130,7 @@
      {
          if (this.field_239227_K_ != null)
          {
-@@ -869,14 +899,15 @@
+@@ -872,14 +902,15 @@
      {
          if (this.world != null)
          {
@@ -154,7 +154,7 @@
  
              this.world.clearColorCaches();
  
-@@ -1018,7 +1049,8 @@
+@@ -1021,7 +1052,8 @@
              this.viewFrustum.updateChunkPositions(this.mc.player.getPosX(), this.mc.player.getPosZ());
          }
  
@@ -164,7 +164,7 @@
          {
              DynamicLights.update(this);
          }
-@@ -1032,7 +1064,8 @@
+@@ -1035,7 +1067,8 @@
          BlockPos blockpos1 = new BlockPos(MathHelper.floor(vector3d.x / 16.0D) * 16, MathHelper.floor(vector3d.y / 16.0D) * 16, MathHelper.floor(vector3d.z / 16.0D) * 16);
          float f = activeRenderInfoIn.getPitch();
          float f1 = activeRenderInfoIn.getYaw();
@@ -174,7 +174,7 @@
          this.lastViewEntityX = vector3d.x;
          this.lastViewEntityY = vector3d.y;
          this.lastViewEntityZ = vector3d.z;
-@@ -1376,8 +1409,14 @@
+@@ -1379,8 +1412,14 @@
          TileEntityRendererDispatcher.instance.prepare(this.world, this.mc.getTextureManager(), this.mc.fontRenderer, activeRenderInfoIn, this.mc.objectMouseOver);
          this.renderManager.cacheActiveRenderInfo(this.world, activeRenderInfoIn, this.mc.pointedEntity);
          IProfiler iprofiler = this.world.getProfiler();
@@ -191,21 +191,7 @@
          Vector3d vector3d = activeRenderInfoIn.getProjectedView();
          double d0 = vector3d.getX();
          double d1 = vector3d.getY();
-@@ -1425,7 +1464,12 @@
-         {
-             Shaders.clearRenderBuffer();
-         }
--
-+        
-+        //Vivecraft - VR Stencil
-+        this.mc.getProfiler().endStartSection("stencil");
-+    		gameRendererIn.drawEyeStencil(flag1);
-+		//    
-+       
-         if (flag1)
-         {
-             Shaders.setCamera(matrixStackIn, activeRenderInfoIn, partialTicks);
-@@ -1487,12 +1531,13 @@
+@@ -1487,12 +1526,13 @@
          iprofiler.endStartSection("terrain");
          Lagometer.timerTerrain.start();
  
@@ -221,7 +207,7 @@
  
          if (Config.isFogOff() && FogRenderer.fogStandard)
          {
-@@ -1511,14 +1556,16 @@
+@@ -1511,16 +1551,23 @@
          }
  
          Lagometer.timerTerrain.end();
@@ -232,15 +218,23 @@
          if (this.world.func_239132_a_().func_239217_c_())
          {
 -            RenderHelper.setupDiffuseGuiLighting(matrixStackIn.getLast().getMatrix());
-+             RenderHelper.setupDiffuseGuiLighting(light);
++            RenderHelper.setupDiffuseGuiLighting(light);
          }
          else
          {
 -            RenderHelper.setupLevelDiffuseLighting(matrixStackIn.getLast().getMatrix());
 +            RenderHelper.setupLevelDiffuseLighting(light);
          }
- 
+-
++        
++        //Vivecraft - VR Stencil
++        this.mc.getProfiler().endStartSection("stencil");
++    		gameRendererIn.drawEyeStencil(flag1);
++		//    
++       
          if (flag1)
+         {
+             Shaders.beginEntities();
 @@ -1559,6 +1606,11 @@
              RenderStateManager.enableCache();
          }
@@ -292,7 +286,7 @@
              }
  
              list1.clear();
-@@ -1813,10 +1879,25 @@
+@@ -1814,10 +1880,25 @@
          --renderEntitiesCounter;
          this.checkMatrixStack(matrixStackIn);
          RayTraceResult raytraceresult = this.mc.objectMouseOver;
@@ -319,8 +313,8 @@
 +        	//
              BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).getPos();
              BlockState blockstate = this.world.getBlockState(blockpos);
-             boolean flag7;
-@@ -1845,7 +1926,7 @@
+ 
+@@ -1853,7 +1934,7 @@
          {
              Reflector.ForgeHooksClient_onDrawBlockHighlight.call(this, activeRenderInfoIn, raytraceresult, partialTicks, matrixStackIn, irendertypebuffer$impl);
          }
@@ -329,18 +323,18 @@
          RenderSystem.pushMatrix();
          RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
          boolean flag6 = GlStateManager.isFogEnabled();
-@@ -1853,6 +1934,7 @@
+@@ -1866,6 +1947,7 @@
+ 
          this.mc.debugRenderer.render(matrixStackIn, irendertypebuffer$impl, d0, d1, d2);
-         GlStateManager.setFogEnabled(flag6);
          RenderSystem.popMatrix();
 +        this.mc.getProfiler().endStartSection("render bukkake");
          irendertypebuffer$impl.finish(Atlases.getTranslucentCullBlockType());
          irendertypebuffer$impl.finish(Atlases.getBannerType());
          irendertypebuffer$impl.finish(Atlases.getShieldType());
-@@ -1869,13 +1951,16 @@
-         if (flag1)
+@@ -1884,13 +1966,16 @@
          {
              irendertypebuffer$impl.finish();
+             ShadersRender.endDebug();
 -            Shaders.preRenderHand();
 -            ShadersRender.renderHand0(gameRendererIn, matrixStackIn, activeRenderInfoIn, partialTicks);
 +            //Shaders.preRenderHand();
@@ -357,7 +351,7 @@
              irendertypebuffer$impl.finish(RenderType.getLines());
              irendertypebuffer$impl.finish();
              this.field_239222_F_.framebufferClear(Minecraft.IS_RUNNING_ON_MAC);
-@@ -1890,10 +1975,15 @@
+@@ -1905,10 +1990,15 @@
              iprofiler.endStartSection("particles");
              this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks, clippinghelper);
              RenderState.field_239237_T_.clearRenderState();
@@ -375,7 +369,7 @@
  
              if (flag1)
              {
-@@ -1919,7 +2009,9 @@
+@@ -1934,7 +2024,9 @@
              }
  
              this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks, clippinghelper);
@@ -386,7 +380,7 @@
              if (flag1)
              {
                  Shaders.endParticles();
-@@ -3213,10 +3305,11 @@
+@@ -3255,12 +3347,13 @@
      {
          bufferIn.pos(xIn - camX, (double)yIn - camY, zIn - camZ).tex(texU, texV).endVertex();
      }
@@ -395,12 +389,14 @@
 +    public float selR, selG, selB;
      private void drawSelectionBox(MatrixStack matrixStackIn, IVertexBuilder bufferIn, Entity entityIn, double xIn, double yIn, double zIn, BlockPos blockPosIn, BlockState blockStateIn)
      {
--        drawShape(matrixStackIn, bufferIn, blockStateIn.getShape(this.world, blockPosIn, ISelectionContext.forEntity(entityIn)), (double)blockPosIn.getX() - xIn, (double)blockPosIn.getY() - yIn, (double)blockPosIn.getZ() - zIn, 0.0F, 0.0F, 0.0F, 0.4F);
-+        drawShape(matrixStackIn, bufferIn, blockStateIn.getShape(this.world, blockPosIn, ISelectionContext.forEntity(entityIn)), (double)blockPosIn.getX() - xIn, (double)blockPosIn.getY() - yIn, (double)blockPosIn.getZ() - zIn, selR, selG, selB, 0.4F);
+         if (!Config.isCustomEntityModels() || !CustomEntityModels.isCustomModel(blockStateIn))
+         {
+-            drawShape(matrixStackIn, bufferIn, blockStateIn.getShape(this.world, blockPosIn, ISelectionContext.forEntity(entityIn)), (double)blockPosIn.getX() - xIn, (double)blockPosIn.getY() - yIn, (double)blockPosIn.getZ() - zIn, 0.0F, 0.0F, 0.0F, 0.4F);
++            drawShape(matrixStackIn, bufferIn, blockStateIn.getShape(this.world, blockPosIn, ISelectionContext.forEntity(entityIn)), (double)blockPosIn.getX() - xIn, (double)blockPosIn.getY() - yIn, (double)blockPosIn.getZ() - zIn, selR, selG, selB, 0.4F);
+         }
      }
  
-     public static void drawVoxelShapeParts(MatrixStack matrixStackIn, IVertexBuilder bufferIn, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
-@@ -3693,6 +3786,8 @@
+@@ -3738,6 +3831,8 @@
      {
          Random random = this.world.rand;
  
@@ -409,89 +405,89 @@
          switch (type)
          {
              case 1000:
-@@ -3755,18 +3850,26 @@
+@@ -3800,18 +3895,26 @@
                  break;
  
              case 1011:
 +                if(playernear)
-+                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
++                	mc.vr.triggerHapticPulse(0,250); //VIVECRAFT go thump.
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_DOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
              case 1012:
 +                if(playernear)
-+                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
++                	mc.vr.triggerHapticPulse(0,250); //VIVECRAFT go thump.
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_WOODEN_DOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
              case 1013:
 +                if(playernear)
-+                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
++                	mc.vr.triggerHapticPulse(0,250); //VIVECRAFT go thump.
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
              case 1014:
 +                if(playernear)
-+                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
++                	mc.vr.triggerHapticPulse(0,250); //VIVECRAFT go thump.
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3787,14 +3890,26 @@
+@@ -3832,14 +3935,26 @@
                  break;
  
              case 1019:
 +                if(playernear){ //this is just mean.
-+                	MCOpenVR.triggerHapticPulse(0,750); 
-+                	MCOpenVR.triggerHapticPulse(1,750); 
++                	mc.vr.triggerHapticPulse(0,750); 
++                	mc.vr.triggerHapticPulse(1,750); 
 +                }
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
              case 1020:
 +                if(playernear){ //this is just mean.
-+                	MCOpenVR.triggerHapticPulse(0,750); 
-+                	MCOpenVR.triggerHapticPulse(1,750); 
++                	mc.vr.triggerHapticPulse(0,750); 
++                	mc.vr.triggerHapticPulse(1,750); 
 +                }
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
              case 1021:
 +                if(playernear){ //this is just mean.
-+                	MCOpenVR.triggerHapticPulse(0,750); 
-+                	MCOpenVR.triggerHapticPulse(1,750); 
++                	mc.vr.triggerHapticPulse(0,750); 
++                	mc.vr.triggerHapticPulse(1,750); 
 +                }
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3823,10 +3938,17 @@
+@@ -3868,10 +3983,17 @@
                  break;
  
              case 1030:
 +                if(playernear){ 
-+                	MCOpenVR.triggerHapticPulse(0,500); 
++                	mc.vr.triggerHapticPulse(0,500); 
 +                }
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
              case 1031:
 +                if(playernear){ 
-+                	MCOpenVR.triggerHapticPulse(0,1250); 
-+                	MCOpenVR.triggerHapticPulse(1,1250); 
++                	mc.vr.triggerHapticPulse(0,1250); 
++                	mc.vr.triggerHapticPulse(1,1250); 
 +                }
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3847,6 +3969,9 @@
+@@ -3892,6 +4014,9 @@
                  break;
  
              case 1036:
 +
 +                if(playernear)
-+                	MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
++                	mc.vr.triggerHapticPulse(0,250); //VIVECRAFT go thump.
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -4439,4 +4564,40 @@
+@@ -4484,4 +4609,40 @@
              super(p_i232463_1_, p_i232463_2_);
          }
      }
@@ -509,7 +505,7 @@
 +        this.alphaSortVROccludedFramebuffer = null;
 +        this.alphaSortVRUnoccludedFramebuffer = null;
 +
-+        ShaderGroup shadergroup = this.mc.stereoProvider.alphaShaders.get(mc.getFramebuffer().name);
++        ShaderGroup shadergroup = this.mc.vrRenderer.alphaShaders.get(mc.getFramebuffer().name);
 +        if (shadergroup != null) { 
 +	        this.field_239227_K_ = shadergroup;
 +	        this.field_239222_F_ = shadergroup.getFramebufferRaw("translucent");
@@ -524,7 +520,7 @@
 +        
 +        this.entityOutlineShader = null;
 +        this.entityOutlineFramebuffer = null;
-+        shadergroup =  this.mc.stereoProvider.entityShaders.get(mc.getFramebuffer().name);
++        shadergroup =  this.mc.vrRenderer.entityShaders.get(mc.getFramebuffer().name);
 +        if (shadergroup != null) {
 +            this.entityOutlineShader = shadergroup;
 +            this.entityOutlineFramebuffer = this.entityOutlineShader.getFramebufferRaw("final");

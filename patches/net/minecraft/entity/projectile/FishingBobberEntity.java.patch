@@ -1,18 +1,19 @@
 --- a/net/minecraft/entity/projectile/FishingBobberEntity.java
 +++ b/net/minecraft/entity/projectile/FishingBobberEntity.java
-@@ -4,6 +4,11 @@
+@@ -4,6 +4,12 @@
  import java.util.List;
  import java.util.Random;
  import javax.annotation.Nullable;
 +
 +import org.vivecraft.api.NetworkHelper;
 +import org.vivecraft.api.ServerVivePlayer;
-+import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.provider.MCVR;
++import org.vivecraft.provider.openvr_jna.MCOpenVR;
 +
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
-@@ -32,6 +37,7 @@
+@@ -32,6 +38,7 @@
  import net.minecraft.stats.Stats;
  import net.minecraft.tags.FluidTags;
  import net.minecraft.tags.ItemTags;
@@ -20,7 +21,7 @@
  import net.minecraft.util.SoundEvents;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.BlockRayTraceResult;
-@@ -41,6 +47,7 @@
+@@ -41,6 +48,7 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -28,7 +29,7 @@
  
  public class FishingBobberEntity extends ProjectileEntity
  {
-@@ -88,6 +95,31 @@
+@@ -88,6 +96,31 @@
          float f3 = MathHelper.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
          float f4 = -MathHelper.cos(-f * ((float)Math.PI / 180F));
          float f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
@@ -60,7 +61,7 @@
          double d0 = p_i50220_1_.getPosX() - (double)f3 * 0.3D;
          double d1 = p_i50220_1_.getPosYEye();
          double d2 = p_i50220_1_.getPosZ() - (double)f2 * 0.3D;
-@@ -283,6 +315,19 @@
+@@ -283,6 +316,19 @@
              this.setMotion(this.getMotion().scale(0.92D));
              this.recenterBoundingBox();
          }
@@ -71,7 +72,7 @@
 +        	if (vp !=null && vp.isVR()) {
 +        		if(this.currentState == State.BOBBING) {
 +        			if(this.getMotion().y <= -0.24) { //server makes the bobber jump downwards on a bite.
-+        				MCOpenVR.triggerHapticPulse(0,250); //VIVECRAFT go thump.
++        				MCVR.get().triggerHapticPulse(0,250); //VIVECRAFT go thump.
 +        			}				
 +        		}
 +        	}
@@ -80,7 +81,7 @@
      }
  
      private boolean func_234600_a_(PlayerEntity p_234600_1_)
-@@ -530,6 +575,7 @@
+@@ -530,6 +576,7 @@
          if (!this.world.isRemote && playerentity != null)
          {
              int i = 0;
@@ -88,7 +89,7 @@
  
              if (this.caughtEntity != null)
              {
-@@ -543,6 +589,14 @@
+@@ -543,6 +590,14 @@
                  LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.world)).withParameter(LootParameters.field_237457_g_, this.getPositionVec()).withParameter(LootParameters.TOOL, p_146034_1_).withParameter(LootParameters.THIS_ENTITY, this).withRandom(this.rand).withLuck((float)this.luck + playerentity.getLuck());
                  LootTable loottable = this.world.getServer().getLootTableManager().getLootTableFromLocation(LootTables.GAMEPLAY_FISHING);
                  List<ItemStack> list = loottable.generate(lootcontext$builder.build(LootParameterSets.FISHING));
@@ -103,7 +104,7 @@
                  CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayerEntity)playerentity, p_146034_1_, this, list);
  
                  for (ItemStack itemstack : list)
-@@ -571,7 +625,7 @@
+@@ -571,7 +626,7 @@
              }
  
              this.remove();
@@ -112,7 +113,7 @@
          }
          else
          {
-@@ -622,6 +676,17 @@
+@@ -622,6 +677,17 @@
          }
      }
  

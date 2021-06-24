@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/platform/GlStateManager.java
 +++ b/com/mojang/blaze3d/platform/GlStateManager.java
-@@ -52,7 +52,7 @@
+@@ -54,7 +54,7 @@
          return new GlStateManager.BooleanState[p_lambda$static$2_0_];
      });
      private static final GlStateManager.ColorMaterialState COLOR_MATERIAL = new GlStateManager.ColorMaterialState();
@@ -9,7 +9,7 @@
      private static final GlStateManager.DepthState DEPTH = new GlStateManager.DepthState();
      private static final GlStateManager.FogState FOG = new GlStateManager.FogState();
      private static final GlStateManager.CullState CULL = new GlStateManager.CullState();
-@@ -351,6 +351,12 @@
+@@ -356,6 +356,12 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnRenderThread);
  
@@ -22,7 +22,17 @@
          if (blendLock.isLocked())
          {
              blendLockState.setFactors(srcFactor, dstFactor, srcFactorAlpha, dstFactorAlpha);
-@@ -1030,7 +1036,13 @@
+@@ -783,7 +789,8 @@
+     public static void deleteFramebuffers(int frameBuffer)
+     {
+         RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+-
++        if(frameBuffer == framebufferDraw) framebufferDraw = 0;
++        if(frameBuffer == framebufferRead) framebufferRead = 0;
+         switch (fboMode)
+         {
+             case BASE:
+@@ -1065,7 +1072,13 @@
          getMatrix(2982, MATRIX_BUFFER);
          multMatrix(MATRIX_BUFFER);
      }
@@ -37,7 +47,7 @@
      @Deprecated
      public static void enableFog()
      {
-@@ -1556,7 +1568,18 @@
+@@ -1599,7 +1612,18 @@
          RenderSystem.assertThread(RenderSystem::isOnRenderThread);
          GL11.glGetFloatv(pname, params);
      }
@@ -57,7 +67,7 @@
      @Deprecated
      public static void ortho(double left, double right, double bottom, double top, double zNear, double zFar)
      {
-@@ -2070,7 +2093,7 @@
+@@ -2187,7 +2211,7 @@
          }
      }
  
@@ -66,7 +76,7 @@
      {
          public final GlStateManager.BooleanState blend = new GlStateManager.BooleanState(3042);
          public int srcFactorRgb = 1;
-@@ -2124,6 +2147,7 @@
+@@ -2241,6 +2265,7 @@
      }
  
      @Deprecated

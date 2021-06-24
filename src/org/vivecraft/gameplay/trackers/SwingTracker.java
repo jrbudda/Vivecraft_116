@@ -4,8 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.vivecraft.api.Vec3History;
-import org.vivecraft.control.ControllerType;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 
 import net.minecraft.block.BlockState;
@@ -217,7 +217,7 @@ public class SwingTracker extends Tracker{
 						if(entityact){
 							Minecraft.getInstance().physicalGuiManager.preClickAction();
 							mc.playerController.attackEntity(player, hitEntity);
-							MCOpenVR.triggerHapticPulse(c, 1000);
+							mc.vr.triggerHapticPulse(c, 1000);
 							lastWeaponSolid[c] = true;
 						}
 						inAnEntity = true;
@@ -238,8 +238,8 @@ public class SwingTracker extends Tracker{
 				canact[c] = canact[c] && !sword && !inAnEntity; 
 				
 				if(mc.climbTracker.isClimbeyClimb()){
-					if(c == 0 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) || !tool ) continue;
-					if(c == 1 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) || !tool ) continue;
+					if(c == 0 && mc.vr.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) || !tool ) continue;
+					if(c == 1 && mc.vr.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) || !tool ) continue;
 				}
 
 				BlockPos bp = new BlockPos(miningPoint[c]);
@@ -294,7 +294,7 @@ public class SwingTracker extends Tracker{
 							mc.vrPlayer.blockDust(blockHit.getHitVec().x, blockHit.getHitVec().y, blockHit.getHitVec().z, 3*p, bp, block, 0.6f, 1f);
 						}
 
-						MCOpenVR.triggerHapticPulse(c, 250*p);
+						mc.vr.triggerHapticPulse(c, 250*p);
 						//   System.out.println("Hit block speed =" + speed + " mot " + mot + " thresh " + speedthresh) ;            				
 					}
 				}

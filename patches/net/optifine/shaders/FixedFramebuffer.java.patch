@@ -1,0 +1,11 @@
+--- a/net/optifine/shaders/FixedFramebuffer.java
++++ b/net/optifine/shaders/FixedFramebuffer.java
+@@ -102,7 +102,7 @@
+     {
+         if (this.glFramebuffer != 0)
+         {
+-            EXTFramebufferObject.glDeleteFramebuffersEXT(this.glFramebuffer);
++        	GlStateManager.deleteFramebuffers(this.glFramebuffer);
+             this.glFramebuffer = 0;
+         }
+ 

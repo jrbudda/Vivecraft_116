@@ -1,7 +1,8 @@
 package org.vivecraft.gui.framework;
 
-import org.vivecraft.control.ControllerType;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.MCVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
@@ -73,14 +74,14 @@ public abstract class TwoHandedScreen extends Screen
         if (hoveredButtonId1 == null) {
         	lastHoveredButtonId1 = null;
         } else if (hoveredButtonId1 instanceof Button && lastHoveredButtonId1 != hoveredButtonId1) {
-			MCOpenVR.triggerHapticPulse(ControllerType.LEFT, 300);
+        	MCVR.get().triggerHapticPulse(ControllerType.LEFT, 300);
     		lastHoveredButtonId1 = hoveredButtonId1;
     	}
         
         if (hoveredButtonId2 == null) {
         	lastHoveredButtonId2 = null;
         } else if (hoveredButtonId2 instanceof Button && lastHoveredButtonId2 != hoveredButtonId2) {
-			MCOpenVR.triggerHapticPulse(ControllerType.RIGHT, 300);
+        	MCVR.get().triggerHapticPulse(ControllerType.RIGHT, 300);
     		lastHoveredButtonId2 = hoveredButtonId2;
     	}
         

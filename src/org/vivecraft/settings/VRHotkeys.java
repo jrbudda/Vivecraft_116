@@ -15,7 +15,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.optifine.Lang;
 import org.lwjgl.glfw.GLFW;
 import org.vivecraft.api.VRData;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.settings.VRSettings.VrOptions;
 import org.vivecraft.utils.LangHelper;
 import org.vivecraft.utils.Utils;
@@ -273,7 +273,7 @@ public class VRHotkeys {
 		
 		if (gotKey) {
 			mc.vrSettings.saveOptions();
-			if (MCOpenVR.mrMovingCamActive) {
+			if (mc.vr.mrMovingCamActive) {
 				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent(LangHelper.get("vivecraft.messages.coords", mc.vrSettings.mrMovingCamOffsetX, mc.vrSettings.mrMovingCamOffsetY, mc.vrSettings.mrMovingCamOffsetZ)));
 				Angle angle = mc.vrSettings.mrMovingCamOffsetRotQuat.toEuler();
 				Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(new StringTextComponent(LangHelper.get("vivecraft.messages.angles", angle.getPitch(), angle.getYaw(), angle.getRoll())));
@@ -287,7 +287,7 @@ public class VRHotkeys {
 
 	private static void adjustCamPos(Vector3 offset) {
 		Minecraft mc = Minecraft.getInstance();
-		if (MCOpenVR.mrMovingCamActive) {
+		if (mc.vr.mrMovingCamActive) {
 			offset = mc.vrSettings.mrMovingCamOffsetRotQuat.multiply(offset);
 			mc.vrSettings.mrMovingCamOffsetX += offset.getX();
 			mc.vrSettings.mrMovingCamOffsetY += offset.getY();
@@ -302,7 +302,7 @@ public class VRHotkeys {
 
 	private static void adjustCamRot(Axis axis, float degrees) {
 		Minecraft mc = Minecraft.getInstance();
-		if (MCOpenVR.mrMovingCamActive) {
+		if (mc.vr.mrMovingCamActive) {
 			mc.vrSettings.mrMovingCamOffsetRotQuat.set(mc.vrSettings.mrMovingCamOffsetRotQuat.rotate(axis, degrees, true));
 		} else {
 			mc.vrSettings.vrFixedCamrotQuat.set(mc.vrSettings.vrFixedCamrotQuat.rotate(axis, degrees, false));

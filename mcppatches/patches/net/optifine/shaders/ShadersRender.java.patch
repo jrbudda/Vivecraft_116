@@ -1,0 +1,20 @@
+--- a/net/optifine/shaders/ShadersRender.java
++++ b/net/optifine/shaders/ShadersRender.java
+@@ -362,7 +362,7 @@
+             IRenderTypeBuffer.Impl irendertypebuffer$impl = worldrenderer1.getRenderTypeTextures().getBufferSource();
+             boolean flag = Shaders.isShadowPass && !minecraft.player.isSpectator();
+ 
+-            for (WorldRenderer.LocalRenderInformationContainer worldrenderer$localrenderinformationcontainer : Shaders.isRenderShadowEntities() ? worldrenderer1.getRenderInfosEntities() : Collections.EMPTY_LIST)
++            for (WorldRenderer.LocalRenderInformationContainer worldrenderer$localrenderinformationcontainer : Shaders.isRenderShadowEntities() ? worldrenderer1.getRenderInfosEntities() : (List<WorldRenderer.LocalRenderInformationContainer>) Collections.EMPTY_LIST)
+             {
+                 ChunkRenderDispatcher.ChunkRender chunkrenderdispatcher$chunkrender = worldrenderer$localrenderinformationcontainer.renderChunk;
+                 Chunk chunk = chunkrenderdispatcher$chunkrender.getChunk();
+@@ -391,7 +391,7 @@
+             ClippingHelper clippinghelper1 = clippinghelper;
+             label100:
+ 
+-            for (WorldRenderer.LocalRenderInformationContainer worldrenderer$localrenderinformationcontainer1 : Shaders.isRenderShadowBlockEntities() ? worldrenderer1.getRenderInfosTileEntities() : Collections.EMPTY_LIST)
++            for (WorldRenderer.LocalRenderInformationContainer worldrenderer$localrenderinformationcontainer1 : Shaders.isRenderShadowBlockEntities() ? worldrenderer1.getRenderInfosTileEntities() : (List<WorldRenderer.LocalRenderInformationContainer>)  Collections.EMPTY_LIST)
+             {
+                 List<TileEntity> list = worldrenderer$localrenderinformationcontainer1.renderChunk.getCompiledChunk().getTileEntities();
+ 

@@ -86,14 +86,18 @@
      protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
      {
          return 2.55F;
-@@ -342,6 +372,16 @@
- 
+@@ -339,9 +369,19 @@
+         BlockState blockstate = this.world.getBlockState(blockpos$mutable);
+         boolean flag = blockstate.getMaterial().blocksMovement();
+         boolean flag1 = blockstate.getFluidState().isTagged(FluidTags.WATER);
+-
++       
          if (flag && !flag1)
          {
 +        	//Forge
-+            Object event = Reflector.newInstance(Reflector.EnderTeleportEvent_Constructor, this, x, y, z, 0);
-+            if(Reflector.postForgeBusEvent(event)) return false;
++            Object event = Reflector.call(Reflector.ForgeEventFactory_onEnderTeleport, this, x, y, z);
 +            if(event != null) {
++                if (Reflector.callBoolean(event, Reflector.EnderTeleportEvent_isCanceled)) return false;
 +            	x= Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetX);
 +            	y= Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetY);
 +            	z= Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetZ);           	

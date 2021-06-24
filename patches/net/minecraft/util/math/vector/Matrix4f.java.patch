@@ -39,7 +39,7 @@
  
      public Matrix4f()
      {
-@@ -631,4 +631,49 @@
+@@ -631,4 +631,28 @@
          this.m13 = p_setTranslation_2_;
          this.m23 = p_setTranslation_3_;
      }
@@ -67,25 +67,4 @@
 +    public Vector3d translationComponent() {
 +    	return new Vector3d(this.m30, this.m31, this.m32);
 +    }
-+
-+    public void setFromOpenVR(jopenvr.HmdMatrix44_t in) {
-+    	//do not transpose on 1.15
-+    	this.m00 = in.m[0];
-+    	this.m01 = in.m[1];
-+    	this.m02 = in.m[2];
-+    	this.m03 = in.m[3];
-+    	this.m10 = in.m[4];
-+    	this.m11 = in.m[5];
-+    	this.m12 = in.m[6];
-+    	this.m13 = in.m[7];
-+    	this.m20 = in.m[8];
-+    	this.m21 = in.m[9];
-+    	this.m22 = in.m[10];
-+    	this.m23 = in.m[11];
-+    	this.m30 = in.m[12];
-+    	this.m31 = in.m[13];
-+    	this.m32 = in.m[14];
-+    	this.m33 = in.m[15];
-+    }
-+    //
  }

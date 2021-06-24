@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/concurrent/ThreadTaskExecutor.java
++++ b/net/minecraft/util/concurrent/ThreadTaskExecutor.java
+@@ -211,7 +211,7 @@
+         }
+         else
+         {
+-            R[] ar = this.queue.toArray(new Runnable[this.queue.size()]);
++            R[] ar = (R[]) this.queue.toArray(new Runnable[this.queue.size()]);
+             double d0 = this.getChunkUpdateWeight(ar);
+ 
+             if (d0 < 5.0D)

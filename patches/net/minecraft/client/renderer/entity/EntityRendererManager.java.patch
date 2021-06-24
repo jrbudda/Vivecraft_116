@@ -82,7 +82,7 @@
          }
          else
          {
-@@ -556,6 +606,44 @@
+@@ -563,6 +613,44 @@
  
      public Quaternion getCameraOrientation()
      {

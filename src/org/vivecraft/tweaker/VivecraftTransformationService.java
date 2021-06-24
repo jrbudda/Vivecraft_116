@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.tree.MethodNode;
 import org.vivecraft.asm.VivecraftASMTransformer;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.utils.Utils;
 
 import cpw.mods.modlauncher.Launcher;

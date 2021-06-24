@@ -1,7 +1,7 @@
 package org.vivecraft.gameplay.trackers;
 
 import org.vivecraft.api.NetworkHelper;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -38,7 +38,7 @@ public class CrawlTracker extends Tracker {
 	
 	@Override
 	public void doProcess(ClientPlayerEntity player) {
-		crawling = MCOpenVR.hmdPivotHistory.averagePosition(0.2f).y * mc.vrPlayer.worldScale + 0.1f < mc.vrSettings.crawlThreshold;
+		crawling = mc.vr.hmdPivotHistory.averagePosition(0.2f).y * mc.vrPlayer.worldScale + 0.1f < mc.vrSettings.crawlThreshold;
 		updateState(player);
 	}
 

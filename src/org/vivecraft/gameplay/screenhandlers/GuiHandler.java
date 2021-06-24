@@ -4,14 +4,16 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.vivecraft.api.ServerVivePlayer;
 import org.vivecraft.api.VRData.VRDevicePose;
-import org.vivecraft.control.ControllerType;
-import org.vivecraft.control.HandedKeyBinding;
-import org.vivecraft.control.InputSimulator;
-import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.provider.OpenVRUtil;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.HandedKeyBinding;
+import org.vivecraft.provider.InputSimulator;
+import org.vivecraft.provider.MCVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.OpenVRUtil;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.AutoCalibration;
 import org.vivecraft.settings.VRSettings;
+import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Matrix4f;
 import org.vivecraft.utils.math.Quaternion;
 import org.vivecraft.utils.math.Vector3;
@@ -108,7 +110,7 @@ public class GuiHandler {
 		if(mc.currentScreen == null)return;
 		if(mc.vrSettings.seated) return;
 		if(guiRotation_room == null) return;
-		if(!MCOpenVR.isControllerTracking(0)) return;
+		if(!MCVR.get().isControllerTracking(0)) return;
 		
 		Vector2f tex = getTexCoordsForCursor(guiPos_room, guiRotation_room, mc.currentScreen, guiScale, mc.vrPlayer.vrdata_room_pre.getController(0));
 
@@ -145,7 +147,7 @@ public class GuiHandler {
 			int deltaX = 0;//?
 			int deltaY = 0;//?
 
-			if (MCOpenVR.controllerDeviceIndex[MCOpenVR.RIGHT_CONTROLLER] != -1)
+			if (MCVR.get().isControllerTracking(ControllerType.RIGHT))
 			{
 				InputSimulator.setMousePos(mouseX, mouseY);
 				controllerMouseValid = true;
@@ -378,7 +380,7 @@ public class GuiHandler {
 			}
 		}*/
 		if (unpressKeys)
-			MCOpenVR.ignorePressesNextFrame = true;
+			mc.vr.ignorePressesNextFrame = true;
 						
 		if(newScreen == null) {
 			//just insurance
@@ -408,7 +410,7 @@ public class GuiHandler {
 		if (staticScreen) {
 			//TODO reset scale things
 			guiScale = 2.0f;
-			float[] playArea = MCOpenVR.getPlayAreaSize();
+			float[] playArea = MCVR.get().getPlayAreaSize();
 			guiPos_room = new Vector3d(
 					(float) (0),
 					(float) (1.3f),
@@ -464,7 +466,7 @@ public class GuiHandler {
 				float pitch = (float) Math.asin(look.getY()/look.length());
 				float yaw = (float) ((float) Math.PI + Math.atan2(look.getX(), look.getZ()));    
 				guiRotation_room = Matrix4f.rotationY((float) yaw);
-				Matrix4f tilt = OpenVRUtil.rotationXMatrix(pitch);	
+				Matrix4f tilt = Utils.rotationXMatrix(pitch);	
 				guiRotation_room = Matrix4f.multiply(guiRotation_room,tilt);		
 
 			}				
@@ -495,7 +497,7 @@ public class GuiHandler {
 				float pitch = (float) Math.asin(look.getY()/look.length());
 				float yaw = (float) ((float) Math.PI + Math.atan2(look.getX(), look.getZ()));    
 				guiRotation_room = Matrix4f.rotationY((float) yaw);
-				Matrix4f tilt = OpenVRUtil.rotationXMatrix(pitch);	
+				Matrix4f tilt = Utils.rotationXMatrix(pitch);	
 				guiRotation_room = Matrix4f.multiply(guiRotation_room,tilt);		
 
 			}
@@ -531,14 +533,14 @@ public class GuiHandler {
  				if (mc.vrSettings.seated || mc.vrSettings.vrHudLockMode == VRSettings.HUD_LOCK_HEAD)
   				{
   					Matrix4f rot = Matrix4f.rotationY((float)mc.vrPlayer.vrdata_world_render.rotation_radians);
-  					Matrix4f max = Matrix4f.multiply(rot, MCOpenVR.hmdRotation);
+  					Matrix4f max = Matrix4f.multiply(rot, mc.vr.hmdRotation);
 
   					Vector3d v = mc.vrPlayer.vrdata_world_render.hmd.getPosition();
   					Vector3d d = mc.vrPlayer.vrdata_world_render.hmd.getDirection();
 
   					if(mc.vrSettings.seated && mc.vrSettings.seatedHudAltMode){
   						d = mc.vrPlayer.vrdata_world_render.getController(0).getDirection();
-  						max = Matrix4f.multiply(rot, MCOpenVR.getAimRotation(0));
+  						max = Matrix4f.multiply(rot, mc.vr.getAimRotation(0));
   					}
 
   					guipos = new Vector3d((v.x + d.x*mc.vrPlayer.vrdata_world_render.worldScale*mc.vrSettings.hudDistance),
@@ -552,31 +554,31 @@ public class GuiHandler {
 
   				}else if (mc.vrSettings.vrHudLockMode == VRSettings.HUD_LOCK_HAND)//hud on hand
   				{
-  					Matrix4f out = MCOpenVR.getAimRotation(1);
+  					Matrix4f out = mc.vr.getAimRotation(1);
   					Matrix4f rot = Matrix4f.rotationY((float) mc.vrPlayer.vrdata_world_render.rotation_radians);
   					Matrix4f MguiRotationPose =  Matrix4f.multiply(rot,out);
-  					guirot = Matrix4f.multiply(MguiRotationPose, OpenVRUtil.rotationXMatrix((float) Math.PI * -0.2F));
+  					guirot = Matrix4f.multiply(MguiRotationPose, Utils.rotationXMatrix((float) Math.PI * -0.2F));
   					guirot = Matrix4f.multiply(guirot, Matrix4f.rotationY((float) Math.PI * 0.1F * i));
   					scale = 1/1.7f;
   					guiLocal = new Vector3d(guiLocal.x, 0.32*mc.vrPlayer.vrdata_world_render.worldScale,guiLocal.z);
 
   					guipos = mc.gameRenderer.getControllerRenderPos(1);
 
-  					MCOpenVR.hudPopup = true;
+  					mc.vr.hudPopup = true;
 
   				}
   				else if (mc.vrSettings.vrHudLockMode == VRSettings.HUD_LOCK_WRIST)//hud on wrist
   				{
 
-  					Matrix4f out = MCOpenVR.getAimRotation(1);
+  					Matrix4f out = mc.vr.getAimRotation(1);
   					Matrix4f rot = Matrix4f.rotationY((float) mc.vrPlayer.vrdata_world_render.rotation_radians);
   					guirot =  Matrix4f.multiply(rot,out);
 
-                    guirot = Matrix4f.multiply(guirot, OpenVRUtil.rotationZMatrix((float)Math.PI * 0.5f * i));
+                    guirot = Matrix4f.multiply(guirot, Utils.rotationZMatrix((float)Math.PI * 0.5f * i));
   					guirot = Matrix4f.multiply(guirot, Matrix4f.rotationY((float) Math.PI * 0.3f *i));
 
                     guipos = mc.gameRenderer.getControllerRenderPos(1);
-                    MCOpenVR.hudPopup = true;
+                    mc.vr.hudPopup = true;
 
                     boolean slim = mc.player.getSkinType().equals("slim");
   						scale = 0.4f;
@@ -602,16 +604,16 @@ public class GuiHandler {
   			scale = 2;
 
   			Vector3d posAvg = new Vector3d(0, 0, 0);
-  			for (Vector3d vec : MCOpenVR.hmdPosSamples) {
+  			for (Vector3d vec : mc.vr.hmdPosSamples) {
   				posAvg = new Vector3d(posAvg.x + vec.x, posAvg.y + vec.y, posAvg.z + vec.z);
   			}
-  			posAvg = new Vector3d(posAvg.x / MCOpenVR.hmdPosSamples.size(), posAvg.y / MCOpenVR.hmdPosSamples.size(), posAvg.z / MCOpenVR.hmdPosSamples.size());
+  			posAvg = new Vector3d(posAvg.x / mc.vr.hmdPosSamples.size(), posAvg.y / mc.vr.hmdPosSamples.size(), posAvg.z / mc.vr.hmdPosSamples.size());
 
   			float yawAvg = 0;
-  			for (float f : MCOpenVR.hmdYawSamples) {
+  			for (float f : mc.vr.hmdYawSamples) {
   				yawAvg += f;
   			}
-  			yawAvg /= MCOpenVR.hmdYawSamples.size();
+  			yawAvg /= mc.vr.hmdYawSamples.size();
   			yawAvg = (float)Math.toRadians(yawAvg);
 
   			Vector3d dir = new Vector3d(-Math.sin(yawAvg), 0, Math.cos(yawAvg));

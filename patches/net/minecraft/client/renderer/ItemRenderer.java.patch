@@ -16,10 +16,10 @@
  import net.optifine.reflect.Reflector;
  import net.optifine.reflect.ReflectorForge;
 +import net.optifine.render.GlAlphaState;
+ import net.optifine.render.VertexBuilderWrapper;
  import net.optifine.shaders.Shaders;
  
- public class ItemRenderer implements IResourceManagerReloadListener
-@@ -66,6 +71,13 @@
+@@ -67,6 +72,13 @@
      private final ItemColors itemColors;
      public ModelManager modelManager = null;
      private static boolean renderItemGui = false;
@@ -33,7 +33,7 @@
  
      public ItemRenderer(TextureManager textureManagerIn, ModelManager modelManagerIn, ItemColors itemColorsIn)
      {
-@@ -140,6 +152,14 @@
+@@ -141,6 +153,14 @@
  
              matrixStackIn.translate(-0.5D, -0.5D, -0.5D);
  
@@ -48,7 +48,7 @@
              if (!modelIn.isBuiltInRenderer() && (itemStackIn.getItem() != Items.TRIDENT || flag))
              {
                  boolean flag1;
-@@ -162,6 +182,10 @@
+@@ -163,6 +183,10 @@
                  {
                      RenderType rendertype = RenderTypeLookup.func_239219_a_(itemStackIn, flag1);
                      IVertexBuilder ivertexbuilder;
@@ -59,9 +59,9 @@
  
                      if (itemStackIn.getItem() == Items.COMPASS && itemStackIn.hasEffect())
                      {
-@@ -327,7 +351,19 @@
-             {
-                 k = this.itemColors.getColor(itemStackIn, bakedquad.getTintIndex());
+@@ -333,7 +357,19 @@
+                     k = CustomColors.getColorFromItemStack(itemStackIn, bakedquad.getTintIndex(), k);
+                 }
              }
 -
 +            //Vivecraft color overrides for custom items
@@ -80,7 +80,7 @@
              float f = (float)(k >> 16 & 255) / 255.0F;
              float f1 = (float)(k >> 8 & 255) / 255.0F;
              float f2 = (float)(k & 255) / 255.0F;
-@@ -338,7 +374,7 @@
+@@ -344,7 +380,7 @@
              }
              else
              {
@@ -89,7 +89,7 @@
              }
          }
      }
-@@ -395,10 +431,15 @@
+@@ -401,10 +437,15 @@
          this.textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
          this.textureManager.getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
          RenderSystem.enableRescaleNormal();
@@ -106,7 +106,7 @@
          RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
          RenderSystem.translatef((float)x, (float)y, 100.0F + this.zLevel);
          RenderSystem.translatef(8.0F, 8.0F, 0.0F);
-@@ -412,7 +453,6 @@
+@@ -418,7 +459,6 @@
          {
              RenderHelper.setupGuiFlatDiffuseLighting();
          }
@@ -114,7 +114,7 @@
          this.renderItem(stack, ItemCameraTransforms.TransformType.GUI, false, matrixstack, irendertypebuffer$impl, 15728880, OverlayTexture.NO_OVERLAY, bakedmodel);
          irendertypebuffer$impl.finish();
          RenderSystem.enableDepthTest();
-@@ -582,4 +622,21 @@
+@@ -588,4 +628,21 @@
      {
          return VanillaResourceType.MODELS;
      }

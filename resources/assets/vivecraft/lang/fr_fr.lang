@@ -1,4 +1,4 @@
-# Contributors: PierraNova, Weelobeae, tomaveclevdsl
+# Contributors: PierraNova, Silinox, Weelobeae, tomaveclevdsl
 
 # Key bindings
 vivecraft.key.hotbarNext=Case suivante
@@ -24,6 +24,8 @@ vivecraft.key.swapMirrorView=Échanger vue du bureau
 vivecraft.key.toggleKeyboard=Montrer le clavier
 vivecraft.key.moveThirdPersonCam=Bouger caméra 3ème personne
 vivecraft.key.togglePlayerList=Afficher la liste de joueurs
+vivecraft.key.toggleHandheldCam=Activer/désactiver la caméra
+vivecraft.key.quickHandheldCam=Caméra rapide
 vivecraft.key.trackpadTouch=Touché du pavé tactile
 vivecraft.key.vrInteract=Interactions contextuelles
 vivecraft.key.guiLeftClick=Clic gauche
@@ -42,7 +44,7 @@ vivecraft.key.climbeyJump=Bottes de Saut
 
 # Key binding categories
 vivecraft.key.category.gui=Interface
-vivecraft.key.category.climbey=Déplacement style "Climbey"
+vivecraft.key.category.climbey=Déplacement à-la "Climbey"
 vivecraft.key.category.keyboard=Clavier
 
 # Action set names
@@ -94,13 +96,13 @@ vivecraft.options.HUD_HIDE=Cacher l'ATH (F1)
 vivecraft.options.RENDER_MENU_BACKGROUND=Fond de l'interface
 vivecraft.options.HUD_OCCLUSION=Occlusion de l'ATH
 vivecraft.options.MENU_ALWAYS_FOLLOW_FACE=Suivre visage ds. menu princi.
-vivecraft.options.CROSSHAIR_OCCLUSION=Réticule occlusion
+vivecraft.options.CROSSHAIR_OCCLUSION=Occlusion du réticule
 vivecraft.options.CROSSHAIR_SCALE=Taille du réticule
 vivecraft.options.MENU_CROSSHAIR_SCALE=Taille du réticule dans les menus
 vivecraft.options.RENDER_CROSSHAIR_MODE=Afficher le réticule
 vivecraft.options.CHAT_NOTIFICATIONS=Notification de chat
 vivecraft.options.CHAT_NOTIFICATION_SOUND=Son de notification
-vivecraft.options.CROSSHAIR_SCALES_WITH_DISTANCE=Taille du Curseur
+vivecraft.options.CROSSHAIR_SCALES_WITH_DISTANCE=Taille du curseur
 vivecraft.options.RENDER_BLOCK_OUTLINE_MODE=Afficher Contours Blocs
 vivecraft.options.AUTO_OPEN_KEYBOARD=Toujours afficher clavier
 vivecraft.options.RADIAL_MODE_HOLD=Mode du menu radiale
@@ -115,7 +117,7 @@ vivecraft.options.MIXED_REALITY_RENDER_HANDS=Afficher les mains
 vivecraft.options.MIXED_REALITY_UNITY_LIKE=Disposition
 vivecraft.options.MIXED_REALITY_UNDISTORTED=Nombre de "passes" anti-distorsion
 vivecraft.options.MIXED_REALITY_ALPHA_MASK=Masque alpha
-vivecraft.options.MIXED_REALITY_FOV=Champ de vis. caméra
+vivecraft.options.MIXED_REALITY_FOV=Champ de vis. du camera troisième personne
 vivecraft.options.WALK_UP_BLOCKS=Marcher au dessus des blocs
 vivecraft.options.MOVEMENT_MULTIPLIER=Multi. vitesse
 vivecraft.options.INERTIA_FACTOR=Inertie du joueur
@@ -132,7 +134,7 @@ vivecraft.options.WORLD_ROTATION_INCREMENT=Incréments de rotation
 vivecraft.options.TOUCH_HOTBAR=Interaction avec la barre d'action activée
 vivecraft.options.PLAY_MODE_SEATED=Mode de jeu
 vivecraft.options.RENDER_SCALEFACTOR=Résolution
-vivecraft.options.MONO_FOV=Champ de vision sans distorsions
+vivecraft.options.MONO_FOV=Champ de vis. sans distorsions
 vivecraft.options.REALISTIC_JUMP=Sauter à l'échelle d'une pièce
 vivecraft.options.REALISTIC_SNEAK=S'accroupir à l'échelle d'une pièce
 vivecraft.options.PHYSICAL_GUI=Interface physique
@@ -147,7 +149,7 @@ vivecraft.options.X_SENSITIVITY=Vitesse du rotation
 vivecraft.options.Y_SENSITIVITY=Sensibilité verticale/"Y"
 vivecraft.options.KEYHOLE=Trou de serrure
 vivecraft.options.FOV_REDUCTION=Réduc. champ de vis. pr. confort
-vivecraft.options.FOV_REDUCTION_MIN=Taille réduc. champ de vis. pr. confort
+vivecraft.options.FOV_REDUCTION_MIN=Taille réduc. champ de vis.
 vivecraft.options.FOV_REDUCTION_OFFSET=Décalage réduc. champ de vis.
 vivecraft.options.SEATED_HMD=Vers l'avant
 vivecraft.options.SEATED_HUD_XHAIR=Faire suivre l'ATH
@@ -168,13 +170,15 @@ vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Recharger la caméra externe
 vivecraft.options.RIGHT_CLICK_DELAY=Répéter clic droit
 vivecraft.options.ANIMAL_TOUCHING=Toucher les animales
+vivecraft.options.HANDHELD_CAMERA_FOV=Champ de vis. caméra
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=Résolution de la caméra
 
 # Option tooltips
-vivecraft.options.HUD_SCALE.tooltip=La taille relative que l'ATH prend dans le champ de vision. Les unités sont relatives, ni des degrés ni des fractions du champ de vision etc..
+vivecraft.options.HUD_SCALE.tooltip=La taille relative que l'ATH prend dans le champ de vis. Les unités sont relatives, ni des degrés ni des fractions du champ de vis. etc..
 
 vivecraft.options.HUD_DISTANCE.tooltip=La distance à laquelle l'ATH flottant est affiché devant vous. La taille relative de l'ATH n'est pas affectée par ce paramètre. La distance est en mètres (mais n'est pas obstrué par des blocs).
 
-vivecraft.options.HUD_LOCK_TO.tooltip=Spécifie à quelle orientation l'ATH sera bloqué.\n  Main: L'ATH s'affichera juste au dessus de la main non-principale.\n  Tête: L'ATH s'affichera droit devant votre champ de vision.\n  Poignet: L'ATH apparaîtra à l'intérieur de votre main non-principale. Il ne deviendra visible qu'en regardant la paume.
+vivecraft.options.HUD_LOCK_TO.tooltip=Spécifie à quelle orientation l'ATH sera bloqué.\n  Main: L'ATH s'affichera juste au dessus de la main non-principale.\n  Tête: L'ATH s'affichera droit devant votre champ de vis.\n  Poignet: L'ATH apparaîtra à l'intérieur de votre main non-principale. Il ne deviendra visible qu'en regardant la paume.
 
 vivecraft.options.HUD_OPACITY.tooltip=La transparence de l'ATH et de l'interface.
 
@@ -224,7 +228,7 @@ vivecraft.options.MIXED_REALITY_UNDISTORTED.tooltip=Inclure une vue sans distors
 
 vivecraft.options.MIXED_REALITY_ALPHA_MASK.tooltip=Dans la mise en page Unity, si activé, affichera un masque alpha "greyscale" quart en haut à droite (comme Unity) utilisé pour masquer la couche au premier plan. Sinon, le premier plan sera déssiné avec la couleur de clé pour utilisation avec l'effet couleur de clé.
 
-vivecraft.options.MIXED_REALITY_FOV.tooltip=Le champ de vision du mode réalité mixte
+vivecraft.options.MIXED_REALITY_FOV.tooltip=Le champ de vis. du mode réalité mixte
 
 vivecraft.options.WALK_UP_BLOCKS.tooltip=Vous permet de sélectionner la capacité à marcher au dessus des blocs sans avoir à sauter. (Raccourci: Ctrl Droit + B)\n§cATTENTION: Peut causer des alertes anti-triche si utilisé sur un serveur multijoueur!\n  Non: (Défaut) Vous devrez sauter au dessus des blocs.\n  Oui: Vous pouvez marcher au dessus des blocs. Peut aider contre la nausée liée au déplacement libre.
 
@@ -242,7 +246,7 @@ vivecraft.options.LIMIT_TELEPORT.tooltip=Si activé, la téléportation aura des
 
 vivecraft.options.REVERSE_HANDS.tooltip=Echange les mains dominantes et secondaires.\n  Oui: Main gauche dominante.\n  Non: Main droite dominante (par défaut)\n\n§cPour échanger les touches, relancez le jeu et vérifiez que les contrôles par défaut sont utilisés sur SteamVR!
 
-vivecraft.options.STENCIL_ON.tooltip=Masque les zones de l'écran en dehors du champ de vision. Améliore les performances.
+vivecraft.options.STENCIL_ON.tooltip=Masque les zones de l'écran en dehors du champ de vis. Améliore les performances.
 
 vivecraft.options.BCB_ON.tooltip=Montre la position de votre corps avec une ombre carrée sur le sol.\nC'est votre propre ombre. Rien que pour vous.\n§4Si vous la perdez, aucun problème on la remplace!
 
@@ -328,7 +332,11 @@ vivecraft.options.RELOAD_EXTERNAL_CAMERA.tooltip=Recharge la configuration de la
 
 vivecraft.options.RIGHT_CLICK_DELAY.tooltip=Le nombre de "ticks" entre chaque clic droit lorsque la touche est enfoncée.
 
-vivecraft.options.ANIMAL_TOUCHING.tooltip=Si activé, vous permet de toucher les animaux pour faire les actions du clic droit. Désactiver pour donner des coups de poing à des pauvres cochons.
+vivecraft.options.ANIMAL_TOUCHING.tooltip=Si activé, vous permet de toucher les animaux pour faire les actions du clic droit. Désactiver pour donner des coups de poing à des pauvres cochons. Sale monstre.
+
+vivecraft.options.HANDHELD_CAMERA_FOV.tooltip=Champ de vision de la caméra de capture d'écran portable.
+
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE.tooltip=Résolution de la caméra de capture d'écran portable, pour des captures plus grandes qu'à la normale.\nIncompatible avec les shaders.\n§cWARNING: Nécessite un ordinateur très puissant!
 
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=Je ne peux pas voir
@@ -410,6 +418,7 @@ vivecraft.gui.screenshot=Capture d'écran
 vivecraft.gui.calibrateheight=Calibrer la hauteur
 vivecraft.gui.alignkatwalk=Aligner le KAT WALK
 vivecraft.gui.movethirdpersoncam=Bouger caméra 3ᵉ pers.
+vivecraft.gui.social=Social
 
 # Items
 vivecraft.item.jumpboots=Bottes de saut
@@ -424,10 +433,11 @@ vivecraft.messages.controls.1=Les contrôles sont gérés par SteamVR, si vous v
 vivecraft.messages.controls.2=Allez dans Paramètres>Manettes>Changer les contrôles dans le tableau de bord.
 vivecraft.messages.controls.3=§6Steam doit être en marche §oavant que§r§6 SteamVR soit lancé, sinon les commandes ne seront pas sauvegardées.
 vivecraft.messages.serverplugin=Mod/Plugin Vivecraft détecté sur le serveur: %s
-vivecraft.messages.noserverplugin=Le mod Vivecraft pour serveurs non détecté. Ce serveur pourrait ne pas supporter la téléportation. Dans le doute, on va restreindre vos déplacements. Ne le prenez pas mal hein, c'est pas contre vous.
-vivecraft.messages.calibrateheight=Calibrez votre hauteur dans le menu pause
+vivecraft.messages.noserverplugin=Vivecraft pour serveurs non détecté. Ce serveur pourrait ne pas supporter la téléportation. Dans le doute, on va restreindre vos déplacements. Ne le prenez pas mal hein, c'est pas contre vous.
+vivecraft.messages.calibrateheight=Calibrez votre hauteur dans le menu pause.
 vivecraft.messages.rendersetupfailed=Erreur d'affichage! (Render setup failed: %s) 
 vivecraft.messages.intelgraphics=Les graphismes intégrés d'Intel ne sont pas supportés. Si ceci est un PC portable, veuillez forcer l'utilisation de la carte vidéo. Carte vidéo détectée: %s
+vivecraft.messages.nosteamvr=Runtime d'OpenVR non détecté, avez vous installé SteamVR?
 vivecraft.messages.menuworldexportcomplete.1=Exportation du monde finie... Taille de la zone: %d
 vivecraft.messages.menuworldexportcomplete.2=Sauvegardé sur %s
 vivecraft.messages.menuworldexportclientwarning=§cATTENTION: Sauvegarde du monde utilisant un monde client. Les données pourraient être incomplètes. Il est recommandé de sauvegarder les mondes pr. le menu principal en solo.

@@ -1,6 +1,6 @@
 package org.vivecraft.api;
 
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.Utils;
@@ -87,34 +87,34 @@ public class VRData{
 	
 	public VRData(Vector3d origin, float walkMul,float worldScale, float rotation) {
 		//ok this is where it gets ugly, gonna go straight to mcopenvr and grab shit for copying.
-		
+		Minecraft mc = Minecraft.getInstance();
 		this.origin = origin;
 		this.worldScale =worldScale;
 		this.rotation_radians = rotation;
 		
-		Vector3d hmd_raw = MCOpenVR.getCenterEyePosition();
+		Vector3d hmd_raw = mc.vr.getCenterEyePosition();
 		Vector3d scaledPos = new Vector3d(hmd_raw.x * walkMul, hmd_raw.y, hmd_raw.z * walkMul);
 		
-		hmd = new VRDevicePose(this, MCOpenVR.hmdRotation, scaledPos, MCOpenVR.getHmdVector()); 
+		hmd = new VRDevicePose(this, mc.vr.hmdRotation, scaledPos, mc.vr.getHmdVector()); 
 		
-		eye0 = new VRDevicePose(this, MCOpenVR.getEyeRotation(RenderPass.LEFT), MCOpenVR.getEyePosition(RenderPass.LEFT).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHmdVector());
-		eye1 = new VRDevicePose(this, MCOpenVR.getEyeRotation(RenderPass.RIGHT), MCOpenVR.getEyePosition(RenderPass.RIGHT).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHmdVector());
+		eye0 = new VRDevicePose(this, mc.vr.getEyeRotation(RenderPass.LEFT), mc.vr.getEyePosition(RenderPass.LEFT).subtract(hmd_raw).add(scaledPos), mc.vr.getHmdVector());
+		eye1 = new VRDevicePose(this, mc.vr.getEyeRotation(RenderPass.RIGHT), mc.vr.getEyePosition(RenderPass.RIGHT).subtract(hmd_raw).add(scaledPos), mc.vr.getHmdVector());
 		
-		c0 = new VRDevicePose(this, MCOpenVR.getAimRotation(0),MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(0));
-		c1 = new VRDevicePose(this, MCOpenVR.getAimRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(1));
-		h0 = new VRDevicePose(this, MCOpenVR.getHandRotation(0),MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(0));
-		h1 = new VRDevicePose(this, MCOpenVR.getHandRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(1));
+		c0 = new VRDevicePose(this, mc.vr.getAimRotation(0),mc.vr.getAimSource(0).subtract(hmd_raw).add(scaledPos), mc.vr.getAimVector(0));
+		c1 = new VRDevicePose(this, mc.vr.getAimRotation(1),mc.vr.getAimSource(1).subtract(hmd_raw).add(scaledPos), mc.vr.getAimVector(1));
+		h0 = new VRDevicePose(this, mc.vr.getHandRotation(0),mc.vr.getAimSource(0).subtract(hmd_raw).add(scaledPos), mc.vr.getHandVector(0));
+		h1 = new VRDevicePose(this, mc.vr.getHandRotation(1),mc.vr.getAimSource(1).subtract(hmd_raw).add(scaledPos), mc.vr.getHandVector(1));
 	
 		Matrix4f s1 = getSmoothedRotation(0,0.33f);
 		Matrix4f s2 = getSmoothedRotation(1,0.33f);
-		t0 = new VRDevicePose(this, s1, MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), s1.transform(Vector3.forward()).toVector3d());
-		t1 = new VRDevicePose(this, s2, MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), s2.transform(Vector3.forward()).toVector3d());
+		t0 = new VRDevicePose(this, s1, mc.vr.getAimSource(0).subtract(hmd_raw).add(scaledPos), s1.transform(Vector3.forward()).toVector3d());
+		t1 = new VRDevicePose(this, s2, mc.vr.getAimSource(1).subtract(hmd_raw).add(scaledPos), s2.transform(Vector3.forward()).toVector3d());
 
 		Matrix4f camRot = Matrix4f.multiply(Matrix4f.rotationY(-rotation), new Matrix4f(Minecraft.getInstance().cameraTracker.getRotation()).transposed());
 		cam = new VRDevicePose(this, camRot, Minecraft.getInstance().cameraTracker.getPosition().subtract(origin).rotateYaw(-rotation).subtract(hmd_raw).add(scaledPos), camRot.transform(Vector3.forward()).toVector3d());
 
-		if (MCOpenVR.mrMovingCamActive)
-			c2 = new VRDevicePose(this, MCOpenVR.getAimRotation(2),MCOpenVR.getAimSource(2).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(2));
+		if (mc.vr.mrMovingCamActive)
+			c2 = new VRDevicePose(this, mc.vr.getAimRotation(2),mc.vr.getAimSource(2).subtract(hmd_raw).add(scaledPos), mc.vr.getAimVector(2));
 		else {
 			VRSettings settings = Minecraft.getInstance().vrSettings;
 			Matrix4f rot = new Matrix4f(settings.vrFixedCamrotQuat).transposed();
@@ -125,9 +125,10 @@ public class VRData{
 	}
 	
 	private Matrix4f getSmoothedRotation(int c, float lenSec) {
-		Vector3d pos = MCOpenVR.controllerHistory[c].averagePosition(lenSec);
-		Vector3d u = MCOpenVR.controllerForwardHistory[c].averagePosition(lenSec);
-		Vector3d f = MCOpenVR.controllerUpHistory[c].averagePosition(lenSec);
+		Minecraft mc = Minecraft.getInstance();
+		Vector3d pos = mc.vr.controllerHistory[c].averagePosition(lenSec);
+		Vector3d u = mc.vr.controllerForwardHistory[c].averagePosition(lenSec);
+		Vector3d f = mc.vr.controllerUpHistory[c].averagePosition(lenSec);
 		Vector3d r = u.crossProduct(f);	
 		return new Matrix4f((float)r.x, (float)u.x, (float)f.x, (float)r.y, (float)u.y, (float)f.y, (float)r.z, (float)u.z, (float)f.z);
 	}

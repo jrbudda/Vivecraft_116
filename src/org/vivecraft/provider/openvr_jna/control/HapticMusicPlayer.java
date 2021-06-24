@@ -1,4 +1,4 @@
-package org.vivecraft.control;
+package org.vivecraft.provider.openvr_jna.control;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,7 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 
 public class HapticMusicPlayer {
 	private static Map<String, Music> map = new HashMap<>();
@@ -62,10 +63,10 @@ public class HapticMusicPlayer {
 				if (obj instanceof Note) {
 					Note note = (Note)obj;
 					if (note.controller != null) {
-						MCOpenVR.triggerHapticPulse(note.controller, note.durationSeconds, note.frequency, note.amplitude, delayAccum);
+						MCOpenVR.get().triggerHapticPulse(note.controller, note.durationSeconds, note.frequency, note.amplitude, delayAccum);
 					} else {
-						MCOpenVR.triggerHapticPulse(ControllerType.RIGHT, note.durationSeconds, note.frequency, note.amplitude, delayAccum);
-						MCOpenVR.triggerHapticPulse(ControllerType.LEFT, note.durationSeconds, note.frequency, note.amplitude, delayAccum);
+						MCOpenVR.get().triggerHapticPulse(ControllerType.RIGHT, note.durationSeconds, note.frequency, note.amplitude, delayAccum);
+						MCOpenVR.get().triggerHapticPulse(ControllerType.LEFT, note.durationSeconds, note.frequency, note.amplitude, delayAccum);
 					}
 				} else if (obj instanceof Delay) {
 					Delay delay = (Delay)obj;
