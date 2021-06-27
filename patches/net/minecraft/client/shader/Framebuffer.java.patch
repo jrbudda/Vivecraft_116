@@ -169,7 +169,16 @@
          }
      }
  
-@@ -270,17 +289,17 @@
+@@ -248,6 +267,8 @@
+             {
+                 throw new RuntimeException("glCheckFramebufferStatus returned unknown status:" + i);
+             }
++        } else {
++        	System.out.println("Framebuffer complete " + this.name);
+         }
+     }
+ 
+@@ -270,17 +291,17 @@
      }
  
      public void bindFramebuffer(boolean setViewportIn)
@@ -190,7 +199,7 @@
          }
      }
  
-@@ -329,7 +348,8 @@
+@@ -329,7 +350,8 @@
          this.framebufferRenderExt(width, height, true);
      }
  
@@ -200,7 +209,7 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnGameThreadOrInit);
  
-@@ -337,58 +357,87 @@
+@@ -337,58 +359,87 @@
          {
              RenderSystem.recordRenderCall(() ->
              {
@@ -332,7 +341,7 @@
      }
  
      public void framebufferClear(boolean onMac)
-@@ -417,18 +466,71 @@
+@@ -417,18 +468,71 @@
      {
          return this.depthBuffer;
      }

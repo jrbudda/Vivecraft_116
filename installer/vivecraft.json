@@ -25,7 +25,7 @@
 		},
 		{
 			"name": "org.ow2.asm:asm-all:5.2",
-			"url": "http://files.minecraftforge.net/maven/"
+			"url": "http://maven.minecraftforge.net/"
 		},
 		{
 			"url": "http://vivecraft.org/jar/",

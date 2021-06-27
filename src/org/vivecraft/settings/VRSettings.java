@@ -213,6 +213,7 @@ public class VRSettings
     public Angle.Order externalCameraAngleOrder = Angle.Order.XZY;
     public float handCameraFov = 70;
     public float handCameraResScale = 1.0f;
+    public boolean mixedRealityRenderCameraModel = true;
     //
     
     //HUD/GUI
@@ -809,6 +810,10 @@ public class VRSettings
                     if(optionTokens[0].equals("handCameraResScale")){
                         this.handCameraResScale = parseFloat(optionTokens[1]);
                     }
+
+                    if(optionTokens[0].equals("mixedRealityRenderCameraModel")){
+                        this.mixedRealityRenderCameraModel = optionTokens[1].equals("true");
+                    }
                     
                     if(optionTokens[0].equals("firstRun")){
                     	this.firstRun = optionTokens[1].equals("true");
@@ -1209,6 +1214,8 @@ public class VRSettings
                 } else {
                     return var4 + Math.round(1920 * this.handCameraResScale) + "x" + Math.round(1080 * this.handCameraResScale);
                 }
+            case MIXED_REALITY_RENDER_CAMERA_MODEL:
+                return this.mixedRealityRenderCameraModel ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case RELOAD_EXTERNAL_CAMERA:
                 return var2;
             default:
@@ -1589,6 +1596,9 @@ public class VRSettings
             	this.rightclickDelay+=2;
             	if (this.rightclickDelay>10) this.rightclickDelay = 4;
             	break;
+            case MIXED_REALITY_RENDER_CAMERA_MODEL:
+                this.mixedRealityRenderCameraModel = !this.mixedRealityRenderCameraModel;
+                break;
             case RELOAD_EXTERNAL_CAMERA:
                 VRHotkeys.loadExternalCameraConfig();
                 break;
@@ -1854,6 +1864,7 @@ public class VRSettings
             var5.println("guiAppearOverBlock:" + this.guiAppearOverBlock);
             var5.println("handCameraFov:" + this.handCameraFov);
             var5.println("handCameraResScale:" + this.handCameraResScale);
+            var5.println("mixedRealityRenderCameraModel:" + this.mixedRealityRenderCameraModel);
 
             var5.println("firstRun:" + this.firstRun);
             
@@ -1977,6 +1988,7 @@ public class VRSettings
         MONO_FOV(true, false, 0, 179, 1), // Undistorted FOV
         HANDHELD_CAMERA_FOV(true, false, 0, 179, 1), // Camera FOV
         HANDHELD_CAMERA_RENDER_SCALE(true, false, 0.5f, 3.0f, 0.25f), // Camera Resolution
+        MIXED_REALITY_RENDER_CAMERA_MODEL(false, true), // Show Camera Model
         //END JRBUDDA
         REALISTIC_JUMP(false, true), // Roomscale Jumping
         REALISTIC_SNEAK(false, true), // Roomscale Sneaking

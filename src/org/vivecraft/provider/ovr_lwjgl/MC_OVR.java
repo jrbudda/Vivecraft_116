@@ -50,6 +50,7 @@ public class MC_OVR extends MCVR {
 	protected static MC_OVR ome;
 	OVRVector3f guardian;
 	OVRInputState inputs;
+	private boolean inputInitialized;
 	
 	public MC_OVR(Minecraft mc) {
 		super(mc);
@@ -62,6 +63,7 @@ public class MC_OVR extends MCVR {
 		hmdDesc = OVRHmdDesc.malloc();
 		inputs = OVRInputState.malloc();
 		guardian = OVRVector3f.malloc();
+		layer = OVRLayerEyeFov.malloc();
 	}
 	public static MC_OVR get() {
 		return ome;
@@ -78,7 +80,7 @@ public class MC_OVR extends MCVR {
 
 	@Override
 	public void processInputs() {
-		if (mc.vrSettings.seated || Main.viewonly) return;	
+		if (mc.vrSettings.seated || Main.viewonly || !inputInitialized) return;
 		OVR.ovr_GetInputState(session.get(0), OVR.ovrControllerType_Touch, inputs);	
 		processInputAction(getInputAction(mc.gameSettings.keyBindAttack), inputs.IndexTrigger(0) > 0.5f);
 		processInputAction(getInputAction(mc.gameSettings.keyBindUseItem), (inputs.Buttons() & OVR.ovrButton_A) == OVR.ovrButton_A);
@@ -182,9 +184,11 @@ public class MC_OVR extends MCVR {
 			return false;
 		}
 		
+		System.out.println("Oculus OVR loaded.");
+		
 		OVR.ovr_GetHmdDesc(session.get(0), hmdDesc);
 		
-		System.out.println("hmd res: " + hmdDesc.Resolution().toString());
+		System.out.println("Oculus hmd res: " + hmdDesc.Resolution().w() + " x " + hmdDesc.Resolution().h());
 		
 		OVR.ovr_GetRenderDesc(session.get(0), OVR.ovrEye_Left, hmdDesc.DefaultEyeFov(0), eyeRenderDesc0);
 		OVR.ovr_GetRenderDesc(session.get(0), OVR.ovrEye_Right, hmdDesc.DefaultEyeFov(1), eyeRenderDesc1);
@@ -201,7 +205,9 @@ public class MC_OVR extends MCVR {
 	@Override
 	public boolean postinit() {
 		populateInputActions();
-		return true;
+		System.out.println("Oculus Keybinds loaded.");
+		inputInitialized = true;
+		return inputInitialized;
 	}
 	
 	@Override

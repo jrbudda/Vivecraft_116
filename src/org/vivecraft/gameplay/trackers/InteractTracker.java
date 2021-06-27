@@ -142,7 +142,7 @@ public class InteractTracker extends Tracker{
 			ItemStack is = player.getHeldItem(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);
 			Item item = null;
 
-			if (!active[c] && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)) {
+			if (!active[c] && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON) && mc.vrSettings.mixedRealityRenderCameraModel) {
 				VRData.VRDevicePose camData = mc.vrPlayer.vrdata_world_pre.getEye(RenderPass.THIRD);
 				Vector3d camPos = camData.getPosition();
 				camPos = camPos.subtract(camData.getCustomVector(new Vector3d(0, 0, -1)).scale(0.15f));

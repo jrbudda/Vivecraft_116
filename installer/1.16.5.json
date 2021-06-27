@@ -1638,6 +1638,7 @@
 				}
 			},
 			"name": "org.lwjgl:lwjgl-ovr:3.2.2",
+			"url": "https://repo1.maven.org/maven2/",
 			"natives": {
 				"windows": "natives-windows"
 			},

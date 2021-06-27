@@ -33,6 +33,7 @@ public class VRWidgetHelper {
 
 	public static void renderVRThirdPersonCamWidget() {
 		Minecraft mc = Minecraft.getInstance();
+		if (!mc.vrSettings.mixedRealityRenderCameraModel) return;
 		if (mc.currentPass == RenderPass.LEFT || mc.currentPass == RenderPass.RIGHT) {
 			if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON) {
 				float scale = 0.35f;
