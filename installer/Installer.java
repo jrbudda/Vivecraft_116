@@ -188,7 +188,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		entryPanel.setAlignmentY(TOP_ALIGNMENT);
 
 		selectedDirText = new JTextField();
-		selectedDirText.setEditable(false);
+		selectedDirText.setEditable(!isWindows);
 		selectedDirText.setToolTipText("Path to minecraft");
 		selectedDirText.setAlignmentX(LEFT_ALIGNMENT);
 		selectedDirText.setAlignmentY(TOP_ALIGNMENT);
