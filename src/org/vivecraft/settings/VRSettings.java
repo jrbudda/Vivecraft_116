@@ -139,7 +139,7 @@ public class VRSettings
 	public String keyboardKeysShift ="~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL;\':\"ZXCVBNM,./?<>";
 	public int hrtfSelection = 0;
 	public boolean firstRun = true;
-    public int rightclickDelay = 6 ;
+    public int rightclickDelay = 4;
 	//
 
     //Locomotion

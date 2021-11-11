@@ -765,8 +765,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					monitor.setProgress(95);
 					monitor.setNote("Creating Vivecraft profile...");
 
-					if (!updateLauncherJson(targetDir, minecriftVersionName, profileName))
-						sbErrors.append("Failed to set up 'Vivecraft' profile (you can still manually select Edit Profile->Use Version " + minecriftVersionName + " in the Minecraft launcher)\n");
+					if (!updateLauncherJson(targetDir, minecriftVersionName, profileName, "launcher_profiles.json" )
+						& (!updateLauncherJson(targetDir, minecriftVersionName, profileName, "launcher_profiles_microsoft_store.json")))
+							sbErrors.append("Failed to set up 'Vivecraft' profile (you can still manually select Edit Profile->Use Version " + minecriftVersionName + " in the Minecraft launcher)\n");
 					else
 						profileCreated = true;
 				}
@@ -1341,13 +1342,13 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			return newPath;
 		}
 
-		private boolean updateLauncherJson(File mcBaseDirFile, String minecriftVer, String profileName)
+		private boolean updateLauncherJson(File mcBaseDirFile, String minecriftVer, String profileName, String profile)
 		{
 			boolean result = false;
 
 			try {
 				int jsonIndentSpaces = 2;
-				File fileJson = new File(mcBaseDirFile, "launcher_profiles.json");
+				File fileJson = new File(mcBaseDirFile, profile);
 				String json = readAsciiFile(fileJson);
 				JSONObject root = new JSONObject(json);
 				//System.out.println(root.toString(jsonIndentSpaces));

@@ -209,7 +209,7 @@
      {
          RenderSystem.assertThread(RenderSystem::isOnGameThreadOrInit);
  
-@@ -337,58 +359,87 @@
+@@ -337,58 +359,86 @@
          {
              RenderSystem.recordRenderCall(() ->
              {
@@ -321,7 +321,6 @@
 +    			}
 +    		}
 +
-+
 +    		float f = (float)width;
 +    		float f1 = (float)height;
 +    		float f2 = (float)this.framebufferWidth / (float)this.framebufferTextureWidth;
@@ -341,7 +340,7 @@
      }
  
      public void framebufferClear(boolean onMac)
-@@ -417,18 +468,71 @@
+@@ -417,18 +467,71 @@
      {
          return this.depthBuffer;
      }

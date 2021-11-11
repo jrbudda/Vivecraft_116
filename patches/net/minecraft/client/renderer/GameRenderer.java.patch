@@ -311,71 +311,67 @@
          return matrixstack.getLast().getMatrix();
      }
  
-@@ -622,10 +757,12 @@
+@@ -622,193 +757,106 @@
  
      public void updateCameraAndRender(float partialTicks, long nanoTime, boolean renderWorldIn)
      {
-+
-+    	if(mc.currentPass == RenderPass.LEFT) { //Vivecraft once per pass
-         this.frameInit();
- 
+-        this.frameInit();
+-
 -        if (!this.mc.isGameFocused() && this.mc.gameSettings.pauseOnLostFocus && (!this.mc.gameSettings.touchscreen || !this.mc.mouseHelper.isRightDown()))
 -        {
-+    		if (!always_true && !this.mc.isGameFocused() && this.mc.gameSettings.pauseOnLostFocus && (!this.mc.gameSettings.touchscreen || !this.mc.mouseHelper.isRightDown()))
-+    		{//never pause on focus loss.
-             if (Util.milliTime() - this.prevFrameTime > 500L)
-             {
-                 this.mc.displayInGameMenu(false);
-@@ -635,16 +772,23 @@
-         {
-             this.prevFrameTime = Util.milliTime();
-         }
-+    	}
- 
-         if (!this.mc.skipRenderWorld)
-         {
-             int i = (int)(this.mc.mouseHelper.getMouseX() * (double)this.mc.getMainWindow().getScaledWidth() / (double)this.mc.getMainWindow().getWidth());
-             int j = (int)(this.mc.mouseHelper.getMouseY() * (double)this.mc.getMainWindow().getScaledHeight() / (double)this.mc.getMainWindow().getHeight());
- 
+-            if (Util.milliTime() - this.prevFrameTime > 500L)
+-            {
+-                this.mc.displayInGameMenu(false);
+-            }
+-        }
+-        else
+-        {
+-            this.prevFrameTime = Util.milliTime();
+-        }
+-
+-        if (!this.mc.skipRenderWorld)
+-        {
+-            int i = (int)(this.mc.mouseHelper.getMouseX() * (double)this.mc.getMainWindow().getScaledWidth() / (double)this.mc.getMainWindow().getWidth());
+-            int j = (int)(this.mc.mouseHelper.getMouseY() * (double)this.mc.getMainWindow().getScaledHeight() / (double)this.mc.getMainWindow().getHeight());
+-
 -            if (renderWorldIn && this.mc.world != null && !Config.isReloadingResources())
-+    		RenderSystem.viewport(0, 0, this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
-+
-+    		if (renderWorldIn && !(isInMenuRoom()) && this.mc.world != null && !Config.isReloadingResources())
-             {
-+    			//This is the viewmodel matrix.
-+    			MatrixStack matrixstack = new MatrixStack();
-                 this.mc.getProfiler().startSection("level");
+-            {
+-                this.mc.getProfiler().startSection("level");
 -                this.renderWorld(partialTicks, nanoTime, new MatrixStack());
-+    			this.renderWorld(partialTicks, nanoTime, matrixstack);
-+    			if(mc.currentPass != RenderPass.THIRD && mc.currentPass != RenderPass.CAMERA)
-+    				renderFaceOverlay(partialTicks);
- 
-                 if (this.mc.isSingleplayer() && this.timeWorldIcon < Util.milliTime() - 1000L)
-                 {
-@@ -656,9 +800,10 @@
-                     }
-                 }
- 
-+    			//note calling this breaks the projection matrix.
-                 this.mc.worldRenderer.renderEntityOutlineFramebuffer();
- 
+-
+-                if (this.mc.isSingleplayer() && this.timeWorldIcon < Util.milliTime() - 1000L)
+-                {
+-                    this.timeWorldIcon = Util.milliTime();
+-
+-                    if (!this.mc.getIntegratedServer().isWorldIconSet())
+-                    {
+-                        this.createWorldIcon();
+-                    }
+-                }
+-
+-                this.mc.worldRenderer.renderEntityOutlineFramebuffer();
+-
 -                if (this.shaderGroup != null && this.useShader)
-+    			if (this.shaderGroup != null && this.useShader && mc.currentPass != RenderPass.THIRD )
-                 {
-                     RenderSystem.disableBlend();
-                     RenderSystem.disableDepthTest();
-@@ -674,140 +819,35 @@
- 
-                 this.mc.getFramebuffer().bindFramebuffer(true);
-             }
+-                {
+-                    RenderSystem.disableBlend();
+-                    RenderSystem.disableDepthTest();
+-                    RenderSystem.disableAlphaTest();
+-                    RenderSystem.enableTexture();
+-                    RenderSystem.matrixMode(5890);
+-                    RenderSystem.pushMatrix();
+-                    RenderSystem.loadIdentity();
+-                    this.shaderGroup.render(partialTicks);
+-                    RenderSystem.popMatrix();
+-                    RenderSystem.enableTexture();
+-                }
+-
+-                this.mc.getFramebuffer().bindFramebuffer(true);
+-            }
 -            else
 -            {
 -                RenderSystem.viewport(0, 0, this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
 -            }
-+    		else {
-+    			this.mc.getProfiler().startSection("MainMenu");
-+    			GL11.glDisable(GL11.GL_STENCIL_TEST);
- 
+-
 -            MainWindow mainwindow = this.mc.getMainWindow();
 -            RenderSystem.clear(256, Minecraft.IS_RUNNING_ON_MAC);
 -            RenderSystem.matrixMode(5889);
@@ -386,22 +382,16 @@
 -            RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
 -            RenderHelper.setupGui3DDiffuseLighting();
 -            MatrixStack matrixstack = new MatrixStack();
-+    			this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
- 
+-
 -            if (this.lightmapTexture.isCustom())
 -            {
 -                this.lightmapTexture.setAllowed(false);
 -            }
-+    			RenderSystem.pushMatrix();
-+    			GL11.glLoadIdentity();
-+    			applyVRModelViewLegacy(this.mc.currentPass);
-+    			removeStereoLegacy(mc.currentPass);
- 
+-
 -            if (renderWorldIn && this.mc.world != null)
 -            {
 -                this.mc.getProfiler().endStartSection("gui");
-+    			renderGuiLayer(partialTicks, true);
- 
+-
 -                if (this.mc.player != null)
 -                {
 -                    float f = MathHelper.lerp(partialTicks, this.mc.player.prevTimeInPortal, this.mc.player.timeInPortal);
@@ -432,27 +422,22 @@
 -                }
 -
 -                this.mc.getProfiler().endSection();
-+    			if(KeyboardHandler.Showing) {
-+    				if (mc.vrSettings.physicalKeyboard)
-+    					renderPhysicalKeyboard(partialTicks);
-+    				else
-+    					render2D(partialTicks, KeyboardHandler.Framebuffer, KeyboardHandler.Pos_room, KeyboardHandler.Rotation_room, false);
-             }
- 
+-            }
+-
 -            if (this.guiLoadingVisible != (this.mc.loadingGui != null))
 -            {
 -                if (this.mc.loadingGui != null)
 -                {
 -                    ResourceLoadProgressGui.loadLogoTexture(this.mc);
--
+ 
 -                    if (this.mc.loadingGui instanceof ResourceLoadProgressGui)
 -                    {
 -                        ResourceLoadProgressGui resourceloadprogressgui = (ResourceLoadProgressGui)this.mc.loadingGui;
 -                        resourceloadprogressgui.update();
 -                    }
-+    			if((mc.currentPass != RenderPass.THIRD || mc.vrSettings.mixedRealityRenderHands) && mc.currentPass != RenderPass.CAMERA){
-+    				renderVRHands(partialTicks, true, true, true, true);
-                 }
+-                }
++    	if(mc.currentPass == RenderPass.LEFT) { //Vivecraft once per pass
++    		this.frameInit();
  
 -                this.guiLoadingVisible = this.mc.loadingGui != null;
 -            }
@@ -504,26 +489,121 @@
 -                        return String.format(Locale.ROOT, "Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %f", this.mc.getMainWindow().getScaledWidth(), this.mc.getMainWindow().getScaledHeight(), this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight(), this.mc.getMainWindow().getGuiScaleFactor());
 -                    });
 -                    throw new ReportedException(crashreport1);
-+    			RenderSystem.popMatrix();
-                 }
+-                }
 -            }
 -
 -            this.lightmapTexture.setAllowed(true);
 -        }
- 
+-
 -        this.frameFinish();
 -        this.waitForServerThread();
 -        MemoryMonitor.update();
 -        Lagometer.updateLagometer();
-+                this.mc.getProfiler().endSection();
- 
+-
 -        if (this.mc.gameSettings.ofProfiler)
 -        {
 -            this.mc.gameSettings.showDebugProfilerChart = true;
-         }
+-        }
++    		if (!always_true && !this.mc.isGameFocused() && this.mc.gameSettings.pauseOnLostFocus && (!this.mc.gameSettings.touchscreen || !this.mc.mouseHelper.isRightDown()))
++    		{//never pause on focus loss.
++    			if (Util.milliTime() - this.prevFrameTime > 500L)
++    			{
++    				this.mc.displayInGameMenu(false);
++    			}
++    		}
++    		else
++    		{
++    			this.prevFrameTime = Util.milliTime();
++    		}
++    	}
++
++    	if (!this.mc.skipRenderWorld)
++    	{
++    		int i = (int)(this.mc.mouseHelper.getMouseX() * (double)this.mc.getMainWindow().getScaledWidth() / (double)this.mc.getMainWindow().getWidth());
++    		int j = (int)(this.mc.mouseHelper.getMouseY() * (double)this.mc.getMainWindow().getScaledHeight() / (double)this.mc.getMainWindow().getHeight());
++
++    		RenderSystem.viewport(0, 0, this.mc.getMainWindow().getFramebufferWidth(), this.mc.getMainWindow().getFramebufferHeight());
++
++    		if (renderWorldIn && !(isInMenuRoom()) && this.mc.world != null && !Config.isReloadingResources())
++    		{
++    			//This is the viewmodel matrix.
++    			MatrixStack matrixstack = new MatrixStack();
++    			this.mc.getProfiler().startSection("level");
++    			this.renderWorld(partialTicks, nanoTime, matrixstack);
++    			if(mc.currentPass != RenderPass.THIRD && mc.currentPass != RenderPass.CAMERA)
++    				renderFaceOverlay(partialTicks);
++
++    			if (this.mc.isSingleplayer() && this.timeWorldIcon < Util.milliTime() - 1000L)
++    			{
++    				this.timeWorldIcon = Util.milliTime();
++
++    				if (!this.mc.getIntegratedServer().isWorldIconSet())
++    				{
++    					this.createWorldIcon();
++    				}
++    			}
++
++    			//note calling this breaks the projection matrix.
++    			this.mc.worldRenderer.renderEntityOutlineFramebuffer();
++
++    			if (this.shaderGroup != null && this.useShader && mc.currentPass != RenderPass.THIRD )
++    			{
++    				RenderSystem.disableBlend();
++    				RenderSystem.disableDepthTest();
++    				RenderSystem.disableAlphaTest();
++    				RenderSystem.enableTexture();
++    				RenderSystem.matrixMode(5890);
++    				RenderSystem.pushMatrix();
++    				RenderSystem.loadIdentity();
++    				this.shaderGroup.render(partialTicks);
++    				RenderSystem.popMatrix();
++    				RenderSystem.enableTexture();
++    			}
++
++    			this.mc.getFramebuffer().bindFramebuffer(true);
++    		}
++    		else {
++    			this.mc.getProfiler().startSection("MainMenu");
++    			GL11.glDisable(GL11.GL_STENCIL_TEST);
++
++    			this.resetProjectionMatrix(this.getProjectionMatrix(activeRender, partialTicks, true));
++
++    			RenderSystem.pushMatrix();
++    			GL11.glLoadIdentity();
++    			applyVRModelViewLegacy(this.mc.currentPass);
++    			removeStereoLegacy(mc.currentPass);
++
++    			renderGuiLayer(partialTicks, true);
++
++    			if(KeyboardHandler.Showing) {
++    				if (mc.vrSettings.physicalKeyboard)
++    					renderPhysicalKeyboard(partialTicks);
++    				else
++    					render2D(partialTicks, KeyboardHandler.Framebuffer, KeyboardHandler.Pos_room, KeyboardHandler.Rotation_room, false);
++    			}
++
++    			if((mc.currentPass != RenderPass.THIRD || mc.vrSettings.mixedRealityRenderHands) && mc.currentPass != RenderPass.CAMERA){
++    				renderVRHands(partialTicks, true, true, true, true);
++    			}
++
++    			RenderSystem.popMatrix();
++    			
++    		}
++
++    		this.mc.getProfiler().endSection();
++
++    	}
++    	
++    
++    	if(!always_true) {
++    		//give mccrays something to hook in to.
++            this.mc.getProfiler().endStartSection("gui");
++    	}
++    	
      }
  
-@@ -851,7 +891,10 @@
+     private void createWorldIcon()
+@@ -851,7 +899,10 @@
  
      private boolean isDrawBlockOutline()
      {
@@ -535,7 +615,7 @@
          {
              return false;
          }
-@@ -886,17 +929,36 @@
+@@ -886,17 +937,36 @@
          }
      }
  
@@ -577,7 +657,7 @@
          if (Config.isShaders())
          {
              Shaders.beginRender(this.mc, this.activeRender, partialTicks, finishTimeNano);
-@@ -909,108 +971,72 @@
+@@ -909,108 +979,72 @@
          {
              Shaders.beginRenderPass(partialTicks, finishTimeNano);
          }
@@ -715,7 +795,7 @@
          this.mc.getProfiler().endSection();
      }
  
-@@ -1122,8 +1148,6 @@
+@@ -1122,8 +1156,6 @@
  
          if (!this.initialized)
          {
@@ -724,7 +804,7 @@
              if (Config.getBitsOs() == 64 && Config.getBitsJre() == 32)
              {
                  Config.setNotify64BitJava(true);
-@@ -1292,25 +1316,30 @@
+@@ -1292,25 +1324,30 @@
              float f6 = this.itemActivationOffY * (float)(heightScaled / 4);
              RenderSystem.enableAlphaTest();
              RenderSystem.pushMatrix();
@@ -771,7 +851,7 @@
          }
      }
  
-@@ -1371,4 +1400,2196 @@
+@@ -1371,4 +1408,2196 @@
      {
          return this.overlayTexture;
      }

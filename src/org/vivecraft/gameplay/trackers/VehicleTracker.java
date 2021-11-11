@@ -98,7 +98,7 @@ public class VehicleTracker extends Tracker {
 				}
 
 				boolean smooth = true;
-				float smoothIncrement = 5;
+				float smoothIncrement = 10;
 
 				if(e instanceof MinecartEntity){ //what a pain in my ass
 				
@@ -117,7 +117,7 @@ public class VehicleTracker extends Tracker {
 
 					double spd = mineCartSpeed((MinecartEntity) e);
 					smoothIncrement = 200 * (float) (spd * spd);
-					if (smoothIncrement < 5) smoothIncrement = 5;
+					if (smoothIncrement < 10) smoothIncrement = 10;
 	//				System.out.println(spd + " " + smoothIncrement);
 
 				}

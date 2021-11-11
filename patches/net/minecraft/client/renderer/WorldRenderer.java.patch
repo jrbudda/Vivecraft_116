@@ -191,7 +191,19 @@
          Vector3d vector3d = activeRenderInfoIn.getProjectedView();
          double d0 = vector3d.getX();
          double d1 = vector3d.getY();
-@@ -1487,12 +1526,13 @@
+@@ -1424,6 +1463,11 @@
+         RenderSystem.clear(16640, Minecraft.IS_RUNNING_ON_MAC);
+         boolean flag1 = Config.isShaders();
+ 
++        //Vivecraft - VR Stencil
++        this.mc.getProfiler().endStartSection("stencil");
++    		gameRendererIn.drawEyeStencil(flag1);
++		//    
++        
+         if (flag1)
+         {
+             Shaders.clearRenderBuffer();
+@@ -1487,12 +1531,13 @@
          iprofiler.endStartSection("terrain");
          Lagometer.timerTerrain.start();
  
@@ -207,7 +219,7 @@
  
          if (Config.isFogOff() && FogRenderer.fogStandard)
          {
-@@ -1511,16 +1551,23 @@
+@@ -1511,16 +1556,19 @@
          }
  
          Lagometer.timerTerrain.end();
@@ -227,15 +239,11 @@
          }
 -
 +        
-+        //Vivecraft - VR Stencil
-+        this.mc.getProfiler().endStartSection("stencil");
-+    		gameRendererIn.drawEyeStencil(flag1);
-+		//    
-+       
++      
          if (flag1)
          {
              Shaders.beginEntities();
-@@ -1559,6 +1606,11 @@
+@@ -1559,6 +1607,11 @@
              RenderStateManager.enableCache();
          }
  
@@ -247,7 +255,7 @@
          for (WorldRenderer.LocalRenderInformationContainer worldrenderer$localrenderinformationcontainer : this.renderInfosEntities)
          {
              ChunkRenderDispatcher.ChunkRender chunkrenderdispatcher$chunkrender = worldrenderer$localrenderinformationcontainer.renderChunk;
-@@ -1567,8 +1619,8 @@
+@@ -1567,8 +1620,8 @@
              for (Entity entity : chunk.getEntityLists()[chunkrenderdispatcher$chunkrender.getPosition().getY() / 16])
              {
                  boolean flag4 = entity == this.mc.player && !this.mc.player.isSpectator();
@@ -258,7 +266,7 @@
                  {
                      String s = entity.getClass().getName();
                      List<Entity> list = this.mapEntityLists.get(s);
-@@ -1590,6 +1642,12 @@
+@@ -1590,6 +1643,12 @@
              {
                  ++this.countEntitiesRendered;
  
@@ -271,7 +279,7 @@
                  if (entity1.ticksExisted == 0)
                  {
                      entity1.lastTickPosX = entity1.getPosX();
-@@ -1625,6 +1683,14 @@
+@@ -1625,6 +1684,14 @@
  
                  this.renderEntity(entity1, d0, d1, d2, partialTicks, matrixStackIn, irendertypebuffer);
                  this.renderedEntity = null;
@@ -286,7 +294,7 @@
              }
  
              list1.clear();
-@@ -1814,10 +1880,25 @@
+@@ -1814,10 +1881,25 @@
          --renderEntitiesCounter;
          this.checkMatrixStack(matrixStackIn);
          RayTraceResult raytraceresult = this.mc.objectMouseOver;
@@ -314,7 +322,7 @@
              BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).getPos();
              BlockState blockstate = this.world.getBlockState(blockpos);
  
-@@ -1853,7 +1934,7 @@
+@@ -1853,7 +1935,7 @@
          {
              Reflector.ForgeHooksClient_onDrawBlockHighlight.call(this, activeRenderInfoIn, raytraceresult, partialTicks, matrixStackIn, irendertypebuffer$impl);
          }
@@ -323,7 +331,7 @@
          RenderSystem.pushMatrix();
          RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
          boolean flag6 = GlStateManager.isFogEnabled();
-@@ -1866,6 +1947,7 @@
+@@ -1866,6 +1948,7 @@
  
          this.mc.debugRenderer.render(matrixStackIn, irendertypebuffer$impl, d0, d1, d2);
          RenderSystem.popMatrix();
@@ -331,7 +339,7 @@
          irendertypebuffer$impl.finish(Atlases.getTranslucentCullBlockType());
          irendertypebuffer$impl.finish(Atlases.getBannerType());
          irendertypebuffer$impl.finish(Atlases.getShieldType());
-@@ -1884,13 +1966,16 @@
+@@ -1884,13 +1967,16 @@
          {
              irendertypebuffer$impl.finish();
              ShadersRender.endDebug();
@@ -351,7 +359,7 @@
              irendertypebuffer$impl.finish(RenderType.getLines());
              irendertypebuffer$impl.finish();
              this.field_239222_F_.framebufferClear(Minecraft.IS_RUNNING_ON_MAC);
-@@ -1905,10 +1990,15 @@
+@@ -1905,10 +1991,15 @@
              iprofiler.endStartSection("particles");
              this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks, clippinghelper);
              RenderState.field_239237_T_.clearRenderState();
@@ -369,7 +377,7 @@
  
              if (flag1)
              {
-@@ -1934,7 +2024,9 @@
+@@ -1934,7 +2025,9 @@
              }
  
              this.mc.particles.renderParticles(matrixStackIn, irendertypebuffer$impl, lightmapIn, activeRenderInfoIn, partialTicks, clippinghelper);
@@ -380,7 +388,7 @@
              if (flag1)
              {
                  Shaders.endParticles();
-@@ -3255,12 +3347,13 @@
+@@ -3255,12 +3348,13 @@
      {
          bufferIn.pos(xIn - camX, (double)yIn - camY, zIn - camZ).tex(texU, texV).endVertex();
      }
@@ -396,7 +404,7 @@
          }
      }
  
-@@ -3738,6 +3831,8 @@
+@@ -3738,6 +3832,8 @@
      {
          Random random = this.world.rand;
  
@@ -405,7 +413,7 @@
          switch (type)
          {
              case 1000:
-@@ -3800,18 +3895,26 @@
+@@ -3800,18 +3896,26 @@
                  break;
  
              case 1011:
@@ -432,7 +440,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3832,14 +3935,26 @@
+@@ -3832,14 +3936,26 @@
                  break;
  
              case 1019:
@@ -459,7 +467,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3868,10 +3983,17 @@
+@@ -3868,10 +3984,17 @@
                  break;
  
              case 1030:
@@ -477,7 +485,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3892,6 +4014,9 @@
+@@ -3892,6 +4015,9 @@
                  break;
  
              case 1036:
@@ -487,11 +495,11 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -4484,4 +4609,40 @@
+@@ -4483,5 +4609,40 @@
+         {
              super(p_i232463_1_, p_i232463_2_);
          }
-     }
-+   
++    }  
 +    
 +    //Vivecraft Additions
 +    public void setShaderGroup() {
@@ -526,5 +534,5 @@
 +            this.entityOutlineFramebuffer = this.entityOutlineShader.getFramebufferRaw("final");
 +        }  
 +
-+    }
+     }
  }
