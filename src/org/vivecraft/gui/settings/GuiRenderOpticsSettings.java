@@ -44,6 +44,7 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
             VRSettings.VrOptions.MIXED_REALITY_UNDISTORTED,
             VRSettings.VrOptions.MONO_FOV,
             VRSettings.VrOptions.MIXED_REALITY_ALPHA_MASK,
+			VRSettings.VrOptions.MIXED_REALITY_RENDER_CAMERA_MODEL,
     };
     
     static VRSettings.VrOptions[] UDOptions = new VRSettings.VrOptions[] {
@@ -52,6 +53,7 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     
     static VRSettings.VrOptions[] TUDOptions = new VRSettings.VrOptions[] {
             VRSettings.VrOptions.MIXED_REALITY_FOV,
+			VRSettings.VrOptions.MIXED_REALITY_RENDER_CAMERA_MODEL,
     };
 
     private float prevRenderScaleFactor;
@@ -131,10 +133,13 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     	this.settings.mixedRealityMRPlusUndistorted = true;
     	this.settings.mixedRealityAlphaMask = false;
     	this.settings.mixedRealityFov = 40;
+		this.settings.mixedRealityRenderCameraModel = true;
     	this.minecraft.gameSettings.fov = 70f;
+    	this.settings.handCameraFov = 70;
+    	this.settings.handCameraResScale = 1.0f;
     	this.settings.useFsaa = true;
     	this.settings.vrUseStencil = true;
-        this.minecraft.stereoProvider.reinitFrameBuffers("Defaults Loaded");
+        this.minecraft.vrRenderer.reinitFrameBuffers("Defaults Loaded");
     }
     
     @Override
@@ -144,7 +149,7 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     	if (button.id == VRSettings.VrOptions.MIRROR_DISPLAY.ordinal() ||
         		button.id == VRSettings.VrOptions.FSAA.ordinal())
         	{
-                this.minecraft.stereoProvider.reinitFrameBuffers("Render Setting Changed");
+                this.minecraft.vrRenderer.reinitFrameBuffers("Render Setting Changed");
         	}
     }
 
@@ -154,7 +159,7 @@ public class GuiRenderOpticsSettings  extends GuiVROptionsBase
     	if (settings.renderScaleFactor != prevRenderScaleFactor || settings.handCameraResScale != prevHandCameraResScale) {
 			prevRenderScaleFactor = settings.renderScaleFactor;
 			prevHandCameraResScale = settings.handCameraResScale;
-			this.minecraft.stereoProvider.reinitFrameBuffers("Render Setting Changed");
+			this.minecraft.vrRenderer.reinitFrameBuffers("Render Setting Changed");
 		}
 
 		return super.mouseReleased(mouseX, mouseY, button);

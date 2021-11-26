@@ -4,8 +4,9 @@ import java.util.Random;
 
 import org.vivecraft.api.NetworkHelper;
 import org.vivecraft.gameplay.VRMovementStyle;
-import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.provider.OpenVRUtil;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.OpenVRUtil;
+import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Angle;
 import org.vivecraft.utils.math.Matrix4f;
 import org.vivecraft.utils.math.Quaternion;
@@ -81,7 +82,7 @@ public class TeleportTracker extends Tracker{
         boolean doTeleport = false;
         Vector3d dest = null;
 
-        boolean bindingTeleport = MCOpenVR.keyTeleport.isKeyDown() && mc.vrPlayer.isTeleportEnabled();
+        boolean bindingTeleport = mc.vr.keyTeleport.isKeyDown() && mc.vrPlayer.isTeleportEnabled();
         boolean seatedTeleport = mc.vrSettings.seated && !mc.vrPlayer.getFreeMove() && (player.movementInput.moveForward != 0 || player.movementInput.moveStrafe != 0);
 
         if ((bindingTeleport || seatedTeleport) && !player.isPassenger())
@@ -295,12 +296,12 @@ public class TeleportTracker extends Tracker{
     {
         Vector3d start = mc.vrPlayer.vrdata_world_render.getController(1).getPosition(); //and here i was just thinking there was never a need to use the render positions for logic.
         Vector3d tiltedAim = mc.vrPlayer.vrdata_world_render.getController(1).getDirection(); 
-        Matrix4f handRotation = MCOpenVR.getAimRotation(1);
+        Matrix4f handRotation = mc.vr.getAimRotation(1);
         
         if(mc.vrSettings.seated){
         	start = mc.gameRenderer.getControllerRenderPos(0);
         	tiltedAim = mc.vrPlayer.vrdata_world_render.getController(0).getDirection(); 
-        	handRotation =MCOpenVR.getAimRotation(0);
+        	handRotation =mc.vr.getAimRotation(0);
         }
         
         Matrix4f rot = Matrix4f.rotationY(mc.vrPlayer.vrdata_world_render.rotation_radians);
@@ -321,8 +322,8 @@ public class TeleportTracker extends Tracker{
 
         // calculate gravity vector for arc
         float gravityAcceleration = 0.098f;
-        Matrix4f rollCounter = OpenVRUtil.rotationZMatrix((float)Math.toRadians(-euler.getRoll()));
-        Matrix4f gravityTilt = OpenVRUtil.rotationXMatrix((float)Math.PI * -.8f);
+        Matrix4f rollCounter = Utils.rotationZMatrix((float)Math.toRadians(-euler.getRoll()));
+        Matrix4f gravityTilt = Utils.rotationXMatrix((float)Math.PI * -.8f);
         Matrix4f gravityRotation = Matrix4f.multiply(handRotation, rollCounter);
         
         Vector3 forward = new Vector3(0,1,0);

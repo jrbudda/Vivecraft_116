@@ -1,7 +1,7 @@
 package org.vivecraft.gameplay.trackers;
 
-import org.vivecraft.gameplay.OpenVRPlayer;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.gameplay.VRPlayer;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.math.Quaternion;
 
@@ -55,8 +55,8 @@ public class RowTracker extends Tracker{
 	
 	@Override
 	public void doProcess (ClientPlayerEntity player){
-		double c0move = MCOpenVR.controllerHistory[0].averageSpeed(0.5);
-		double c1move = MCOpenVR.controllerHistory[1].averageSpeed(0.5);
+		double c0move = mc.vr.controllerHistory[0].averageSpeed(0.5);
+		double c1move = mc.vr.controllerHistory[1].averageSpeed(0.5);
 
 		float minspeed = 0.5f;
 		float maxspeed = 2;
@@ -126,10 +126,10 @@ public class RowTracker extends Tracker{
 	}
 
 	Vector3d getAbsArmPos(int side){
-		Vector3d arm = MCOpenVR.controllerHistory[side].averagePosition(0.1);
+		Vector3d arm = mc.vr.controllerHistory[side].averagePosition(0.1);
 		Quaternion worldRot = new Quaternion(0, VRSettings.inst.vrWorldRotation, 0);
 
-		return OpenVRPlayer.get().roomOrigin.add(worldRot.multiply(arm));
+		return VRPlayer.get().roomOrigin.add(worldRot.multiply(arm));
 	}
 
 	boolean isPaddleUnderWater(int paddle, BoatEntity boat){

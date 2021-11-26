@@ -33,6 +33,7 @@ public class VRWidgetHelper {
 
 	public static void renderVRThirdPersonCamWidget() {
 		Minecraft mc = Minecraft.getInstance();
+		if (!mc.vrSettings.mixedRealityRenderCameraModel) return;
 		if (mc.currentPass == RenderPass.LEFT || mc.currentPass == RenderPass.RIGHT) {
 			if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON) {
 				float scale = 0.35f;
@@ -40,7 +41,7 @@ public class VRWidgetHelper {
 					scale *= 1.03f;
 
 				renderVRCameraWidget(-0.748f, -0.438f, -0.06f, scale, RenderPass.THIRD, GameRenderer.thirdPersonCameraModel, GameRenderer.thirdPersonCameraDisplayModel, () -> {
-					mc.stereoProvider.framebufferMR.bindFramebufferTexture();
+					mc.vrRenderer.framebufferMR.bindFramebufferTexture();
 				}, face -> {
 					if (face == Direction.NORTH)
 						return DisplayFace.MIRROR;
@@ -61,7 +62,7 @@ public class VRWidgetHelper {
 
 			renderVRCameraWidget(-0.5f, -0.25f, -0.22f, scale, RenderPass.CAMERA, CameraTracker.cameraModel, CameraTracker.cameraDisplayModel, () -> {
 				if (mc.getFirstPersonRenderer().getNearOpaqueBlock(mc.vrPlayer.vrdata_world_render.getEye(RenderPass.CAMERA).getPosition(), mc.gameRenderer.minClipDistance) == null)
-					mc.stereoProvider.cameraFramebuffer.bindFramebufferTexture();
+					mc.vrRenderer.cameraFramebuffer.bindFramebufferTexture();
 				else
 					mc.getTextureManager().bindTexture(new ResourceLocation("vivecraft:textures/black.png"));
 			}, face -> {

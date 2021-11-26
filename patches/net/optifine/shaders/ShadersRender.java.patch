@@ -6,7 +6,7 @@
  import com.mojang.blaze3d.platform.GlStateManager;
 +import com.mojang.blaze3d.systems.RenderSystem;
  import com.mojang.blaze3d.vertex.IVertexBuilder;
- import java.nio.IntBuffer;
+ import java.util.Collections;
  import java.util.Iterator;
 @@ -15,6 +16,7 @@
  import net.minecraft.client.renderer.FirstPersonRenderer;
@@ -24,41 +24,39 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
-@@ -196,7 +199,7 @@
+@@ -256,7 +259,7 @@
          }
      }
  
 -    public static void renderShadowMap(GameRenderer entityRenderer, ActiveRenderInfo activeRenderInfo, int pass, float partialTicks, long finishTimeNano)
 +    public static void renderShadowMap(GameRenderer gameRenderer, ActiveRenderInfo activeRenderInfo, int pass, float partialTicks, long finishTimeNano)
      {
-         if (Shaders.usedShadowDepthBuffers > 0 && --Shaders.shadowPassCounter <= 0)
+         if (Shaders.hasShadowMap)
          {
-@@ -262,6 +265,9 @@
-             worldrenderer.renderBlockLayer(RenderTypes.SOLID, matrixstack, d0, d1, d2);
-             Shaders.checkGLError("shadow terrain solid");
-             GlStateManager.enableAlphaTest();
-+            //Vivecraft - needed???
-+            GlStateManager.alphaFunc(516, 0.1F);
-+            //
-             worldrenderer.renderBlockLayer(RenderTypes.CUTOUT_MIPPED, matrixstack, d0, d1, d2);
-             Shaders.checkGLError("shadow terrain cutoutmipped");
-             minecraft.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
-@@ -278,7 +284,13 @@
-             EntityRendererManager entityrenderermanager = minecraft.getRenderManager();
+@@ -343,6 +346,9 @@
+                 worldrenderer.renderBlockLayer(RenderTypes.SOLID, matrixstack, d0, d1, d2);
+                 Shaders.checkGLError("shadow terrain solid");
+                 GlStateManager.enableAlphaTest();
++                //Vivecraft - needed???
++                GlStateManager.alphaFunc(516, 0.1F);
++                //
+                 worldrenderer.renderBlockLayer(RenderTypes.CUTOUT_MIPPED, matrixstack, d0, d1, d2);
+                 Shaders.checkGLError("shadow terrain cutoutmipped");
+                 minecraft.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
+@@ -362,6 +368,12 @@
              IRenderTypeBuffer.Impl irendertypebuffer$impl = worldrenderer1.getRenderTypeTextures().getBufferSource();
              boolean flag = Shaders.isShadowPass && !minecraft.player.isSpectator();
--
-+            
+ 
 +            //Vivecraft fix something	
 +            Matrix4f light = new Matrix4f();
 +            light.setIdentity();
 +            RenderHelper.setupLevelDiffuseLighting(light);
 +            //
-+            
-             for (WorldRenderer.LocalRenderInformationContainer worldrenderer$localrenderinformationcontainer : worldrenderer1.getRenderInfosEntities())
++
+             for (WorldRenderer.LocalRenderInformationContainer worldrenderer$localrenderinformationcontainer : Shaders.isRenderShadowEntities() ? worldrenderer1.getRenderInfosEntities() : (List<WorldRenderer.LocalRenderInformationContainer>) Collections.EMPTY_LIST)
              {
                  ChunkRenderDispatcher.ChunkRender chunkrenderdispatcher$chunkrender = worldrenderer$localrenderinformationcontainer.renderChunk;
-@@ -286,12 +298,24 @@
+@@ -369,12 +381,24 @@
  
                  for (Entity entity : chunk.getEntityLists()[chunkrenderdispatcher$chunkrender.getPosition().getY() / 16])
                  {
@@ -88,7 +86,7 @@
                      }
                  }
              }
-@@ -399,7 +423,8 @@
+@@ -482,7 +506,8 @@
              GlStateManager.depthMask(true);
              GlStateManager.enableCull();
              GlStateManager.disableBlend();

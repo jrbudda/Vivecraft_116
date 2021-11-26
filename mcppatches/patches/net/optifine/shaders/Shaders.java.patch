@@ -1,6 +1,6 @@
 --- a/net/optifine/shaders/Shaders.java
 +++ b/net/optifine/shaders/Shaders.java
-@@ -118,6 +118,7 @@
+@@ -124,6 +124,7 @@
  import net.optifine.util.WorldUtils;
  import org.apache.commons.io.IOUtils;
  import org.lwjgl.BufferUtils;
@@ -8,7 +8,7 @@
  import org.lwjgl.opengl.ARBGeometryShader4;
  import org.lwjgl.opengl.ARBShaderObjects;
  import org.lwjgl.opengl.ARBVertexShader;
-@@ -812,6 +813,7 @@
+@@ -871,6 +872,7 @@
  
      public static void loadShaderPack()
      {
@@ -16,7 +16,7 @@
          boolean flag = shaderPackLoaded;
          boolean flag1 = isOldLighting();
  
-@@ -1085,7 +1087,7 @@
+@@ -1184,7 +1186,7 @@
          Set set = props.keySet();
          List<ICustomTexture> list = new ArrayList<>();
  
@@ -25,22 +25,8 @@
          {
              if (s1.startsWith(s))
              {
-@@ -2448,11 +2450,11 @@
- 
-     private static int getDrawBuffer(Program p, String str, int i)
-     {
--        int i = 0;
-+        int d = 0;
- 
-         if (i >= str.length())
-         {
--            return i;
-+            return d;
-         }
-         else
-         {
-@@ -4301,12 +4303,12 @@
-         GlStateManager.activeTexture(33984);
+@@ -4834,12 +4836,12 @@
+         bindCustomTextures(customTextures);
      }
  
 -    public static void checkWorldChanged(ClientWorld world)
@@ -55,7 +41,7 @@
  
              if (currentWorld == null)
              {
-@@ -4320,7 +4322,7 @@
+@@ -4853,7 +4855,7 @@
  
              setCameraOffset(mc.getRenderViewEntity());
              int i = WorldUtils.getDimensionId(world);
@@ -64,7 +50,7 @@
  
              if (j != i)
              {
-@@ -5794,7 +5796,7 @@
+@@ -6323,7 +6325,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

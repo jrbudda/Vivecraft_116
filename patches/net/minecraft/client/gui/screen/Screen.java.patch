@@ -1,6 +1,10 @@
 --- a/net/minecraft/client/gui/screen/Screen.java
 +++ b/net/minecraft/client/gui/screen/Screen.java
-@@ -38,6 +38,8 @@
+@@ -35,9 +35,12 @@
+ import net.minecraft.util.Util;
+ import net.minecraft.util.math.vector.Matrix4f;
+ import net.minecraft.util.text.ITextComponent;
++import net.minecraft.util.text.ITextProperties;
  import net.minecraft.util.text.Style;
  import net.minecraft.util.text.event.ClickEvent;
  import net.minecraft.util.text.event.HoverEvent;
@@ -9,37 +13,53 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -128,6 +130,12 @@
+@@ -128,7 +131,14 @@
  
      protected void renderTooltip(MatrixStack matrixStack, ItemStack itemStack, int mouseX, int mouseY)
      {
-+    	//Forge TODO fix
-+    	Reflector.call(Reflector.GuiUtils_preItemToolTip, itemStack);        
-+    	FontRenderer fon = (FontRenderer)Reflector.call(itemStack.getItem(), Reflector.IForgeItem_getFontRenderer, itemStack);
-+        this.renderToolTip(matrixStack, Lists.transform(this.getTooltipFromItem(itemStack), ITextComponent::func_241878_f), mouseX, mouseY, (font == null ? this.font : font));
-+    	Reflector.call(Reflector.GuiUtils_postItemToolTip);
-+    	//
-         this.func_243308_b(matrixStack, this.getTooltipFromItem(itemStack), mouseX, mouseY);
+-        this.func_243308_b(matrixStack, this.getTooltipFromItem(itemStack), mouseX, mouseY);
++    	if (Reflector.GuiUtils.exists()) {
++            Reflector.call(Reflector.GuiUtils_preItemToolTip, itemStack);
++            FontRenderer fon = (FontRenderer)Reflector.call(itemStack.getItem(), Reflector.IForgeItem_getFontRenderer, itemStack);
++            this.renderToolTip(matrixStack, Lists.transform(this.getTooltipFromItem(itemStack), ITextComponent::func_241878_f), mouseX, mouseY, (fon == null ? this.font : fon));
++            Reflector.call(Reflector.GuiUtils_postItemToolTip);
++        } else {
++            this.func_243308_b(matrixStack, this.getTooltipFromItem(itemStack), mouseX, mouseY);
++        }
      }
  
-@@ -146,7 +154,15 @@
-         this.renderTooltip(p_243308_1_, Lists.transform(p_243308_2_, ITextComponent::func_241878_f), p_243308_3_, p_243308_4_);
-     }
+     public List<ITextComponent> getTooltipFromItem(ItemStack itemStack)
+@@ -143,10 +153,27 @@
  
--    public void renderTooltip(MatrixStack matrixStack, List <? extends IReorderingProcessor > tooltips, int mouseX, int mouseY)
+     public void func_243308_b(MatrixStack p_243308_1_, List<ITextComponent> p_243308_2_, int p_243308_3_, int p_243308_4_)
+     {
+-        this.renderTooltip(p_243308_1_, Lists.transform(p_243308_2_, ITextComponent::func_241878_f), p_243308_3_, p_243308_4_);
++        if (Reflector.GuiUtils.exists())
++            this.renderWrappedToolTip(p_243308_1_, p_243308_2_, p_243308_3_, p_243308_4_, font);
++        else
++            this.renderTooltip(p_243308_1_, Lists.transform(p_243308_2_, ITextComponent::func_241878_f), p_243308_3_, p_243308_4_);
++    }
++
++    // Forge
++    public void renderWrappedToolTip(MatrixStack matrixStack, List<? extends ITextProperties> tooltips, int mouseX, int mouseY, FontRenderer font) {
++        Reflector.call(Reflector.GuiUtils_drawHoveringText, matrixStack, tooltips, mouseX, mouseY, width, height, -1, font);
+     }
++    //
++
 +    //Forge vanilla method
 +    public void renderTooltip(MatrixStack p_238654_1_, List<? extends IReorderingProcessor> tooltips, int mouseX, int mouseY) {
 +        this.renderToolTip(p_238654_1_, tooltips, mouseX, mouseY, font);
 +     }
 +    //
 +    
-+
+ 
+-    public void renderTooltip(MatrixStack matrixStack, List <? extends IReorderingProcessor > tooltips, int mouseX, int mouseY)
 +    //Captial T -.-
 +    public void renderToolTip(MatrixStack matrixStack, List <? extends IReorderingProcessor > tooltips, int mouseX, int mouseY, FontRenderer font)
      {
          if (!tooltips.isEmpty())
          {
-@@ -365,6 +381,11 @@
+@@ -365,6 +392,11 @@
  
      public void sendMessage(String text, boolean addToChat)
      {
@@ -51,7 +71,7 @@
          if (addToChat)
          {
              this.minecraft.ingameGUI.getChatGUI().addToSentMessages(text);
-@@ -380,10 +401,15 @@
+@@ -380,10 +412,15 @@
          this.font = minecraft.fontRenderer;
          this.width = width;
          this.height = height;
@@ -71,7 +91,7 @@
      }
  
      public List <? extends IGuiEventListener > getEventListeners()
-@@ -412,7 +438,17 @@
+@@ -412,7 +449,17 @@
      {
          if (this.minecraft.world != null)
          {
@@ -90,7 +110,7 @@
          }
          else
          {
-@@ -433,6 +469,7 @@
+@@ -433,6 +480,7 @@
          bufferbuilder.pos((double)this.width, 0.0D, 0.0D).tex((float)this.width / 32.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
          bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
          tessellator.draw();
@@ -98,7 +118,7 @@
      }
  
      public boolean isPauseScreen()
-@@ -548,4 +585,10 @@
+@@ -548,4 +596,10 @@
      public void addPacks(List<Path> packs)
      {
      }

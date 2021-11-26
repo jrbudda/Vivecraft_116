@@ -19,9 +19,9 @@
 +import org.apache.logging.log4j.LogManager;
 +import org.vivecraft.api.NetworkHelper;
 +import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
-+import org.vivecraft.gameplay.OpenVRPlayer;
++import org.vivecraft.gameplay.VRPlayer;
 +import org.vivecraft.physicalinventory.TransactionMutex;
-+import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.provider.openvr_jna.MCOpenVR;
 +import org.vivecraft.render.VRFirstPersonArmSwing;
 +import org.vivecraft.settings.VRSettings;
 +import org.vivecraft.utils.external.jinfinadeck;
@@ -433,10 +433,10 @@
 +    		return;
 +    	}
 +
-+    	boolean freemove = OpenVRPlayer.get().getFreeMove();
++    	boolean freemove = VRPlayer.get().getFreeMove();
 +    	boolean doY = freemove || (Minecraft.getInstance().vrSettings.simulateFalling && !this.isOnLadder()) && !this.isSneaking();
 +    	if(mc.climbTracker.isActive(this) && (freemove || mc.climbTracker.isGrabbingLadder())) doY = true;
-+    	Vector3d roomOrigin = OpenVRPlayer.get().roomOrigin;
++    	Vector3d roomOrigin = VRPlayer.get().roomOrigin;
 +    	//   	Vec3 camloc = Minecraft.getInstance().vrPlayer.getHMDPos_World();
 +
 +    	if ( (mc.climbTracker.isGrabbingLadder() || freemove || mc.swimTracker.isActive(this)) && 
@@ -454,17 +454,17 @@
 +    			this.updateAutoJump((float)(this.getPosX() - d0), (float)(this.getPosZ() - d1));
 +    		}
 +    		double oy = this.getPosY() + this.getRoomYOffsetFromPose();
-+    		OpenVRPlayer.get().setRoomOrigin(
++    		VRPlayer.get().setRoomOrigin(
 +    				getPosX() + ox, 
 +    				oy, 
 +    				getPosZ()  + oz, false);
 +    	} else {
 +    		if(doY) {      	 
 +    			super.move(typeIn,new Vector3d(0,pos.y,0));
-+    			OpenVRPlayer.get().setRoomOrigin(
-+    					OpenVRPlayer.get().roomOrigin.x, 
++    			VRPlayer.get().setRoomOrigin(
++    					VRPlayer.get().roomOrigin.x, 
 +    					this.getPosY() + this.getRoomYOffsetFromPose(),
-+    					OpenVRPlayer.get().roomOrigin.z, false);
++    					VRPlayer.get().roomOrigin.z, false);
 +    		} else {
 +    			this.onGround = true; //
 +    			//do not move player, VRPlayer.moveplayerinroom will move him around.
@@ -568,7 +568,7 @@
 +    			mc.vrPlayer.setRoomOrigin(x, y, z, x+y+z==0);   		
 +            } else {
 +        		Vector3d roomOrigin = Minecraft.getInstance().vrPlayer.roomOrigin;
-+          		OpenVRPlayer.get().setRoomOrigin(
++          		VRPlayer.get().setRoomOrigin(
 +          				roomOrigin.x + (ax - bx),
 +          				roomOrigin.y + (ay - by),
 +          				roomOrigin.z + (az - bz),
@@ -636,7 +636,7 @@
 +    	double strafe = move.x;
 +    	double forward = move.z;
 +
-+    	OpenVRPlayer vr = mc.vrPlayer;		
++    	VRPlayer vr = mc.vrPlayer;		
 +    	if (!vr.getFreeMove()) {return;}
 +
 +    	int inertiaFactor = Minecraft.getInstance().vrSettings.inertiaFactor;
@@ -660,7 +660,7 @@
 +    		strafe *= speed;
 +    		forward *= speed;
 +    		Vector3d directionVec = new Vector3d(strafe, 0,forward);
-+    		OpenVRPlayer con = mc.vrPlayer;
++    		VRPlayer con = mc.vrPlayer;
 +    		boolean doPitch =  !this.isPassenger() && (this.abilities.isFlying || this.isSwimming());
 +
 +    		if(Main.katvr){
@@ -834,8 +834,8 @@
 +    public void onDeath(DamageSource cause){
 +
 +    	super.onDeath(cause);
-+    	MCOpenVR.triggerHapticPulse(0, 2000);
-+    	MCOpenVR.triggerHapticPulse(1, 2000);    	
++    	mc.vr.triggerHapticPulse(0, 2000);
++    	mc.vr.triggerHapticPulse(1, 2000);    	
 +
 +    }
 +

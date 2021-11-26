@@ -11,7 +11,7 @@ import org.vivecraft.gameplay.screenhandlers.RadialHandler;
 import org.vivecraft.gameplay.trackers.BowTracker;
 import org.vivecraft.gameplay.trackers.Tracker;
 import org.vivecraft.gameplay.trackers.VehicleTracker;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRSettings;
 
@@ -41,7 +41,7 @@ import net.minecraft.util.math.vector.Vector3d;
 
 
 // VIVE
-public class OpenVRPlayer 
+public class VRPlayer 
 {
 	Minecraft mc = Minecraft.getInstance();
 
@@ -63,7 +63,7 @@ public class OpenVRPlayer
 		trackers.add(tracker);
 	}
 
-	public OpenVRPlayer() {
+	public VRPlayer() {
 		this.vrdata_room_pre = new VRData(new Vector3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
 		this.vrdata_room_post = new VRData(new Vector3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
 		this.vrdata_world_post = new VRData(new Vector3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
@@ -94,7 +94,7 @@ public class OpenVRPlayer
 
 	boolean initdone =false;
 	
-	public static OpenVRPlayer get()
+	public static VRPlayer get()
 	{
 		return Minecraft.getInstance().vrPlayer;
 	}
@@ -152,7 +152,7 @@ public class OpenVRPlayer
 		}
 		
 		if(mc.vrSettings.seated && !mc.gameRenderer.isInMenuRoom())
-			mc.vrSettings.vrWorldRotation = MCOpenVR.seatedRot;
+			mc.vrSettings.vrWorldRotation = mc.vr.seatedRot;
 
 	}
   
@@ -319,8 +319,8 @@ public class OpenVRPlayer
 			System.out.println("Room origin: " + vrdata_world_pre.origin);
 			System.out.println("Hmd position room: " + vrdata_room_pre.hmd.getPosition());
 			System.out.println("Hmd position world: " + vrdata_world_pre.hmd.getPosition());
-			System.out.println("Hmd Projection Left: " + mc.stereoProvider.eyeproj[0]);
-			System.out.println("Hmd Projection Right: " + mc.stereoProvider.eyeproj[1]);
+			System.out.println("Hmd Projection Left: " + mc.vrRenderer.eyeproj[0]);
+			System.out.println("Hmd Projection Right: " + mc.vrRenderer.eyeproj[1]);
 			System.out.println("<Debug info end>");
 			initdone =true;
 		}
@@ -559,14 +559,14 @@ public class OpenVRPlayer
 	//		if(player==null || !player.initFromServer)
 	//			return Vector3d.ZERO;
 	//		float walkmult=Minecraft.getInstance().vrSettings.walkMultiplier;
-	//		Vector3d pos=vecMult(MCOpenVR.getCenterEyePosition(),interpolatedWorldScale);
+	//		Vector3d pos=vecMult(mc.vr.getCenterEyePosition(),interpolatedWorldScale);
 	//		return new Vector3d(pos.x*walkmult,pos.y,pos.z*walkmult).subtract(pos);
 	//	}
 
 
 	//	//leave these for now
 	//	public FloatBuffer getHMDMatrix_World() {
-	//		Matrix4f out = MCOpenVR.hmdRotation;
+	//		Matrix4f out = mc.vr.hmdRotation;
 	//		Matrix4f rot;
 	//		
 	//		if(vrdata_world_render != null)
@@ -578,13 +578,13 @@ public class OpenVRPlayer
 	//	}	
 	//	
 	//	public FloatBuffer getControllerMatrix_World(int controller) {
-	//		Matrix4f out = MCOpenVR.getAimRotation(controller);
+	//		Matrix4f out = mc.vr.getAimRotation(controller);
 	//		Matrix4f rot = Matrix4f.rotationY(vrdata_world_post.rotation);
 	//		return Matrix4f.multiply(rot,out).toFloatBuffer();
 	//	}
 	//	
 	//	public FloatBuffer getControllerMatrix_World_Transposed(int controller) {
-	//		Matrix4f out = MCOpenVR.getAimRotation(controller);
+	//		Matrix4f out = mc.vr.getAimRotation(controller);
 	//		Matrix4f rot;
 	//		
 	//		if(vrdata_world_render != null)
@@ -723,8 +723,8 @@ public class OpenVRPlayer
 	}
 
     private void updateTeleportKeys() {
-		MCOpenVR.getInputAction(MCOpenVR.keyTeleport).setEnabled(isTeleportEnabled());
-		MCOpenVR.getInputAction(MCOpenVR.keyTeleportFallback).setEnabled(!isTeleportEnabled());
+		mc.vr.getInputAction(mc.vr.keyTeleport).setEnabled(isTeleportEnabled());
+		mc.vr.getInputAction(mc.vr.keyTeleportFallback).setEnabled(!isTeleportEnabled());
 	}
 
 

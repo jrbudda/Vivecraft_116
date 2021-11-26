@@ -1,7 +1,7 @@
 package org.vivecraft.gui.physical.interactables;
 
 import org.vivecraft.gui.physical.PhysicalItemSlotGui;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.utils.math.Quaternion;
 
 import net.minecraft.client.Minecraft;
@@ -142,7 +142,7 @@ public class PhysicalItemSlot implements Interactable {
 
 	/**
 	 * The rotation of the slot, relative to the entity or blocks backwards vector (see {@link PhysicalItemSlot#position})<br>
-	 * Defines which way the *back-face* of the itemslot is looking, meaning lying flat is a 90° pitch down (so +90° in minecraft terms)
+	 * Defines which way the *back-face* of the itemslot is looking, meaning lying flat is a 90ï¿½ pitch down (so +90ï¿½ in minecraft terms)
 	 */
 	public Quaternion rotation = new Quaternion();
 
@@ -205,7 +205,7 @@ public class PhysicalItemSlot implements Interactable {
 		popOut=true;
 
 		if(getDisplayedItem()!=null && !getDisplayedItem().isEmpty()) {
-			MCOpenVR.triggerHapticPulse(mainhand, 500);
+			mc.vr.triggerHapticPulse(mainhand, 500);
 		}
 
 		if(preview && !mc.physicalGuiManager.getVirtualHeldItem().isEmpty()){

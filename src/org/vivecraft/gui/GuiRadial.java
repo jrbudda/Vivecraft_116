@@ -1,8 +1,9 @@
 package org.vivecraft.gui;
 
-import org.vivecraft.control.VRInputAction;
 import org.vivecraft.gui.framework.TwoHandedScreen;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.MCVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.VRInputAction;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
@@ -94,7 +95,7 @@ public class GuiRadial extends TwoHandedScreen
 				this.addButton(new Button(centerx + x - buttonwidth/2 , centery+y-10, buttonwidth, 20, str , (p) -> {	
 						if (idx < 200 )
 						{
-							VRInputAction vb = MCOpenVR.getInputAction(arr[idx]);
+							VRInputAction vb = MCVR.get().getInputAction(arr[idx]);
 							if(vb!=null) {
 								vb.pressBinding();
 								vb.unpressBinding(2);

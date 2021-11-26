@@ -77,6 +77,16 @@ def create_install(mcp_dir):
     resources = os.path.join(base_dir,"resources")
     patches = os.path.join(base_dir,'patches')
     
+    #use the java that mcp uses for compiling the installer and invoking launch4j
+    dir = os.path.abspath(mcp_dir)
+    sys.path.append(dir)
+    os.chdir(dir)
+    from runtime.commands import Commands  
+    commands = Commands(None, verify=True)
+    print "java is " + commands.cmdjavac
+    os.chdir("..")
+    #
+    
     in_mem_zip = StringIO.StringIO()
     with zipfile.ZipFile( in_mem_zip,'w', zipfile.ZIP_DEFLATED) as zipout:
         vanilla = parse_srg_classnames(os.path.join(mcp_dir, "conf", "joined.srg"))
@@ -190,7 +200,7 @@ def create_install(mcp_dir):
     # Build installer.java
     print "Recompiling Installer.java..."
     subprocess.Popen( 
-        cmdsplit("javac -source 1.8 -target 1.8 \"%s\"" % os.path.join(base_dir,installer_java_file)), 
+        cmdsplit(commands.cmdjavac + " -source 1.8 -target 1.8 \"%s\"" % os.path.join(base_dir,installer_java_file)), 
             cwd=os.path.join(base_dir,"installer"),
             bufsize=-1).communicate()
 	
@@ -228,7 +238,7 @@ def create_install(mcp_dir):
     
     print("Invoking launch4j...")
     subprocess.Popen( 
-        cmdsplit("java -jar \"%s\" \"%s\""% (
+        cmdsplit(commands.cmdjava + " -jar \"%s\" \"%s\""% (
                 os.path.join( base_dir,"installer","launch4j","launch4j.jar"),
                 os.path.join( base_dir,"installer","launch4j","launch4j.xml"))), 
             cwd=os.path.join(base_dir,"installer","launch4j"),

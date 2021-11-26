@@ -19,11 +19,11 @@
 +
 +import org.apache.commons.lang3.tuple.Triple;
 +import org.lwjgl.opengl.GL11;
-+import org.vivecraft.control.ControllerType;
 +import org.vivecraft.gameplay.trackers.BowTracker;
 +import org.vivecraft.gameplay.trackers.SwingTracker;
 +import org.vivecraft.gameplay.trackers.TelescopeTracker;
-+import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.provider.ControllerType;
++import org.vivecraft.provider.openvr_jna.MCOpenVR;
 +import org.vivecraft.render.RenderPass;
 +import org.vivecraft.render.VRArmRenderer;
 +import org.vivecraft.render.VRFirstPersonArmSwing;
@@ -544,7 +544,7 @@
 +    			double translateZ =  0;
 +    			//
 +
-+    			double gunAngle = MCOpenVR.getGunAngle();
++    			double gunAngle = mc.vr.getGunAngle();
 +
 +    			Quaternion rotation = Vector3f.YP.rotationDegrees((float) (0));
 +    			Quaternion prerotation = Vector3f.YP.rotationDegrees((float) (0));
@@ -758,7 +758,7 @@
 +    							}
 +
 +    							if(mc.frameIndex % 4 == 0) {
-+    								MCOpenVR.triggerHapticPulse(flag ? 0 : 1, 200);
++    								mc.vr.triggerHapticPulse(flag ? 0 : 1, 200);
 +    							}
 +
 +    							long ti = Util.milliTime() - mc.bowTracker.startDrawTime;
@@ -806,7 +806,7 @@
 +    					translateY += 0.02f;
 +    					translateX += 0.03f;
 +
-+    					if((MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) && flag) || (MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) && !flag)) {
++    					if((mc.vr.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) && flag) || (mc.vr.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) && !flag)) {
 +    						translateZ += -0.2f;
 +    					}
 +    				}

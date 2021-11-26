@@ -1,4 +1,4 @@
-# Contributors: Kyasu_Aur, Romitus, jlsalvador, kerotan24, techroot
+# Contributors: Kyasu_Aur, Romitus, Vararo7, aloxo.black, jlsalvador, kerotan24, techroot
 
 # Key bindings
 vivecraft.key.hotbarNext=Barra rápida Siguiente
@@ -25,6 +25,7 @@ vivecraft.key.toggleKeyboard=Mostrar/Ocultar Teclado
 vivecraft.key.moveThirdPersonCam=Mover cámara en tercera persona
 vivecraft.key.togglePlayerList=Alternar Lista de Jugadores
 vivecraft.key.toggleHandheldCam=Cambiar Cámara
+vivecraft.key.quickHandheldCam=Cámara Rápida
 vivecraft.key.trackpadTouch=Tocar Panel Táctil
 vivecraft.key.vrInteract=Interacción Contextual
 vivecraft.key.guiLeftClick=Clic izdo.
@@ -417,6 +418,7 @@ vivecraft.gui.screenshot=Cap. Pantalla
 vivecraft.gui.calibrateheight=Calibrar Altura
 vivecraft.gui.alignkatwalk=Alinear KAT WALK
 vivecraft.gui.movethirdpersoncam=Mover Cám. 3ª Pers.
+vivecraft.gui.social=Social
 
 # Items
 vivecraft.item.jumpboots=Botas Saltarinas
@@ -435,6 +437,7 @@ vivecraft.messages.noserverplugin=Mod de servidor Vivecraft no detectado. Este s
 vivecraft.messages.calibrateheight=Por favor calibra tu altura en el menú de pausa.
 vivecraft.messages.rendersetupfailed=Inicialización de Renderizado fallida: %s
 vivecraft.messages.intelgraphics=No se soporta las Gráficas Integradas de Intel. Si estás usando un portátil, por favor use la GPU de gran-rendimiento. GPU Detectada: %s
+vivecraft.messages.nosteamvr=Componente OpenVR no detectado. ¿Ha instalado SteamVR?
 vivecraft.messages.menuworldexportcomplete.1=Exportación de Mundo completada... tamaño de área: %d
 vivecraft.messages.menuworldexportcomplete.2=Guardado como %s
 vivecraft.messages.menuworldexportclientwarning=ADVERTENCIA: Guardando mundo para menú usando un mundo como cliente. Los datos pueden estar incompletos. Se recomienda guardar mundos para el menú en modo un sólo jugador.

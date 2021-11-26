@@ -32,6 +32,7 @@ clean = False
 force = False
 dependenciesOnly = False
 includeForge = False
+optifine_dest_file = ''
 
 try:
     WindowsError
@@ -79,7 +80,7 @@ def download_file(url, target, md5=None):
         download = False 
         
     if download is True:
-        print 'Downloading: %s' % os.path.basename(target)
+        print 'Downloading: %s from %s' % (os.path.basename(target), url)
         try:
             with open(target,"wb") as tf:
                 res = urllib2.urlopen(urllib2.Request( url, headers = {"User-Agent":"Mozilla/5.0"}))
@@ -206,31 +207,41 @@ def download_deps( mcp_dir, download_mc, forgedep=False ):
         source_json_file = os.path.join("installer",mc_version+"-forge.json")
     
     # Use optifine json name for destination dir and jar names
-    optifine_dest_dir = os.path.join(jars,"libraries","optifine","OptiFine",of_file_name )
+    optifine_dest_dir = os.path.join(base_dir,"lib","of",of_file_name )
     mkdir_p( optifine_dest_dir )
    
     if not nomerge:
         print 'Checking Optifine...'
         optifine_jar = "OptiFine-"+of_file_name+".jar"
+        global optifine_dest_file
         optifine_dest_file = os.path.join( optifine_dest_dir, optifine_jar )
     
         download_optifine = True
+        local_of = False
         
         if download_optifine: 
             # Use optifine filename for URL
             optifine_url = "http://vivecraft.org/jar/build/OptiFine-"+of_file_name+of_file_extension
             print 'Downloading Optifine from ' + optifine_url
+            local_of = os.path.exists(optifine_dest_file)
             if not download_file( optifine_url, optifine_dest_file, of_build_md5):
                 print 'FAILED to download Optifine!'
-                sys.exit(1)
+                if os.path.exists(optifine_dest_file):
+                        shutil.copy(optifine_dest_file,os.path.join(flat_lib_dir, os.path.basename(optifine_dest_file)))
+                else:
+                     print 'Optifine not found: %s' % optifine_dest_file
+                     sys.exit(0)
             else:
                 shutil.copy(optifine_dest_file,os.path.join(flat_lib_dir, os.path.basename(optifine_dest_file)))
                 
         if of_build_md5 == "":
             optifine_md5 = get_md5( optifine_dest_file )
             print 'Optifine md5: %s' % optifine_md5
-            sys.exit(0)
-   
+            if not local_of:
+                sys.exit(0)
+            else:
+                 print 'No md5 to check against!'
+                 
     json_obj = []
     with open(source_json_file,"rb") as f:
         #data=f.read()
@@ -442,10 +453,9 @@ def main(mcp_dir):
 
     if nomerge == False:
         print("Applying Optifine...")
-        optifine = os.path.join(mcp_dir,"jars","libraries","optifine","OptiFine",of_file_name,"OptiFine-"+of_file_name+".jar" )
         minecraft_jar = os.path.join( mcp_dir,"jars","versions",mc_version,mc_version+".jar")
-        print ' Merging\n  %s\n into\n  %s' % (optifine, minecraft_jar)
-        zipmerge( minecraft_jar, optifine )
+        print ' Merging\n  %s\n into\n  %s' % (optifine_dest_file, minecraft_jar)
+        zipmerge( minecraft_jar, optifine_dest_file )
     else:
         print("Skipping Optifine merge!")
         
@@ -555,6 +565,13 @@ def reallyrmtree(path):
         if os.path.exists(path):
             shutil.rmtree(path)
     else:
+        i = 0
+        try:
+            while os.stat(path) and i < 20:
+                shutil.rmtree(path + "temp", onerror=rmtree_onerror)
+                i += 1
+        except OSError:
+            pass
         os.rename(path, path + "temp")
         path = path + "temp"
         i = 0

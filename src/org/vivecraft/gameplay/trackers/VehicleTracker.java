@@ -1,7 +1,7 @@
 package org.vivecraft.gameplay.trackers;
 
 import org.vivecraft.api.VRData.VRDevicePose;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -98,7 +98,7 @@ public class VehicleTracker extends Tracker {
 				}
 
 				boolean smooth = true;
-				float smoothIncrement = 5;
+				float smoothIncrement = 10;
 
 				if(e instanceof MinecartEntity){ //what a pain in my ass
 				
@@ -117,7 +117,7 @@ public class VehicleTracker extends Tracker {
 
 					double spd = mineCartSpeed((MinecartEntity) e);
 					smoothIncrement = 200 * (float) (spd * spd);
-					if (smoothIncrement < 5) smoothIncrement = 5;
+					if (smoothIncrement < 10) smoothIncrement = 10;
 	//				System.out.println(spd + " " + smoothIncrement);
 
 				}
@@ -139,7 +139,7 @@ public class VehicleTracker extends Tracker {
 
 				mc.vrSettings.vrWorldRotation += difference;
 				mc.vrSettings.vrWorldRotation %= 360;
-				MCOpenVR.seatedRot = mc.vrSettings.vrWorldRotation;
+				mc.vr.seatedRot = mc.vrSettings.vrWorldRotation;
 
 				vehicleInitialRotation -= difference;
 				vehicleInitialRotation %= 360;
@@ -179,7 +179,7 @@ public class VehicleTracker extends Tracker {
 	    // 	System.out.println("OnStart " + start + " " + end + " " + difference);
         	mc.vrSettings.vrWorldRotation = (float) (Math.toDegrees(mc.vrPlayer.vrdata_world_pre.rotation_radians) + difference);
         	mc.vrSettings.vrWorldRotation %= 360;
-        	MCOpenVR.seatedRot = mc.vrSettings.vrWorldRotation;
+        	mc.vr.seatedRot = mc.vrSettings.vrWorldRotation;
 
         }
 	}
@@ -191,7 +191,7 @@ public class VehicleTracker extends Tracker {
        	//I dont wanna do this anymore. 
         //I think its more confusing to get off the thing an not know where you're looking
         //	mc.vrSettings.vrWorldRotation = playerRotation_PreMount;
-        //	MCOpenVR.seatedRot = playerRotation_PreMount;
+        //	mc.vr.seatedRot = playerRotation_PreMount;
         }
 	}
 	

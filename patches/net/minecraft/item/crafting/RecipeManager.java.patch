@@ -35,8 +35,8 @@
              {
 +            	//Forge
 +            	if(Reflector.CraftingHelper_processConditions.exists()) {
-+            		if(!Reflector.callBoolean(Reflector.CraftingHelper_processConditions, entry.getValue(), "conditions")) {
-+                        LOGGER.info("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
++            		if(entry.getValue().isJsonObject() && !Reflector.callBoolean(Reflector.CraftingHelper_processConditions, entry.getValue().getAsJsonObject(), "conditions")) {
++                        LOGGER.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
 +                        continue;
 +                     }
 +            	}
@@ -51,7 +51,7 @@
                  map.computeIfAbsent(irecipe.getType(), (recipeType) ->
                  {
                      return ImmutableMap.builder();
-@@ -67,7 +89,30 @@
+@@ -67,7 +89,32 @@
                  LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
              }
          }
@@ -76,9 +76,11 @@
 +    	ShapedRecipe claw = new ShapedRecipe(new ResourceLocation("climbclaws"),"Vivecraft", 3, 2, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItems(Items.SPIDER_EYE),Ingredient.EMPTY,Ingredient.fromItems(Items.SPIDER_EYE),Ingredient.fromItems(Items.SHEARS),Ingredient.EMPTY,Ingredient.fromItems(Items.SHEARS)), is2);
 +    	ShapedRecipe scope = new ShapedRecipe(new ResourceLocation("telescope"),"Vivecraft", 3, 1, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItems(Items.DIAMOND), Ingredient.fromItems(Items.ENDER_EYE), Ingredient.fromItems(Items.DIAMOND)), is3);
 +
-+    	map.get(boot.getType()).put(boot.getId(), boot);
-+    	map.get(claw.getType()).put(claw.getId(), claw);	
-+     	map.get(scope.getType()).put(scope.getId(), scope);
++    	if (map.containsKey(boot.getType())) {
++            map.get(boot.getType()).put(boot.getId(), boot);
++            map.get(claw.getType()).put(claw.getId(), claw);
++            map.get(scope.getType()).put(scope.getId(), scope);
++        }
 +     	
          this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (recipeEntry) ->
          {

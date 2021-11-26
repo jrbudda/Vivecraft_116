@@ -1,7 +1,7 @@
 package org.vivecraft.gameplay.trackers;
 
-import org.vivecraft.gameplay.OpenVRPlayer;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.gameplay.VRPlayer;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Quaternion;
@@ -65,8 +65,8 @@ public class HorseTracker extends Tracker {
 		float absYaw = (horse.rotationYaw + 360) % 360;
 		float absYawOffset = (horse.renderYawOffset + 360) % 360;
 
-		Vector3d speedLeft = MCOpenVR.controllerHistory[1].netMovement(0.1).scale(1 / 0.1);
-		Vector3d speedRight = MCOpenVR.controllerHistory[0].netMovement(0.1).scale(1 / 0.1);
+		Vector3d speedLeft = mc.vr.controllerHistory[1].netMovement(0.1).scale(1 / 0.1);
+		Vector3d speedRight = mc.vr.controllerHistory[0].netMovement(0.1).scale(1 / 0.1);
 		double speedDown = Math.min(-speedLeft.y, -speedRight.y);
 
 		if (speedDown > boostTrigger) {
@@ -80,8 +80,8 @@ public class HorseTracker extends Tracker {
 
 		Quaternion worldRot = new Quaternion(0, VRSettings.inst.vrWorldRotation, 0);
 
-		Vector3d posL = OpenVRPlayer.get().roomOrigin.add(worldRot.multiply(MCOpenVR.controllerHistory[1].latest()));
-		Vector3d posR = OpenVRPlayer.get().roomOrigin.add(worldRot.multiply(MCOpenVR.controllerHistory[0].latest()));
+		Vector3d posL = VRPlayer.get().roomOrigin.add(worldRot.multiply(mc.vr.controllerHistory[1].latest()));
+		Vector3d posR = VRPlayer.get().roomOrigin.add(worldRot.multiply(mc.vr.controllerHistory[0].latest()));
 
 		double distanceL = posL.subtract(info.leftReinPos).dotProduct(back) + posL.subtract(info.leftReinPos).dotProduct(left);
 		double distanceR = posR.subtract(info.rightReinPos).dotProduct(back) + posR.subtract(info.rightReinPos).dotProduct(right);

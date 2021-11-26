@@ -170,6 +170,7 @@ vivecraft.options.RIGHT_CLICK_DELAY=Right Click Repeat
 vivecraft.options.ANIMAL_TOUCHING=Animal Touching
 vivecraft.options.HANDHELD_CAMERA_FOV=Camera FOV
 vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=Camera Resolution
+vivecraft.options.MIXED_REALITY_RENDER_CAMERA_MODEL=Show Camera Model
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=Relative size HUD takes up in field-of-view.\n\
@@ -473,6 +474,10 @@ vivecraft.options.HANDHELD_CAMERA_FOV.tooltip=FOV of the handheld screenshot cam
 vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE.tooltip=Resolution of the handheld screenshot camera, for taking screenshots much larger than normal render resolution.\n\
 Cannot be used when shaders are enabled.\n\
 §cWARNING: Setting this very high may melt your computer!
+
+vivecraft.options.MIXED_REALITY_RENDER_CAMERA_MODEL.tooltip=Show model of a video camera (only in HMD view) to represent \
+where the mixed reality or third person camera is currently located. \
+It can also be grabbed to move it around using the interact binding.
 
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=I Can't See

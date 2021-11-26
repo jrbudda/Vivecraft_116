@@ -51,7 +51,7 @@
              p_lambda$static$65_0_.updateRenderClouds();
              minecraft.worldRenderer.loadRenderers();
 +            //Vivecraft
-+            minecraft.stereoProvider.reinitFrameBuffers("gfx setting change");
++            minecraft.vrRenderer.reinitFrameBuffers("gfx setting change");
 +            //
          }
      }, (p_lambda$static$66_0_, p_lambda$static$66_1_) ->

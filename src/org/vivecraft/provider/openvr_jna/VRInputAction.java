@@ -1,4 +1,4 @@
-package org.vivecraft.control;
+package org.vivecraft.provider.openvr_jna;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,18 +8,15 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.lwjgl.glfw.GLFW;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.HandedKeyBinding;
+import org.vivecraft.provider.InputSimulator;
+import org.vivecraft.provider.MCVR;
+import org.vivecraft.provider.openvr_jna.control.VRInputActionSet;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.utils.math.Vector2;
 import org.vivecraft.utils.math.Vector3;
 
-import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.LongByReference;
-
-import jopenvr.InputAnalogActionData_t;
-import jopenvr.InputDigitalActionData_t;
-import jopenvr.JOpenVRLibrary;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
 import net.optifine.reflect.Reflector;
@@ -35,14 +32,35 @@ public class VRInputAction {
 	private boolean[] enabled = new boolean[ControllerType.values().length];
 	private List<KeyListener> listeners = new ArrayList<>();
 	private ControllerType currentHand = ControllerType.RIGHT;
+	// Only used for the UseTracked axis methods
+	private boolean currentlyInUse;
 
-	private long handle;
+	public long handle;
 	private boolean[] pressed = new boolean[ControllerType.values().length];
 	protected int[] unpressInTicks = new int[ControllerType.values().length];
 
-	private InputDigitalActionData_t.ByReference[] digitalData = new InputDigitalActionData_t.ByReference[ControllerType.values().length];
-	private InputAnalogActionData_t.ByReference[] analogData = new InputAnalogActionData_t.ByReference[ControllerType.values().length];
+	public DigitalData[] digitalData = new DigitalData[ControllerType.values().length];
+	public AnalogData[] analogData = new AnalogData[ControllerType.values().length];
 
+	public class DigitalData{
+		public boolean state;
+		public boolean isChanged;
+		public boolean isActive;
+		public long activeOrigin;
+	}
+	
+	public class AnalogData{
+		public float x;
+		public float y;
+		public float z;
+		public float deltaX;
+		public float deltaY;
+		public float deltaZ;
+		public boolean isChanged;
+		public boolean isActive;
+		public long activeOrigin;
+	}
+		
 	public VRInputAction(KeyBinding keyBinding, String requirement, String type, VRInputActionSet actionSetOverride) {
 		this.keyBinding = keyBinding;
 		this.requirement = requirement;
@@ -52,20 +70,14 @@ public class VRInputAction {
 
 		for (int i = 0; i < ControllerType.values().length; i++) {
 			enabled[i] = true;
-			digitalData[i] = new InputDigitalActionData_t.ByReference();
-			digitalData[i].setAutoRead(false);
-			digitalData[i].setAutoWrite(false);
-			digitalData[i].setAutoSynch(false);
-			analogData[i] = new InputAnalogActionData_t.ByReference();
-			analogData[i].setAutoRead(false);
-			analogData[i].setAutoWrite(false);
-			analogData[i].setAutoSynch(false);
+			analogData[i] = new AnalogData();
+			digitalData[i] = new DigitalData();
 		}
 	}
 
 	public boolean isButtonPressed() {
 		if (type.equals("boolean")) {
-			return digitalData().bState != 0;
+			return digitalData().state;
 		} else {
 			Vector3 axis = getAxis3D(false);
 			return Math.abs(axis.getX()) > 0.5f || Math.abs(axis.getY()) > 0.5f || Math.abs(axis.getZ()) > 0.5f;
@@ -74,7 +86,7 @@ public class VRInputAction {
 
 	public boolean isButtonChanged() {
 		if (type.equals("boolean")) {
-			return digitalData().bChanged != 0;
+			return digitalData().isChanged;
 		} else {
 			Vector3 axis = getAxis3D(false);
 			Vector3 delta = getAxis3D(true);
@@ -126,14 +138,59 @@ public class VRInputAction {
 		}
 	}
 
+	/**
+	 * This special variant of getAxis1D internally handles the isEnabled check and will continue
+	 * to give an output even after disabled until the user lets go of the input.
+	 *
+	 * Cannot provide delta values as it wouldn't make any sense.
+	 */
+	public float getAxis1DUseTracked() {
+		if (currentlyInUse || isEnabled()) {
+			float axis = getAxis1D(false);
+			currentlyInUse = axis != 0;
+			return axis;
+		}
+		return 0;
+	}
+
+	/**
+	 * This special variant of getAxis1D internally handles the isEnabled check and will continue
+	 * to give an output even after disabled until the user lets go of the input.
+	 *
+	 * Cannot provide delta values as it wouldn't make any sense.
+	 */
+	public Vector2 getAxis2DUseTracked() {
+		if (currentlyInUse || isEnabled()) {
+			Vector2 axis = getAxis2D(false);
+			currentlyInUse = axis.getX() != 0 || axis.getY() != 0;
+			return axis;
+		}
+		return new Vector2();
+	}
+
+	/**
+	 * This special variant of getAxis1D internally handles the isEnabled check and will continue
+	 * to give an output even after disabled until the user lets go of the input.
+	 *
+	 * Cannot provide delta values as it wouldn't make any sense.
+	 */
+	Vector3 getAxis3DUseTracked() {
+		if (currentlyInUse || isEnabled()) {
+			Vector3 axis = getAxis3D(false);
+			currentlyInUse = axis.getX() != 0 || axis.getY() != 0 || axis.getZ() != 0;
+			return axis;
+		}
+		return new Vector3();
+	}
+
 	private float digitalToAnalog(boolean delta) {
 		if (delta) {
-			if (digitalData().bChanged != 0)
-				return digitalData().bState != 0 ? 1.0f : -1.0f;
+			if (digitalData().isChanged)
+				return digitalData().state ? 1.0f : -1.0f;
 			else
 				return 0.0f;
 		} else {
-			return digitalData().bState != 0 ? 1.0f : 0.0f;
+			return digitalData().state ? 1.0f : 0.0f;
 		}
 	}
 
@@ -146,7 +203,7 @@ public class VRInputAction {
 			case "vector3":
 				return analogData().activeOrigin;
 			default:
-				return JOpenVRLibrary.k_ulInvalidInputValueHandle;
+				return 0;
 		}
 	}
 
@@ -158,48 +215,7 @@ public class VRInputAction {
 		this.currentHand = currentHand;
 	}
 
-	public void readNewData() {
-		switch (type) {
-			case "boolean":
-				if (isHanded())
-					Arrays.stream(ControllerType.values()).forEach(this::readDigitalData);
-				else
-					readDigitalData(null);
-				break;
-			case "vector1":
-			case "vector2":
-			case "vector3":
-				if (isHanded())
-					Arrays.stream(ControllerType.values()).forEach(this::readAnalogData);
-				else
-					readAnalogData(null);
-				break;
-		}
-	}
-
-	private void readDigitalData(ControllerType hand) {
-		int index = 0;
-		if (hand != null)
-			index = hand.ordinal();
-
-		int error = MCOpenVR.vrInput.GetDigitalActionData.apply(handle, digitalData[index], digitalData[index].size(), hand != null ? MCOpenVR.getControllerHandle(hand) : JOpenVRLibrary.k_ulInvalidInputValueHandle);
-		if (error != 0)
-			throw new RuntimeException("Error reading digital data for '" + this.name + "': " + MCOpenVR.getInputError(error));
-		digitalData[index].read();
-	}
-
-	private void readAnalogData(ControllerType hand) {
-		int index = 0;
-		if (hand != null)
-			index = hand.ordinal();
-
-		int error = MCOpenVR.vrInput.GetAnalogActionData.apply(handle, analogData[index], analogData[index].size(), hand != null ? MCOpenVR.getControllerHandle(hand) : JOpenVRLibrary.k_ulInvalidInputValueHandle);
-		if (error != 0)
-			throw new RuntimeException("Error reading analog data for '" + this.name + "': " + MCOpenVR.getInputError(error));
-		analogData[index].read();
-	}
-
-	private InputDigitalActionData_t digitalData() {
+	private DigitalData digitalData() {
 		if (isHanded()) {
 			return digitalData[currentHand.ordinal()];
 		} else {
@@ -207,7 +223,7 @@ public class VRInputAction {
 		}
 	}
 
-	private InputAnalogActionData_t analogData() {
+	private AnalogData analogData() {
 		if (isHanded()) {
 			return analogData[currentHand.ordinal()];
 		} else {
@@ -215,22 +231,6 @@ public class VRInputAction {
 		}
 	}
 
-	public List<Long> getOrigins() {
-		Pointer p = new Memory(JOpenVRLibrary.k_unMaxActionOriginCount * 8);
-		LongByReference longRef = new LongByReference();
-		longRef.setPointer(p);
-		int error = MCOpenVR.vrInput.GetActionOrigins.apply(MCOpenVR.getActionSetHandle(actionSet), handle, longRef, JOpenVRLibrary.k_unMaxActionOriginCount);
-		if (error != 0)
-			throw new RuntimeException("Error getting action origins for '" + this.name + "': " + MCOpenVR.getInputError(error));
-
-		List<Long> list = new ArrayList<>();
-		for (long handle : p.getLongArray(0, JOpenVRLibrary.k_unMaxActionOriginCount)) {
-			if (handle != JOpenVRLibrary.k_ulInvalidInputValueHandle)
-				list.add(handle);
-		}
-
-		return list;
-	}
 
 	public void setHandle(long handle) {
 		if (this.handle != 0)
@@ -253,13 +253,16 @@ public class VRInputAction {
 	public boolean isEnabled() {
 		if (!isEnabledRaw(currentHand)) return false;
 
-		long lastOrigin = this.getLastOrigin();
-		ControllerType hand = MCOpenVR.getOriginControllerType(lastOrigin);
-		if (hand == null)
+		if (MCOpenVR.get() == null)
 			return false;
 
-		for (VRInputAction action : MCOpenVR.getInputActions()) {
-			if (action != this && action.isEnabledRaw(hand) && action.isActive() && action.getPriority() > this.getPriority() && action.getOrigins().contains(lastOrigin)) {
+		long lastOrigin = this.getLastOrigin();
+		ControllerType hand = MCOpenVR.get().getOriginControllerType(lastOrigin);
+		if (hand == null && this.isHanded())
+			return false;
+
+		for (VRInputAction action : MCOpenVR.get().getInputActions()) {
+			if (action != this && action.isEnabledRaw(hand) && action.isActive() && action.getPriority() > this.getPriority() && MCVR.get().getOrigins(this).contains(lastOrigin)) {
 				if (action.isHanded())
 					return !((HandedKeyBinding)action.keyBinding).isPriorityOnController(hand);
 				return false;
@@ -271,7 +274,7 @@ public class VRInputAction {
 
 	public boolean isEnabledRaw(ControllerType hand) {
 		if (isHanded())
-			return enabled[hand.ordinal()];
+			return hand != null && enabled[hand.ordinal()];
 		else
 			return enabled[0];
 	}
@@ -300,11 +303,11 @@ public class VRInputAction {
 	public boolean isActive() {
 		switch (type) {
 			case "boolean":
-				return digitalData().bActive != 0;
+				return digitalData().isActive;
 			case "vector1":
 			case "vector2":
 			case "vector3":
-				return analogData().bActive != 0;
+				return analogData().isActive;
 			default:
 				return false;
 		}
@@ -411,10 +414,10 @@ public class VRInputAction {
 		}
 	}
 
-	public void pressKey() {
+	private void pressKey() {
 		InputMappings.Input input = (InputMappings.Input)MCReflection.KeyBinding_keyCode.get(keyBinding);
 
-		if (input.getKeyCode() != GLFW.GLFW_KEY_UNKNOWN && !MCOpenVR.isSafeBinding(keyBinding) && (!Reflector.ForgeKeyBinding_getKeyModifier.exists() || Reflector.call(keyBinding, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
+		if (input.getKeyCode() != GLFW.GLFW_KEY_UNKNOWN && !MCOpenVR.get().isSafeBinding(keyBinding) && (!Reflector.ForgeKeyBinding_getKeyModifier.exists() || Reflector.call(keyBinding, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
 			if (input.getType() == InputMappings.Type.KEYSYM) {
 				//System.out.println("InputSimulator pressKey: " + kb.getKeyDescription() + ", input type: " + input.getType().name() + ", key code: " + input.getKeyCode());
 				InputSimulator.pressKey(input.getKeyCode());
@@ -434,7 +437,7 @@ public class VRInputAction {
 	public void unpressKey() {
 		InputMappings.Input input = (InputMappings.Input)MCReflection.KeyBinding_keyCode.get(keyBinding);
 
-		if (input.getKeyCode() != GLFW.GLFW_KEY_UNKNOWN && !MCOpenVR.isSafeBinding(keyBinding) && (!Reflector.ForgeKeyBinding_getKeyModifier.exists() || Reflector.call(keyBinding, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
+		if (input.getKeyCode() != GLFW.GLFW_KEY_UNKNOWN && !MCOpenVR.get().isSafeBinding(keyBinding) && (!Reflector.ForgeKeyBinding_getKeyModifier.exists() || Reflector.call(keyBinding, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
 			if (input.getType() == InputMappings.Type.KEYSYM) {
 				//System.out.println("InputSimulator releaseKey: " + kb.getKeyDescription() + ", input type: " + input.getType().name() + ", key code: " + input.getKeyCode());
 				InputSimulator.releaseKey(input.getKeyCode());

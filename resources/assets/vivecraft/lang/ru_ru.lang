@@ -1,4 +1,4 @@
-# Contributors: Hu4uTa, Krays, Shinomasu, link1107
+# Contributors: Hu4uTa, Jonny_Bro, Krays, NikMe, Shinomasu, link1107
 
 # Key bindings
 vivecraft.key.hotbarNext=Следующий Слот
@@ -24,6 +24,8 @@ vivecraft.key.swapMirrorView=Выбрать зеркальный вид
 vivecraft.key.toggleKeyboard=Показать/Скрыть Клавиатуру
 vivecraft.key.moveThirdPersonCam=Передвинуть Камеру Третьего Лица
 vivecraft.key.togglePlayerList=Переключить Список Игроков
+vivecraft.key.toggleHandheldCam=Переключить камеру
+# vivecraft.key.quickHandheldCam=Quick Camera
 vivecraft.key.trackpadTouch=Прикосновения к сенсорной панели
 vivecraft.key.vrInteract=Контекстное Взаимодействие
 vivecraft.key.guiLeftClick=Левый Клик
@@ -115,7 +117,7 @@ vivecraft.options.MIXED_REALITY_RENDER_HANDS=Показывать Руки
 vivecraft.options.MIXED_REALITY_UNITY_LIKE=Слой
 vivecraft.options.MIXED_REALITY_UNDISTORTED=Прямая передача
 vivecraft.options.MIXED_REALITY_ALPHA_MASK=Альфа-маска
-vivecraft.options.MIXED_REALITY_FOV=Поле Зрения Камеры
+vivecraft.options.MIXED_REALITY_FOV=Поле зрения от третьего лица
 vivecraft.options.WALK_UP_BLOCKS=Хождение по блокам
 vivecraft.options.MOVEMENT_MULTIPLIER=Движение. Множитель скорости
 vivecraft.options.INERTIA_FACTOR=Инерция Игрока
@@ -168,6 +170,8 @@ vivecraft.options.HRTF_SELECTION=HRTF
 vivecraft.options.RELOAD_EXTERNAL_CAMERA=Перезагрузка камеры
 vivecraft.options.RIGHT_CLICK_DELAY=Повтор ПКМ
 vivecraft.options.ANIMAL_TOUCHING=Прикосновения к животным
+vivecraft.options.HANDHELD_CAMERA_FOV=Поле Зрения Камеры
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE=Разрешение камеры
 
 # Option tooltips
 vivecraft.options.HUD_SCALE.tooltip=Относительный размер HUD в поле зрения.\nЕдиницы измерения относительны, и не имеют привязки к градусам и т.д.
@@ -330,6 +334,10 @@ vivecraft.options.RIGHT_CLICK_DELAY.tooltip=Количество тиков в �
 
 vivecraft.options.ANIMAL_TOUCHING.tooltip=Если включено, при нажатии на животное (мирное) без оружия используйте ПКМ (взаимодействие) чтобы избежать атаки.\nВыключи, чтобы не бить по лицу поросят.
 
+vivecraft.options.HANDHELD_CAMERA_FOV.tooltip=Поле зрения портативной камеры
+
+vivecraft.options.HANDHELD_CAMERA_RENDER_SCALE.tooltip=Разрешение портативной камеры для скриншотов, позволяет делать скриншоты более высокого разрешения.\nИспользование невозможно если включены шейдеры.\n§cВНИМАНИЕ: Очень высокие значения могут уничтожить ваш компьютер!
+
 # Option values
 vivecraft.options.gamma.cantseeshitcaptain=Я не вижу
 vivecraft.options.yes=ДА
@@ -410,6 +418,7 @@ vivecraft.gui.screenshot=Скриншот
 vivecraft.gui.calibrateheight=Калибровка высоты
 vivecraft.gui.alignkatwalk=Выровняйте KAT WALK
 vivecraft.gui.movethirdpersoncam=Переместить камеру
+# vivecraft.gui.social=Social
 
 # Items
 vivecraft.item.jumpboots=Ботинки Прыгуны
@@ -428,6 +437,7 @@ vivecraft.messages.noserverplugin=Vivecraft не обнаружен. Этот с
 vivecraft.messages.calibrateheight=Пожалуйста, откаллибруйте высоту в меню паузы.
 vivecraft.messages.rendersetupfailed=Ошибка рендера: %s
 vivecraft.messages.intelgraphics=Интегрированная графика Intel не поддерживается. Если это ноутбук, пожалуйста, установите высокопроизводительный GPU. Найденное GPU: %s
+vivecraft.messages.nosteamvr=OpenVR не обнаружен. Вы установили SteamVR?
 vivecraft.messages.menuworldexportcomplete.1=Экспорт завершен... размер области: %d
 vivecraft.messages.menuworldexportcomplete.2=Сохранено в %s
 vivecraft.messages.menuworldexportclientwarning=ВНИМАНИЕ: Сохранение мира с помощью клиентского мира может быть неполным, что приведет к утрате мира.

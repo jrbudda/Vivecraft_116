@@ -3,9 +3,9 @@ package org.vivecraft.render;
 import org.lwjgl.opengl.ARBTextureEnvCombine;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.vivecraft.control.ControllerType;
 import org.vivecraft.gameplay.trackers.SwingTracker;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -47,10 +47,10 @@ public class VRArmRenderer extends PlayerRenderer
     private void renderItem(ControllerType side, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, AbstractClientPlayerEntity playerIn, ModelRenderer rendererArmIn, ModelRenderer rendererArmwearIn)
     {
     	// TODO: find a different way to highlight the hand
-        //if (MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).isEnabledRaw(side) ||
-        //		MCOpenVR.keyVRInteract.isKeyDown(side)||
-        //		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).isEnabledRaw(side) ||
-        //		MCOpenVR.keyClimbeyGrab.isKeyDown(side)) {
+        //if (mc.vr.getInputAction(mc.vr.keyVRInteract).isEnabledRaw(side) ||
+        //		mc.vr.keyVRInteract.isKeyDown(side)||
+        //		mc.vr.getInputAction(mc.vr.keyClimbeyGrab).isEnabledRaw(side) ||
+        //		mc.vr.keyClimbeyGrab.isKeyDown(side)) {
         //	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_COMBINE);
         //	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_COMBINE_RGB_ARB, GL13.GL_MODULATE);
         //	GlStateManager.texEnv(GL11.GL_TEXTURE_ENV, ARBTextureEnvCombine.GL_RGB_SCALE_ARB, 2);

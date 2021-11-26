@@ -3,7 +3,7 @@ package org.vivecraft.gui.physical.interactables;
 import java.util.ArrayList;
 
 import org.vivecraft.api.VRData;
-import org.vivecraft.gameplay.OpenVRPlayer;
+import org.vivecraft.gameplay.VRPlayer;
 import org.vivecraft.utils.math.Quaternion;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -49,9 +49,9 @@ public class Slider implements Interactable{
 	}
 
 	double getTargetSlidePos(double partialTicks){
-		VRData data= OpenVRPlayer.get().vrdata_world_render;
+		VRData data= VRPlayer.get().vrdata_world_render;
 		if (data==null)
-			data=OpenVRPlayer.get().vrdata_world_pre;
+			data=VRPlayer.get().vrdata_world_pre;
 
 		int mainhand = (mc.gameSettings.mainHand == HandSide.RIGHT) ? 0 : 1;
 		Vector3d ctrPos=data.getController(mainhand).getPosition();

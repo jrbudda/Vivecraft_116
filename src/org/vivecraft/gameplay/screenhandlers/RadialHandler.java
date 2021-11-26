@@ -1,10 +1,11 @@
 package org.vivecraft.gameplay.screenhandlers;
 
 import org.vivecraft.api.VRData.VRDevicePose;
-import org.vivecraft.control.ControllerType;
 import org.vivecraft.gui.GuiRadial;
-import org.vivecraft.provider.MCOpenVR;
-import org.vivecraft.provider.OpenVRUtil;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.OpenVRUtil;
+import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.math.Matrix4f;
 import org.vivecraft.utils.math.Vector3;
 
@@ -148,7 +149,7 @@ public class RadialHandler {
 		float pitch = (float) Math.asin(look.getY()/look.length());
 		float yaw = (float) ((float) Math.PI + Math.atan2(look.getX(), look.getZ()));    
 		Rotation_room = Matrix4f.rotationY((float) yaw);
-		Matrix4f tilt = OpenVRUtil.rotationXMatrix(pitch);	
+		Matrix4f tilt = Utils.rotationXMatrix(pitch);	
 		Rotation_room = Matrix4f.multiply(Rotation_room, tilt);	
 
 	}
@@ -188,7 +189,7 @@ public class RadialHandler {
 			if (activecontroller == null)
 				return;
 			
-			if (!MCOpenVR.keyRadialMenu.isKeyDown()) {
+			if (!mc.vr.keyRadialMenu.isKeyDown()) {
 				if (activecontroller == ControllerType.LEFT) {
 					UI.mouseClicked((int)d0, (int)d1, 0);
 				} else {

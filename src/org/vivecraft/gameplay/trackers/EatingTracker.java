@@ -2,8 +2,8 @@ package org.vivecraft.gameplay.trackers;
 
 import java.util.Random;
 
-import org.vivecraft.gameplay.OpenVRPlayer;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.gameplay.VRPlayer;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -60,14 +60,14 @@ private Random r = new Random();
 
 	public void doProcess(ClientPlayerEntity player){
 
-		OpenVRPlayer provider = mc.vrPlayer;
+		VRPlayer provider = mc.vrPlayer;
 		
 		Vector3d hmdPos=provider.vrdata_room_pre.hmd.getPosition();
 		Vector3d mouthPos=provider.vrdata_room_pre.getController(0).getCustomVector(new Vector3d(0,-mouthtoEyeDistance,0)).add(hmdPos);
 
 		for(int c=0;c<2;c++){
 
-			Vector3d controllerPos = MCOpenVR.controllerHistory[c].averagePosition(0.333).add(provider.vrdata_room_pre.getController(c).getCustomVector(new Vector3d(0,0,-0.1)));
+			Vector3d controllerPos = mc.vr.controllerHistory[c].averagePosition(0.333).add(provider.vrdata_room_pre.getController(c).getCustomVector(new Vector3d(0,0,-0.1)));
 			controllerPos = controllerPos.add(mc.vrPlayer.vrdata_room_pre.getController(c).getDirection().scale(0.1));
 			
 			if(mouthPos.distanceTo(controllerPos)<threshold){
@@ -96,7 +96,7 @@ private Random r = new Random();
 					long t = player.getItemInUseCount();
 					if(t>0)
 						if(t%5 <= crunchiness)
-							MCOpenVR.triggerHapticPulse(c, 700 );
+							mc.vr.triggerHapticPulse(c, 700 );
 				}
 				
 				if(Util.milliTime()-eatStart > eattime)

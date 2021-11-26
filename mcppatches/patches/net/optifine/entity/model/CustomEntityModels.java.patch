@@ -1,6 +1,6 @@
 --- a/net/optifine/entity/model/CustomEntityModels.java
 +++ b/net/optifine/entity/model/CustomEntityModels.java
-@@ -116,7 +116,7 @@
+@@ -179,7 +179,7 @@
  
      private static Map<TileEntityType, TileEntityRenderer> getTileEntityRenderMap()
      {

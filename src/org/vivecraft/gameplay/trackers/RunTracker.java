@@ -1,6 +1,6 @@
 package org.vivecraft.gameplay.trackers;
 
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.client.Minecraft;
@@ -55,8 +55,8 @@ public class RunTracker extends Tracker {
 		
 		//Vector3d middle= controllerL.subtract(controllerR).scale(0.5).add(controllerR);
 
-		double c0move = MCOpenVR.controllerHistory[0].averageSpeed(.33);
-		double c1move = MCOpenVR.controllerHistory[1].averageSpeed(.33);
+		double c0move = mc.vr.controllerHistory[0].averageSpeed(.33);
+		double c1move = mc.vr.controllerHistory[1].averageSpeed(.33);
 
 		if(speed > 0) {
 			if(c0move < 0.1 && c1move < 0.1){
@@ -83,8 +83,8 @@ public class RunTracker extends Tracker {
 //		
 //		if(speed < 0) Hmddir = movedir; //maybe?
 //		
-//		Vector3d r = MCOpenVR.controllerHistory[0].netMovement(0.33).rotateYaw(minecraft.vrPlayer.worldRotationRadians);
-//		Vector3d l = MCOpenVR.controllerHistory[1].netMovement(0.33).rotateYaw(minecraft.vrPlayer.worldRotationRadians);
+//		Vector3d r = mc.vr.controllerHistory[0].netMovement(0.33).rotateYaw(minecraft.vrPlayer.worldRotationRadians);
+//		Vector3d l = mc.vr.controllerHistory[1].netMovement(0.33).rotateYaw(minecraft.vrPlayer.worldRotationRadians);
 //
 //		r = new Vector3d(r.x,0, r.z).normalize();		
 //		l = new Vector3d(l.x,0, l.z).normalize();	
@@ -104,8 +104,8 @@ public class RunTracker extends Tracker {
 //		movedir = movedir.normalize();
 		
 		//todo: skip entries? is this computationally expensive?
-//		Vector3d r = MCOpenVR.controllerHistory[0].averagePosition(.25);
-//		Vector3d l = MCOpenVR.controllerHistory[1].averagePosition(.25);
+//		Vector3d r = mc.vr.controllerHistory[0].averagePosition(.25);
+//		Vector3d l = mc.vr.controllerHistory[1].averagePosition(.25);
 //		
 //		Vector3d diff = l.subtract(r).rotateYaw(minecraft.getInstance().vrPlayer.worldRotationRadians);
 //		

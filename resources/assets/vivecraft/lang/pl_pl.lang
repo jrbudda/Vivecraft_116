@@ -25,6 +25,7 @@ vivecraft.key.toggleKeyboard=Pokaż/Ukryj klawiaturę
 vivecraft.key.moveThirdPersonCam=Porusz kamerę trzecioosobową
 vivecraft.key.togglePlayerList=Pokaż/Ukryj listę graczy
 vivecraft.key.toggleHandheldCam=Przełącz kamerę
+vivecraft.key.quickHandheldCam=Szybka kamera
 vivecraft.key.trackpadTouch=Dotyk trackpada
 vivecraft.key.vrInteract=Interakcja
 vivecraft.key.guiLeftClick=Lewe kliknięcie
@@ -417,6 +418,7 @@ vivecraft.gui.screenshot=Zrzut ekranu
 vivecraft.gui.calibrateheight=Kalibruj wysokość
 vivecraft.gui.alignkatwalk=Wyrównaj KAT WALK
 vivecraft.gui.movethirdpersoncam=Porusz kamerę trzecioosobową
+vivecraft.gui.social=Społeczność
 
 # Items
 vivecraft.item.jumpboots=Buty do skakania
@@ -435,6 +437,7 @@ vivecraft.messages.noserverplugin=Nie wykryto serwerowego moda Vivecraft. Ten se
 vivecraft.messages.calibrateheight=Proszę skalibruj swoją wysokość w menu.
 vivecraft.messages.rendersetupfailed=Renderowanie nie powiodło się %s
 vivecraft.messages.intelgraphics=Zintegrowana grafika Intela nie jest wspierana. Jeśli to jest laptop, wymuś użycie wysokiej wydajności GPU. Wykryte GPU: %s
+vivecraft.messages.nosteamvr=OpenVR nie zostało wykryte. Zainstalowałeś SteamVR? 
 vivecraft.messages.menuworldexportcomplete.1=Export świata pomyślny... rozmiar strefy: %d
 vivecraft.messages.menuworldexportcomplete.2=Zapisane do %s
 vivecraft.messages.menuworldexportclientwarning=UWAGA: Zapis świata menu używając świata klienckiego. Dane mogą być niekompletne. Zalecane jest zapisywanie światów menu w trybie jednoosobowym. 

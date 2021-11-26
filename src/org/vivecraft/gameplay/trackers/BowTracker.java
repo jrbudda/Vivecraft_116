@@ -5,8 +5,8 @@ import java.nio.ByteBuffer;
 import org.vivecraft.api.NetworkHelper;
 import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
 import org.vivecraft.api.VRData;
-import org.vivecraft.gameplay.OpenVRPlayer;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.gameplay.VRPlayer;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.utils.math.Vector3;
 
 import net.minecraft.client.Minecraft;
@@ -116,7 +116,7 @@ public class BowTracker extends Tracker {
 		if (vrData==null)
 			vrData=mc.vrPlayer.vrdata_world_pre;
 		
-		OpenVRPlayer provider = mc.vrPlayer;
+		VRPlayer provider = mc.vrPlayer;
 
 		if(mc.vrSettings.seated){
 			aim = vrData.getController(0).getCustomVector(new Vector3d(0,0,1));
@@ -210,8 +210,8 @@ public class BowTracker extends Tracker {
 
 		if(isDrawing && !pressed && lastpressed && getDrawPercent() > 0.0) {
 			//fire!
-			MCOpenVR.triggerHapticPulse(0, 500); 	
-			MCOpenVR.triggerHapticPulse(1, 3000); 	
+			mc.vr.triggerHapticPulse(0, 500); 	
+			mc.vr.triggerHapticPulse(1, 3000); 	
 			CCustomPayloadPacket pack =	NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.DRAW, ByteBuffer.allocate(4).putFloat((float) getDrawPercent()).array());
 			Minecraft.getInstance().getConnection().sendPacket(pack);
 			mc.playerController.onStoppedUsingItem(player); //server
@@ -225,8 +225,8 @@ public class BowTracker extends Tracker {
 		}
 		
 		if (!isDrawing && canDraw && !lastcanDraw) {
-			MCOpenVR.triggerHapticPulse(1, 800);
-			MCOpenVR.triggerHapticPulse(0, 800); 	
+			mc.vr.triggerHapticPulse(1, 800);
+			mc.vr.triggerHapticPulse(0, 800); 	
 			//notch     	    	
 		}
 			
@@ -253,13 +253,13 @@ public class BowTracker extends Tracker {
 
 			int hapstep=(int)(drawperc*4*4*3);
 			if ( hapstep % 2 == 0 && lasthapStep!= hapstep) {
-				MCOpenVR.triggerHapticPulse(0, hap);
+				mc.vr.triggerHapticPulse(0, hap);
 				if(drawperc==1)
-					MCOpenVR.triggerHapticPulse(1,hap);
+					mc.vr.triggerHapticPulse(1,hap);
 			}
 
 			if(isCharged() && hapcounter %4==0){
-				MCOpenVR.triggerHapticPulse(1,200);
+				mc.vr.triggerHapticPulse(1,200);
 			}
 			
 			//else if(drawperc==1 && hapcounter % 8 == 0){

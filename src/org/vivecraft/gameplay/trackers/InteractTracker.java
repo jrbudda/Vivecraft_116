@@ -4,8 +4,8 @@ import java.util.HashSet;
 
 import org.vivecraft.api.NetworkHelper;
 import org.vivecraft.api.VRData;
-import org.vivecraft.control.ControllerType;
-import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.reflection.MCReflection;
 import org.vivecraft.reflection.MCReflection.ReflectionMethod;
 import org.vivecraft.render.RenderPass;
@@ -92,7 +92,7 @@ public class InteractTracker extends Tracker{
 		inCamera[c] = false;
 		inHandheldCamera[c] = false;
 		active[c] = false;
-		MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).setEnabled(ControllerType.values()[c], false);
+		mc.vr.getInputAction(mc.vr.keyVRInteract).setEnabled(ControllerType.values()[c], false);
 	}
 
 	private HashSet<Class> rightClickable = null;
@@ -125,7 +125,7 @@ public class InteractTracker extends Tracker{
 		Vector3d forward = new Vector3d(0,0,-1);
 
 		for(int c =0 ;c<2;c++){
-			if ((inCamera[c] || inHandheldCamera[c]) && MCOpenVR.keyVRInteract.isKeyDown(ControllerType.values()[c]))
+			if ((inCamera[c] || inHandheldCamera[c]) && mc.vr.keyVRInteract.isKeyDown(ControllerType.values()[c]))
 				continue;
 
 			reset(player, c);
@@ -142,7 +142,7 @@ public class InteractTracker extends Tracker{
 			ItemStack is = player.getHeldItem(c==0?Hand.MAIN_HAND:Hand.OFF_HAND);
 			Item item = null;
 
-			if (!active[c] && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)) {
+			if (!active[c] && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON) && mc.vrSettings.mixedRealityRenderCameraModel) {
 				VRData.VRDevicePose camData = mc.vrPlayer.vrdata_world_pre.getEye(RenderPass.THIRD);
 				Vector3d camPos = camData.getPosition();
 				camPos = camPos.subtract(camData.getCustomVector(new Vector3d(0, 0, -1)).scale(0.15f));
@@ -214,10 +214,10 @@ public class InteractTracker extends Tracker{
 			}
 
 			if(!wasactive[c] && active[c]) {
-				MCOpenVR.triggerHapticPulse(c, 250);
+				mc.vr.triggerHapticPulse(c, 250);
 			}
 
-			MCOpenVR.getInputAction(MCOpenVR.keyVRInteract).setEnabled(ControllerType.values()[c], active[c]);
+			mc.vr.getInputAction(mc.vr.keyVRInteract).setEnabled(ControllerType.values()[c], active[c]);
 
 			wasactive[c] = active[c];
 		}
@@ -237,7 +237,7 @@ public class InteractTracker extends Tracker{
 
 	public void processBindings() {
 		for(int c =0 ;c<2;c++){
-			if(MCOpenVR.keyVRInteract.isPressed(ControllerType.values()[c])) {
+			if(mc.vr.keyVRInteract.isPressed(ControllerType.values()[c])) {
 				if (!active[c]) 
 					continue; //how tho?
 				Hand hand = Hand.values()[c];
@@ -274,7 +274,7 @@ public class InteractTracker extends Tracker{
 				
 				if(success){
 					mc.player.swingArm(hand, VRFirstPersonArmSwing.Interact);
-					MCOpenVR.triggerHapticPulse(c, 750);	
+					mc.vr.triggerHapticPulse(c, 750);	
 				}
 			}
 		}

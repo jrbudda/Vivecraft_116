@@ -8,10 +8,11 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.util.Tuple;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-import org.vivecraft.control.ControllerType;
-import org.vivecraft.control.InputSimulator;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
+import org.vivecraft.provider.ControllerType;
+import org.vivecraft.provider.InputSimulator;
+import org.vivecraft.provider.MCVR;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.lwjgl.Matrix4f;
 import org.vivecraft.utils.lwjgl.Vector3f;
@@ -518,7 +519,7 @@ public class PhysicalKeyboard {
 		public final void press(ControllerType controller, boolean isRepeat) {
 			if (!isRepeat)
 				mc.getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-			controller.getController().triggerHapticPulse(isRepeat ? 300 : 600);
+			MCVR.get().triggerHapticPulse(controller, isRepeat ? 300 : 600);
 			this.pressed = true;
 			this.onPressed();
 			PhysicalKeyboard.this.updateEasterEgg(this.label);

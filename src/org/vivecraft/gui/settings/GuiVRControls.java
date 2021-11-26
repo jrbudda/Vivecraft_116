@@ -51,6 +51,6 @@ public class GuiVRControls extends GuiVROptionsBase {
 			VRSettings vrSettings = minecraft.vrSettings;
 			vrSettings.vrReverseHands = false;
 			vrSettings.allowAdvancedBindings = false;
-			vrSettings.rightclickDelay = 6;
+			vrSettings.rightclickDelay = 4;
 		}
 }

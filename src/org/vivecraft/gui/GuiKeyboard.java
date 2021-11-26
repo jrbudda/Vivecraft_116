@@ -1,8 +1,8 @@
 package org.vivecraft.gui;
 
 import org.lwjgl.glfw.GLFW;
-import org.vivecraft.control.InputSimulator;
 import org.vivecraft.gui.framework.TwoHandedScreen;
+import org.vivecraft.provider.InputSimulator;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
