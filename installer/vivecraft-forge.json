@@ -235,24 +235,35 @@
             }
         },
         {
-            "name": "org.apache.logging.log4j:log4j-api:2.11.2",
+            "name": "org.apache.logging.log4j:log4j-api:2.15.0",
             "downloads": {
                 "artifact": {
-                    "path": "org/apache/logging/log4j/log4j-api/2.11.2/log4j-api-2.11.2.jar",
-                    "url": "https://maven.minecraftforge.net/org/apache/logging/log4j/log4j-api/2.11.2/log4j-api-2.11.2.jar",
-                    "sha1": "f5e9a2ffca496057d6891a3de65128efc636e26e",
-                    "size": 266283
+                    "path": "org/apache/logging/log4j/log4j-api/2.15.0/log4j-api-2.15.0.jar",
+                    "url": "https://maven.minecraftforge.net/org/apache/logging/log4j/log4j-api/2.15.0/log4j-api-2.15.0.jar",
+                    "sha1": "4a5aa7e55a29391c6f66e0b259d5189aa11e45d0",
+                    "size": 301804
                 }
             }
         },
         {
-            "name": "org.apache.logging.log4j:log4j-core:2.11.2",
+            "name": "org.apache.logging.log4j:log4j-core:2.15.0",
             "downloads": {
                 "artifact": {
-                    "path": "org/apache/logging/log4j/log4j-core/2.11.2/log4j-core-2.11.2.jar",
-                    "url": "https://maven.minecraftforge.net/org/apache/logging/log4j/log4j-core/2.11.2/log4j-core-2.11.2.jar",
-                    "sha1": "6c2fb3f5b7cd27504726aef1b674b542a0c9cf53",
-                    "size": 1629585
+                    "path": "org/apache/logging/log4j/log4j-core/2.15.0/log4j-core-2.15.0.jar",
+                    "url": "https://maven.minecraftforge.net/org/apache/logging/log4j/log4j-core/2.15.0/log4j-core-2.15.0.jar",
+                    "sha1": "ba55c13d7ac2fd44df9cc8074455719a33f375b9",
+                    "size": 1789769
+                }
+            }
+        },
+        {
+            "name": "org.apache.logging.log4j:log4j-slf4j18-impl:2.15.0",
+            "downloads": {
+                "artifact": {
+                    "path": "org/apache/logging/log4j/log4j-slf4j18-impl/2.15.0/log4j-slf4j18-impl-2.15.0.jar",
+                    "url": "https://maven.minecraftforge.net/org/apache/logging/log4j/log4j-slf4j18-impl/2.15.0/log4j-slf4j18-impl-2.15.0.jar",
+                    "sha1": "88f72ad364bfc3a7cf43186fc17212f2b4bb8d97",
+                    "size": 21223
                 }
             }
         },
