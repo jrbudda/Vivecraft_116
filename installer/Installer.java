@@ -50,7 +50,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String OF_FILE_NAME          = "1.16.5_HD_U_G8";
     private static final String OF_MD5                = "e0717ba6d1674af83036ebc479fc77b4";
     private static final String OF_VERSION_EXT        = ".jar";
-    private static String FORGE_VERSION               = "36.1.31";
+    private static String FORGE_VERSION               = "36.2.20";
     private static final String HOMEPAGE_LINK         = "http://www.vivecraft.org";
     private static final String DONATION_LINK         = "https://www.patreon.com/jrbudda";
     private static final String PROJECT_NAME          = "Vivecraft NonVR";

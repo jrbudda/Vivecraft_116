@@ -115,7 +115,18 @@
      public static ReflectorClass ChunkEvent_Load = new ReflectorClass("net.minecraftforge.event.world.ChunkEvent$Load");
      public static ReflectorConstructor ChunkEvent_Load_Constructor = new ReflectorConstructor(ChunkEvent_Load, new Class[] {IChunk.class});
      public static ReflectorClass ChunkEvent_Unload = new ReflectorClass("net.minecraftforge.event.world.ChunkEvent$Unload");
-@@ -363,8 +396,9 @@
+@@ -291,6 +324,10 @@
+     public static ReflectorMethod ForgeHooksClient_renderSpecificFirstPersonHand = new ReflectorMethod(ForgeHooksClient, "renderSpecificFirstPersonHand");
+     public static ReflectorMethod ForgeHooksClient_setRenderLayer = new ReflectorMethod(ForgeHooksClient, "setRenderLayer");
+     public static ReflectorMethod ForgeHooksClient_shouldCauseReequipAnimation = new ReflectorMethod(ForgeHooksClient, "shouldCauseReequipAnimation");
++    public static ReflectorMethod ForgeHooksClient_pushGuiLayer = new ReflectorMethod(ForgeHooksClient, "pushGuiLayer");
++    public static ReflectorMethod ForgeHooksClient_popGuiLayer = new ReflectorMethod(ForgeHooksClient, "popGuiLayer");    
++    public static ReflectorMethod ForgeHooksClient_getGuiFarPlane = new ReflectorMethod(ForgeHooksClient, "getGuiFarPlane");   
++    public static ReflectorMethod ForgeHooksClient_resizeGuiLayers = new ReflectorMethod(ForgeHooksClient, "resizeGuiLayers");    
+     public static ReflectorClass ForgeConfig = new ReflectorClass("net.minecraftforge.common.ForgeConfig");
+     public static ReflectorField ForgeConfig_CLIENT = new ReflectorField(ForgeConfig, "CLIENT");
+     public static ReflectorClass ForgeConfig_Client = new ReflectorClass("net.minecraftforge.common.ForgeConfig$Client");
+@@ -363,8 +400,9 @@
      public static ReflectorField Launch_blackboard = new ReflectorField(Launch, "blackboard");
      public static ReflectorClass LightUtil = new ReflectorClass("net.minecraftforge.client.model.pipeline.LightUtil");
      public static ReflectorField LightUtil_itemConsumer = new ReflectorField(LightUtil, "itemConsumer");
@@ -126,7 +137,7 @@
      public static ReflectorClass Loader = new ReflectorClass("net.minecraftforge.fml.common.Loader");
      public static ReflectorMethod Loader_getActiveModList = new ReflectorMethod(Loader, "getActiveModList");
      public static ReflectorMethod Loader_instance = new ReflectorMethod(Loader, "instance");
-@@ -418,6 +452,8 @@
+@@ -418,6 +456,8 @@
      public static ReflectorField GuiEnchantment_bookModel = new ReflectorField(GuiEnchantment, BookModel.class);
      public static ReflectorClass GuiMainMenu = new ReflectorClass(MainMenuScreen.class);
      public static ReflectorField GuiMainMenu_splashText = new ReflectorField(GuiMainMenu, String.class);
@@ -135,7 +146,7 @@
      public static ReflectorClass ItemOverride = new ReflectorClass(ItemOverride.class);
      public static ReflectorField ItemOverride_mapResourceValues = new ReflectorField(ItemOverride, Map.class);
      public static ReflectorClass LegacyResourcePackWrapper = new ReflectorClass(LegacyResourcePackWrapper.class);
-@@ -435,6 +471,10 @@
+@@ -435,6 +475,10 @@
      public static ReflectorFields ModelArmorStand_ModelRenderers = new ReflectorFields(ModelArmorStand, ModelRenderer.class, 4);
      public static ReflectorClass ModelBat = new ReflectorClass(BatModel.class);
      public static ReflectorFields ModelBat_ModelRenderers = new ReflectorFields(ModelBat, ModelRenderer.class, 6);
@@ -146,7 +157,7 @@
      public static ReflectorClass ModelBee = new ReflectorClass(BeeModel.class);
      public static ReflectorFields ModelBee_ModelRenderers = new ReflectorFields(ModelBee, ModelRenderer.class, 10);
      public static ReflectorClass ModelBlaze = new ReflectorClass(BlazeModel.class);
-@@ -451,6 +491,8 @@
+@@ -451,6 +495,8 @@
      public static ReflectorFields ModelCod_ModelRenderers = new ReflectorFields(ModelCod, ModelRenderer.class, 7);
      public static ReflectorClass ModelCreeper = new ReflectorClass(CreeperModel.class);
      public static ReflectorFields ModelCreeper_ModelRenderers = new ReflectorFields(ModelCreeper, ModelRenderer.class, 7);
@@ -155,7 +166,7 @@
      public static ReflectorClass ModelDragon = new ReflectorClass(EnderDragonRenderer.EnderDragonModel.class);
      public static ReflectorFields ModelDragon_ModelRenderers = new ReflectorFields(ModelDragon, ModelRenderer.class, 20);
      public static ReflectorClass RenderEnderCrystal = new ReflectorClass(EnderCrystalRenderer.class);
-@@ -459,6 +501,9 @@
+@@ -459,6 +505,9 @@
      public static ReflectorField ModelEnderMite_bodyParts = new ReflectorField(ModelEnderMite, ModelRenderer[].class);
      public static ReflectorClass ModelEvokerFangs = new ReflectorClass(EvokerFangsModel.class);
      public static ReflectorFields ModelEvokerFangs_ModelRenderers = new ReflectorFields(ModelEvokerFangs, ModelRenderer.class, 3);
@@ -165,7 +176,7 @@
      public static ReflectorClass ModelGuardian = new ReflectorClass(GuardianModel.class);
      public static ReflectorField ModelGuardian_body = new ReflectorField(ModelGuardian, ModelRenderer.class, 0);
      public static ReflectorField ModelGuardian_eye = new ReflectorField(ModelGuardian, ModelRenderer.class, 1);
-@@ -1324,4 +1369,174 @@
+@@ -1324,4 +1373,174 @@
          ReflectorResolver.register(iresolvable);
          return true;
      }

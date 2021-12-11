@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/gui/screen/Screen.java
++++ b/net/minecraft/client/gui/screen/Screen.java
+@@ -111,7 +111,10 @@
+ 
+     public void closeScreen()
+     {
+-        this.minecraft.displayGuiScreen((Screen)null);
++    	//FORGE
++    	this.minecraft.popGuiLayer();
++    	//
++        //this.minecraft.displayGuiScreen((Screen)null);
+     }
+ 
+     protected <T extends Widget> T addButton(T button)
