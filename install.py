@@ -150,6 +150,7 @@ def installAndPatchMcp( mcp_dir ):
     if os.path.exists(mappingsdir):
         distutils.dir_util.copy_tree(mappingsdir, mappingstarget);
        
+
     # Setup the appropriate mcp file versions
     mcp_version_cfg = os.path.join(mcp_dir,"conf","version.cfg")
     replacelineinfile( mcp_version_cfg, "ClientVersion =", "ClientVersion = %s\n" % mc_version );

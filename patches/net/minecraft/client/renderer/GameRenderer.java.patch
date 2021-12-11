@@ -851,7 +851,7 @@
          }
      }
  
-@@ -1371,4 +1408,2196 @@
+@@ -1371,4 +1408,2200 @@
      {
          return this.overlayTexture;
      }
@@ -1216,10 +1216,14 @@
 +  		RenderSystem.colorMask(true, true, true, true);
 +  		RenderSystem.matrixMode(GL11.GL_PROJECTION);
 +  		RenderSystem.loadIdentity();
-+  		RenderSystem.ortho(0.0D, this.mc.getMainWindow().getFramebufferWidth() / this.mc.getMainWindow().getGuiScaleFactor(), this.mc.getMainWindow().getFramebufferHeight() / this.mc.getMainWindow().getGuiScaleFactor(), 0.0D, 1000.0D, 3000.0D); // TODO: is this right?
++  		float farplane = 3000.0f;
++  		if (Reflector.ForgeHooksClient_getGuiFarPlane.exists()){
++  			farplane = Reflector.callFloat(Reflector.ForgeHooksClient_getGuiFarPlane);
++  		}
++  		RenderSystem.ortho(0.0D, this.mc.getMainWindow().getFramebufferWidth() / this.mc.getMainWindow().getGuiScaleFactor(), this.mc.getMainWindow().getFramebufferHeight() / this.mc.getMainWindow().getGuiScaleFactor(), 0.0D, 1000.0D, farplane); // TODO: is this right?
 +  		RenderSystem.matrixMode(GL11.GL_MODELVIEW);
 +  		RenderSystem.loadIdentity();
-+  		RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
++  		RenderSystem.translatef(0.0F, 0.0F, 1000.0F - farplane);
 +  		RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE);
 +
 +  		screen.render(matrixstack, 0, 0, par1);

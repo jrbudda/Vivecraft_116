@@ -129,16 +129,18 @@
  import net.minecraft.util.registry.Bootstrap;
  import net.minecraft.util.registry.DynamicRegistries;
  import net.minecraft.util.registry.Registry;
-@@ -235,12 +302,83 @@
+@@ -235,12 +302,84 @@
  import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
  import net.minecraft.world.storage.ServerWorldInfo;
++import net.minecraftforge.client.extensions.IForgeMinecraft;
 +import net.optifine.reflect.Reflector;
 +import net.optifine.reflect.ReflectorConstructor;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
- public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperInfo, IWindowEventListener
+-public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperInfo, IWindowEventListener
++public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperInfo, IWindowEventListener, IForgeMinecraft
  {
      private static Minecraft instance;
 +	// VIVECRAFT things
@@ -207,13 +209,13 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do
 +	 * not modify here. Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.16.5 jrbudda-7-6";
++    public final String minecriftVerString = "Vivecraft 1.16.5 jrbudda-7-7";
 +	/* end version */
 +	/** END MINECRIFT */
      private static final Logger LOGGER = LogManager.getLogger();
      public static final boolean IS_RUNNING_ON_MAC = Util.getOSType() == Util.OS.OSX;
      public static final ResourceLocation DEFAULT_FONT_RENDERER_NAME = new ResourceLocation("default");
-@@ -271,7 +409,7 @@
+@@ -271,7 +410,7 @@
      public final DebugRenderer debugRenderer;
      private final AtomicReference<TrackingChunkStatusListener> refChunkStatusListener = new AtomicReference<>();
      public final IngameGui ingameGUI;
@@ -222,7 +224,7 @@
      private final CreativeSettings creativeSettings;
      public final MouseHelper mouseHelper;
      public final KeyboardListener keyboardListener;
-@@ -293,7 +431,7 @@
+@@ -293,7 +432,7 @@
      private final LanguageManager languageManager;
      private final BlockColors blockColors;
      private final ItemColors itemColors;
@@ -231,7 +233,7 @@
      private final SoundHandler soundHandler;
      private final MusicTicker musicTicker;
      private final FontResourceManager fontResourceMananger;
-@@ -378,9 +516,12 @@
+@@ -378,9 +517,12 @@
  
      public Minecraft(GameConfiguration gameConfig)
      {
@@ -247,7 +249,7 @@
          File file1 = gameConfig.folderInfo.assetsDir;
          this.fileResourcepacks = gameConfig.folderInfo.resourcePacksDir;
          this.launchedVersion = gameConfig.gameInfo.version;
-@@ -393,8 +534,9 @@
+@@ -393,8 +535,9 @@
          this.sessionService = yggdrasilauthenticationservice.createMinecraftSessionService();
          this.field_244734_au = this.func_244735_a(yggdrasilauthenticationservice, gameConfig);
          this.session = gameConfig.userInfo.session;
@@ -259,7 +261,7 @@
          this.isDemo = gameConfig.gameInfo.isDemo;
          this.enableMultiplayer = !gameConfig.gameInfo.disableMultiplayer;
          this.enableChat = !gameConfig.gameInfo.disableChat;
-@@ -418,6 +560,21 @@
+@@ -418,6 +561,21 @@
          this.dataFixer = DataFixesManager.getDataFixer();
          this.toastGui = new ToastGui(this);
          this.tutorial = new Tutorial(this);
@@ -281,7 +283,7 @@
          this.thread = Thread.currentThread();
          this.gameSettings = new GameSettings(this, this.gameDir);
          this.creativeSettings = new CreativeSettings(this.gameDir, this.dataFixer);
-@@ -451,13 +608,17 @@
+@@ -451,13 +609,17 @@
  
          this.mainWindow.setFramerateLimit(this.gameSettings.framerateLimit);
          this.mouseHelper = new MouseHelper(this);
@@ -301,7 +303,7 @@
          this.resourcePackRepository.reloadPacksFromFinders();
          this.gameSettings.fillResourcePackList(this.resourcePackRepository);
          this.languageManager = new LanguageManager(this.gameSettings.language);
-@@ -475,6 +636,13 @@
+@@ -475,6 +637,13 @@
          this.fontRenderer = this.fontResourceMananger.func_238548_a_();
          this.resourceManager.addReloadListener(this.fontResourceMananger.getReloadListener());
          this.forceUnicodeFont(this.getForceUnicodeFont());
@@ -315,7 +317,7 @@
          this.resourceManager.addReloadListener(new GrassColorReloadListener());
          this.resourceManager.addReloadListener(new FoliageColorReloadListener());
          this.mainWindow.setRenderPhase("Startup");
-@@ -499,6 +667,9 @@
+@@ -499,6 +668,9 @@
          this.populateSearchTreeManager();
          this.resourceManager.addReloadListener(this.searchTreeManager);
          this.particles = new ParticleManager(this.world, this.textureManager);
@@ -325,7 +327,7 @@
          this.resourceManager.addReloadListener(this.particles);
          this.paintingSprites = new PaintingSpriteUploader(this.textureManager);
          this.resourceManager.addReloadListener(this.paintingSprites);
-@@ -506,7 +677,16 @@
+@@ -506,7 +678,16 @@
          this.resourceManager.addReloadListener(this.potionSprites);
          this.warningGPU = new GPUWarning();
          this.resourceManager.addReloadListener(this.warningGPU);
@@ -343,7 +345,7 @@
          this.debugRenderer = new DebugRenderer(this);
          RenderSystem.setErrorCallback(this::disableVSyncAfterGlError);
  
-@@ -521,24 +701,43 @@
+@@ -521,24 +702,43 @@
          this.mainWindow.setLogOnGlError();
          this.updateWindowSize();
  
@@ -395,7 +397,7 @@
              });
          }, false));
      }
-@@ -550,13 +749,14 @@
+@@ -550,13 +750,14 @@
  
      private String getWindowTitle()
      {
@@ -417,7 +419,7 @@
          stringbuilder.append(" ");
          stringbuilder.append(SharedConstants.getVersion().getName());
          ClientPlayNetHandler clientplaynethandler = this.getConnection();
-@@ -605,9 +805,9 @@
+@@ -605,9 +806,9 @@
      }
  
      private void restoreResourcePacks(Throwable throwableIn)
@@ -430,7 +432,7 @@
              ITextComponent itextcomponent;
  
              if (throwableIn instanceof SimpleReloadableResourceManager.FailedPackException)
-@@ -721,7 +921,12 @@
+@@ -721,7 +922,12 @@
          });
          SearchTreeReloadable<ItemStack> searchtreereloadable = new SearchTreeReloadable<>((stack) ->
          {
@@ -443,7 +445,7 @@
          });
          NonNullList<ItemStack> nonnulllist = NonNullList.create();
  
-@@ -818,16 +1023,25 @@
+@@ -818,16 +1024,25 @@
          if (report.getFile() != null)
          {
              Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + report.getFile());
@@ -469,7 +471,7 @@
              System.exit(-2);
          }
      }
-@@ -858,6 +1072,17 @@
+@@ -858,6 +1073,17 @@
                  List<IResourcePack> list = this.resourcePackRepository.func_232623_f_();
                  this.setLoadingGui(new ResourceLoadProgressGui(this, this.resourceManager.reloadResources(Util.getServerExecutor(), this, RESOURCE_RELOAD_INIT_TASK, list), (throwable) ->
                  {
@@ -487,7 +489,7 @@
                      Util.acceptOrElse(throwable, this::restoreResourcePacks, () -> {
                          this.worldRenderer.loadRenderers();
                          completablefuture.complete((Void)null);
-@@ -959,10 +1184,11 @@
+@@ -959,10 +1185,11 @@
  
      public void displayGuiScreen(@Nullable Screen guiScreenIn)
      {
@@ -503,7 +505,7 @@
  
          if (guiScreenIn == null && this.world == null)
          {
-@@ -979,13 +1205,26 @@
+@@ -979,13 +1206,26 @@
                  this.player.respawnPlayer();
              }
          }
@@ -531,7 +533,7 @@
          this.currentScreen = guiScreenIn;
  
          if (guiScreenIn != null)
-@@ -1051,6 +1290,12 @@
+@@ -1051,6 +1291,12 @@
          finally
          {
              Util.nanoTimeSupplier = System::nanoTime;
@@ -544,7 +546,7 @@
  
              if (this.crashReporter == null)
              {
-@@ -1091,7 +1336,7 @@
+@@ -1091,7 +1337,7 @@
      private void runGameLoop(boolean renderWorldIn)
      {
          this.mainWindow.setRenderPhase("Pre render");
@@ -553,7 +555,7 @@
  
          if (this.mainWindow.shouldClose())
          {
-@@ -1117,71 +1362,256 @@
+@@ -1117,71 +1363,256 @@
  
          if (renderWorldIn)
          {
@@ -856,7 +858,7 @@
          ++this.fpsCounter;
          boolean flag = this.isSingleplayer() && (this.currentScreen != null && this.currentScreen.isPauseScreen() || this.loadingGui != null && this.loadingGui.isPauseScreen()) && !this.integratedServer.getPublic();
  
-@@ -1270,14 +1700,19 @@
+@@ -1270,14 +1701,22 @@
          int i = this.mainWindow.calcGuiScale(this.gameSettings.guiScale, this.getForceUnicodeFont());
          this.mainWindow.setGuiScale((double)i);
  
@@ -866,11 +868,15 @@
          if (this.currentScreen != null)
          {
              this.currentScreen.resize(this, this.mainWindow.getScaledWidth(), this.mainWindow.getScaledHeight());
-         }
+-        }
 -
 -        Framebuffer framebuffer = this.getFramebuffer();
 -        framebuffer.resize(this.mainWindow.getFramebufferWidth(), this.mainWindow.getFramebufferHeight(), IS_RUNNING_ON_MAC);
 -        this.gameRenderer.updateShaderGroupSize(this.mainWindow.getFramebufferWidth(), this.mainWindow.getFramebufferHeight());
++            //FORGE
++            Reflector.call(Reflector.ForgeHooksClient_resizeGuiLayers, this, this.mainWindow.getScaledWidth(), this.mainWindow.getScaledHeight());
++            //
++        }
 +		//Vivecraft do not do this.
 +        //Framebuffer framebuffer = this.getFramebuffer();
 +        //framebuffer.resize(this.mainWindow.getFramebufferWidth(), this.mainWindow.getFramebufferHeight(), IS_RUNNING_ON_MAC);
@@ -880,7 +886,7 @@
          this.mouseHelper.setIgnoreFirstMove();
      }
  
-@@ -1366,6 +1801,14 @@
+@@ -1366,6 +1805,14 @@
          }
      }
  
@@ -895,7 +901,7 @@
      private void func_238183_a_(MatrixStack matrixStack, IProfileResult profilerResult)
      {
          List<DataPoint> list = profilerResult.getDataPoints(this.debugProfilerName);
-@@ -1382,14 +1825,15 @@
+@@ -1382,14 +1829,15 @@
          Tessellator tessellator = Tessellator.getInstance();
          BufferBuilder bufferbuilder = tessellator.getBuffer();
          int i = 160;
@@ -914,7 +920,7 @@
          tessellator.draw();
          RenderSystem.disableBlend();
          double d0 = 0.0D;
-@@ -1516,34 +1960,54 @@
+@@ -1516,34 +1964,54 @@
  
      private void sendClickBlockToController(boolean leftClick)
      {
@@ -997,7 +1003,7 @@
      }
  
      private void clickMouse()
-@@ -1561,6 +2025,12 @@
+@@ -1561,6 +2029,12 @@
              }
              else if (!this.player.isRowingBoat())
              {
@@ -1010,7 +1016,7 @@
                  switch (this.objectMouseOver.getType())
                  {
                      case ENTITY:
-@@ -1571,7 +2041,7 @@
+@@ -1571,7 +2045,7 @@
                          BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.objectMouseOver;
                          BlockPos blockpos = blockraytraceresult.getPos();
  
@@ -1019,7 +1025,7 @@
                          {
                              this.playerController.clickBlock(blockpos, blockraytraceresult.getFace());
                              break;
-@@ -1584,9 +2054,13 @@
+@@ -1584,9 +2058,13 @@
                          }
  
                          this.player.resetCooldown();
@@ -1034,7 +1040,7 @@
              }
          }
      }
-@@ -1594,11 +2068,14 @@
+@@ -1594,11 +2072,14 @@
      /**
       * Called when user clicked he's mouse right button (place)
       */
@@ -1052,20 +1058,20 @@
  
              if (!this.player.isRowingBoat())
              {
-@@ -1609,13 +2086,29 @@
+@@ -1609,13 +2090,29 @@
  
                  for (Hand hand : Hand.values())
                  {
 -                    ItemStack itemstack = this.player.getHeldItem(hand);
 +    				Object inputEvent;
 +    				inputEvent = Reflector.call(Reflector.ForgeHooksClient_OnClickInput, 1, this.gameSettings.keyBindUseItem, hand);
- 
++
 +    				if (inputEvent !=null && Reflector.callBoolean(inputEvent,  Reflector.Event_isCanceled)) {
 +    					if (Reflector.callBoolean(inputEvent, Reflector.ClickInputEvent_shouldSwingHand)) 
 +    						this.player.swingArm(hand);
 +    					return;
 +    				}
-+
+ 
 +                    ItemStack itemstack = this.player.getHeldItem(hand);
 +    				if(TelescopeTracker.isTelescope(itemstack))
 +    					continue;
@@ -1083,7 +1089,7 @@
                                  EntityRayTraceResult entityraytraceresult = (EntityRayTraceResult)this.objectMouseOver;
                                  Entity entity = entityraytraceresult.getEntity();
                                  ActionResultType actionresulttype = this.playerController.interactWithEntity(this.player, entity, entityraytraceresult, hand);
-@@ -1629,7 +2122,10 @@
+@@ -1629,7 +2126,10 @@
                                  {
                                      if (actionresulttype.isSuccess())
                                      {
@@ -1095,7 +1101,7 @@
                                      }
  
                                      return;
-@@ -1646,8 +2142,10 @@
+@@ -1646,8 +2146,10 @@
                                  {
                                      if (actionresulttype1.isSuccess())
                                      {
@@ -1108,7 +1114,7 @@
                                          if (!itemstack.isEmpty() && (itemstack.getCount() != i || this.playerController.isInCreativeMode()))
                                          {
                                              this.gameRenderer.itemRenderer.resetEquippedProgress(hand);
-@@ -1663,16 +2161,25 @@
+@@ -1663,16 +2165,25 @@
                                  }
                          }
                      }
@@ -1136,7 +1142,7 @@
                              }
  
                              this.gameRenderer.itemRenderer.resetEquippedProgress(hand);
-@@ -1697,12 +2204,17 @@
+@@ -1697,12 +2208,17 @@
       */
      public void runTick()
      {
@@ -1156,7 +1162,7 @@
  
          if (!this.isGamePaused)
          {
-@@ -1710,7 +2222,7 @@
+@@ -1710,7 +2226,7 @@
          }
  
          this.profiler.endSection();
@@ -1165,7 +1171,7 @@
          this.tutorial.onMouseHover(this.world, this.objectMouseOver);
          this.profiler.startSection("gameMode");
  
-@@ -1721,10 +2233,11 @@
+@@ -1721,10 +2237,11 @@
  
          this.profiler.endStartSection("textures");
  
@@ -1180,7 +1186,7 @@
  
          if (this.currentScreen == null && this.player != null)
          {
-@@ -1759,6 +2272,11 @@
+@@ -1759,6 +2276,11 @@
          {
              this.ingameGUI.reset();
          }
@@ -1192,7 +1198,7 @@
  
          if (this.loadingGui == null && (this.currentScreen == null || this.currentScreen.passEvents))
          {
-@@ -1771,8 +2289,26 @@
+@@ -1771,8 +2293,26 @@
              }
          }
  
@@ -1221,7 +1227,7 @@
              this.profiler.endStartSection("gameRenderer");
  
              if (!this.isGamePaused)
-@@ -1804,6 +2340,12 @@
+@@ -1804,6 +2344,12 @@
              this.gameRenderer.stopUseShader();
          }
  
@@ -1234,7 +1240,7 @@
          if (!this.isGamePaused)
          {
              this.musicTicker.tick();
-@@ -1875,9 +2417,13 @@
+@@ -1875,9 +2421,13 @@
          this.profiler.endStartSection("keyboard");
          this.keyboardListener.tick();
          this.profiler.endSection();
@@ -1249,7 +1255,7 @@
      {
          return !this.integratedServerIsRunning || this.integratedServer != null && this.integratedServer.getPublic();
      }
-@@ -1886,13 +2432,17 @@
+@@ -1886,13 +2436,17 @@
      {
          for (; this.gameSettings.keyBindTogglePerspective.isPressed(); this.worldRenderer.setDisplayListEntitiesDirty())
          {
@@ -1274,7 +1280,7 @@
          }
  
          while (this.gameSettings.keyBindSmoothCamera.isPressed())
-@@ -1971,7 +2521,9 @@
+@@ -1971,7 +2525,9 @@
          {
              if (!this.player.isSpectator() && this.player.drop(Screen.hasControlDown()))
              {
@@ -1285,7 +1291,7 @@
              }
          }
  
-@@ -1979,7 +2531,7 @@
+@@ -1979,7 +2535,7 @@
  
          if (flag2)
          {
@@ -1294,7 +1300,7 @@
              {
                  this.openChatScreen("");
              }
-@@ -1990,11 +2542,13 @@
+@@ -1990,11 +2546,13 @@
              }
          }
  
@@ -1313,7 +1319,7 @@
              }
  
              while (this.gameSettings.keyBindAttack.isPressed())
-@@ -2011,10 +2565,18 @@
+@@ -2011,10 +2569,18 @@
          }
          else
          {
@@ -1336,7 +1342,7 @@
  
              while (this.gameSettings.keyBindUseItem.isPressed())
              {
-@@ -2032,7 +2594,7 @@
+@@ -2032,7 +2598,7 @@
              this.rightClickMouse();
          }
  
@@ -1345,7 +1351,7 @@
      }
  
      public static DatapackCodec loadDataPackCodec(SaveFormat.LevelSave worldStorage)
-@@ -2067,7 +2629,7 @@
+@@ -2067,7 +2633,7 @@
  
      public void loadWorld(String worldName)
      {
@@ -1354,7 +1360,7 @@
      }
  
      public void createWorld(String worldName, WorldSettings worldSettings, DynamicRegistries.Impl dynamicRegistriesIn, DimensionGeneratorSettings dimensionGeneratorSettings)
-@@ -2084,10 +2646,11 @@
+@@ -2084,10 +2650,11 @@
              });
              DimensionGeneratorSettings dimensiongeneratorsettings = dataresult.resultOrPartial(Util.func_240982_a_("Error reading worldgen settings after loading data packs: ", LOGGER::error)).orElse(dimensionGeneratorSettings);
              return new ServerWorldInfo(worldSettings, dimensiongeneratorsettings, dataresult.lifecycle());
@@ -1368,7 +1374,7 @@
      {
          SaveFormat.LevelSave saveformat$levelsave;
  
-@@ -2104,17 +2667,22 @@
+@@ -2104,17 +2671,22 @@
          }
  
          Minecraft.PackManager minecraft$packmanager;
@@ -1393,7 +1399,7 @@
              }));
  
              try
-@@ -2140,7 +2708,7 @@
+@@ -2140,7 +2712,7 @@
  
              try
              {
@@ -1402,7 +1408,7 @@
                  minecraft$packmanager.getDataPackRegistries().updateTags();
                  YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(this.proxy);
                  MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
-@@ -2151,7 +2719,7 @@
+@@ -2151,7 +2723,7 @@
                  PlayerProfileCache.setOnlineMode(false);
                  this.integratedServer = MinecraftServer.func_240784_a_((thread) ->
                  {
@@ -1411,7 +1417,7 @@
                          TrackingChunkStatusListener trackingchunkstatuslistener = new TrackingChunkStatusListener(radius + 0);
                          trackingchunkstatuslistener.startTracking();
                          this.refChunkStatusListener.set(trackingchunkstatuslistener);
-@@ -2180,7 +2748,7 @@
+@@ -2180,7 +2752,7 @@
  
              while (!this.integratedServer.serverIsInRunLoop())
              {
@@ -1420,7 +1426,7 @@
                  this.runGameLoop(false);
  
                  try
-@@ -2205,6 +2773,13 @@
+@@ -2205,6 +2777,13 @@
              {
              }));
              networkmanager.sendPacket(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -1434,7 +1440,7 @@
              networkmanager.sendPacket(new CLoginStartPacket(this.getSession().getProfile()));
              this.networkManager = networkmanager;
          }
-@@ -2212,7 +2787,7 @@
+@@ -2212,7 +2791,7 @@
          {
              this.deleteWorld(selectionType, worldName, flag, () ->
              {
@@ -1443,7 +1449,7 @@
              });
              minecraft$packmanager.close();
  
-@@ -2306,6 +2881,13 @@
+@@ -2306,6 +2885,13 @@
       */
      public void loadWorld(ClientWorld worldClientIn)
      {
@@ -1457,7 +1463,7 @@
          WorkingScreen workingscreen = new WorkingScreen();
          workingscreen.displaySavingString(new TranslationTextComponent("connect.joining"));
          this.updateScreenTick(workingscreen);
-@@ -2342,12 +2924,18 @@
+@@ -2342,12 +2928,18 @@
          IntegratedServer integratedserver = this.integratedServer;
          this.integratedServer = null;
          this.gameRenderer.resetData();
@@ -1476,7 +1482,7 @@
              if (integratedserver != null)
              {
                  this.profiler.startSection("waitForServer");
-@@ -2364,6 +2952,9 @@
+@@ -2364,6 +2956,9 @@
              this.ingameGUI.resetPlayersOverlayFooterHeader();
              this.currentServerData = null;
              this.integratedServerIsRunning = false;
@@ -1486,7 +1492,7 @@
              this.game.leaveGameSession();
          }
  
-@@ -2397,6 +2988,9 @@
+@@ -2397,6 +2992,9 @@
          this.particles.clearEffects(worldIn);
          TileEntityRendererDispatcher.instance.setWorld(worldIn);
          this.setDefaultMinecraftTitle();
@@ -1496,7 +1502,7 @@
      }
  
      public boolean isMultiplayerEnabled()
-@@ -2465,6 +3059,16 @@
+@@ -2465,6 +3063,16 @@
      {
          if (this.objectMouseOver != null && this.objectMouseOver.getType() != RayTraceResult.Type.MISS)
          {
@@ -1513,7 +1519,7 @@
              boolean flag = this.player.abilities.isCreativeMode;
              TileEntity tileentity = null;
              RayTraceResult.Type raytraceresult$type = this.objectMouseOver.getType();
-@@ -2626,6 +3230,8 @@
+@@ -2626,6 +3234,8 @@
                  }
              }
          }
@@ -1522,7 +1528,7 @@
      }
  
      private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
-@@ -3182,8 +3788,12 @@
+@@ -3182,8 +3792,12 @@
          {
              supplier = wrapV4(supplier);
          }
@@ -1537,7 +1543,7 @@
      }
  
      private static Supplier<IResourcePack> wrapV3(Supplier<IResourcePack> resourcePackSupplier)
-@@ -3248,4 +3858,519 @@
+@@ -3248,4 +3862,519 @@
          CREATE,
          BACKUP;
      }

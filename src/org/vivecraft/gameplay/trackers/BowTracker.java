@@ -7,6 +7,7 @@ import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
 import org.vivecraft.api.VRData;
 import org.vivecraft.gameplay.VRPlayer;
 import org.vivecraft.provider.openvr_jna.MCOpenVR;
+import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.math.Vector3;
 
 import net.minecraft.client.Minecraft;
@@ -69,8 +70,8 @@ public class BowTracker extends Tracker {
 	
 	public static boolean isBow(ItemStack itemStack) {
 		if( itemStack == ItemStack.EMPTY) return false;
-		if(Minecraft.getInstance().vrSettings.bowMode == 0) return false;
-		else if(Minecraft.getInstance().vrSettings.bowMode == 1) return itemStack.getItem() == Items.BOW; 
+		if(Minecraft.getInstance().vrSettings.bowMode == VRSettings.BOW_MODE_OFF) return false;
+		else if(Minecraft.getInstance().vrSettings.bowMode == VRSettings.BOW_MODE_VANILLA) return itemStack.getItem() == Items.BOW;
 		else return itemStack.getItem().getUseAction(itemStack) == UseAction.BOW;			 
 	}
 	

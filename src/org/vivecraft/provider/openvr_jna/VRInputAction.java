@@ -262,7 +262,7 @@ public class VRInputAction {
 			return false;
 
 		for (VRInputAction action : MCOpenVR.get().getInputActions()) {
-			if (action != this && action.isEnabledRaw(hand) && action.isActive() && action.getPriority() > this.getPriority() && MCVR.get().getOrigins(this).contains(lastOrigin)) {
+			if (action != this && action.isEnabledRaw(hand) && action.isActive() && action.getPriority() > this.getPriority() && MCVR.get().getOrigins(action).contains(lastOrigin)) {
 				if (action.isHanded())
 					return !((HandedKeyBinding)action.keyBinding).isPriorityOnController(hand);
 				return false;

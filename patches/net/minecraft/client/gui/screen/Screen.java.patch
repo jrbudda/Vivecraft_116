@@ -13,7 +13,19 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -128,7 +131,14 @@
+@@ -111,7 +114,10 @@
+ 
+     public void closeScreen()
+     {
+-        this.minecraft.displayGuiScreen((Screen)null);
++    	//FORGE
++    	this.minecraft.popGuiLayer();
++    	//
++        //this.minecraft.displayGuiScreen((Screen)null);
+     }
+ 
+     protected <T extends Widget> T addButton(T button)
+@@ -128,7 +134,14 @@
  
      protected void renderTooltip(MatrixStack matrixStack, ItemStack itemStack, int mouseX, int mouseY)
      {
@@ -29,7 +41,7 @@
      }
  
      public List<ITextComponent> getTooltipFromItem(ItemStack itemStack)
-@@ -143,10 +153,27 @@
+@@ -143,10 +156,27 @@
  
      public void func_243308_b(MatrixStack p_243308_1_, List<ITextComponent> p_243308_2_, int p_243308_3_, int p_243308_4_)
      {
@@ -59,7 +71,7 @@
      {
          if (!tooltips.isEmpty())
          {
-@@ -365,6 +392,11 @@
+@@ -365,6 +395,11 @@
  
      public void sendMessage(String text, boolean addToChat)
      {
@@ -71,7 +83,7 @@
          if (addToChat)
          {
              this.minecraft.ingameGUI.getChatGUI().addToSentMessages(text);
-@@ -380,10 +412,15 @@
+@@ -380,10 +415,15 @@
          this.font = minecraft.fontRenderer;
          this.width = width;
          this.height = height;
@@ -91,7 +103,7 @@
      }
  
      public List <? extends IGuiEventListener > getEventListeners()
-@@ -412,7 +449,17 @@
+@@ -412,7 +452,17 @@
      {
          if (this.minecraft.world != null)
          {
@@ -110,7 +122,7 @@
          }
          else
          {
-@@ -433,6 +480,7 @@
+@@ -433,6 +483,7 @@
          bufferbuilder.pos((double)this.width, 0.0D, 0.0D).tex((float)this.width / 32.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
          bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0F, (float)vOffset).color(64, 64, 64, 255).endVertex();
          tessellator.draw();
@@ -118,7 +130,7 @@
      }
  
      public boolean isPauseScreen()
-@@ -548,4 +596,10 @@
+@@ -548,4 +599,10 @@
      public void addPacks(List<Path> packs)
      {
      }
