@@ -133,7 +133,7 @@
  {
      private static Minecraft instance;
 +
-+    public final String minecriftVerString = "Vivecraft 1.16.5 jrbudda-NONVR-7-8";
++    public final String minecriftVerString = "Vivecraft 1.16.5 jrbudda-NONVR-7-8a";
 +
      private static final Logger LOGGER = LogManager.getLogger();
      public static final boolean IS_RUNNING_ON_MAC = Util.getOSType() == Util.OS.OSX;
