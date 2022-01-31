@@ -710,6 +710,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 						}
 					}
 				}
+				forgeVersionInstalled = false; // fuck it
 
 				if (useForge.isSelected() && !forgeVersionInstalled && !isMultiMC) {
 					monitor.setProgress(55);
