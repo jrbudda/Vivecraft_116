@@ -40,9 +40,9 @@ public class GuiRadialItemsList extends ExtendedList
         	String s = kb != null ? kb.getKeyCategory() : null;
         	if (s == null) continue;
         	if (s != null && !s.equals(cat)) {
-                cat = s;
-                this.addEntry(new GuiRadialItemsList.CategoryEntry(cat));
-            }
+                	cat = s;
+                	this.addEntry(new GuiRadialItemsList.CategoryEntry(cat));
+        	}
         	this.addEntry(new GuiRadialItemsList.MappingEntry(kb, this.parent));
         }
         
