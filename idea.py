@@ -11,13 +11,11 @@ def createIdeaProject(project_root_dir, version, mcpDirName, are32bitNatives):
     # generate IML xml
     # VIVE - removed
     #os.path.join(project_root_dir, 'JOpenVR', 'JOpenVR', 'src'),
-    srcPaths = [os.path.join(project_root_dir, 'JRift', 'JRift', 'src'), \
-                os.path.join(project_root_dir, 'JMumbleLink', 'JMumble', 'src'), \
-                os.path.join(project_root_dir, 'Sixense-Java', 'SixenseJava', 'src'), \
-                os.path.join(project_root_dir, mcpDirName, 'src', 'minecraft')]
+    srcPaths = [os.path.join(project_root_dir, mcpDirName, 'src', 'minecraft')]
+    resourcePaths = [os.path.join(project_root_dir, mcpDirName, 'src', 'resources')]
     libNames = [version]
 
-    imlxml = IMLXML(srcDirPaths=srcPaths, rootDir=project_root_dir, libraryNames=libNames)
+    imlxml = IMLXML(srcDirPaths=srcPaths, resourceDirPaths=resourcePaths, rootDir=project_root_dir, libraryNames=libNames)
     #print "./%s.iml:\n\n%s\n" % (PROJECT_NAME, imlxml.xmlString)
     writeFile(os.path.join(project_root_dir, PROJECT_NAME +'.iml'), imlxml.xmlString)
 
@@ -29,8 +27,24 @@ def createIdeaProject(project_root_dir, version, mcpDirName, are32bitNatives):
             if file.endswith(".jar"):
                 jarFile = os.path.join(root, file)
                 jarPaths.append(jarFile)
+    
+    # find jsr library
+    sourcePaths = []
+    jsrDir = os.path.join(project_root_dir, mcpDirName, 'jars', 'libraries', 'com', 'google', 'code', 'findbugs')
+    for root, dirs, files in os.walk(jsrDir):
+        for file in files:
+            if file.endswith("sources.jar"):
+                sourceFile = os.path.join(root, file)
+                sourcePaths.append(sourceFile)
+            elif file.endswith(".jar"):
+                jarFile = os.path.join(root, file)
+                jarPaths.append(jarFile)
+    
+    nativePaths = []
+    for dir in ['linux', 'osx', 'windows']:
+        nativePaths.append(os.path.join(project_root_dir, 'lib', version, 'natives', dir))
     libName = version
-    libXML = LibraryXML(libraryName=libName, rootDir=project_root_dir, libraryJarPathNames=jarPaths)
+    libXML = LibraryXML(libraryName=libName, rootDir=project_root_dir, libraryJarPathNames=jarPaths, librarySourcePathNames=sourcePaths, nativePathNames=nativePaths)
     #print "./.idea/libraries/%s.xml:\n\n%s\n" % (version, libXML.xmlString)
     writeFile(os.path.join(project_root_dir, '.idea', 'libraries', version + '.xml'), libXML.xmlString)
 
@@ -63,6 +77,31 @@ def createIdeaProject(project_root_dir, version, mcpDirName, are32bitNatives):
     modulesXML = ModulesXML(projectName=PROJECT_NAME)
     #print "./.idea/modules.xml:\n\n%s\n" % (modulesXML.xmlString)
     writeFile(os.path.join(project_root_dir, '.idea', 'modules.xml'), modulesXML.xmlString)
+
+    miscXML = MiscXML(languageLevel='JDK_1_8')
+    writeFile(os.path.join(project_root_dir, '.idea', 'misc.xml'), miscXML.xmlString)
+
+class MiscXML:
+
+    Base_Misc = (
+r"""<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectRootManager" version="2" />
+</project>
+""")
+
+    def __init__(self, languageLevel):
+
+        # Read base xml
+        xml = ET.ElementTree(ET.fromstring(self.Base_Misc))
+
+        # Get ./project/component element
+        project = xml.getroot()
+        component = project.find('component')
+        component.attrib['languageLevel'] = languageLevel
+
+        # get result
+        self.xmlString = dumpXml(element=project)
 
 class ModulesXML:
 
@@ -111,7 +150,6 @@ r"""<?xml version="1.0" encoding="UTF-8"?>
   <component name="RunManager" selected="Application.Run Minecrift Client">
     <configuration default="false" name="Run Minecrift Client" type="Application" factoryName="Application" singleton="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
@@ -123,30 +161,6 @@ r"""<?xml version="1.0" encoding="UTF-8"?>
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="Application.Run Minecrift Client" />
     </list>
-  </component>
-  <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="Minecraft.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/$MCP_DIR$/src/minecraft/net/minecraft/client/Minecraft.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.01783591">
-              <caret line="444" column="0" selection-start-line="444" selection-start-column="0" selection-end-line="444" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="EntityRenderer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/$MCP_DIR$/src/minecraft/net/minecraft/client/renderer/EntityRenderer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="98" column="13" selection-start-line="98" selection-start-column="13" selection-end-line="98" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
   </component>
 </project>
 """)
@@ -166,28 +180,8 @@ r"""<?xml version="1.0" encoding="UTF-8"?>
         # Add main class
         self._add_Option('MAIN_CLASS_NAME', mainClassName, configuration)
 
-        # Add vm args
-
-        # Format natives path string
-        pathSeparator = ':'
-        if _platform == "win32":
-            pathSeparator = ';'
-        vm_args = '-Djava.library.path=\"'
-        firstEntry = True
-
-        # Add all native dirs, convert each to relative to project root
-        for nativeDir in nativeDirs:
-            nativeRelativeDir = os.path.relpath(nativeDir, rootDir)
-            if firstEntry == True:
-                firstEntry = False
-            else:
-                vm_args = vm_args + pathSeparator
-
-            vm_args = vm_args + self.PROJECT_DIR + '/' + nativeRelativeDir
-
-        vm_args = vm_args + '\"'
-
-        self._add_Option('VM_PARAMETERS', vm_args, configuration)
+        # Add working directory
+        self._add_Option('WORKING_DIRECTORY', 'file://$PROJECT_DIR$/' + mcpDir + '/jars', configuration)
 
         # Add program parameters
         self._add_Option('PROGRAM_PARAMETERS', programParams, configuration)
@@ -224,12 +218,15 @@ r"""<component name="libraryTable">
   <library>
     <CLASSES>
     </CLASSES>
-    <SOURCES />
+    <SOURCES>
+    </SOURCES>
+    <NATIVE>
+    </NATIVE>
   </library>
 </component>
 """)
 
-    def __init__(self, libraryName, rootDir, libraryJarPathNames):
+    def __init__(self, libraryName, rootDir, libraryJarPathNames, librarySourcePathNames, nativePathNames):
 
         # Read base xml
         xml = ET.ElementTree(ET.fromstring(self.BASE_Library))
@@ -243,12 +240,26 @@ r"""<component name="libraryTable">
 
         # Get classes element
         CLASSES = library.find('CLASSES')
+        NATIVE = library.find('NATIVE')
+        SOURCES = library.find('SOURCES')
 
         # Add libraries in order
         for libraryJarPathName in libraryJarPathNames:
             # convert to relative path
             relativeLibraryJarPathName = os.path.relpath(libraryJarPathName, rootDir)
             self._add_LibraryJar(self.PROJECT_DIR+'/' + relativeLibraryJarPathName, CLASSES)
+
+        # Add natives
+        for nativePathName in nativePathNames:
+            # convert to relative path
+            relativeNativePathName = os.path.relpath(nativePathName, rootDir)
+            self._add_Native(self.PROJECT_DIR+'/' + relativeNativePathName, NATIVE)
+
+        # Add sources
+        for librarySourcePathName in librarySourcePathNames:
+            # convert to relative path
+            relativeLibrarySourcePathName = os.path.relpath(librarySourcePathName, rootDir)
+            self._add_LibraryJar(self.PROJECT_DIR+'/' + relativeLibrarySourcePathName, SOURCES)
 
         # get result
         self.xmlString = dumpXml(element=component)
@@ -260,6 +271,11 @@ r"""<component name="libraryTable">
         rootElement.attrib['url'] = 'jar://' + libraryJarPathName + '!/'
         CLASSESElement.append(rootElement)
 
+    def _add_Native(self, nativePathName, NATIVEElement):
+
+        rootElement = ET.Element('root')
+        rootElement.attrib['url'] = 'file://' + nativePathName + '/'
+        NATIVEElement.append(rootElement)
 
 class IMLXML:
 
@@ -278,7 +294,7 @@ r"""<?xml version="1.0" encoding="UTF-8"?>
 </module>
 """)
 
-    def __init__(self, rootDir, srcDirPaths, libraryNames):
+    def __init__(self, rootDir, srcDirPaths, resourceDirPaths, libraryNames):
 
         # Read base xml
         xml = ET.ElementTree(ET.fromstring(self.BASE_IML))
@@ -297,6 +313,11 @@ r"""<?xml version="1.0" encoding="UTF-8"?>
             relativeSrcDirPath = os.path.relpath(srcDirPath, rootDir)
             self._addIML_SourceContent('file://' + self.PROJECT_DIR+'/' + relativeSrcDirPath, component)
 
+        for resourceDirPath in resourceDirPaths:
+            # convert to relative path
+            relativeResourceDirPath = os.path.relpath(resourceDirPath, rootDir)
+            self._addIML_ResourceContent('file://' + self.PROJECT_DIR+'/' + relativeResourceDirPath, component)
+
         # get result
         self.xmlString = dumpXml(element=module)
 
@@ -308,6 +329,16 @@ r"""<?xml version="1.0" encoding="UTF-8"?>
         sourceFolder = ET.Element('sourceFolder')
         sourceFolder.attrib['isTestSource'] = 'false'
         sourceFolder.attrib['url'] = srcDirPath
+        content.append(sourceFolder)
+        componentElement.append(content)
+
+    def _addIML_ResourceContent(self, resourceDirPath, componentElement):
+
+        content = ET.Element('content')
+        content.attrib['url'] = resourceDirPath
+        sourceFolder = ET.Element('sourceFolder')
+        sourceFolder.attrib['type'] = 'java-resource'
+        sourceFolder.attrib['url'] = resourceDirPath
         content.append(sourceFolder)
         componentElement.append(content)
 
